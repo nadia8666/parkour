@@ -1,10 +1,11 @@
-import { Keyboard } from "@Easy/Core/Shared/UserInput";
 import { Bin } from "@Easy/Core/Shared/Util/Bin";
+import CFrame from "@inkyaker/CFrame/Code";
 import { Gravity } from "../Framework/FrameworkController";
-import type FloorTrigger from "./FloorTrigger";
+import UIController from "../Framework/UIController";
+import type GenericTrigger from "./GenericTrigger";
 import { MovesetBase } from "./Moveset/MovesetBase";
 
-type ValidStates = "Airborne" | "Grounded";
+export type ValidStates = "Airborne" | "Grounded" | "Wallclimb" | "Wallrun" | "LedgeGrab";
 
 @AirshipComponentMenu("Client/Controller/Physics Controller")
 export default class ClientController extends AirshipBehaviour {
@@ -13,7 +14,12 @@ export default class ClientController extends AirshipBehaviour {
 	public State: ValidStates = "Airborne";
 
 	@Header("Colliders")
-	public FloorTrigger: FloorTrigger;
+	public BodyCollider: Collider;
+	public Floor: GenericTrigger;
+	public Wallclimb: GenericTrigger;
+	public WallrunL: GenericTrigger;
+	public WallrunR: GenericTrigger;
+	public LedgeGrab: GenericTrigger;
 
 	@Header("Curves")
 	public AccelerationCurve: AnimationCurve;
@@ -22,44 +28,77 @@ export default class ClientController extends AirshipBehaviour {
 		Base: new MovesetBase(),
 	};
 
-	override FixedUpdate() {
-		this.UpdateState();
+	override FixedUpdate(FixedDT: number) {
+		this.Step(FixedDT);
 	}
 
 	override OnEnable() {
-		this.Bin.Add(
-			this.FloorTrigger.Signal.Connect((Mode) => {
-				if (Mode === "Enter" && this.State === "Airborne") {
-					this.State = "Grounded";
-				} else if (Mode === "Exit" && this.State === "Grounded") {
-					this.State = "Airborne";
-				}
-			}),
-		);
+		this.Moveset.Base.BindInputs();
 	}
 
 	override OnDisable() {
 		this.Bin.Clean();
+		this.Moveset.Base.Bin.Clean();
 	}
 
-	public UpdateState() {
+	public CameraRotationToCharacter() {
 		const YRotation = Camera.main.transform.rotation.eulerAngles.y;
 		this.Rigidbody.rotation = Quaternion.FromToRotation(
 			Quaternion.Euler(0, this.Rigidbody.rotation.eulerAngles.y, 0).mul(Vector3.forward),
 			Quaternion.Euler(0, YRotation, 0).mul(Vector3.forward),
 		).mul(this.Rigidbody.rotation);
+	}
 
-		this.Moveset.Base.Walk(this);
+	public GetCFrame() {
+		return new CFrame(this.Rigidbody.worldCenterOfMass, this.Rigidbody.rotation);
+	}
+
+	public Step(FixedDT: number) {
+		UIController.Get().State.text = this.State;
+		UIController.Get().Speed.text = `${this.Rigidbody.linearVelocity}`;
+
+		this.Moveset.Base.UpdateInputs(this);
 
 		switch (this.State) {
 			case "Grounded":
-				this.Moveset.Base.Jump(this);
+				this.CameraRotationToCharacter();
+
+				if (!this.Floor.Touching) {
+					this.State = "Airborne";
+				}
+
+				this.Moveset.Base.Walk(this);
 
 				break;
 			case "Airborne":
-				this.Rigidbody.linearVelocity = this.Rigidbody.linearVelocity.add(Gravity);
+				this.CameraRotationToCharacter();
 
-				this.Moveset.Base.JumpHold(this);
+				this.Rigidbody.linearVelocity = this.Rigidbody.linearVelocity.add(Gravity);
+				this.Moveset.Base.JumpHold(this, FixedDT);
+
+				this.Moveset.Base.Walk(this);
+
+				if (this.Floor.Touching && this.Rigidbody.linearVelocity.y <= 0.1) {
+					this.State = "Grounded";
+				}
+
+				this.Moveset.Base.TryLedgeGrab(this);
+
+				break;
+			case "Wallclimb":
+				this.Moveset.Base.WallclimbUpdate(this, FixedDT);
+
+				if (this.Floor.Touching) {
+					this.State = "Grounded";
+				}
+
+				break;
+			case "Wallrun":
+				this.Moveset.Base.WallrunUpdate(this, FixedDT);
+
+				if (this.Floor.Touching) {
+					this.State = "Grounded";
+				}
 
 				break;
 		}
