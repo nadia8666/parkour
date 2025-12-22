@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55587e6da00a44bf9f7d5798297ebf2b, type: 3}
   m_Name: GameConfig
   m_EditorClassIdentifier: 
-  gameId: fbbd5433-410b-4c19-95b3-9bbcc08038f8
+  gameId: 61551d0f-b5d2-44e4-a6b8-1e56a0261fd7
   startingScene: {fileID: 102900000, guid: e9baa4b514ca7466592cd454e7e23b0a, type: 3}
   gameScenes:
   - {fileID: 102900000, guid: e9baa4b514ca7466592cd454e7e23b0a, type: 3}

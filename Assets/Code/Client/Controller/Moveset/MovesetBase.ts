@@ -149,12 +149,12 @@ export class MovesetBase {
 		}
 	}
 
+	public GetMoveVector() {
+		return new Vector3((Keyboard.IsKeyDown(Key.A) ? -1 : 0) + (Keyboard.IsKeyDown(Key.D) ? 1 : 0), 0, (Keyboard.IsKeyDown(Key.S) ? -1 : 0) + (Keyboard.IsKeyDown(Key.W) ? 1 : 0));
+	}
+
 	public Walk(Controller: ClientController) {
-		const LocalMoveVector = new Vector3(
-			(Keyboard.IsKeyDown(Key.A) ? -1 : 0) + (Keyboard.IsKeyDown(Key.D) ? 1 : 0),
-			0,
-			(Keyboard.IsKeyDown(Key.S) ? -1 : 0) + (Keyboard.IsKeyDown(Key.W) ? 1 : 0),
-		);
+		const LocalMoveVector = this.GetMoveVector();
 
 		const TargetVelocity = Controller.Rigidbody.transform.TransformVector(LocalMoveVector);
 		const CurrentVelocity = Controller.Rigidbody.linearVelocity.WithY(0).magnitude;
@@ -166,7 +166,7 @@ export class MovesetBase {
 	}
 
 	public WallclimbStart(Controller: ClientController) {
-		// TODO: slip glove min -45
+		if (Controller.Gear.Ammo.Wallclimb <= 0) return;
 		if (!Controller.Wallclimb.Touching || Controller.Rigidbody.linearVelocity.y < -10) return;
 
 		const Root = Controller.GetCFrame();
@@ -176,9 +176,9 @@ export class MovesetBase {
 		const TargetLook = Quaternion.LookRotation(Normal.mul(-1), Vector3.up);
 		Controller.Rigidbody.rotation = TargetLook;
 
-		// TODO: make grip glove give minimum 7, gloveless minimum 0, slip glove min -10
 		Controller.Rigidbody.linearVelocity = Controller.Rigidbody.linearVelocity.WithY(math.max(Controller.Rigidbody.linearVelocity.y, 5));
 
+		Controller.Gear.Ammo.Wallclimb--;
 		Controller.State = "Wallclimb";
 		this.WallclimbTimer = 1;
 	}
@@ -193,10 +193,15 @@ export class MovesetBase {
 		Controller.Rigidbody.AddForce(Vector3.up.mul(this.WallclimbTimer / 6), ForceMode.VelocityChange);
 		Controller.Rigidbody.AddForce(Controller.GetCFrame().Rotation.mul(Vector3.forward), ForceMode.VelocityChange);
 
+		const HorizontalSpeed = Controller.Rigidbody.transform.InverseTransformVector(Controller.Rigidbody.linearVelocity);
+
+		Controller.Rigidbody.AddForce(HorizontalSpeed.mul(Vector3.right).mul(-0.025), ForceMode.VelocityChange);
+
 		this.TryLedgeGrab(Controller);
 	}
 
 	public WallrunStart(Controller: ClientController) {
+		if (Controller.Gear.Ammo.Wallrun <= 0) return;
 		const [TouchingL, TouchingR] = [Controller.WallrunL.Touching, Controller.WallrunR.Touching];
 
 		if ((!TouchingL && !TouchingR) || Controller.Rigidbody.linearVelocity.y <= -75) return;
@@ -206,10 +211,12 @@ export class MovesetBase {
 		const Root = Controller.GetCFrame();
 		const [LeftHit, _1, LeftNormal] = Physics.Raycast(Root.Position, Root.Rotation.mul(Vector3.left), 10, CollisionLayer);
 		const [RightHit, _2, RightNormal] = Physics.Raycast(Root.Position, Root.Rotation.mul(Vector3.right), 10, CollisionLayer);
-		const LDot = LeftHit ? -LeftNormal.Dot(Root.Rotation.mul(Vector3.right)) : -1;
-		const RDot = RightHit ? -RightNormal.Dot(Root.Rotation.mul(Vector3.left)) : -1;
+		const LDot = LeftHit ? LeftNormal.mul(-1).Dot(Root.Rotation.mul(Vector3.left)) : -1;
+		const RDot = RightHit ? RightNormal.mul(-1).Dot(Root.Rotation.mul(Vector3.right)) : -1;
 
-		if (!(LDot >= 0.35 || RDot >= 0.35)) return;
+		print(LDot, RDot);
+
+		if (LDot < 0.75 && RDot < 0.75) return;
 
 		if (TouchingL && TouchingR) {
 			if (LeftHit && RightHit) {
@@ -233,6 +240,8 @@ export class MovesetBase {
 		Controller.State = "Wallrun";
 		this.WallrunTimer = 2;
 		this.WallrunTarget = Target;
+
+		Controller.Gear.Ammo.Wallrun--;
 	}
 
 	public WallrunUpdate(Controller: ClientController, FixedDT: number) {
@@ -247,10 +256,7 @@ export class MovesetBase {
 		const Magnitude = Controller.Rigidbody.linearVelocity.WithY(YSpeed / 4).magnitude;
 		const GravityAffector = 1 - this.WallrunTimer / 2;
 
-		Controller.Rigidbody.linearVelocity = Controller.GetCFrame()
-			.Rotation.mul(Vector3.forward.mul(Magnitude))
-			.WithY(YSpeed)
-			.add(Gravity.mul(GravityAffector));
+		Controller.Rigidbody.linearVelocity = Controller.GetCFrame().Rotation.mul(Vector3.forward.mul(Magnitude)).WithY(YSpeed).add(Gravity.mul(GravityAffector));
 	}
 
 	public TryLedgeGrab(Controller: ClientController) {
@@ -258,10 +264,20 @@ export class MovesetBase {
 
 		if (Controller.LedgeGrab.Touching && !Controller.Wallclimb.Touching) {
 			const Root = Controller.GetCFrame();
-			const [Hit, HitPos] = Physics.Raycast(Root.Position.add(Root.Rotation.mul(Vector3.forward.mul(0.5))), new Vector3(0, -1, 0), 1.5, CollisionLayer);
+			const [Hit, HitPos] = Physics.SphereCast(Root.Position.add(Root.Rotation.mul(Vector3.forward.mul(0.5))), 0.05, new Vector3(0, -1, 0), 1.5, CollisionLayer);
 
 			if (Hit) {
-				Controller.Rigidbody.linearVelocity = Controller.Rigidbody.linearVelocity.WithY(10);
+				const MoveVector = this.GetMoveVector();
+
+				if (MoveVector.magnitude <= 0) {
+					// purely vertical speed
+					Controller.Rigidbody.linearVelocity = Controller.Rigidbody.linearVelocity.div(4).WithY(12);
+				} else {
+					// horizontal launch
+					const TargetVelocity = Controller.Rigidbody.linearVelocity.magnitude + 2;
+					Controller.Rigidbody.linearVelocity = Controller.GetCFrame().Rotation.mul(Vector3.forward).WithY(2).normalized.mul(TargetVelocity);
+				}
+
 				this.RunLedgeGrab(Controller, HitPos);
 			}
 		}

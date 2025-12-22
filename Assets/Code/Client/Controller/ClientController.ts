@@ -2,6 +2,7 @@ import { Bin } from "@Easy/Core/Shared/Util/Bin";
 import CFrame from "@inkyaker/CFrame/Code";
 import { Gravity } from "../Framework/FrameworkController";
 import UIController from "../Framework/UIController";
+import GearController from "./Gear/GearController";
 import type GenericTrigger from "./GenericTrigger";
 import { MovesetBase } from "./Moveset/MovesetBase";
 
@@ -24,18 +25,23 @@ export default class ClientController extends AirshipBehaviour {
 	@Header("Curves")
 	public AccelerationCurve: AnimationCurve;
 
+	public Gear = new GearController();
+
 	public Moveset = {
 		Base: new MovesetBase(),
 	};
 
+	@Client()
 	override FixedUpdate(FixedDT: number) {
 		this.Step(FixedDT);
 	}
 
+	@Client()
 	override OnEnable() {
 		this.Moveset.Base.BindInputs();
 	}
 
+	@Client()
 	override OnDisable() {
 		this.Bin.Clean();
 		this.Moveset.Base.Bin.Clean();
@@ -53,10 +59,18 @@ export default class ClientController extends AirshipBehaviour {
 		return new CFrame(this.Rigidbody.worldCenterOfMass, this.Rigidbody.rotation);
 	}
 
-	public Step(FixedDT: number) {
-		UIController.Get().State.text = this.State;
-		UIController.Get().Speed.text = `${this.Rigidbody.linearVelocity}`;
+	public UpdateUI() {
+		// TEMP
+		const UI = UIController.Get();
+		UI.State.text = this.State;
+		UI.Speed.text = `${this.Rigidbody.linearVelocity}`;
 
+		UI.WC1.gameObject.SetActive(this.Gear.Ammo.Wallclimb >= 1);
+		UI.WR1.gameObject.SetActive(this.Gear.Ammo.Wallrun >= 1);
+		UI.WR2.gameObject.SetActive(this.Gear.Ammo.Wallrun >= 2);
+	}
+
+	public Step(FixedDT: number) {
 		this.Moveset.Base.UpdateInputs(this);
 
 		switch (this.State) {
@@ -79,7 +93,7 @@ export default class ClientController extends AirshipBehaviour {
 				this.Moveset.Base.Walk(this);
 
 				if (this.Floor.Touching && this.Rigidbody.linearVelocity.y <= 0.1) {
-					this.State = "Grounded";
+					this.Land();
 				}
 
 				this.Moveset.Base.TryLedgeGrab(this);
@@ -89,7 +103,7 @@ export default class ClientController extends AirshipBehaviour {
 				this.Moveset.Base.WallclimbUpdate(this, FixedDT);
 
 				if (this.Floor.Touching) {
-					this.State = "Grounded";
+					this.Land();
 				}
 
 				break;
@@ -97,10 +111,17 @@ export default class ClientController extends AirshipBehaviour {
 				this.Moveset.Base.WallrunUpdate(this, FixedDT);
 
 				if (this.Floor.Touching) {
-					this.State = "Grounded";
+					this.Land();
 				}
 
 				break;
 		}
+
+		this.UpdateUI();
+	}
+
+	public Land() {
+		this.State = "Grounded";
+		this.Gear.ResetAmmo();
 	}
 }

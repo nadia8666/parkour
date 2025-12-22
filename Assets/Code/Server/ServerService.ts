@@ -8,6 +8,7 @@ export default class ServerService extends AirshipSingleton {
 	public Spawner = new CharacterSpawner();
 	public CharacterMap = new Map<Player, Character>();
 
+	@Server()
 	override Start() {
 		Airship.Players.ObservePlayers((Player) => {
 			this.Spawner.SpawnCharacter(Player, new CFrame(new Vector3(0, 2, 0)));
