@@ -1,0 +1,12 @@
+{
+	"linter": {
+		"rules": {
+			"style": {
+				"useConst": "off"
+			}
+		}
+	},
+	"formatter": {
+		"lineWidth": 180
+	}
+}
