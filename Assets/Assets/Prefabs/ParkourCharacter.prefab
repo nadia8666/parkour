@@ -937,6 +937,24 @@ MonoBehaviour:
       serializedValue: 
       serializedObject: {fileID: 4616352204257410828}
       modified: 1
+    - name: AirborneTime
+      type: number
+      objectType: 
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators: []
+      nullable: 0
+      serializedValue: 0
+      serializedObject: {fileID: 0}
+      modified: 0
     displayIcon: {fileID: 0}
     displayName: 
 --- !u!114 &6647136626085009081

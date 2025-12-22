@@ -225,7 +225,7 @@ export class MovesetBase {
 
 		const HorizontalSpeed = Controller.Rigidbody.transform.InverseTransformVector(Controller.Rigidbody.linearVelocity);
 
-		Controller.Rigidbody.AddForce(HorizontalSpeed.mul(Vector3.right).mul(-0.025), ForceMode.VelocityChange);
+		Controller.Rigidbody.AddForce(Controller.Rigidbody.transform.TransformVector(HorizontalSpeed.mul(Vector3.right).mul(-0.05)), ForceMode.VelocityChange);
 
 		this.TryLedgeGrab(Controller);
 	}
