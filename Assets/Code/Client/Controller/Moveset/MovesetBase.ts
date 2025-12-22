@@ -250,7 +250,7 @@ export class MovesetBase {
 		Controller.Rigidbody.linearVelocity = Controller.GetCFrame()
 			.Rotation.mul(Vector3.forward.mul(Magnitude))
 			.WithY(YSpeed)
-			.add(Gravity.mul(GravityAffector * 1));
+			.add(Gravity.mul(GravityAffector));
 	}
 
 	public TryLedgeGrab(Controller: ClientController) {
