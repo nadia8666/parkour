@@ -31,6 +31,8 @@ export default class ClientController extends AirshipBehaviour {
 		Base: new MovesetBase(),
 	};
 
+	public AirborneTime = 0;
+
 	@Client()
 	override FixedUpdate(FixedDT: number) {
 		this.Step(FixedDT);
@@ -85,6 +87,7 @@ export default class ClientController extends AirshipBehaviour {
 
 				break;
 			case "Airborne":
+				this.AirborneTime += FixedDT;
 				this.CameraRotationToCharacter();
 
 				this.Rigidbody.linearVelocity = this.Rigidbody.linearVelocity.add(Gravity);
@@ -92,7 +95,7 @@ export default class ClientController extends AirshipBehaviour {
 
 				this.Moveset.Base.Walk(this);
 
-				if (this.Floor.Touching && this.Rigidbody.linearVelocity.y <= 0.1) {
+				if (this.Floor.Touching && this.Rigidbody.linearVelocity.y <= 0) {
 					this.Land();
 				}
 
@@ -122,6 +125,7 @@ export default class ClientController extends AirshipBehaviour {
 
 	public Land() {
 		this.State = "Grounded";
+		this.AirborneTime = 0;
 		this.Gear.ResetAmmo();
 	}
 }

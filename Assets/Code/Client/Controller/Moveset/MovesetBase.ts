@@ -27,7 +27,21 @@ const Inputs = {
 	LedgeGrab: new InputEntry(Key.Space, 0),
 };
 
+const InverseMap = new Map<Key, (keyof typeof Inputs)[]>();
+
 for (const [Name, Entry] of pairs(Inputs)) {
+	const List = InverseMap.get(Entry.Key);
+
+	if (List) {
+		List.push(Name);
+		List.sort((Name1, Name2) => {
+			const [Entry1, Entry2] = [Inputs[Name1], Inputs[Name2]];
+			return Entry1.Priority > Entry2.Priority;
+		});
+	} else {
+		InverseMap.set(Entry.Key, [Name]);
+	}
+
 	Airship.Input.CreateAction(Name, Binding.Key(Entry.Key));
 }
 
@@ -68,10 +82,6 @@ export class MovesetBase {
 		const ExistingKeys = this.KeyMap.get(Entry.Key);
 		if (ExistingKeys) {
 			ExistingKeys.push(Name);
-			ExistingKeys.sort((Name1, Name2) => {
-				const [Entry1, Entry2] = [Inputs[Name1], Inputs[Name2]];
-				return Entry1.Priority > Entry2.Priority;
-			});
 		} else {
 			this.KeyMap.set(Entry.Key, [Name]);
 		}
@@ -80,11 +90,8 @@ export class MovesetBase {
 	public ActionPressed(Name: keyof typeof Inputs, Controller: ClientController) {
 		switch (Name) {
 			case "Jump": {
-				const JumpStates = new Set<ValidStates>(["Grounded", "Wallrun"]);
+				const JumpStates = new Set<ValidStates>(["Grounded", "Wallrun", "Airborne"]);
 				if (JumpStates.has(Controller.State)) {
-					this.KeyReleased("Wallclimb");
-					this.KeyReleased("Wallrun");
-
 					this.Jump(Controller);
 				}
 				break;
@@ -107,35 +114,58 @@ export class MovesetBase {
 	}
 
 	public UpdateInputs(Controller: ClientController) {
-		for (const [Name, Entry] of pairs(Inputs)) {
-			const ExistingKeys = this.KeyMap.get(Entry.Key);
+		for (const [Key, Names] of pairs(InverseMap)) {
+			const ExistingKeys = this.KeyMap.get(Key);
 
 			if (ExistingKeys) {
-				const Index = ExistingKeys.includes(Name);
+				for (const [_, Name] of pairs(Names)) {
+					const Index = ExistingKeys.indexOf(Name);
+					const Entry = Inputs[Name];
 
-				if (Index && !Entry.Active) {
-					Entry.Active = true;
-					this.ActionPressed(Name, Controller);
-				} else if (!Index && Entry.Active) {
-					Entry.Active = false;
+					if (Index === -1) {
+						if (Entry.Active) Entry.Active = false;
+					} else {
+						if (!Entry.Active) {
+							Entry.Active = true;
+							this.ActionPressed(Name, Controller);
+						}
+					}
 				}
-			} else if (Entry.Active) {
-				Entry.Active = false;
+			} else {
+				for (const [_, Name] of pairs(Names)) {
+					const Entry = Inputs[Name];
+
+					if (Entry.Active) Entry.Active = false;
+				}
 			}
 		}
 	}
 
 	public Jump(Controller: ClientController) {
-		if (Controller.State === "Wallrun") {
+		const InWallrun = Controller.State === "Wallrun";
+
+		if (Controller.Gear.Ammo.Jump <= 0 && !InWallrun) return;
+
+		if (Controller.State === "Airborne") {
+			if (Controller.AirborneTime >= 0.25) return;
+		}
+
+		this.KeyReleased("Jump");
+		this.KeyReleased("Wallclimb");
+		this.KeyReleased("Wallrun");
+
+		if (InWallrun) {
 			const CurrentMagnitude = Controller.Rigidbody.linearVelocity.magnitude;
 			const CameraLook = Camera.main.transform.rotation.mul(Vector3.forward);
 			Controller.Rigidbody.linearVelocity = CameraLook.WithY(1).normalized.mul(CurrentMagnitude + 8.5);
 		} else {
 			Controller.Rigidbody.linearVelocity = Controller.Rigidbody.linearVelocity.WithY(12);
 		}
+
 		Controller.State = "Airborne";
 
 		this.JumpTimer = 1;
+		Controller.Gear.Ammo.Jump -= 1;
 	}
 
 	public JumpHold(Controller: ClientController, FixedDT: number) {
@@ -214,8 +244,6 @@ export class MovesetBase {
 		const LDot = LeftHit ? LeftNormal.mul(-1).Dot(Root.Rotation.mul(Vector3.left)) : -1;
 		const RDot = RightHit ? RightNormal.mul(-1).Dot(Root.Rotation.mul(Vector3.right)) : -1;
 
-		print(LDot, RDot);
-
 		if (LDot < 0.75 && RDot < 0.75) return;
 
 		if (TouchingL && TouchingR) {
@@ -284,6 +312,7 @@ export class MovesetBase {
 	}
 
 	public RunLedgeGrab(Controller: ClientController, EndPosition: Vector3) {
+		Controller.Gear.ResetAmmo(["Jump"]);
 		Controller.State = "LedgeGrab";
 		Controller.BodyCollider.enabled = false;
 
