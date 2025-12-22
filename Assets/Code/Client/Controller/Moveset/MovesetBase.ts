@@ -206,8 +206,8 @@ export class MovesetBase {
 		const Root = Controller.GetCFrame();
 		const [LeftHit, _1, LeftNormal] = Physics.Raycast(Root.Position, Root.Rotation.mul(Vector3.left), 10, CollisionLayer);
 		const [RightHit, _2, RightNormal] = Physics.Raycast(Root.Position, Root.Rotation.mul(Vector3.right), 10, CollisionLayer);
-		const LDot = LeftHit ? -LeftNormal.Dot(Vector3.right) : -1;
-		const RDot = RightHit ? -RightNormal.Dot(Vector3.left) : -1;
+		const LDot = LeftHit ? -LeftNormal.Dot(Root.Rotation.mul(Vector3.right)) : -1;
+		const RDot = RightHit ? -RightNormal.Dot(Root.Rotation.mul(Vector3.left)) : -1;
 
 		if (!(LDot >= 0.35 || RDot >= 0.35)) return;
 
