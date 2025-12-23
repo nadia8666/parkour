@@ -5,6 +5,7 @@ import { Tween } from "@Easy/Core/Shared/Tween/Tween";
 import { Keyboard } from "@Easy/Core/Shared/UserInput";
 import { Bin } from "@Easy/Core/Shared/Util/Bin";
 import { Gravity } from "Code/Client/Framework/FrameworkController";
+import AnimationController from "../Animation/AnimationController";
 import type ClientController from "../ClientController";
 import type { ValidStates } from "../ClientController";
 import type GenericTrigger from "../GenericTrigger";
@@ -21,10 +22,10 @@ class InputEntry {
 }
 
 const Inputs = {
+	LedgeGrab: new InputEntry(Key.Space, 4),
 	Jump: new InputEntry(Key.Space, 3),
 	Wallclimb: new InputEntry(Key.Space, 2),
 	Wallrun: new InputEntry(Key.Space, 1),
-	LedgeGrab: new InputEntry(Key.Space, 0),
 };
 
 const InverseMap = new Map<Key, (keyof typeof Inputs)[]>();
@@ -45,7 +46,15 @@ for (const [Name, Entry] of pairs(Inputs)) {
 	Airship.Input.CreateAction(Name, Binding.Key(Entry.Key));
 }
 
+enum LedgeGrabType {
+	Vault,
+	Jump,
+}
+
 export class MovesetBase {
+	private AnimationController = AnimationController.Get();
+
+	public LastJump = "R";
 	public JumpTimer = 0;
 	public WallclimbTimer = 0;
 	public WallrunTimer = 0;
@@ -142,12 +151,30 @@ export class MovesetBase {
 	}
 
 	public Jump(Controller: ClientController) {
-		const InWallrun = Controller.State === "Wallrun";
+		const State = Controller.State;
+		if (State === "Grounded" && this.TryLedgeGrab(Controller)) {
+			return;
+		}
+
+		const InWallrun = State === "Wallrun";
+
+		if (State === "Airborne") {
+			// easier jumps
+			const [FloorHit] = Physics.Raycast(Controller.GetCFrame(true).Position, new Vector3(0, -1, 0), 0.65, CollisionLayer);
+			if (!FloorHit && Controller.AirborneTime >= 0.25) {
+				return;
+			} else if (FloorHit) {
+				Controller.Land();
+			}
+		}
 
 		if (Controller.Gear.Ammo.Jump <= 0 && !InWallrun) return;
 
-		if (Controller.State === "Airborne") {
-			if (Controller.AirborneTime >= 0.25) return;
+		if (this.AnimationController.Current === "VM_Run" || this.AnimationController.Current.find("VM_Jump")[0]) {
+			const Dir = this.LastJump === "R" ? "L" : "R";
+			this.LastJump = Dir;
+
+			this.AnimationController.Current = `VM_Jump${Dir}`;
 		}
 
 		this.KeyReleased("Jump");
@@ -158,6 +185,8 @@ export class MovesetBase {
 			const CurrentMagnitude = Controller.Rigidbody.linearVelocity.magnitude;
 			const CameraLook = Camera.main.transform.rotation.mul(Vector3.forward);
 			Controller.Rigidbody.linearVelocity = CameraLook.WithY(1).normalized.mul(CurrentMagnitude + 8.5);
+
+			this.AnimationController.Current = this.WallrunTarget === Controller.WallrunL ? "VM_JumpR" : "VM_JumpL";
 		} else {
 			Controller.Rigidbody.linearVelocity = Controller.Rigidbody.linearVelocity.WithY(12);
 		}
@@ -225,7 +254,7 @@ export class MovesetBase {
 
 		const HorizontalSpeed = Controller.Rigidbody.transform.InverseTransformVector(Controller.Rigidbody.linearVelocity);
 
-		Controller.Rigidbody.AddForce(Controller.Rigidbody.transform.TransformVector(HorizontalSpeed.mul(Vector3.right).mul(-0.05)), ForceMode.VelocityChange);
+		Controller.Rigidbody.AddForce(Controller.Rigidbody.transform.TransformVector(HorizontalSpeed.mul(Vector3.right).mul(-0.1)), ForceMode.VelocityChange);
 
 		this.TryLedgeGrab(Controller);
 	}
@@ -290,47 +319,69 @@ export class MovesetBase {
 	public TryLedgeGrab(Controller: ClientController) {
 		if (!Inputs.LedgeGrab.Active || Controller.State === "LedgeGrab") return;
 
-		if (Controller.LedgeGrab.Touching && !Controller.Wallclimb.Touching) {
+		if ((Controller.State === "Grounded" ? Controller.LedgeGrabG : Controller.LedgeGrabA).Touching && !Controller.Wallclimb.Touching) {
 			const Root = Controller.GetCFrame();
-			const [Hit, HitPos] = Physics.SphereCast(Root.Position.add(Root.Rotation.mul(Vector3.forward.mul(0.5))), 0.05, new Vector3(0, -1, 0), 1.5, CollisionLayer);
+			const Origin = Root.Position.add(Root.Rotation.mul(Vector3.forward.mul(0.5))).add(new Vector3(0, 1.25, 0));
+			let [Hit, HitPos] = Physics.BoxCast(Origin, new Vector3(0.25, 0.001, 0.25), new Vector3(0, -1, 0), Root.Rotation, 4.25, CollisionLayer);
+
+			const [FloorHit] = Physics.Raycast(Root.Position, new Vector3(0, -1, 0), 2, CollisionLayer);
+
+			if (Controller.State === "Airborne" && FloorHit) return;
 
 			if (Hit) {
-				const MoveVector = this.GetMoveVector();
+				const Mag = (HitPos as Vector3).sub(Origin).magnitude;
+				HitPos = Origin.add(new Vector3(0, -Mag, 0));
+				HitPos.add(new Vector3(0, 0.25, 0));
 
-				if (MoveVector.magnitude <= 0) {
-					// purely vertical speed
-					Controller.Rigidbody.linearVelocity = Controller.Rigidbody.linearVelocity.div(4).WithY(12);
+				if (Controller.State === "Grounded") {
+					// vault
+					const TargetVelocity = Controller.Rigidbody.linearVelocity.magnitude;
+
+					Controller.Rigidbody.linearVelocity = Controller.GetCFrame().Rotation.mul(Vector3.forward).WithY(0.25).normalized.mul(TargetVelocity);
+					this.RunLedgeGrab(Controller, HitPos, LedgeGrabType.Vault);
 				} else {
-					// horizontal launch
-					const TargetVelocity = Controller.Rigidbody.linearVelocity.magnitude + 2;
-					Controller.Rigidbody.linearVelocity = Controller.GetCFrame().Rotation.mul(Vector3.forward).WithY(2).normalized.mul(TargetVelocity);
+					const MoveVector = this.GetMoveVector();
+
+					if (MoveVector.magnitude <= 0) {
+						// purely vertical speed
+						Controller.Rigidbody.linearVelocity = Controller.Rigidbody.linearVelocity.div(4).WithY(12);
+					} else {
+						// horizontal launch
+						const TargetVelocity = Controller.Rigidbody.linearVelocity.magnitude + 2;
+						Controller.Rigidbody.linearVelocity = Controller.GetCFrame().Rotation.mul(Vector3.forward).WithY(2).normalized.mul(TargetVelocity);
+					}
+
+					this.RunLedgeGrab(Controller, HitPos, LedgeGrabType.Jump);
 				}
 
-				this.RunLedgeGrab(Controller, HitPos);
+				return true;
 			}
 		}
 	}
 
-	public RunLedgeGrab(Controller: ClientController, EndPosition: Vector3) {
+	public RunLedgeGrab(Controller: ClientController, EndPosition: Vector3, Type: LedgeGrabType) {
 		Controller.Gear.ResetAmmo(["Jump"]);
 		Controller.State = "LedgeGrab";
-		Controller.BodyCollider.enabled = false;
 
-		let LastPosition = Controller.GetCFrame().Position;
+		Controller.BodyCollider.center = new Vector3(0, 1.25, 0);
+		Controller.BodyCollider.height = 0;
+
+		let LastPosition = Controller.GetCFrame(true).Position;
 		const PositionTween = Tween.Vector3(
 			TweenEasingFunction.OutSine,
 			0.25,
 			(Position) => {
 				const PositionOffset = Position.sub(LastPosition);
 				LastPosition = Position;
-				Controller.Rigidbody.MovePosition(Controller.Rigidbody.position.add(PositionOffset));
+				Controller.Rigidbody.position = Controller.Rigidbody.position.add(PositionOffset);
 			},
 			LastPosition,
 			EndPosition,
 		);
 
 		PositionTween.OnCompleted.Wait();
-		Controller.BodyCollider.enabled = true;
+		Controller.BodyCollider.center = new Vector3(0, 0.5, 0);
+		Controller.BodyCollider.height = 1;
 		Controller.State = "Airborne";
 	}
 }

@@ -1,7 +1,10 @@
+import { Airship } from "@Easy/Core/Shared/Airship";
 import { Bin } from "@Easy/Core/Shared/Util/Bin";
 import CFrame from "@inkyaker/CFrame/Code";
 import { Gravity } from "../Framework/FrameworkController";
 import UIController from "../Framework/UIController";
+import AnimationController from "./Animation/AnimationController";
+import type ViewmodelController from "./Animation/ViewmodelController";
 import GearController from "./Gear/GearController";
 import type GenericTrigger from "./GenericTrigger";
 import { MovesetBase } from "./Moveset/MovesetBase";
@@ -15,12 +18,13 @@ export default class ClientController extends AirshipBehaviour {
 	public State: ValidStates = "Airborne";
 
 	@Header("Colliders")
-	public BodyCollider: Collider;
+	public BodyCollider: CapsuleCollider;
 	public Floor: GenericTrigger;
 	public Wallclimb: GenericTrigger;
 	public WallrunL: GenericTrigger;
 	public WallrunR: GenericTrigger;
-	public LedgeGrab: GenericTrigger;
+	public LedgeGrabG: GenericTrigger;
+	public LedgeGrabA: GenericTrigger;
 
 	@Header("Curves")
 	public AccelerationCurve: AnimationCurve;
@@ -30,6 +34,9 @@ export default class ClientController extends AirshipBehaviour {
 	public Moveset = {
 		Base: new MovesetBase(),
 	};
+
+	private AnimationController = AnimationController.Get();
+	private ViewmodelController: ViewmodelController;
 
 	public AirborneTime = 0;
 
@@ -41,6 +48,11 @@ export default class ClientController extends AirshipBehaviour {
 	@Client()
 	override OnEnable() {
 		this.Moveset.Base.BindInputs();
+
+		while (!Airship.Characters.viewmodel) task.wait();
+
+		this.ViewmodelController = Airship.Characters.viewmodel.viewmodelGo.GetAirshipComponent<ViewmodelController>() as ViewmodelController;
+		this.ViewmodelController.AnimationController = this.AnimationController;
 	}
 
 	@Client()
@@ -57,8 +69,8 @@ export default class ClientController extends AirshipBehaviour {
 		).mul(this.Rigidbody.rotation);
 	}
 
-	public GetCFrame() {
-		return new CFrame(this.Rigidbody.worldCenterOfMass, this.Rigidbody.rotation);
+	public GetCFrame(Raw?: boolean) {
+		return new CFrame(Raw ? this.transform.position : this.Rigidbody.worldCenterOfMass, this.Rigidbody.rotation);
 	}
 
 	public UpdateUI() {
@@ -85,6 +97,9 @@ export default class ClientController extends AirshipBehaviour {
 
 				this.Moveset.Base.Walk(this);
 
+				this.AnimationController.Current = (this.Rigidbody.linearVelocity.magnitude > 2 && "VM_Run") || "Idle";
+				this.AnimationController.Speed = this.Rigidbody.linearVelocity.WithY(0).magnitude / 8;
+
 				break;
 			case "Airborne":
 				this.AirborneTime += FixedDT;
@@ -94,16 +109,21 @@ export default class ClientController extends AirshipBehaviour {
 				this.Moveset.Base.JumpHold(this, FixedDT);
 
 				this.Moveset.Base.Walk(this);
+				this.Moveset.Base.TryLedgeGrab(this);
 
 				if (this.Floor.Touching && this.Rigidbody.linearVelocity.y <= 0) {
 					this.Land();
 				}
 
-				this.Moveset.Base.TryLedgeGrab(this);
+				if (!this.AnimationController.Current.find("Jump")[0] && this.AirborneTime >= 0.25) {
+					this.AnimationController.Current = "Idle";
+				}
 
 				break;
 			case "Wallclimb":
 				this.Moveset.Base.WallclimbUpdate(this, FixedDT);
+
+				this.AnimationController.Current = "VM_Wallclimb";
 
 				if (this.Floor.Touching) {
 					this.Land();
@@ -113,14 +133,28 @@ export default class ClientController extends AirshipBehaviour {
 			case "Wallrun":
 				this.Moveset.Base.WallrunUpdate(this, FixedDT);
 
+				this.AnimationController.Current = `VM_Wallrun${this.Moveset.Base.WallrunTarget === this.WallrunL ? "L" : "R"}`;
+
 				if (this.Floor.Touching) {
 					this.Land();
 				}
 
 				break;
+			case "LedgeGrab":
+				this.AnimationController.Current = "VM_LedgeGrab";
+
+				break;
 		}
 
 		this.UpdateUI();
+	}
+
+	public LateUpdate(DeltaTime: number) {
+		this.ViewmodelController.Animate(DeltaTime);
+
+		const Rotation = this.GetCFrame().Rotation;
+		this.ViewmodelController.gameObject.transform.rotation = Rotation;
+		this.ViewmodelController.gameObject.transform.position = this.transform.position.add(Rotation.mul(Vector3.forward.mul(0.1)));
 	}
 
 	public Land() {

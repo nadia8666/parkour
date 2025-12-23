@@ -140,7 +140,7 @@ GameObject:
   - component: {fileID: 575785979652922099}
   - component: {fileID: 8372354139145470677}
   m_Layer: 3
-  m_Name: LedgeGrab
+  m_Name: LedgeGrabGrounded
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -155,8 +155,8 @@ Transform:
   m_GameObject: {fileID: 1285228464815837465}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.5, z: 0.5}
-  m_LocalScale: {x: 0.1, y: 0.7, z: 0.1}
+  m_LocalPosition: {x: 0, y: 0.5, z: 0.576}
+  m_LocalScale: {x: 0.5, y: 0.23, z: 0.9388282}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7630457668712985523}
@@ -345,7 +345,7 @@ Transform:
   m_GameObject: {fileID: 3375897256296728825}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.24, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -502,6 +502,7 @@ Transform:
   - {fileID: 4753790612959041966}
   - {fileID: 2822705970531056036}
   - {fileID: 2480702029105329959}
+  - {fileID: 1255929829260927385}
   m_Father: {fileID: 2393249491825821150}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3733968003439496359
@@ -571,6 +572,101 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   guid: 67a2513d-a2aa-4225-a9ab-5190a0e8522d
+  script: {fileID: -3613046522668490647, guid: 66c671e6042f046489a8d57e3db758af, type: 3}
+  scriptPath: Assets/Code/Client/Controller/GenericTrigger.lua
+  forceContext: 0
+  metadata:
+    name: GenericTrigger
+    singleton: 0
+    decorators: []
+    properties:
+    - name: Touching
+      type: boolean
+      objectType: 
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators: []
+      nullable: 0
+      serializedValue: 0
+      serializedObject: {fileID: 0}
+      modified: 0
+    displayIcon: {fileID: 0}
+    displayName: 
+--- !u!1 &5595275914154442464
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1255929829260927385}
+  - component: {fileID: 8754101168591486736}
+  - component: {fileID: 5730036010997591012}
+  m_Layer: 3
+  m_Name: LedgeGrabAirborne
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1255929829260927385
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5595275914154442464}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.5, z: 0.5}
+  m_LocalScale: {x: 0.5, y: 0.7, z: 0.5}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7630457668712985523}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &8754101168591486736
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5595275914154442464}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 131072
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1.1753601, z: 1}
+  m_Center: {x: 0, y: -0.08767771, z: 0}
+--- !u!114 &5730036010997591012
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5595275914154442464}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa4feffba88dce746a2607f0ec6233b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  guid: f661e0bf-edd1-4863-bcea-852300651df6
   script: {fileID: -3613046522668490647, guid: 66c671e6042f046489a8d57e3db758af, type: 3}
   scriptPath: Assets/Code/Client/Controller/GenericTrigger.lua
   forceContext: 0
@@ -897,27 +993,9 @@ MonoBehaviour:
       serializedValue: 
       serializedObject: {fileID: 65932167914108366}
       modified: 1
-    - name: LedgeGrab
-      type: AirshipBehaviour
-      objectType: GenericTrigger
-      items:
-        type: 
-        objectType: 
-        serializedItems: []
-        objectRefs: []
-      refPath: 
-      fileRef: Code/Client/Controller/GenericTrigger.ts
-      jsDocs:
-        text: []
-        tags: []
-      decorators: []
-      nullable: 0
-      serializedValue: 
-      serializedObject: {fileID: 8372354139145470677}
-      modified: 1
     - name: BodyCollider
       type: object
-      objectType: Collider
+      objectType: CapsuleCollider
       items:
         type: 
         objectType: 
@@ -955,6 +1033,42 @@ MonoBehaviour:
       serializedValue: 0
       serializedObject: {fileID: 0}
       modified: 0
+    - name: LedgeGrabG
+      type: AirshipBehaviour
+      objectType: GenericTrigger
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: Code/Client/Controller/GenericTrigger.ts
+      jsDocs:
+        text: []
+        tags: []
+      decorators: []
+      nullable: 0
+      serializedValue: 
+      serializedObject: {fileID: 8372354139145470677}
+      modified: 1
+    - name: LedgeGrabA
+      type: AirshipBehaviour
+      objectType: GenericTrigger
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: Code/Client/Controller/GenericTrigger.ts
+      jsDocs:
+        text: []
+        tags: []
+      decorators: []
+      nullable: 0
+      serializedValue: 
+      serializedObject: {fileID: 5730036010997591012}
+      modified: 1
     displayIcon: {fileID: 0}
     displayName: 
 --- !u!114 &6647136626085009081
