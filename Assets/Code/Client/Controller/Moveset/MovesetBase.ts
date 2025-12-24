@@ -182,8 +182,9 @@ export class MovesetBase {
 		if (InWallrun) {
 			const CurrentMagnitude = Controller.Rigidbody.linearVelocity.magnitude;
 			const CameraLook = Camera.main.transform.rotation.mul(Vector3.forward);
-			const TargetVelocity = CameraLook.WithY(1).normalized.mul(CurrentMagnitude + 8.5);
-			Controller.Rigidbody.linearVelocity = TargetVelocity.WithY(math.clamp(TargetVelocity.y, -CurrentMagnitude, CurrentMagnitude));
+			Controller.Rigidbody.linearVelocity = CameraLook.WithY(0)
+				.normalized.mul(CurrentMagnitude + 8.5)
+				.WithY(15);
 
 			this.AnimationController.Current = this.WallrunTarget === Controller.WallrunL ? "VM_JumpR" : "VM_JumpL";
 		} else {
@@ -227,7 +228,7 @@ export class MovesetBase {
 
 	public WallclimbStart(Controller: ClientComponent) {
 		if (Controller.Gear.Ammo.Wallclimb <= 0) return;
-		if (!Controller.Wallclimb.Touching || Controller.Rigidbody.linearVelocity.y < -10) return;
+		if (!Controller.Wallclimb.Touching || Controller.Rigidbody.linearVelocity.y < Config.WallClimbThreshold) return;
 
 		const Root = Controller.GetCFrame();
 		const [Hit, _, Normal] = Physics.Raycast(Root.Position, Root.Rotation.mul(Vector3.forward), 5, CollisionLayer);
@@ -236,7 +237,7 @@ export class MovesetBase {
 		const TargetLook = Quaternion.LookRotation(Normal.mul(-1), Vector3.up);
 		Controller.Rigidbody.rotation = TargetLook;
 
-		Controller.Rigidbody.linearVelocity = Controller.Rigidbody.linearVelocity.WithY(math.max(Controller.Rigidbody.linearVelocity.y, 5));
+		Controller.Rigidbody.linearVelocity = Controller.Rigidbody.linearVelocity.WithY(math.max(Controller.Rigidbody.linearVelocity.y, Config.WallClimbMinSpeed));
 
 		Controller.Gear.Ammo.Wallclimb--;
 		Controller.State = "Wallclimb";
@@ -264,7 +265,7 @@ export class MovesetBase {
 		if (Controller.Gear.Ammo.Wallrun <= 0) return;
 		const [TouchingL, TouchingR] = [Controller.WallrunL.Touching, Controller.WallrunR.Touching];
 
-		if ((!TouchingL && !TouchingR) || Controller.Rigidbody.linearVelocity.y <= -75) return;
+		if ((!TouchingL && !TouchingR) || Controller.Rigidbody.linearVelocity.y <= Config.WallrunThreshold) return;
 
 		let Target: GenericTrigger | undefined;
 
@@ -275,6 +276,8 @@ export class MovesetBase {
 		const RDot = RightHit ? RightNormal.mul(-1).Dot(Root.Rotation.mul(Vector3.right)) : -1;
 
 		if (LDot < 0.75 && RDot < 0.75) return;
+
+		const WallrunForce = Controller.Rigidbody.linearVelocity.WithY(0).magnitude * Config.WallrunSpeedBoost;
 
 		if (TouchingL && TouchingR) {
 			if (LeftHit && RightHit) {
@@ -294,6 +297,9 @@ export class MovesetBase {
 		}
 
 		if (!Target) return;
+
+		const LocalSpeed = Controller.transform.InverseTransformVector(Controller.Rigidbody.linearVelocity);
+		Controller.Rigidbody.linearVelocity = Controller.transform.TransformVector(LocalSpeed.WithZ(math.max(WallrunForce, Config.WallrunMinSpeed)));
 
 		Controller.State = "Wallrun";
 		Controller.Gear.Ammo.Wallrun--;
@@ -320,7 +326,10 @@ export class MovesetBase {
 		const Magnitude = Controller.Rigidbody.linearVelocity.WithY(YSpeed / 4).magnitude;
 		const GravityAffector = 1 - this.WallrunTimer / 2;
 
-		Controller.Rigidbody.linearVelocity = Controller.GetCFrame().Rotation.mul(Vector3.forward.mul(Magnitude)).WithY(YSpeed).add(Config.Gravity.mul(GravityAffector));
+		Controller.Rigidbody.linearVelocity = Controller.GetCFrame()
+			.Rotation.mul(Vector3.forward.mul(Magnitude))
+			.WithY(YSpeed)
+			.add(Config.Gravity.mul(GravityAffector * Config.WallrunGravity));
 	}
 
 	public TryLedgeGrab(Controller: ClientComponent) {

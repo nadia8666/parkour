@@ -42,7 +42,6 @@ export default class DragController extends AirshipSingleton {
 		this.CurrentDrag = undefined;
 
 		const Target = this.RaycastUI();
-		print(Target);
 	}
 
 	override Update() {
