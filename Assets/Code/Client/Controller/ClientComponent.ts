@@ -1,18 +1,17 @@
 import { Airship } from "@Easy/Core/Shared/Airship";
 import { Bin } from "@Easy/Core/Shared/Util/Bin";
 import CFrame from "@inkyaker/CFrame/Code";
-import { Gravity } from "../Framework/FrameworkController";
-import UIController from "../Framework/UIController";
+import type GenericTrigger from "../Components/Collision/GenericTriggerComponent";
+import Config from "../Config";
 import AnimationController from "./Animation/AnimationController";
-import type ViewmodelController from "./Animation/ViewmodelController";
+import type ViewmodelComponent from "./Animation/ViewmodelComponent";
 import GearController from "./Gear/GearController";
-import type GenericTrigger from "./GenericTrigger";
-import { MovesetBase } from "./Moveset/MovesetBase";
+import { LedgeGrabType, MovesetBase } from "./Moveset/MovesetBase";
 
 export type ValidStates = "Airborne" | "Grounded" | "Wallclimb" | "Wallrun" | "LedgeGrab";
 
 @AirshipComponentMenu("Client/Controller/Physics Controller")
-export default class ClientController extends AirshipBehaviour {
+export default class ClientComponent extends AirshipBehaviour {
 	public Rigidbody: Rigidbody;
 	public Bin = new Bin();
 	public State: ValidStates = "Airborne";
@@ -36,7 +35,7 @@ export default class ClientController extends AirshipBehaviour {
 	};
 
 	private AnimationController = AnimationController.Get();
-	private ViewmodelController: ViewmodelController;
+	private ViewmodelController: ViewmodelComponent;
 
 	public AirborneTime = 0;
 
@@ -51,7 +50,7 @@ export default class ClientController extends AirshipBehaviour {
 
 		while (!Airship.Characters.viewmodel) task.wait();
 
-		this.ViewmodelController = Airship.Characters.viewmodel.viewmodelGo.GetAirshipComponent<ViewmodelController>() as ViewmodelController;
+		this.ViewmodelController = Airship.Characters.viewmodel.viewmodelGo.GetAirshipComponent<ViewmodelComponent>() as ViewmodelComponent;
 		this.ViewmodelController.AnimationController = this.AnimationController;
 	}
 
@@ -73,16 +72,7 @@ export default class ClientController extends AirshipBehaviour {
 		return new CFrame(Raw ? this.transform.position : this.Rigidbody.worldCenterOfMass, this.Rigidbody.rotation);
 	}
 
-	public UpdateUI() {
-		// TEMP
-		const UI = UIController.Get();
-		UI.State.text = this.State;
-		UI.Speed.text = `${this.Rigidbody.linearVelocity}`;
-
-		UI.WC1.gameObject.SetActive(this.Gear.Ammo.Wallclimb >= 1);
-		UI.WR1.gameObject.SetActive(this.Gear.Ammo.Wallrun >= 1);
-		UI.WR2.gameObject.SetActive(this.Gear.Ammo.Wallrun >= 2);
-	}
+	public UpdateUI() {}
 
 	public Step(FixedDT: number) {
 		this.Moveset.Base.UpdateInputs(this);
@@ -97,7 +87,7 @@ export default class ClientController extends AirshipBehaviour {
 
 				this.Moveset.Base.Walk(this);
 
-				this.AnimationController.Current = (this.Rigidbody.linearVelocity.magnitude > 2 && "VM_Run") || "Idle";
+				this.AnimationController.Current = (this.Rigidbody.linearVelocity.magnitude > 2 && "VM_Run") || "VM_Idle";
 				this.AnimationController.Speed = this.Rigidbody.linearVelocity.WithY(0).magnitude / 8;
 
 				break;
@@ -105,7 +95,7 @@ export default class ClientController extends AirshipBehaviour {
 				this.AirborneTime += FixedDT;
 				this.CameraRotationToCharacter();
 
-				this.Rigidbody.linearVelocity = this.Rigidbody.linearVelocity.add(Gravity);
+				this.Rigidbody.linearVelocity = this.Rigidbody.linearVelocity.add(Config.Gravity);
 				this.Moveset.Base.JumpHold(this, FixedDT);
 
 				this.Moveset.Base.Walk(this);
@@ -115,8 +105,8 @@ export default class ClientController extends AirshipBehaviour {
 					this.Land();
 				}
 
-				if (!this.AnimationController.Current.find("Jump")[0] && this.AirborneTime >= 0.25) {
-					this.AnimationController.Current = "Idle";
+				if (!this.AnimationController.Current.find("Jump")[0] && this.AirborneTime >= Config.JumpCoyoteTime && this.AnimationController.Current !== "VM_Idle") {
+					this.AnimationController.Current = "VM_Idle";
 				}
 
 				break;
@@ -141,7 +131,7 @@ export default class ClientController extends AirshipBehaviour {
 
 				break;
 			case "LedgeGrab":
-				this.AnimationController.Current = "VM_LedgeGrab";
+				this.AnimationController.Current = this.Moveset.Base.LedgeGrabType === LedgeGrabType.Jump ? "VM_LedgeGrab" : "VM_Vault";
 
 				break;
 		}

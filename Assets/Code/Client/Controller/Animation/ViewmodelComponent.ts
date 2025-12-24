@@ -1,6 +1,6 @@
 import AnimationController, { type InferredAnimation, type SetAnimation } from "./AnimationController";
 
-export default class ViewmodelController extends AirshipBehaviour {
+export default class ViewmodelComponent extends AirshipBehaviour {
 	public AnimationController = AnimationController.Get();
 	public Controller: Animator;
 	public EventListener: AnimationEventListener;

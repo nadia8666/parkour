@@ -28,8 +28,8 @@ export interface AnimationData {
 export type SetAnimation = InferredAnimation & AnimationData;
 
 export const Animations = {
-	Idle: {
-		0: { Name: "Idle" },
+	VM_Idle: {
+		0: { Name: "VM_Idle" },
 	},
 
 	VM_Run: {
@@ -42,16 +42,20 @@ export const Animations = {
 
 	VM_LedgeGrab: {
 		0: { Name: "VM_LedgeGrab" },
-		EndAnimation: "Idle",
+		EndAnimation: "VM_Idle",
+	},
+	VM_Vault: {
+		0: { Name: "VM_Vault" },
+		EndAnimation: "VM_Idle",
 	},
 
 	VM_JumpL: {
 		0: { Name: "VM_JumpL" },
-		EndAnimation: "Idle",
+		EndAnimation: "VM_Idle",
 	},
 	VM_JumpR: {
 		0: { Name: "VM_JumpR" },
-		EndAnimation: "Idle",
+		EndAnimation: "VM_Idle",
 	},
 
 	VM_WallrunL: {
@@ -78,10 +82,10 @@ export const Animations = {
 };
 
 export default class AnimationController extends AirshipSingleton {
-	public Current: ValidAnimation;
+	public Current: ValidAnimation = "VM_Idle";
 	public Speed: number = 1;
 	public ClientSpeed: Vector3 = Vector3.zero;
-	public Last: ValidAnimation;
+	public Last: ValidAnimation = "VM_Run";
 	public WeightLayers = {
 		0: { Target: 1, Current: 1 },
 	};

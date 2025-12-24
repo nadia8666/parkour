@@ -18,11 +18,11 @@
       "depth": 2,
       "source": "registry",
       "dependencies": {
+        "com.unity.burst": "1.8.4",
         "com.unity.2d.sprite": "1.0.0",
         "com.unity.mathematics": "1.1.0",
-        "com.unity.modules.uielements": "1.0.0",
         "com.unity.modules.animation": "1.0.0",
-        "com.unity.burst": "1.8.4"
+        "com.unity.modules.uielements": "1.0.0"
       },
       "url": "https://packages.unity.com"
     },
@@ -365,7 +365,7 @@
       "url": "https://packages.unity.com"
     },
     "gg.easy.airship": {
-      "version": "0.1.2205",
+      "version": "0.1.2206",
       "depth": 0,
       "source": "registry",
       "dependencies": {

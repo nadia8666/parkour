@@ -90,11 +90,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   guid: d95fed84-472a-4abc-bed7-5984ce45d933
-  script: {fileID: 4364315865773188718, guid: 839c1f9d7375d0a4f8c3902a9f45dd0b, type: 3}
-  scriptPath: Assets/Code/Client/Controller/Animation/ViewmodelController.lua
+  script: {fileID: 6762808397098763115, guid: 493e8f4caa77c9647a8f624926c7e9f6, type: 3}
+  scriptPath: Assets/Code/Client/Controller/Animation/ViewmodelComponent.lua
   forceContext: 0
   metadata:
-    name: ViewmodelController
+    name: ViewmodelComponent
     singleton: 0
     decorators: []
     properties:

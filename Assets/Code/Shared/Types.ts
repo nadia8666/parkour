@@ -1,0 +1,1 @@
+export type GearSlots = "Grip" | "Core" | "Mod" | "Augment"

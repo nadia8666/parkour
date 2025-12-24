@@ -43,7 +43,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2553678752925766451}
   - component: {fileID: 4695250667359192834}
-  - component: {fileID: 5745347630625635282}
+  - component: {fileID: 3133684184148850963}
   m_Layer: 3
   m_Name: Left
   m_TagString: Untagged
@@ -87,7 +87,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.7, y: 0.25, z: 0.5}
   m_Center: {x: -0.5, y: 1, z: 0}
---- !u!114 &5745347630625635282
+--- !u!114 &3133684184148850963
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -99,12 +99,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa4feffba88dce746a2607f0ec6233b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  guid: 8f0d2fd3-cd03-4929-9960-c11ebd34495d
-  script: {fileID: -3613046522668490647, guid: 66c671e6042f046489a8d57e3db758af, type: 3}
-  scriptPath: Assets/Code/Client/Controller/GenericTrigger.lua
+  guid: 2a9df280-a6f2-4fb7-a0d4-01c01e1c5f28
+  script: {fileID: 2989671297370096068, guid: b270cbbc97f94534e8accf28034baef1, type: 3}
+  scriptPath: Assets/Code/Client/Components/Collision/GenericTriggerComponent.lua
   forceContext: 0
   metadata:
-    name: GenericTrigger
+    name: GenericTriggerComponent
     singleton: 0
     decorators: []
     properties:
@@ -138,7 +138,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2480702029105329959}
   - component: {fileID: 575785979652922099}
-  - component: {fileID: 8372354139145470677}
+  - component: {fileID: 4535046266817976427}
   m_Layer: 3
   m_Name: LedgeGrabGrounded
   m_TagString: Untagged
@@ -182,7 +182,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &8372354139145470677
+--- !u!114 &4535046266817976427
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -194,12 +194,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa4feffba88dce746a2607f0ec6233b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  guid: f661e0bf-edd1-4863-bcea-852300651df6
-  script: {fileID: -3613046522668490647, guid: 66c671e6042f046489a8d57e3db758af, type: 3}
-  scriptPath: Assets/Code/Client/Controller/GenericTrigger.lua
+  guid: 0fd5870a-fe69-4abb-bcd9-3138e204ac43
+  script: {fileID: 2989671297370096068, guid: b270cbbc97f94534e8accf28034baef1, type: 3}
+  scriptPath: Assets/Code/Client/Components/Collision/GenericTriggerComponent.lua
   forceContext: 0
   metadata:
-    name: GenericTrigger
+    name: GenericTriggerComponent
     singleton: 0
     decorators: []
     properties:
@@ -233,7 +233,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7770709673320697558}
   - component: {fileID: 8768795451609096346}
-  - component: {fileID: 8896298561579119479}
+  - component: {fileID: 9083308086761915196}
   m_Layer: 3
   m_Name: Floor
   m_TagString: Untagged
@@ -277,7 +277,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.1, y: 0.05, z: 0.1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &8896298561579119479
+--- !u!114 &9083308086761915196
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -289,12 +289,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa4feffba88dce746a2607f0ec6233b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  guid: 2fd39de8-3e38-4076-ba81-b5fc7081ff68
-  script: {fileID: -3613046522668490647, guid: 66c671e6042f046489a8d57e3db758af, type: 3}
-  scriptPath: Assets/Code/Client/Controller/GenericTrigger.lua
+  guid: 94f57597-bc77-4069-8f6f-1f662d0979c1
+  script: {fileID: 2989671297370096068, guid: b270cbbc97f94534e8accf28034baef1, type: 3}
+  scriptPath: Assets/Code/Client/Components/Collision/GenericTriggerComponent.lua
   forceContext: 0
   metadata:
-    name: GenericTrigger
+    name: GenericTriggerComponent
     singleton: 0
     decorators: []
     properties:
@@ -328,7 +328,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2822705970531056036}
   - component: {fileID: 4616452989243110445}
-  - component: {fileID: 3242989972835271081}
+  - component: {fileID: 8051915402181900416}
   m_Layer: 3
   m_Name: Wallclimb
   m_TagString: Untagged
@@ -372,7 +372,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.25, y: 0.25, z: 0.93832445}
   m_Center: {x: 0, y: 1, z: 0.5941622}
---- !u!114 &3242989972835271081
+--- !u!114 &8051915402181900416
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -384,12 +384,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa4feffba88dce746a2607f0ec6233b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  guid: f661e0bf-edd1-4863-bcea-852300651df6
-  script: {fileID: -3613046522668490647, guid: 66c671e6042f046489a8d57e3db758af, type: 3}
-  scriptPath: Assets/Code/Client/Controller/GenericTrigger.lua
+  guid: c06f7c28-e0cb-4222-a711-e10b25ec60e4
+  script: {fileID: 2989671297370096068, guid: b270cbbc97f94534e8accf28034baef1, type: 3}
+  scriptPath: Assets/Code/Client/Components/Collision/GenericTriggerComponent.lua
   forceContext: 0
   metadata:
-    name: GenericTrigger
+    name: GenericTriggerComponent
     singleton: 0
     decorators: []
     properties:
@@ -515,7 +515,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3283148830965980119}
   - component: {fileID: 7047663558163656419}
-  - component: {fileID: 65932167914108366}
+  - component: {fileID: 2505369585705151792}
   m_Layer: 3
   m_Name: Right
   m_TagString: Untagged
@@ -559,7 +559,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.7, y: 0.25, z: 0.5}
   m_Center: {x: 0.5, y: 1, z: 0}
---- !u!114 &65932167914108366
+--- !u!114 &2505369585705151792
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -571,12 +571,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa4feffba88dce746a2607f0ec6233b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  guid: 67a2513d-a2aa-4225-a9ab-5190a0e8522d
-  script: {fileID: -3613046522668490647, guid: 66c671e6042f046489a8d57e3db758af, type: 3}
-  scriptPath: Assets/Code/Client/Controller/GenericTrigger.lua
+  guid: 39db23ca-7405-4074-98f8-745959ed2188
+  script: {fileID: 2989671297370096068, guid: b270cbbc97f94534e8accf28034baef1, type: 3}
+  scriptPath: Assets/Code/Client/Components/Collision/GenericTriggerComponent.lua
   forceContext: 0
   metadata:
-    name: GenericTrigger
+    name: GenericTriggerComponent
     singleton: 0
     decorators: []
     properties:
@@ -610,7 +610,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1255929829260927385}
   - component: {fileID: 8754101168591486736}
-  - component: {fileID: 5730036010997591012}
+  - component: {fileID: 5272411587572441318}
   m_Layer: 3
   m_Name: LedgeGrabAirborne
   m_TagString: Untagged
@@ -654,7 +654,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1.1753601, z: 1}
   m_Center: {x: 0, y: -0.08767771, z: 0}
---- !u!114 &5730036010997591012
+--- !u!114 &5272411587572441318
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -666,12 +666,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa4feffba88dce746a2607f0ec6233b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  guid: f661e0bf-edd1-4863-bcea-852300651df6
-  script: {fileID: -3613046522668490647, guid: 66c671e6042f046489a8d57e3db758af, type: 3}
-  scriptPath: Assets/Code/Client/Controller/GenericTrigger.lua
+  guid: c650fd31-2ebf-4b4e-ba9c-f1a81b0f4da0
+  script: {fileID: 2989671297370096068, guid: b270cbbc97f94534e8accf28034baef1, type: 3}
+  scriptPath: Assets/Code/Client/Components/Collision/GenericTriggerComponent.lua
   forceContext: 0
   metadata:
-    name: GenericTrigger
+    name: GenericTriggerComponent
     singleton: 0
     decorators: []
     properties:
@@ -847,11 +847,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   guid: 8b570062-79fd-481c-b228-b3f6cff8dd56
-  script: {fileID: 6182027193538208185, guid: 1e71b9280063ac248abb2d576d6df3e8, type: 3}
-  scriptPath: Assets/Code/Client/Controller/ClientController.lua
+  script: {fileID: 2724010929140434867, guid: 6dadc839d31b6cb4d9f494e5a22ae72e, type: 3}
+  scriptPath: Assets/Code/Client/Controller/ClientComponent.lua
   forceContext: 0
   metadata:
-    name: ClientController
+    name: ClientComponent
     singleton: 0
     decorators:
     - name: AirshipComponentMenu
@@ -885,7 +885,7 @@ MonoBehaviour:
         objectType: 
         serializedItems: []
         objectRefs: []
-      refPath: Code/Client/Controller/ClientController@ValidStates
+      refPath: Code/Client/Controller/ClientComponent@ValidStates
       fileRef: 
       jsDocs:
         text: []
@@ -914,19 +914,19 @@ MonoBehaviour:
         - type: string
           serializedValue: '"Curves"'
       nullable: 0
-      serializedValue: 0,1.002622,4.029712,4.029712,0,0.01729433;1,0.006676555,-3.473802,-3.473802,0.04121083,0
+      serializedValue: 0,1.006912,4.350131,4.350131,0,0.2009018;1.01004,0.001693726,-1.368069,-1.368069,0.1628779,0
       serializedObject: {fileID: 0}
       modified: 1
     - name: Floor
       type: AirshipBehaviour
-      objectType: GenericTrigger
+      objectType: GenericTriggerComponent
       items:
         type: 
         objectType: 
         serializedItems: []
         objectRefs: []
       refPath: 
-      fileRef: Code/Client/Controller/GenericTrigger.ts
+      fileRef: Code/Client/Components/Collision/GenericTriggerComponent.ts
       jsDocs:
         text: []
         tags: []
@@ -937,61 +937,61 @@ MonoBehaviour:
           serializedValue: '"Colliders"'
       nullable: 0
       serializedValue: 
-      serializedObject: {fileID: 8896298561579119479}
+      serializedObject: {fileID: 9083308086761915196}
       modified: 1
     - name: Wallclimb
       type: AirshipBehaviour
-      objectType: GenericTrigger
+      objectType: GenericTriggerComponent
       items:
         type: 
         objectType: 
         serializedItems: []
         objectRefs: []
       refPath: 
-      fileRef: Code/Client/Controller/GenericTrigger.ts
+      fileRef: Code/Client/Components/Collision/GenericTriggerComponent.ts
       jsDocs:
         text: []
         tags: []
       decorators: []
       nullable: 0
       serializedValue: 
-      serializedObject: {fileID: 3242989972835271081}
+      serializedObject: {fileID: 8051915402181900416}
       modified: 1
     - name: WallrunL
       type: AirshipBehaviour
-      objectType: GenericTrigger
+      objectType: GenericTriggerComponent
       items:
         type: 
         objectType: 
         serializedItems: []
         objectRefs: []
       refPath: 
-      fileRef: Code/Client/Controller/GenericTrigger.ts
+      fileRef: Code/Client/Components/Collision/GenericTriggerComponent.ts
       jsDocs:
         text: []
         tags: []
       decorators: []
       nullable: 0
       serializedValue: 
-      serializedObject: {fileID: 5745347630625635282}
+      serializedObject: {fileID: 3133684184148850963}
       modified: 1
     - name: WallrunR
       type: AirshipBehaviour
-      objectType: GenericTrigger
+      objectType: GenericTriggerComponent
       items:
         type: 
         objectType: 
         serializedItems: []
         objectRefs: []
       refPath: 
-      fileRef: Code/Client/Controller/GenericTrigger.ts
+      fileRef: Code/Client/Components/Collision/GenericTriggerComponent.ts
       jsDocs:
         text: []
         tags: []
       decorators: []
       nullable: 0
       serializedValue: 
-      serializedObject: {fileID: 65932167914108366}
+      serializedObject: {fileID: 2505369585705151792}
       modified: 1
     - name: BodyCollider
       type: object
@@ -1035,39 +1035,39 @@ MonoBehaviour:
       modified: 0
     - name: LedgeGrabG
       type: AirshipBehaviour
-      objectType: GenericTrigger
+      objectType: GenericTriggerComponent
       items:
         type: 
         objectType: 
         serializedItems: []
         objectRefs: []
       refPath: 
-      fileRef: Code/Client/Controller/GenericTrigger.ts
+      fileRef: Code/Client/Components/Collision/GenericTriggerComponent.ts
       jsDocs:
         text: []
         tags: []
       decorators: []
       nullable: 0
       serializedValue: 
-      serializedObject: {fileID: 8372354139145470677}
+      serializedObject: {fileID: 4535046266817976427}
       modified: 1
     - name: LedgeGrabA
       type: AirshipBehaviour
-      objectType: GenericTrigger
+      objectType: GenericTriggerComponent
       items:
         type: 
         objectType: 
         serializedItems: []
         objectRefs: []
       refPath: 
-      fileRef: Code/Client/Controller/GenericTrigger.ts
+      fileRef: Code/Client/Components/Collision/GenericTriggerComponent.ts
       jsDocs:
         text: []
         tags: []
       decorators: []
       nullable: 0
       serializedValue: 
-      serializedObject: {fileID: 5730036010997591012}
+      serializedObject: {fileID: 5272411587572441318}
       modified: 1
     displayIcon: {fileID: 0}
     displayName: 

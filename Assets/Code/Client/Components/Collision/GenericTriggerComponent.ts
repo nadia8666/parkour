@@ -1,4 +1,4 @@
-export default class GenericTrigger extends AirshipBehaviour {
+export default class GenericTriggerComponent extends AirshipBehaviour {
 	public Touching: boolean = false;
 
 	@Client()
