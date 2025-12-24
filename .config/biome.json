@@ -8,5 +8,8 @@
 	},
 	"formatter": {
 		"lineWidth": 180
+	},
+	"files": {
+		"includes": ["**", "!**/Assets/AirshipPackages"]
 	}
 }

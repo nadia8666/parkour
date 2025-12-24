@@ -19,6 +19,7 @@ export default class UIController extends AirshipSingleton {
 
 	public Connections = new Bin();
 
+	@Client()
 	override Start() {
 		Airship.Menu.SetTabListEnabled(false);
 
@@ -47,11 +48,13 @@ export default class UIController extends AirshipSingleton {
 		}
 	}
 
+	@Client()
 	public CloseCenterMenus() {
 		this.EquipmentMenu.SetActive(false);
 		this.Inventory.SetActive(false);
 	}
 
+	@Client()
 	public UpdateMenuState() {
 		this.Main.SetActive(this.MenuOpen); // TEMP
 

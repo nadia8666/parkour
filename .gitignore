@@ -111,6 +111,7 @@ Assets/TypeScriptEditorMetadata.aseditorinfo
 **/TextMesh Pro
 *.exr
 **/.vscode
+**/.config/biome.json
 *.prettierrc
 *.lighting
 *.player_version

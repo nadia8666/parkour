@@ -5,6 +5,7 @@ export default class ViewmodelComponent extends AirshipBehaviour {
 	public Controller: Animator;
 	public EventListener: AnimationEventListener;
 
+	@Client()
 	override Start() {
 		this.EventListener.OnAnimEvent((Key) => {
 			if (Key === "EndAnimation") {
@@ -22,6 +23,7 @@ export default class ViewmodelComponent extends AirshipBehaviour {
 	 * @param Animation
 	 * @param Playing
 	 */
+	@Client()
 	private UpdateState(Animation: InferredAnimation, Playing: boolean, TransitionTime?: number) {
 		if (Playing) {
 			for (let i of $range(0, this.Controller.layerCount - 1)) {
@@ -39,6 +41,7 @@ export default class ViewmodelComponent extends AirshipBehaviour {
 		}
 	}
 
+	@Client()
 	private GetCurrentTrack(Animation: InferredAnimation) {
 		let [Track, Layer] = [Animation[0].Name, 0];
 
@@ -68,6 +71,7 @@ export default class ViewmodelComponent extends AirshipBehaviour {
 		return $tuple(Track, Layer);
 	}
 
+	@Client()
 	private UpdateSpeed(Value: InferredAnimation[0]) {
 		let Speed: number;
 
@@ -83,6 +87,7 @@ export default class ViewmodelComponent extends AirshipBehaviour {
 		this.Controller.SetFloat("AnimSpeed", Speed);
 	}
 
+	@Client()
 	private CalculateWeightAndSpeed(Animation: InferredAnimation, Initial: boolean = false) {
 		for (const [Key, Value] of pairs(Animation)) {
 			if (typeOf(Key) !== "number") {
@@ -104,6 +109,7 @@ export default class ViewmodelComponent extends AirshipBehaviour {
 	 * @param Client
 	 * @param Animation
 	 */
+	@Client()
 	private UpdateCurrent(Animation: InferredAnimation, Delta: number) {
 		this.CalculateWeightAndSpeed(Animation);
 
@@ -115,6 +121,7 @@ export default class ViewmodelComponent extends AirshipBehaviour {
 		}
 	}
 
+	@Client()
 	public GetTransitions(Previous: SetAnimation, Animation: SetAnimation) {
 		let [LastFrom, LastTo]: [number?, number?] = [undefined, undefined];
 		let [NextFrom]: [number?, number?] = [undefined, undefined];
@@ -152,6 +159,7 @@ export default class ViewmodelComponent extends AirshipBehaviour {
 	 * Change current Clients animation and update
 	 * @param Client
 	 */
+	@Client()
 	public Animate(DeltaTime: number) {
 		const Previous = this.AnimationController.AnimList[this.AnimationController.Last] as SetAnimation;
 		const Next = this.AnimationController.AnimList[this.AnimationController.Current] as SetAnimation;
@@ -170,6 +178,7 @@ export default class ViewmodelComponent extends AirshipBehaviour {
 		this.UpdateCurrent(Next, DeltaTime);
 	}
 
+	@Client()
 	public GetRate() {
 		const [_, Layer] = this.GetCurrentTrack(this.AnimationController.AnimList[this.AnimationController.Current]);
 		const Clip = this.Controller.GetCurrentAnimatorStateInfo(Layer);

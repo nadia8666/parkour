@@ -28,7 +28,7 @@ export default class ClientComponent extends AirshipBehaviour {
 	@Header("Curves")
 	public AccelerationCurve: AnimationCurve;
 
-	public Gear = new GearController();
+	public Gear = GearController.Get();
 
 	public Moveset = {
 		Base: new MovesetBase(),
@@ -60,6 +60,7 @@ export default class ClientComponent extends AirshipBehaviour {
 		this.Moveset.Base.Bin.Clean();
 	}
 
+	@Client()
 	public CameraRotationToCharacter() {
 		const YRotation = Camera.main.transform.rotation.eulerAngles.y;
 		this.Rigidbody.rotation = Quaternion.FromToRotation(
@@ -68,12 +69,15 @@ export default class ClientComponent extends AirshipBehaviour {
 		).mul(this.Rigidbody.rotation);
 	}
 
+	@Client()
 	public GetCFrame(Raw?: boolean) {
 		return new CFrame(Raw ? this.transform.position : this.Rigidbody.worldCenterOfMass, this.Rigidbody.rotation);
 	}
 
+	@Client()
 	public UpdateUI() {}
 
+	@Client()
 	public Step(FixedDT: number) {
 		this.Moveset.Base.UpdateInputs(this);
 
@@ -139,6 +143,7 @@ export default class ClientComponent extends AirshipBehaviour {
 		this.UpdateUI();
 	}
 
+	@Client()
 	public LateUpdate(DeltaTime: number) {
 		this.ViewmodelController.Animate(DeltaTime);
 
@@ -147,6 +152,7 @@ export default class ClientComponent extends AirshipBehaviour {
 		this.ViewmodelController.gameObject.transform.position = this.transform.position.add(Rotation.mul(Vector3.forward.mul(0.1)));
 	}
 
+	@Client()
 	public Land() {
 		this.State = "Grounded";
 		this.AirborneTime = 0;

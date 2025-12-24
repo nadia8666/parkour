@@ -208,7 +208,7 @@ MonoBehaviour:
       decorators: []
       nullable: 0
       serializedValue: 
-      serializedObject: {fileID: 0}
+      serializedObject: {fileID: 11400000, guid: d2539e1bcf9d0c840b464cccddd87875, type: 2}
       modified: 0
     - name: ARCBrace
       type: AirshipScriptableObject
@@ -226,7 +226,7 @@ MonoBehaviour:
       decorators: []
       nullable: 0
       serializedValue: 
-      serializedObject: {fileID: 0}
+      serializedObject: {fileID: 11400000, guid: 25fb67b7807d03b4bac46ffe578d49c4, type: 2}
       modified: 0
     - name: t
       type: AirshipScriptableObject
@@ -655,9 +655,37 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1896791467227703647, guid: a82095914e978c04c988e7bd06b78c24, type: 3}
+      propertyPath: m_AdditionalShaderChannelsFlag
+      value: 25
+      objectReference: {fileID: 0}
     - target: {fileID: 2949437546639149275, guid: a82095914e978c04c988e7bd06b78c24, type: 3}
       propertyPath: m_Name
       value: Augment2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7406705676554583611, guid: a82095914e978c04c988e7bd06b78c24, type: 3}
+      propertyPath: metadata.properties.Array.data[2].modified
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7406705676554583611, guid: a82095914e978c04c988e7bd06b78c24, type: 3}
+      propertyPath: metadata.properties.Array.data[3].modified
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7406705676554583611, guid: a82095914e978c04c988e7bd06b78c24, type: 3}
+      propertyPath: metadata.properties.Array.data[4].modified
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7406705676554583611, guid: a82095914e978c04c988e7bd06b78c24, type: 3}
+      propertyPath: metadata.properties.Array.data[2].serializedValue
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7406705676554583611, guid: a82095914e978c04c988e7bd06b78c24, type: 3}
+      propertyPath: metadata.properties.Array.data[3].serializedValue
+      value: Augment
+      objectReference: {fileID: 0}
+    - target: {fileID: 7406705676554583611, guid: a82095914e978c04c988e7bd06b78c24, type: 3}
+      propertyPath: metadata.properties.Array.data[4].serializedValue
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -895,9 +923,37 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1896791467227703647, guid: a82095914e978c04c988e7bd06b78c24, type: 3}
+      propertyPath: m_AdditionalShaderChannelsFlag
+      value: 25
+      objectReference: {fileID: 0}
     - target: {fileID: 2949437546639149275, guid: a82095914e978c04c988e7bd06b78c24, type: 3}
       propertyPath: m_Name
       value: Mod1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7406705676554583611, guid: a82095914e978c04c988e7bd06b78c24, type: 3}
+      propertyPath: metadata.properties.Array.data[2].modified
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7406705676554583611, guid: a82095914e978c04c988e7bd06b78c24, type: 3}
+      propertyPath: metadata.properties.Array.data[3].modified
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7406705676554583611, guid: a82095914e978c04c988e7bd06b78c24, type: 3}
+      propertyPath: metadata.properties.Array.data[4].modified
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7406705676554583611, guid: a82095914e978c04c988e7bd06b78c24, type: 3}
+      propertyPath: metadata.properties.Array.data[2].serializedValue
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7406705676554583611, guid: a82095914e978c04c988e7bd06b78c24, type: 3}
+      propertyPath: metadata.properties.Array.data[3].serializedValue
+      value: Mod
+      objectReference: {fileID: 0}
+    - target: {fileID: 7406705676554583611, guid: a82095914e978c04c988e7bd06b78c24, type: 3}
+      propertyPath: metadata.properties.Array.data[4].serializedValue
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -997,12 +1053,36 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1896791467227703647, guid: a82095914e978c04c988e7bd06b78c24, type: 3}
+      propertyPath: m_AdditionalShaderChannelsFlag
+      value: 25
+      objectReference: {fileID: 0}
     - target: {fileID: 2949437546639149275, guid: a82095914e978c04c988e7bd06b78c24, type: 3}
       propertyPath: m_Name
       value: Grip
       objectReference: {fileID: 0}
     - target: {fileID: 7406705676554583611, guid: a82095914e978c04c988e7bd06b78c24, type: 3}
       propertyPath: metadata.properties.Array.data[2].modified
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7406705676554583611, guid: a82095914e978c04c988e7bd06b78c24, type: 3}
+      propertyPath: metadata.properties.Array.data[3].modified
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7406705676554583611, guid: a82095914e978c04c988e7bd06b78c24, type: 3}
+      propertyPath: metadata.properties.Array.data[4].modified
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7406705676554583611, guid: a82095914e978c04c988e7bd06b78c24, type: 3}
+      propertyPath: metadata.properties.Array.data[2].serializedValue
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7406705676554583611, guid: a82095914e978c04c988e7bd06b78c24, type: 3}
+      propertyPath: metadata.properties.Array.data[3].serializedValue
+      value: Grip
+      objectReference: {fileID: 0}
+    - target: {fileID: 7406705676554583611, guid: a82095914e978c04c988e7bd06b78c24, type: 3}
+      propertyPath: metadata.properties.Array.data[4].serializedValue
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -1136,6 +1216,8 @@ GameObject:
   - component: {fileID: 667655504}
   - component: {fileID: 667655505}
   - component: {fileID: 667655506}
+  - component: {fileID: 667655507}
+  - component: {fileID: 667655508}
   m_Layer: 0
   m_Name: Controllers
   m_TagString: Untagged
@@ -1400,6 +1482,52 @@ MonoBehaviour:
       serializedValue: 
       serializedObject: {fileID: 2949437546639149275, guid: a82095914e978c04c988e7bd06b78c24, type: 3}
       modified: 1
+    displayIcon: {fileID: 0}
+    displayName: 
+--- !u!114 &667655507
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 667655501}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa4feffba88dce746a2607f0ec6233b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  guid: d7dbf0af-103e-4fbf-a109-5a6585ba3943
+  script: {fileID: 8692440200194477772, guid: c195c26645480604d972c902cf968d3e, type: 3}
+  scriptPath: Assets/Code/Client/Framework/DataController.lua
+  forceContext: 0
+  metadata:
+    name: DataController
+    singleton: 0
+    decorators: []
+    properties: []
+    displayIcon: {fileID: 0}
+    displayName: 
+--- !u!114 &667655508
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 667655501}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa4feffba88dce746a2607f0ec6233b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  guid: 36a14a47-36fe-45e0-b9c7-6b7ef7a4ef85
+  script: {fileID: 3001094692318377845, guid: 3e91a0113ce2d7445b35ecaa3b4dd624, type: 3}
+  scriptPath: Assets/Code/Client/Controller/Gear/GearController.lua
+  forceContext: 0
+  metadata:
+    name: GearController
+    singleton: 0
+    decorators: []
+    properties: []
     displayIcon: {fileID: 0}
     displayName: 
 --- !u!1 &721921842
@@ -2368,9 +2496,37 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1896791467227703647, guid: a82095914e978c04c988e7bd06b78c24, type: 3}
+      propertyPath: m_AdditionalShaderChannelsFlag
+      value: 25
+      objectReference: {fileID: 0}
     - target: {fileID: 2949437546639149275, guid: a82095914e978c04c988e7bd06b78c24, type: 3}
       propertyPath: m_Name
       value: Core
+      objectReference: {fileID: 0}
+    - target: {fileID: 7406705676554583611, guid: a82095914e978c04c988e7bd06b78c24, type: 3}
+      propertyPath: metadata.properties.Array.data[2].modified
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7406705676554583611, guid: a82095914e978c04c988e7bd06b78c24, type: 3}
+      propertyPath: metadata.properties.Array.data[3].modified
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7406705676554583611, guid: a82095914e978c04c988e7bd06b78c24, type: 3}
+      propertyPath: metadata.properties.Array.data[4].modified
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7406705676554583611, guid: a82095914e978c04c988e7bd06b78c24, type: 3}
+      propertyPath: metadata.properties.Array.data[2].serializedValue
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7406705676554583611, guid: a82095914e978c04c988e7bd06b78c24, type: 3}
+      propertyPath: metadata.properties.Array.data[3].serializedValue
+      value: Core
+      objectReference: {fileID: 0}
+    - target: {fileID: 7406705676554583611, guid: a82095914e978c04c988e7bd06b78c24, type: 3}
+      propertyPath: metadata.properties.Array.data[4].serializedValue
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3447,9 +3603,37 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1896791467227703647, guid: a82095914e978c04c988e7bd06b78c24, type: 3}
+      propertyPath: m_AdditionalShaderChannelsFlag
+      value: 25
+      objectReference: {fileID: 0}
     - target: {fileID: 2949437546639149275, guid: a82095914e978c04c988e7bd06b78c24, type: 3}
       propertyPath: m_Name
       value: Augment1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7406705676554583611, guid: a82095914e978c04c988e7bd06b78c24, type: 3}
+      propertyPath: metadata.properties.Array.data[2].modified
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7406705676554583611, guid: a82095914e978c04c988e7bd06b78c24, type: 3}
+      propertyPath: metadata.properties.Array.data[3].modified
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7406705676554583611, guid: a82095914e978c04c988e7bd06b78c24, type: 3}
+      propertyPath: metadata.properties.Array.data[4].modified
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7406705676554583611, guid: a82095914e978c04c988e7bd06b78c24, type: 3}
+      propertyPath: metadata.properties.Array.data[2].serializedValue
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7406705676554583611, guid: a82095914e978c04c988e7bd06b78c24, type: 3}
+      propertyPath: metadata.properties.Array.data[3].serializedValue
+      value: Augment
+      objectReference: {fileID: 0}
+    - target: {fileID: 7406705676554583611, guid: a82095914e978c04c988e7bd06b78c24, type: 3}
+      propertyPath: metadata.properties.Array.data[4].serializedValue
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3687,6 +3871,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1904944120}
   - component: {fileID: 1904944121}
+  - component: {fileID: 1904944122}
   m_Layer: 0
   m_Name: Services
   m_TagString: Untagged
@@ -3727,6 +3912,29 @@ MonoBehaviour:
   forceContext: 0
   metadata:
     name: ServerService
+    singleton: 0
+    decorators: []
+    properties: []
+    displayIcon: {fileID: 0}
+    displayName: 
+--- !u!114 &1904944122
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1904944119}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa4feffba88dce746a2607f0ec6233b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  guid: 94894fb2-d1d6-4504-8b05-29b52ab0b6c9
+  script: {fileID: 2476120514759714275, guid: 1cdfed0e13e67ce46a76ca7878a88020, type: 3}
+  scriptPath: Assets/Code/Server/Data/DataService.lua
+  forceContext: 0
+  metadata:
+    name: DataService
     singleton: 0
     decorators: []
     properties: []
@@ -3892,9 +4100,37 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1896791467227703647, guid: a82095914e978c04c988e7bd06b78c24, type: 3}
+      propertyPath: m_AdditionalShaderChannelsFlag
+      value: 25
+      objectReference: {fileID: 0}
     - target: {fileID: 2949437546639149275, guid: a82095914e978c04c988e7bd06b78c24, type: 3}
       propertyPath: m_Name
       value: Augment3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7406705676554583611, guid: a82095914e978c04c988e7bd06b78c24, type: 3}
+      propertyPath: metadata.properties.Array.data[2].modified
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7406705676554583611, guid: a82095914e978c04c988e7bd06b78c24, type: 3}
+      propertyPath: metadata.properties.Array.data[3].modified
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7406705676554583611, guid: a82095914e978c04c988e7bd06b78c24, type: 3}
+      propertyPath: metadata.properties.Array.data[4].modified
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7406705676554583611, guid: a82095914e978c04c988e7bd06b78c24, type: 3}
+      propertyPath: metadata.properties.Array.data[2].serializedValue
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7406705676554583611, guid: a82095914e978c04c988e7bd06b78c24, type: 3}
+      propertyPath: metadata.properties.Array.data[3].serializedValue
+      value: Augment
+      objectReference: {fileID: 0}
+    - target: {fileID: 7406705676554583611, guid: a82095914e978c04c988e7bd06b78c24, type: 3}
+      propertyPath: metadata.properties.Array.data[4].serializedValue
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3924,7 +4160,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2082487074
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4098,9 +4334,37 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1896791467227703647, guid: a82095914e978c04c988e7bd06b78c24, type: 3}
+      propertyPath: m_AdditionalShaderChannelsFlag
+      value: 25
+      objectReference: {fileID: 0}
     - target: {fileID: 2949437546639149275, guid: a82095914e978c04c988e7bd06b78c24, type: 3}
       propertyPath: m_Name
       value: Mod2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7406705676554583611, guid: a82095914e978c04c988e7bd06b78c24, type: 3}
+      propertyPath: metadata.properties.Array.data[2].modified
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7406705676554583611, guid: a82095914e978c04c988e7bd06b78c24, type: 3}
+      propertyPath: metadata.properties.Array.data[3].modified
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7406705676554583611, guid: a82095914e978c04c988e7bd06b78c24, type: 3}
+      propertyPath: metadata.properties.Array.data[4].modified
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7406705676554583611, guid: a82095914e978c04c988e7bd06b78c24, type: 3}
+      propertyPath: metadata.properties.Array.data[2].serializedValue
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7406705676554583611, guid: a82095914e978c04c988e7bd06b78c24, type: 3}
+      propertyPath: metadata.properties.Array.data[3].serializedValue
+      value: Mod
+      objectReference: {fileID: 0}
+    - target: {fileID: 7406705676554583611, guid: a82095914e978c04c988e7bd06b78c24, type: 3}
+      propertyPath: metadata.properties.Array.data[4].serializedValue
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
