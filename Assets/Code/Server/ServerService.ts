@@ -11,7 +11,7 @@ export default class ServerService extends AirshipSingleton {
 	@Server()
 	override Start() {
 		Airship.Players.ObservePlayers((Player) => {
-			this.Spawner.SpawnCharacter(Player, new CFrame(new Vector3(0, 2, 0)));
+			this.Spawner.SpawnCharacter(Player, new CFrame(new Vector3(0, 50, 0)));
 
 			return () => {
 				const CurrentCharacter = this.CharacterMap.get(Player);

@@ -27,6 +27,7 @@ export default class ClientComponent extends AirshipBehaviour {
 
 	@Header("Curves")
 	public AccelerationCurve: AnimationCurve;
+	public RunAnimationCurve: AnimationCurve;
 
 	public Gear = GearController.Get();
 
@@ -80,6 +81,7 @@ export default class ClientComponent extends AirshipBehaviour {
 	@Client()
 	public Step(FixedDT: number) {
 		this.Moveset.Base.UpdateInputs(this);
+		this.Moveset.Base.Step(this, FixedDT);
 
 		switch (this.State) {
 			case "Grounded":
@@ -87,12 +89,13 @@ export default class ClientComponent extends AirshipBehaviour {
 
 				if (!this.Floor.Touching) {
 					this.State = "Airborne";
+					this.Moveset.Base.EndDash();
 				}
 
-				this.Moveset.Base.Walk(this);
+				this.Moveset.Base.AccelerateToInput(this);
 
 				this.AnimationController.Current = (this.Rigidbody.linearVelocity.magnitude > 2 && "VM_Run") || "VM_Idle";
-				this.AnimationController.Speed = this.Rigidbody.linearVelocity.WithY(0).magnitude / 8;
+				this.AnimationController.Speed = this.AnimationController.Current === "VM_Idle" ? 1 : this.RunAnimationCurve.Evaluate(this.Rigidbody.linearVelocity.magnitude / 4);
 
 				break;
 			case "Airborne":
@@ -102,7 +105,7 @@ export default class ClientComponent extends AirshipBehaviour {
 				this.Rigidbody.linearVelocity = this.Rigidbody.linearVelocity.add(Config.Gravity);
 				this.Moveset.Base.JumpHold(this, FixedDT);
 
-				this.Moveset.Base.Walk(this);
+				this.Moveset.Base.AccelerateToInput(this);
 				this.Moveset.Base.TryLedgeGrab(this);
 
 				if (this.Floor.Touching && this.Rigidbody.linearVelocity.y <= 0) {
@@ -157,5 +160,7 @@ export default class ClientComponent extends AirshipBehaviour {
 		this.State = "Grounded";
 		this.AirborneTime = 0;
 		this.Gear.ResetAmmo();
+
+		this.Moveset.Base.EndDash();
 	}
 }

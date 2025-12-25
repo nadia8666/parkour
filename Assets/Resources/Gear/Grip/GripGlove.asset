@@ -92,7 +92,7 @@ MonoBehaviour:
         serializedItems:
         - '-45 Max WC Activation Speed
 
-          7 WC Minimum Speed'
+          +7 WC Minimum Speed'
         objectRefs:
         - {fileID: 0}
       refPath: 
@@ -120,13 +120,8 @@ MonoBehaviour:
         tags: []
       decorators: []
       nullable: 0
-      serializedValue: 'multilin trstr
-
-
-
-
-
-        12he'
+      serializedValue: Tight woven fibers allow for exceptional friction while falling,
+        you may be prone to increased risk of hand injury while wearing.
       serializedObject: {fileID: 0}
       modified: 1
     - name: WorldModel

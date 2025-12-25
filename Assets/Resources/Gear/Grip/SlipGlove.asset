@@ -92,7 +92,12 @@ MonoBehaviour:
         serializedItems:
         - '-45 Max WC Activation Speed
 
-          -10 WC Minimum Speed'
+          -10 WC Minimum Speed
+
+          -135
+          Max WR Activation Speed
+
+          -18% Wallrun Gravity'
         objectRefs:
         - {fileID: 0}
       refPath: 
@@ -120,13 +125,8 @@ MonoBehaviour:
         tags: []
       decorators: []
       nullable: 0
-      serializedValue: 'multilin trstr
-
-
-
-
-
-        12he'
+      serializedValue: A glove made with synthetic fibers, allowing the wearer's
+        hands to glide over surfaces while still maintaining grip.
       serializedObject: {fileID: 0}
       modified: 1
     - name: WorldModel

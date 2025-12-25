@@ -30,7 +30,6 @@ export default class DataService extends AirshipSingleton {
 			ExistingData = undefined;
 		}
 
-		warn(ExistingData);
 		if (!ExistingData) {
 			ExistingData = DeepCopy(DataTemplate);
 
@@ -94,5 +93,12 @@ export default class DataService extends AirshipSingleton {
 				task.spawn(() => this.UnloadPlayerData(Key as string));
 			}
 		});
+	}
+
+	@Server()
+	override LateUpdate() {
+		for (const [_, Link] of pairs(this.DataMap)) {
+			Link.PrepareReplicate();
+		}
 	}
 }

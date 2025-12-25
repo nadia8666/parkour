@@ -12,9 +12,9 @@ export default class GearRegistrySingleton extends AirshipSingleton {
 	public ARCBrace: GearObject;
 
 	@Header("Augment")
-	public t: GearObject;
 
-	@NonSerialized() public None = new GearObject();
+	@NonSerialized()
+	public None = new GearObject();
 
 	public KeyFromGear(Gear: GearObject): GearRegistryKey {
 		for (const [Index, Value] of pairs(this)) {

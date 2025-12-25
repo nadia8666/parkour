@@ -91,7 +91,7 @@ export default class DraggableSlotComponent extends AirshipBehaviour {
 
 	@Client()
 	public LS_FetchSlotContents() {
-		const Data = DataController.Get().Link.Data;
+		const Data = DataController.Get().GetLink().Data;
 
 		this.SlotContents = GearRegistrySingleton.Get().GearFromKey(Data.EquippedGear[this.LS_TargetSlot][this.LS_SlotID - 1]);
 		this.UpdateFilled();

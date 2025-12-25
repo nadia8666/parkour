@@ -1069,6 +1069,42 @@ MonoBehaviour:
       serializedValue: 
       serializedObject: {fileID: 5272411587572441318}
       modified: 1
+    - name: RunAnimationCurve
+      type: AnimationCurve
+      objectType: 
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators: []
+      nullable: 0
+      serializedValue: 0,0,1.966483,1.966483,0,0.1729586;2.165405,1.531158,0,0,0,0
+      serializedObject: {fileID: 0}
+      modified: 1
+    - name: Gear
+      type: AirshipBehaviour
+      objectType: GearController
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: Code/Client/Controller/Gear/GearController.ts
+      jsDocs:
+        text: []
+        tags: []
+      decorators: []
+      nullable: 0
+      serializedValue: 
+      serializedObject: {fileID: 0}
+      modified: 0
     displayIcon: {fileID: 0}
     displayName: 
 --- !u!114 &6647136626085009081
