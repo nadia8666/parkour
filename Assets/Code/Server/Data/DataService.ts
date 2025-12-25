@@ -4,15 +4,17 @@ import { deepCopy as DeepCopy } from "@Easy/Core/Shared/Util/ObjectUtils";
 import { Network } from "Code/Shared/Network";
 import { type DataFormat, DataTemplate } from "Code/Shared/Types";
 import { DualLink } from "@inkyaker/DualLink/Code";
+import ENV from "../ENV";
 
 const Store = Platform.Server.DataStore;
+const TargetID = `${ENV.Runtime}-PlayerData`;
 
 export default class DataService extends AirshipSingleton {
 	private DataMap: { [Index: string]: DualLink<DataFormat> } = {};
 
 	public Key(Player: Player) {
 		while (Player.userId === "loading") task.wait();
-		return `PlayerData:${Player.userId}`;
+		return `${TargetID}:${Player.userId}`;
 	}
 
 	@Server()
