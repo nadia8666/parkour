@@ -5,7 +5,6 @@ import { Tween } from "@Easy/Core/Shared/Tween/Tween";
 import { Keyboard } from "@Easy/Core/Shared/UserInput";
 import { Bin } from "@Easy/Core/Shared/Util/Bin";
 import Config from "Code/Client/Config";
-import GearRegistrySingleton from "Code/Shared/GearRegistry";
 import type GenericTrigger from "../../Components/Collision/GenericTriggerComponent";
 import AnimationController from "../Animation/AnimationController";
 import type ClientComponent from "../ClientComponent";

@@ -1,7 +1,9 @@
+import { WithGear } from "Code/Client/Config";
+
 export type ValidAnimation = keyof typeof Animations;
 export interface InferredAnimation {
 	[Index: number]: {
-		Name: string;
+		Name: string | (() => string);
 		Position?: number;
 		Speed?: {
 			Base: number;
@@ -37,7 +39,7 @@ export const Animations = {
 	},
 
 	VM_Wallclimb: {
-		0: { Name: "VM_Wallclimb" },
+		0: { Name: WithGear({ None: "VM_Wallclimb", GripGlove: "VM_WallclimbGrip" }) },
 	},
 
 	VM_LedgeGrab: {
@@ -67,7 +69,7 @@ export const Animations = {
 } as const satisfies {
 	[Index: string]: {
 		[Index: number]: {
-			Name: string;
+			Name: string | (() => string);
 			Position?: number;
 			Speed?: {
 				Base: number;
