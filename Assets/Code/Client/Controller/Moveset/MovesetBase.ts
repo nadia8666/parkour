@@ -164,6 +164,7 @@ export class MovesetBase {
 	public ActionDropped(Name: keyof typeof Actions, Controller: ClientComponent) {
 		switch (Name) {
 			case "Dash":
+				this.DashStart = os.clock();
 				this.EndDash();
 				break;
 		}
@@ -204,7 +205,6 @@ export class MovesetBase {
 	}
 
 	public EndDash() {
-		this.DashStart = os.clock();
 		this.DashCharge = -1;
 	}
 
@@ -214,6 +214,7 @@ export class MovesetBase {
 
 		if (this.DashCharge >= (Grounded ? Config.DashLengthGrounded : Config.DashLengthAirborne)) {
 			this.EndDash();
+			this.DashStart = os.clock();
 		}
 	}
 	// #endregion
@@ -240,18 +241,12 @@ export class MovesetBase {
 			} else {
 				// coyote time
 				if (this.DashActive()) {
-					print("coyote time dash jump");
 					JumpType = "Long";
 				}
 			}
 		}
 
 		if (Controller.Gear.Ammo.Jump <= 0 && !InWallrun) return;
-
-		const Dir = this.LastJump === "R" ? "L" : "R";
-		this.LastJump = Dir;
-
-		this.AnimationController.Current = `VM_Jump${Dir}`;
 
 		this.KeyReleased("Jump");
 		this.KeyReleased("Wallclimb");
@@ -262,6 +257,11 @@ export class MovesetBase {
 				const JumpHeight = math.clamp(Controller.Rigidbody.linearVelocity.WithY(0).magnitude / Config.JumpRequiredSpeed, 0.5, 1);
 
 				Controller.Rigidbody.linearVelocity = Controller.Rigidbody.linearVelocity.WithY(12 * JumpHeight);
+
+				const Dir = this.LastJump === "R" ? "L" : "R";
+				this.LastJump = Dir;
+
+				this.AnimationController.Current = `VM_Jump${Dir}`;
 				break;
 			}
 			case "Long": {
@@ -270,6 +270,8 @@ export class MovesetBase {
 				Controller.Rigidbody.linearVelocity = Controller.Rigidbody.linearVelocity.normalized
 					.WithY(Config.LongJumpHeightMultiplier)
 					.normalized.mul(Magnitude + Config.LongJumpForce);
+
+				this.AnimationController.Current = "VM_LongJump";
 				break;
 			}
 			case "Wallrun": {
@@ -279,7 +281,7 @@ export class MovesetBase {
 					.normalized.mul(CurrentMagnitude + Config.WallrunJumpForce.x)
 					.WithY(Config.WallrunJumpForce.y);
 
-				this.AnimationController.Current = this.WallrunTarget === Controller.WallrunL ? "VM_JumpR" : "VM_JumpL";
+				this.AnimationController.Current = this.WallrunTarget === Controller.WallrunL ? "VM_JumpRWallrun" : "VM_JumpLWallrun";
 
 				break;
 			}

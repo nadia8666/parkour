@@ -112,8 +112,8 @@ export default class ClientComponent extends AirshipBehaviour {
 					this.Land();
 				}
 
-				if (!this.AnimationController.Current.find("Jump")[0] && this.AirborneTime >= Config.JumpCoyoteTime && this.AnimationController.Current !== "VM_Idle") {
-					this.AnimationController.Current = "VM_Idle";
+				if (!this.AnimationController.Current.find("Jump")[0] && this.AirborneTime >= Config.JumpCoyoteTime && this.AnimationController.Current !== "VM_Fall") {
+					this.AnimationController.Current = "VM_Fall";
 				}
 
 				break;

@@ -76,7 +76,7 @@ const Config = {
 	LedgeGrabForwardSpeed: WithGear({ None: 2, ARCBrace: 12 }), // how much extra velocity should be added for forward ledgegrabs
 	LedgeGrabForwardY: WithGear({ None: 1, ARCBrace: 1.35 }), // how much forward velocity should be converted into y velocity on ledgegrab forward
 
-	LongJumpForce: 18,
+	LongJumpForce: 12.5,
 	LongJumpHeightMultiplier: 0.45,
 
 	DashLengthGrounded: 1.5,

@@ -7,20 +7,27 @@ import { DualLink } from "@inkyaker/DualLink/Code";
 import ENV from "../ENV";
 
 const Store = Platform.Server.DataStore;
-const TargetID = `${ENV.Runtime}-PlayerData`;
+const TargetID = `${ENV.Runtime}-PlayerData:`;
 
 export default class DataService extends AirshipSingleton {
 	private DataMap: { [Index: string]: DualLink<DataFormat> } = {};
 
+	public GetPlayer(Key: string) {
+		const UserID = string.sub(Key, TargetID.size() + 1);
+		for (const [_, Player] of pairs(Airship.Players.GetPlayers())) {
+			if (Player.userId === UserID) return Player;
+		}
+	}
+
 	public Key(Player: Player) {
 		while (Player.userId === "loading") task.wait();
-		return `${TargetID}:${Player.userId}`;
+		return `${TargetID}${Player.userId}`;
 	}
 
 	@Server()
 	public async LoadPlayerData(Key: string) {
 		if (!Store.LockKeyOrStealSafely(Key)) {
-			const Player = Airship.Players.FindByUserId(Key);
+			const Player = this.GetPlayer(Key);
 
 			if (Player) Player.Kick(`Failed to load data!`);
 
@@ -40,7 +47,7 @@ export default class DataService extends AirshipSingleton {
 
 		this.DataMap[Key] = new DualLink(Key, ExistingData, {
 			// biome-ignore lint/style/noNonNullAssertion: can be undefined
-			AllowUpdateFrom: [Airship.Players.FindByUserId(Key)!],
+			AllowUpdateFrom: [this.GetPlayer(Key)!],
 		});
 	}
 
@@ -79,10 +86,12 @@ export default class DataService extends AirshipSingleton {
 	@Server()
 	override Start() {
 		Network.Data.GetInitialData.server.SetCallback((Player) => {
+			print("get inital data");
 			return this.WaitForPlayerData(this.Key(Player)) as DataFormat;
 		});
 
 		Airship.Players.ObservePlayers((Player) => {
+			print("observ ing");
 			this.LoadPlayerData(this.Key(Player));
 
 			return () => {

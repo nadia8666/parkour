@@ -34,6 +34,10 @@ export const Animations = {
 		0: { Name: "VM_Idle" },
 	},
 
+	VM_Fall: {
+		0: { Name: "VM_Fall" },
+	},
+
 	VM_Run: {
 		0: { Name: "VM_Run" },
 	},
@@ -44,20 +48,34 @@ export const Animations = {
 
 	VM_LedgeGrab: {
 		0: { Name: "VM_LedgeGrab" },
-		EndAnimation: "VM_Idle",
+		EndAnimation: "VM_Fall",
 	},
 	VM_Vault: {
 		0: { Name: "VM_Vault" },
-		EndAnimation: "VM_Idle",
+		EndAnimation: "VM_Fall",
+	},
+
+	VM_LongJump: {
+		0: { Name: "VM_LongJump" },
+		EndAnimation: "VM_Fall",
 	},
 
 	VM_JumpL: {
 		0: { Name: "VM_JumpL" },
-		EndAnimation: "VM_Idle",
+		EndAnimation: "VM_Fall",
 	},
 	VM_JumpR: {
 		0: { Name: "VM_JumpR" },
-		EndAnimation: "VM_Idle",
+		EndAnimation: "VM_Fall",
+	},
+
+	VM_JumpLWallrun: {
+		0: { Name: "VM_JumpLWallrun" },
+		EndAnimation: "VM_Fall",
+	},
+	VM_JumpRWallrun: {
+		0: { Name: "VM_JumpRWallrun" },
+		EndAnimation: "VM_Fall",
 	},
 
 	VM_WallrunL: {

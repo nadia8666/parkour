@@ -6,8 +6,11 @@ import { DualLink } from "@inkyaker/DualLink/Code";
 
 let InitialLink: DualLink<DataFormat>;
 
-// biome-ignore lint/suspicious/noAssignInExpressions: clean
-task.spawn(() => (InitialLink = new DualLink(DataService.Get().Key(Game.localPlayer), Network.Data.GetInitialData.client.FireServer())));
+task.spawn(() => {
+	Game.WaitForLocalPlayerLoaded();
+
+	InitialLink = new DualLink(DataService.Get().Key(Game.localPlayer), Network.Data.GetInitialData.client.FireServer());
+});
 export default class DataController extends AirshipSingleton {
 	@Client()
 	public GetLink() {
@@ -18,6 +21,6 @@ export default class DataController extends AirshipSingleton {
 
 	@Client()
 	override LateUpdate() {
-		if (InitialLink) InitialLink.PrepareReplicate()
+		if (InitialLink) InitialLink.PrepareReplicate();
 	}
 }
