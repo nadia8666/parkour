@@ -194,7 +194,7 @@ export class MovesetBase {
 
 		if (GlobalMoveVector.magnitude > 0) {
 			const DeltaMomentum = (AccelerationForce / 40) * FixedDT * Config.ReferenceFPS;
-			Controller.Momentum = math.clamp(Controller.Momentum + DeltaMomentum, 0, 15);
+			Controller.Momentum = math.max(Controller.Momentum + DeltaMomentum, 0);
 		}
 
 		if (Grounded) {
@@ -303,6 +303,7 @@ export class MovesetBase {
 					.WithY(Config.WallrunJumpForce.y);
 
 				this.AnimationController.Current = this.WallrunTarget === Controller.WallrunL ? "VM_JumpRWallrun" : "VM_JumpLWallrun";
+				Controller.Momentum = Controller.Rigidbody.linearVelocity.magnitude
 
 				break;
 			}
@@ -482,7 +483,7 @@ export class MovesetBase {
 						Controller.Rigidbody.linearVelocity = Controller.GetCFrame().Rotation.mul(Vector3.forward).WithY(Config.LedgeGrabForwardY()).normalized.mul(TargetVelocity);
 					}
 				}
-				
+
 				Controller.ResetLastFallSpeed();
 
 				this.RunLedgeGrab(Controller, HitPos, Type);
