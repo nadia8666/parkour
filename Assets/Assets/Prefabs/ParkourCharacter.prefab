@@ -828,6 +828,17 @@ Rigidbody:
   m_CorrespondingSourceObject: {fileID: 5519949438957097557, guid: 4bfcf38072e582e42b941b472d5f3dcb, type: 3}
   m_PrefabInstance: {fileID: 6767161154545908016}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1735489984542057203 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5043041770756594627, guid: 4bfcf38072e582e42b941b472d5f3dcb, type: 3}
+  m_PrefabInstance: {fileID: 6767161154545908016}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3061699078004531044}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99dfe5a335b4400d888199768fd1e932, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &2393249491825821150 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8997996947095583982, guid: 4bfcf38072e582e42b941b472d5f3dcb, type: 3}
@@ -892,24 +903,6 @@ MonoBehaviour:
       serializedValue: 
       serializedObject: {fileID: 1257355264846228325}
       modified: 1
-    - name: State
-      type: StringEnum
-      objectType: 
-      items:
-        type: 
-        objectType: 
-        serializedItems: []
-        objectRefs: []
-      refPath: Code/Client/Controller/ClientComponent@ValidStates
-      fileRef: 
-      jsDocs:
-        text: []
-        tags: []
-      decorators: []
-      nullable: 0
-      serializedValue: Airborne
-      serializedObject: {fileID: 0}
-      modified: 0
     - name: AccelerationCurve
       type: AnimationCurve
       objectType: 
@@ -1030,24 +1023,6 @@ MonoBehaviour:
       serializedValue: 
       serializedObject: {fileID: 4616352204257410828}
       modified: 1
-    - name: AirborneTime
-      type: number
-      objectType: 
-      items:
-        type: 
-        objectType: 
-        serializedItems: []
-        objectRefs: []
-      refPath: 
-      fileRef: 
-      jsDocs:
-        text: []
-        tags: []
-      decorators: []
-      nullable: 0
-      serializedValue: 0
-      serializedObject: {fileID: 0}
-      modified: 0
     - name: LedgeGrabG
       type: AirshipBehaviour
       objectType: GenericTriggerComponent
@@ -1102,24 +1077,6 @@ MonoBehaviour:
       serializedValue: -0.05319214,0,0.4309317,0.4309317,0,0.267726;8.275973,2.102695,0.09476618,0.09476618,0.1349584,0.1139709;14.96584,2.409062,0,0,0,0
       serializedObject: {fileID: 0}
       modified: 1
-    - name: Gear
-      type: AirshipBehaviour
-      objectType: GearController
-      items:
-        type: 
-        objectType: 
-        serializedItems: []
-        objectRefs: []
-      refPath: 
-      fileRef: Code/Client/Controller/Gear/GearController.ts
-      jsDocs:
-        text: []
-        tags: []
-      decorators: []
-      nullable: 0
-      serializedValue: 
-      serializedObject: {fileID: 0}
-      modified: 0
     - name: Identity
       type: object
       objectType: NetworkIdentity
@@ -1138,9 +1095,9 @@ MonoBehaviour:
       serializedValue: 
       serializedObject: {fileID: 2938946416571182491}
       modified: 1
-    - name: Momentum
-      type: number
-      objectType: 
+    - name: AccessoryBuilder
+      type: object
+      objectType: AccessoryBuilder
       items:
         type: 
         objectType: 
@@ -1151,11 +1108,15 @@ MonoBehaviour:
       jsDocs:
         text: []
         tags: []
-      decorators: []
+      decorators:
+      - name: Header
+        parameters:
+        - type: string
+          serializedValue: '"Rendering"'
       nullable: 0
-      serializedValue: 0
-      serializedObject: {fileID: 0}
-      modified: 0
+      serializedValue: 
+      serializedObject: {fileID: 1735489984542057203}
+      modified: 1
     displayIcon: {fileID: 0}
     displayName: 
 --- !u!114 &6647136626085009081

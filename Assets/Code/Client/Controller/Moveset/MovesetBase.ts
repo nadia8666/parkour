@@ -10,7 +10,7 @@ import AnimationController from "../Animation/AnimationController";
 import type ClientComponent from "../ClientComponent";
 import type { ValidStates } from "../ClientComponent";
 
-const CollisionLayer = LayerMask.GetMask("GameLayer0");
+export const CollisionLayer = LayerMask.GetMask("GameLayer0");
 
 class InputEntry {
 	public Active = false;

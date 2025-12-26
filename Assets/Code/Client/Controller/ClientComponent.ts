@@ -8,20 +8,15 @@ import AnimationController, { type ValidAnimation } from "./Animation/AnimationC
 import type ViewmodelComponent from "./Animation/ViewmodelComponent";
 import { Camera as CameraController } from "./Camera";
 import GearController from "./Gear/GearController";
-import { LedgeGrabType, MovesetBase } from "./Moveset/MovesetBase";
+import { CollisionLayer, LedgeGrabType, MovesetBase } from "./Moveset/MovesetBase";
 
 export type ValidStates = "Airborne" | "Grounded" | "Wallclimb" | "Wallrun" | "LedgeGrab" | "Slide";
 
 @AirshipComponentMenu("Client/Controller/Physics Controller")
 export default class ClientComponent extends AirshipBehaviour {
+	@Header("Main")
 	public Rigidbody: Rigidbody;
-	public Bin = new Bin();
-	public State: ValidStates = "Airborne";
-	public Camera = new CameraController({
-		X: this.transform.rotation.eulerAngles.x,
-		Y: this.transform.rotation.eulerAngles.y,
-		Z: this.transform.rotation.eulerAngles.z,
-	});
+	public Identity: NetworkIdentity;
 
 	@Header("Colliders")
 	public BodyCollider: CapsuleCollider;
@@ -36,23 +31,38 @@ export default class ClientComponent extends AirshipBehaviour {
 	public AccelerationCurve: AnimationCurve;
 	public RunAnimationCurve: AnimationCurve;
 
-	public Gear = GearController.Get();
+	@Header("Rendering")
+	public AccessoryBuilder: AccessoryBuilder;
 
+	// Misc
+	public Bin = new Bin();
+
+	// Control
+	@NonSerialized() public Gear = GearController.Get();
 	public Moveset = {
 		Base: new MovesetBase(),
 	};
+	public Camera = new CameraController({
+		X: this.transform.rotation.eulerAngles.x,
+		Y: this.transform.rotation.eulerAngles.y,
+		Z: this.transform.rotation.eulerAngles.z,
+	});
 
+	// Animation
 	private AnimationController = AnimationController.Get();
 	private ViewmodelController: ViewmodelComponent;
 
+	// Physics
+	@NonSerialized() public AirborneTime = 0;
+	@NonSerialized() public Momentum = 0;
+	@NonSerialized() public LastFallSpeed = 0;
+
+	// States
+	@NonSerialized() public State: ValidStates = "Airborne";
 	public MatchCameraStates: ValidStates[] = ["Airborne", "Grounded"];
 	public FallIgnoreAnimations: ValidAnimation[] = ["VM_JumpL", "VM_JumpR", "VM_JumpLWallrun", "VM_JumpRWallrun", "VM_LongJump", "VM_Coil"];
-	public AirborneTime = 0;
-	public Momentum = 0;
-	public LastFallSpeed = 0;
 
-	public Identity: NetworkIdentity;
-
+	// Main
 	@Client()
 	override OnEnable() {
 		if ($CLIENT && !$SERVER) {
@@ -68,6 +78,22 @@ export default class ClientComponent extends AirshipBehaviour {
 
 		this.ViewmodelController = this.AnimationController.gameObject.GetAirshipComponent<ViewmodelComponent>() as ViewmodelComponent;
 		this.ViewmodelController.AnimationController = this.AnimationController;
+
+		this.AccessoryBuilder.OnMeshCombined.Connect(() => this.ReloadShadows());
+		this.AccessoryBuilder.OnAccessoryAdded.Connect(() => this.ReloadShadows());
+		this.AccessoryBuilder.OnAccessoryRemoved.Connect(() => this.ReloadShadows());
+		this.ReloadShadows();
+	}
+
+	@Client()
+	public ReloadShadows() {
+		const MainRenderer = this.AccessoryBuilder.GetCombinedSkinnedMesh();
+		const AccessoryRenderers = this.AccessoryBuilder.GetAllAccessoryRenderers();
+
+		MainRenderer.shadowCastingMode = ShadowCastingMode.ShadowsOnly;
+		for (const [_, Renderer] of pairs(AccessoryRenderers)) {
+			Renderer.shadowCastingMode = ShadowCastingMode.ShadowsOnly;
+		}
 	}
 
 	@Client()
@@ -170,7 +196,13 @@ export default class ClientComponent extends AirshipBehaviour {
 	@Client()
 	public LateUpdate(DeltaTime: number) {
 		this.UpdateViewmodel();
-		this.Camera.Update(DeltaTime, this.ViewmodelController.HeadTransform);
+		let Target = CFrame.FromTransform(this.ViewmodelController.HeadTransform);
+
+		if (this.State === "Slide") {
+			Target = new CFrame(Target.Position, Target.Rotation.mul(Quaternion.Euler(-Target.Rotation.eulerAngles.x, 0, 0)));
+		}
+
+		this.Camera.Update(DeltaTime, Target);
 
 		if (this.MatchCameraStates.includes(this.State)) this.CameraRotationToCharacter();
 
@@ -188,7 +220,16 @@ export default class ClientComponent extends AirshipBehaviour {
 	@Client()
 	public UpdateViewmodel() {
 		const Rotation = this.GetCFrame().Rotation;
-		this.ViewmodelController.gameObject.transform.rotation = Rotation;
+
+		let TargetRotation = Quaternion.LookRotation(Rotation.mul(Vector3.forward), Vector3.up);
+		if (this.State === "Slide") {
+			const [Hit, _, Normal] = Physics.Raycast(this.GetCFrame().Position, new Vector3(0, -1, 0), 2, CollisionLayer);
+			if (Hit) {
+				TargetRotation = Quaternion.FromToRotation(Vector3.up, Normal).mul(TargetRotation);
+			}
+		}
+
+		this.ViewmodelController.gameObject.transform.rotation = TargetRotation;
 		this.ViewmodelController.gameObject.transform.position = this.transform.position.add(Rotation.mul(Vector3.forward.mul(0.1)));
 	}
 
@@ -211,11 +252,8 @@ export default class ClientComponent extends AirshipBehaviour {
 				const SurvivableDamage = 50;
 				const TargetTime = math.max(0, BaseRollTime * (1 - math.clamp(Damage / SurvivableDamage, 0, 1)));
 
-				print(CurrentDashTime, TargetTime);
-
 				if (CurrentDashTime <= TargetTime) {
 					Damage = 0;
-					print("roll success!");
 				}
 			} else {
 				this.State = "Slide";

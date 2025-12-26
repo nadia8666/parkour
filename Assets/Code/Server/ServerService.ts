@@ -10,9 +10,17 @@ export default class ServerService extends AirshipSingleton {
 	public CharacterMap = new Map<Player, Character>();
 
 	@Server()
+	public SafeSpawnCharacter(Player: Player) {
+		const ExistingCharacter = this.CharacterMap.get(Player);
+		if (ExistingCharacter) ExistingCharacter.Despawn();
+
+		this.CharacterMap.set(Player, this.Spawner.SpawnCharacter(Player, new CFrame(new Vector3(0, 50, 0))));
+	}
+
+	@Server()
 	override Start() {
 		Airship.Players.ObservePlayers((Player) => {
-			this.Spawner.SpawnCharacter(Player, new CFrame(new Vector3(0, 50, 0)));
+			this.SafeSpawnCharacter(Player);
 
 			return () => {
 				const CurrentCharacter = this.CharacterMap.get(Player);
@@ -24,9 +32,7 @@ export default class ServerService extends AirshipSingleton {
 
 		Airship.Damage.onDeath.Connect((Info) => {
 			const Character = Info.gameObject.GetAirshipComponent<Character>();
-			if (Character?.player) {
-				this.Spawner.SpawnCharacter(Character.player, new CFrame(new Vector3(0, 50, 0)));
-			}
+			if (Character?.player) this.SafeSpawnCharacter(Character.player);
 		});
 
 		Network.Effect.DamageSelf.server.OnClientEvent((Player, Damage) => {

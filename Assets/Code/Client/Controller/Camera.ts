@@ -12,8 +12,8 @@ export class Camera {
 
 	constructor(public Rotation: { X: number; Y: number; Z: number }) {}
 
-	public Update(DeltaTime: number, Source: Transform) {
-		const RenderPos = Source.position;
+	public Update(DeltaTime: number, Source: CFrame) {
+		const RenderPos = Source.Position;
 
 		if (!UIController.Get().MenuOpen) {
 			let CamDelta = Mouse.GetDelta();
@@ -33,7 +33,7 @@ export class Camera {
 
 		this.TargetRotation = Rotation;
 
-		const Euler = Source.rotation.eulerAngles;
+		const Euler = Source.Rotation.eulerAngles;
 		const Current = Rotation.eulerAngles;
 
 		this.Transform.rotation = Quaternion.Euler(Euler.x + Current.x, Current.y, Euler.z + Current.z);
