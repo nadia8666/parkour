@@ -22,12 +22,7 @@ export default class ServerService extends AirshipSingleton {
 		Airship.Players.ObservePlayers((Player) => {
 			this.SafeSpawnCharacter(Player);
 
-			return () => {
-				const CurrentCharacter = this.CharacterMap.get(Player);
-				if (CurrentCharacter) CurrentCharacter.Despawn();
-
-				this.CharacterMap.delete(Player);
-			};
+			return () => this.CharacterMap.delete(Player);
 		});
 
 		Airship.Damage.onDeath.Connect((Info) => {
