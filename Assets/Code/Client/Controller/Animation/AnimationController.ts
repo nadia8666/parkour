@@ -45,6 +45,14 @@ export const Animations = {
 
 	VM_Slide: {
 		0: { Name: "VM_Slide" },
+		Transitions: {
+			From: {
+				All: 0.15,
+			},
+			To: {
+				All: 0.15,
+			},
+		},
 	},
 
 	VM_Coil: {

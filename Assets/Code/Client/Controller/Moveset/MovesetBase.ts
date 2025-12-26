@@ -507,6 +507,7 @@ export class MovesetBase {
 	}
 	// #endregion
 
+	// #region Slide
 	public StartSlide(Controller: ClientComponent) {
 		Controller.State = "Slide";
 	}
@@ -534,4 +535,5 @@ export class MovesetBase {
 			this.EndSlide(Controller);
 		}
 	}
+	// #endregion
 }
