@@ -46,8 +46,8 @@ MonoBehaviour:
     forceLatestVersion: 0
   - id: '@inkyaker/DualLink'
     assetVersion: 5
-    codeVersion: 13
-    publishVersionNumber: 10
+    codeVersion: 15
+    publishVersionNumber: 12
     game: 0
     localSource: 0
     disabled: 0
@@ -121,4 +121,4 @@ MonoBehaviour:
   reuseCollisionCallbacks2D: 1
   autoSyncTransforms2D: 0
   supportsMobile: 0
-  compileURPShaders: 0
+  compileURPShaders: 1

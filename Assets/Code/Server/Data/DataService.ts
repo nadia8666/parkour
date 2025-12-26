@@ -53,10 +53,12 @@ export default class DataService extends AirshipSingleton {
 
 	@Server()
 	public async UnloadPlayerData(Key: string) {
+		print("loaded check");
 		if (!this.IsPlayerLoaded(Key)) return;
 
-		// biome-ignore lint/style/noNonNullAssertion: known
-		await Store.SetKey(Key, this.GetPlayerData(Key)!);
+		const Data = this.WaitForPlayerData(Key);
+		print(`Saving`, Data);
+		await Store.SetKey(Key, Data);
 
 		delete this.DataMap[Key];
 
@@ -92,10 +94,11 @@ export default class DataService extends AirshipSingleton {
 
 		Airship.Players.ObservePlayers((Player) => {
 			print("observ ing");
-			this.LoadPlayerData(this.Key(Player));
+			const Key = this.Key(Player);
+			this.LoadPlayerData(Key);
 
 			return () => {
-				this.UnloadPlayerData(this.Key(Player));
+				this.UnloadPlayerData(Key);
 			};
 		});
 

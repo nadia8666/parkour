@@ -156,7 +156,7 @@ export class MovesetBase {
 				}
 				break;
 			case "Dash":
-				this.StartDash();
+				this.StartDash(Controller);
 				break;
 		}
 	}
@@ -199,8 +199,11 @@ export class MovesetBase {
 		return this.DashCharge !== -1;
 	}
 
-	public StartDash() {
+	public StartDash(Controller: ClientComponent) {
 		if (os.clock() - this.DashStart <= Config.DashCooldown) return;
+
+		if (Controller.State === "Airborne") this.AnimationController.Current = "VM_Coil";
+
 		this.DashCharge = 0;
 	}
 

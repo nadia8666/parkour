@@ -1084,7 +1084,7 @@ MonoBehaviour:
         tags: []
       decorators: []
       nullable: 0
-      serializedValue: 0,0,1.966483,1.966483,0,0.1729586;2.165405,1.531158,0,0,0,0
+      serializedValue: -0.05319214,0,0.4309317,0.4309317,0,0.267726;8.275973,2.102695,0.09476618,0.09476618,0.1349584,0.1139709;14.96584,2.409062,0,0,0,0
       serializedObject: {fileID: 0}
       modified: 1
     - name: Gear
