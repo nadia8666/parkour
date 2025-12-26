@@ -457,6 +457,24 @@ MonoBehaviour:
       serializedValue: 
       serializedObject: {fileID: 7507945540958766954}
       modified: 1
+    - name: HeadTransform
+      type: object
+      objectType: Transform
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators: []
+      nullable: 0
+      serializedValue: 
+      serializedObject: {fileID: 7607820505191896761}
+      modified: 1
     displayIcon: {fileID: 0}
     displayName: 
 --- !u!114 &6948834669718589445
@@ -488,7 +506,7 @@ MonoBehaviour:
         objectType: 
         serializedItems: []
         objectRefs: []
-      refPath: ::global@0a9fcc4e8f56aefbe68d5962371fa06925d69fa2
+      refPath: ::global@6285427090f0543ec244239960d141c371ff4847
       fileRef: 
       jsDocs:
         text: []
@@ -542,7 +560,7 @@ MonoBehaviour:
         objectType: 
         serializedItems: []
         objectRefs: []
-      refPath: ::global@0a9fcc4e8f56aefbe68d5962371fa06925d69fa2
+      refPath: ::global@6285427090f0543ec244239960d141c371ff4847
       fileRef: 
       jsDocs:
         text: []

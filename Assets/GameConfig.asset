@@ -99,7 +99,7 @@ MonoBehaviour:
   defaultSolverVelocityIterations: 1
   queriesHitBackfaces: 0
   queriesHitTriggers: 1
-  fixedDeltaTime: 0.025
+  fixedDeltaTime: 0.016666668
   gravity2D: {x: 0, y: -9.81, z: 0}
   velocityIterations2D: 8
   positionIterations2D: 3

@@ -58,7 +58,7 @@ export function WithGear<T>(ValueMap: { None: T } & { [K in GearRegistryKey]?: T
 }
 
 const Config = {
-	Gravity: new Vector3(0, -1, 0),
+	Gravity: new Vector3(0, -40, 0),
 
 	JumpRequiredSpeed: 3, // jump height under this speed is scaled from 0-spd to 0-1
 	JumpCoyoteTime: 0.25,
@@ -80,8 +80,10 @@ const Config = {
 	LongJumpHeightMultiplier: 0.45,
 
 	DashLengthGrounded: 1.5,
-	DashLengthAirborne: 0.5,
-	DashCooldown: 0.75,
+	DashLengthAirborne: 1.5,
+	DashCooldown: 0.15,
+
+	ReferenceFPS: 40, // the original fps before it was bumped up to 120
 };
 
 export default Config;

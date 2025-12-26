@@ -1,20 +1,26 @@
-import { Airship } from "@Easy/Core/Shared/Airship";
+import { Game } from "@Easy/Core/Shared/Game";
 import { Bin } from "@Easy/Core/Shared/Util/Bin";
 import CFrame from "@inkyaker/CFrame/Code";
 import type GenericTrigger from "../Components/Collision/GenericTriggerComponent";
 import Config from "../Config";
-import AnimationController, { SetAnimation, type ValidAnimation } from "./Animation/AnimationController";
+import AnimationController, { type ValidAnimation } from "./Animation/AnimationController";
 import type ViewmodelComponent from "./Animation/ViewmodelComponent";
+import { Camera as CameraController } from "./Camera";
 import GearController from "./Gear/GearController";
 import { LedgeGrabType, MovesetBase } from "./Moveset/MovesetBase";
 
-export type ValidStates = "Airborne" | "Grounded" | "Wallclimb" | "Wallrun" | "LedgeGrab";
+export type ValidStates = "Airborne" | "Grounded" | "Wallclimb" | "Wallrun" | "LedgeGrab" | "Slide";
 
 @AirshipComponentMenu("Client/Controller/Physics Controller")
 export default class ClientComponent extends AirshipBehaviour {
 	public Rigidbody: Rigidbody;
 	public Bin = new Bin();
 	public State: ValidStates = "Airborne";
+	public Camera = new CameraController({
+		X: this.transform.rotation.eulerAngles.x,
+		Y: this.transform.rotation.eulerAngles.y,
+		Z: this.transform.rotation.eulerAngles.z,
+	});
 
 	@Header("Colliders")
 	public BodyCollider: CapsuleCollider;
@@ -42,8 +48,19 @@ export default class ClientComponent extends AirshipBehaviour {
 	public FallIgnoreAnimations: ValidAnimation[] = ["VM_JumpL", "VM_JumpR", "VM_JumpLWallrun", "VM_JumpRWallrun", "VM_LongJump", "VM_Coil"];
 	public AirborneTime = 0;
 
+	public Identity: NetworkIdentity;
+
 	@Client()
 	override OnEnable() {
+		if ($CLIENT && !$SERVER) {
+			const Character = Game.localPlayer.WaitForCharacter();
+
+			if (Character.gameObject !== this.gameObject) {
+				this.enabled = false;
+				return;
+			}
+		}
+
 		this.Moveset.Base.BindInputs();
 
 		this.ViewmodelController = this.AnimationController.gameObject.GetAirshipComponent<ViewmodelComponent>() as ViewmodelComponent;
@@ -65,7 +82,6 @@ export default class ClientComponent extends AirshipBehaviour {
 		).mul(this.Rigidbody.rotation);
 	}
 
-	@Client()
 	public GetCFrame(Raw?: boolean) {
 		return new CFrame(Raw ? this.transform.position : this.Rigidbody.worldCenterOfMass, this.Rigidbody.rotation);
 	}
@@ -87,19 +103,24 @@ export default class ClientComponent extends AirshipBehaviour {
 					this.Moveset.Base.EndDash();
 				}
 
-				this.Moveset.Base.AccelerateToInput(this);
+				this.Rigidbody.AddForce(Config.Gravity, ForceMode.Acceleration);
+				this.Moveset.Base.AccelerateToInput(this, FixedDT);
 
-				this.AnimationController.Current = (this.Rigidbody.linearVelocity.magnitude > .03 && "VM_Run") || "VM_Idle";
+				this.AnimationController.Current = (this.Rigidbody.linearVelocity.magnitude > 0.03 && "VM_Run") || "VM_Idle";
 				this.AnimationController.Speed = this.AnimationController.Current === "VM_Idle" ? 1 : this.RunAnimationCurve.Evaluate(this.Rigidbody.linearVelocity.magnitude);
+
+				break;
+			case "Slide":
+				this.Moveset.Base.SlideStep(this, FixedDT);
 
 				break;
 			case "Airborne":
 				this.AirborneTime += FixedDT;
 
-				this.Rigidbody.linearVelocity = this.Rigidbody.linearVelocity.add(Config.Gravity);
+				this.Rigidbody.AddForce(Config.Gravity, ForceMode.Acceleration);
 				this.Moveset.Base.JumpHold(this, FixedDT);
 
-				this.Moveset.Base.AccelerateToInput(this);
+				this.Moveset.Base.AccelerateToInput(this, FixedDT);
 				this.Moveset.Base.TryLedgeGrab(this);
 
 				if (this.Floor.Touching && this.Rigidbody.linearVelocity.y <= 0) {
@@ -142,10 +163,12 @@ export default class ClientComponent extends AirshipBehaviour {
 
 	@Client()
 	public LateUpdate(DeltaTime: number) {
+		this.UpdateViewmodel();
+		this.Camera.Update(DeltaTime, this.ViewmodelController.HeadTransform);
+
 		if (this.MatchCameraStates.includes(this.State)) this.CameraRotationToCharacter();
 
 		this.ViewmodelController.Animate(DeltaTime);
-		this.UpdateViewmodel();
 	}
 
 	@Client()
@@ -163,11 +186,27 @@ export default class ClientComponent extends AirshipBehaviour {
 		this.ViewmodelController.gameObject.transform.position = this.transform.position.add(Rotation.mul(Vector3.forward.mul(0.1)));
 	}
 
-	@Client()
 	public Land() {
 		this.State = "Grounded";
 		this.AirborneTime = 0;
 		this.Gear.ResetAmmo();
+
+		print(this.Rigidbody.linearVelocity.y);
+
+		let DamagingFall = false;
+
+		if (this.Moveset.Base.DashActive()) {
+			if (DamagingFall) {
+				// try roll!
+				DamagingFall = false;
+			} else {
+				this.State = "Slide";
+			}
+		}
+
+		if (DamagingFall) {
+			// calc dmg and hurt Self
+		}
 
 		this.Moveset.Base.EndDash();
 	}

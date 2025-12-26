@@ -53,11 +53,9 @@ export default class DataService extends AirshipSingleton {
 
 	@Server()
 	public async UnloadPlayerData(Key: string) {
-		print("loaded check");
 		if (!this.IsPlayerLoaded(Key)) return;
 
 		const Data = this.WaitForPlayerData(Key);
-		print(`Saving`, Data);
 		await Store.SetKey(Key, Data);
 
 		delete this.DataMap[Key];
@@ -88,12 +86,10 @@ export default class DataService extends AirshipSingleton {
 	@Server()
 	override Start() {
 		Network.Data.GetInitialData.server.SetCallback((Player) => {
-			print("get inital data");
 			return this.WaitForPlayerData(this.Key(Player)) as DataFormat;
 		});
 
 		Airship.Players.ObservePlayers((Player) => {
-			print("observ ing");
 			const Key = this.Key(Player);
 			this.LoadPlayerData(Key);
 

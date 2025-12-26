@@ -13,7 +13,6 @@ const MaxAmmo = {
 export default class GearController extends AirshipSingleton {
 	public Ammo = DeepCopy(MaxAmmo);
 
-	@Client()
 	public ResetAmmo(Skip?: (keyof typeof MaxAmmo)[]) {
 		for (const [Index, Ammo] of pairs(MaxAmmo)) {
 			if (Skip?.includes(Index)) continue;

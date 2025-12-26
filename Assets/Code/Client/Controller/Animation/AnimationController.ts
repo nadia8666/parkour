@@ -36,11 +36,20 @@ export const Animations = {
 
 	VM_Fall: {
 		0: { Name: "VM_Fall" },
+		Transitions: {
+			From: {
+				All: 0.5,
+			},
+		},
+	},
+
+	VM_Slide: {
+		0: { Name: "VM_Slide" },
 	},
 
 	VM_Coil: {
 		0: { Name: "VM_Coil" },
-		EndAnimation: "VM_Fall"
+		EndAnimation: "VM_Fall",
 	},
 
 	VM_Run: {

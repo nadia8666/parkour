@@ -21,13 +21,14 @@ class InputEntry {
 	) {}
 }
 
-const Actions = {
+export const Actions = {
 	LedgeGrab: new InputEntry(Key.Space, 4),
 	Jump: new InputEntry(Key.Space, 3),
 	Wallclimb: new InputEntry(Key.Space, 2),
 	Wallrun: new InputEntry(Key.Space, 1),
 
-	Dash: new InputEntry(Key.LeftShift, 1),
+	Dash: new InputEntry(Key.LeftShift, 2),
+	Slide: new InputEntry(Key.LeftShift, 1),
 };
 
 const InverseMap = new Map<Key, (keyof typeof Actions)[]>();
@@ -139,7 +140,7 @@ export class MovesetBase {
 	public ActionPressed(Name: keyof typeof Actions, Controller: ClientComponent) {
 		switch (Name) {
 			case "Jump": {
-				const JumpStates = new Set<ValidStates>(["Grounded", "Wallrun", "Airborne"]);
+				const JumpStates = new Set<ValidStates>(["Grounded", "Wallrun", "Airborne", "Slide"]);
 				if (JumpStates.has(Controller.State)) {
 					this.Jump(Controller);
 				}
@@ -174,23 +175,27 @@ export class MovesetBase {
 		if (this.DashCharge !== -1) this.UpdateDash(Controller, FixedDT);
 	}
 
-	public AccelerateToInput(Controller: ClientComponent) {
-		const LocalMoveVector = this.GetMoveVector();
-
+	public AccelerateToInput(Controller: ClientComponent, FixedDT: number) {
+		const Sliding = Controller.State === "Slide";
 		const Grounded = Controller.State === "Grounded";
+		const LocalMoveVector = Sliding ? new Vector3(this.GetMoveVector().x, 0, 1).normalized : this.GetMoveVector();
 
 		const TargetVelocity = Controller.Rigidbody.transform.TransformVector(LocalMoveVector);
 		const CurrentVelocity = Controller.Rigidbody.linearVelocity.WithY(0).magnitude;
-		const AccelerationForce = Controller.AccelerationCurve.Evaluate(math.clamp(CurrentVelocity, 0, 15) / 15) * 20 * (Grounded && this.DashActive() ? 1.5 : 1);
+		const AccelerationForce =
+			Controller.AccelerationCurve.Evaluate(math.clamp(CurrentVelocity, 0, 15) / 15) * 20 * (Grounded && this.DashActive() ? 1.5 : 1) * (Sliding ? 0.35 : 1);
 		const GlobalMoveVector = TargetVelocity.magnitude > 0 ? TargetVelocity.normalized : Vector3.zero;
 
-		Controller.Rigidbody.linearVelocity = Controller.Rigidbody.linearVelocity.MoveTowards(Vector3.zero.WithY(Controller.Rigidbody.linearVelocity.y), Grounded ? 0.45 : 0.2); // friction
+		if (!Sliding) {
+		}
+		Controller.Rigidbody.linearVelocity = Controller.Rigidbody.linearVelocity.MoveTowards(Vector3.zero, (Grounded ? 0.45 : 0.2) * FixedDT * Config.ReferenceFPS); // friction
 		Controller.Rigidbody.AddForce(GlobalMoveVector.mul(AccelerationForce), ForceMode.Acceleration); // acceleration
 
 		if (Grounded) {
 			const LocalForce = Controller.transform.InverseTransformVector(Controller.Rigidbody.linearVelocity);
 
-			Controller.Rigidbody.linearVelocity = Controller.transform.TransformVector(LocalForce.add(LocalForce.mul(new Vector3(-0.1, 0, 0))));
+			// extra z friction
+			Controller.Rigidbody.linearVelocity = Controller.transform.TransformVector(LocalForce.add(LocalForce.mul(new Vector3(-0.1 * FixedDT * Config.ReferenceFPS, 0, 0))));
 		}
 	}
 
@@ -205,9 +210,13 @@ export class MovesetBase {
 		if (Controller.State === "Airborne") this.AnimationController.Current = "VM_Coil";
 
 		this.DashCharge = 0;
+
+		if (Controller.State === "Grounded") this.StartSlide(Controller);
 	}
 
 	public EndDash() {
+		if (this.AnimationController.Current === "VM_Coil") this.AnimationController.Current = "VM_Fall";
+
 		this.DashCharge = -1;
 	}
 
@@ -415,10 +424,9 @@ export class MovesetBase {
 		const Magnitude = Controller.Rigidbody.linearVelocity.WithY(YSpeed / 4).magnitude;
 		const GravityAffector = 1 - this.WallrunTimer / 2;
 
-		Controller.Rigidbody.linearVelocity = Controller.GetCFrame()
-			.Rotation.mul(Vector3.forward.mul(Magnitude))
-			.WithY(YSpeed)
-			.add(Config.Gravity.mul(GravityAffector * Config.WallrunGravity()));
+		Controller.Rigidbody.linearVelocity = Controller.GetCFrame().Rotation.mul(Vector3.forward.mul(Magnitude)).WithY(YSpeed);
+
+		Controller.Rigidbody.AddForce(Config.Gravity.mul(GravityAffector * Config.WallrunGravity()), ForceMode.Acceleration);
 	}
 	// #endregion
 
@@ -498,4 +506,32 @@ export class MovesetBase {
 		Controller.State = "Airborne";
 	}
 	// #endregion
+
+	public StartSlide(Controller: ClientComponent) {
+		Controller.State = "Slide";
+	}
+
+	public EndSlide(Controller: ClientComponent) {
+		Controller.State = Controller.Floor.Touching ? "Grounded" : "Airborne";
+
+		this.EndDash();
+		this.DashStart = 0;
+	}
+
+	public SlideStep(Controller: ClientComponent, FixedDT: number) {
+		this.DashCharge = 0;
+
+		Controller.Rigidbody.AddForce(Config.Gravity, ForceMode.Acceleration);
+		this.AccelerateToInput(Controller, FixedDT);
+
+		const TargetLook = Quaternion.LookRotation(Controller.Rigidbody.linearVelocity.WithY(0).normalized).eulerAngles.y;
+		const LastRotation = Controller.transform.rotation.eulerAngles;
+
+		Controller.transform.rotation = Quaternion.Euler(LastRotation.x, TargetLook, LastRotation.z);
+		this.AnimationController.Current = "VM_Slide";
+
+		if (!Actions.Slide.Active || !Controller.Floor.Touching) {
+			this.EndSlide(Controller);
+		}
+	}
 }

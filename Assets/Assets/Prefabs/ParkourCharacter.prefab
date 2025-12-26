@@ -275,7 +275,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.1, y: 0.05, z: 0.1}
+  m_Size: {x: 0.5, y: 0.2, z: 0.5}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &9083308086761915196
 MonoBehaviour:
@@ -458,7 +458,7 @@ CapsuleCollider:
     m_Bits: 131072
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 4294713343
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
@@ -740,6 +740,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5519949438957097557, guid: 4bfcf38072e582e42b941b472d5f3dcb, type: 3}
+      propertyPath: m_ExcludeLayers.m_Bits
+      value: 4294713343
+      objectReference: {fileID: 0}
+    - target: {fileID: 5519949438957097557, guid: 4bfcf38072e582e42b941b472d5f3dcb, type: 3}
       propertyPath: m_IncludeLayers.m_Bits
       value: 131072
       objectReference: {fileID: 0}
@@ -829,6 +833,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8997996947095583982, guid: 4bfcf38072e582e42b941b472d5f3dcb, type: 3}
   m_PrefabInstance: {fileID: 6767161154545908016}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2938946416571182491 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8440015110078338219, guid: 4bfcf38072e582e42b941b472d5f3dcb, type: 3}
+  m_PrefabInstance: {fileID: 6767161154545908016}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3061699078004531044}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3061699078004531044 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8616685848737228372, guid: 4bfcf38072e582e42b941b472d5f3dcb, type: 3}
@@ -1105,6 +1120,24 @@ MonoBehaviour:
       serializedValue: 
       serializedObject: {fileID: 0}
       modified: 0
+    - name: Identity
+      type: object
+      objectType: NetworkIdentity
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators: []
+      nullable: 0
+      serializedValue: 
+      serializedObject: {fileID: 2938946416571182491}
+      modified: 1
     displayIcon: {fileID: 0}
     displayName: 
 --- !u!114 &6647136626085009081

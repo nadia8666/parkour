@@ -4,6 +4,7 @@ export default class ViewmodelComponent extends AirshipBehaviour {
 	public AnimationController = AnimationController.Get();
 	public Controller: Animator;
 	public EventListener: AnimationEventListener;
+	public HeadTransform: Transform;
 
 	@Client()
 	override Start() {
