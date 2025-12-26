@@ -186,10 +186,16 @@ export class MovesetBase {
 			Controller.AccelerationCurve.Evaluate(math.clamp(CurrentVelocity, 0, 15) / 15) * 20 * (Grounded && this.DashActive() ? 1.5 : 1) * (Sliding ? 0.35 : 1);
 		const GlobalMoveVector = TargetVelocity.magnitude > 0 ? TargetVelocity.normalized : Vector3.zero;
 
-		if (!Sliding) {
-		}
-		Controller.Rigidbody.linearVelocity = Controller.Rigidbody.linearVelocity.MoveTowards(Vector3.zero, (Grounded ? 0.45 : 0.2) * FixedDT * Config.ReferenceFPS); // friction
+		const FrictionRate = (Grounded ? 0.45 : 0.2) * FixedDT * Config.ReferenceFPS;
+		Controller.Momentum = math.max(0, Controller.Momentum - FrictionRate);
+
+		Controller.Rigidbody.linearVelocity = Controller.Rigidbody.linearVelocity.MoveTowards(Vector3.zero, FrictionRate); // friction
 		Controller.Rigidbody.AddForce(GlobalMoveVector.mul(AccelerationForce), ForceMode.Acceleration); // acceleration
+
+		if (GlobalMoveVector.magnitude > 0) {
+			const DeltaMomentum = (AccelerationForce / 40) * FixedDT * Config.ReferenceFPS;
+			Controller.Momentum = math.clamp(Controller.Momentum + DeltaMomentum, 0, 15);
+		}
 
 		if (Grounded) {
 			const LocalForce = Controller.transform.InverseTransformVector(Controller.Rigidbody.linearVelocity);
@@ -266,8 +272,9 @@ export class MovesetBase {
 
 		switch (JumpType) {
 			case "Default": {
-				const JumpHeight = math.clamp(Controller.Rigidbody.linearVelocity.WithY(0).magnitude / Config.JumpRequiredSpeed, 0.5, 1);
+				const JumpHeight = math.clamp(Controller.Momentum / Config.JumpRequiredSpeed, 0.5, 1);
 
+				Controller.ResetLastFallSpeed();
 				Controller.Rigidbody.linearVelocity = Controller.Rigidbody.linearVelocity.WithY(12 * JumpHeight);
 
 				const Dir = this.LastJump === "R" ? "L" : "R";
@@ -279,6 +286,7 @@ export class MovesetBase {
 			case "Long": {
 				const Magnitude = Controller.Rigidbody.linearVelocity.magnitude;
 
+				Controller.ResetLastFallSpeed();
 				Controller.Rigidbody.linearVelocity = Controller.Rigidbody.linearVelocity.normalized
 					.WithY(Config.LongJumpHeightMultiplier)
 					.normalized.mul(Magnitude + Config.LongJumpForce);
@@ -287,8 +295,9 @@ export class MovesetBase {
 				break;
 			}
 			case "Wallrun": {
-				const CurrentMagnitude = Controller.Rigidbody.linearVelocity.magnitude;
+				const CurrentMagnitude = Controller.Momentum;
 				const CameraLook = Camera.main.transform.rotation.mul(Vector3.forward);
+				Controller.ResetLastFallSpeed();
 				Controller.Rigidbody.linearVelocity = CameraLook.WithY(0)
 					.normalized.mul(CurrentMagnitude + Config.WallrunJumpForce.x)
 					.WithY(Config.WallrunJumpForce.y);
@@ -310,6 +319,7 @@ export class MovesetBase {
 
 		if (Actions.Jump.Active) {
 			this.JumpTimer -= FixedDT;
+			Controller.ResetLastFallSpeed();
 			Controller.Rigidbody.AddForce(new Vector3(0, this.JumpTimer / 1.5, 0), ForceMode.VelocityChange);
 		} else {
 			this.JumpTimer = 0;
@@ -329,6 +339,7 @@ export class MovesetBase {
 		const TargetLook = Quaternion.LookRotation(Normal.mul(-1), Vector3.up);
 		Controller.Rigidbody.rotation = TargetLook;
 
+		Controller.ResetLastFallSpeed();
 		Controller.Rigidbody.linearVelocity = Controller.Rigidbody.linearVelocity.WithY(math.max(Controller.Rigidbody.linearVelocity.y, Config.WallClimbMinSpeed()));
 
 		Controller.Gear.Ammo.Wallclimb--;
@@ -343,6 +354,7 @@ export class MovesetBase {
 		}
 
 		this.WallclimbTimer -= FixedDT;
+		Controller.ResetLastFallSpeed();
 		Controller.Rigidbody.AddForce(Vector3.up.mul(this.WallclimbTimer / 6), ForceMode.VelocityChange);
 		Controller.Rigidbody.AddForce(Controller.GetCFrame().Rotation.mul(Vector3.forward), ForceMode.VelocityChange);
 
@@ -375,7 +387,7 @@ export class MovesetBase {
 
 		if (LDot < 0.75 && RDot < 0.75) return;
 
-		const WallrunForce = Controller.Rigidbody.linearVelocity.WithY(0).magnitude * Config.WallrunSpeedBoost;
+		const WallrunForce = Controller.Momentum * Config.WallrunSpeedBoost;
 
 		if (TouchingL && TouchingR) {
 			if (LeftHit && RightHit) {
@@ -421,7 +433,7 @@ export class MovesetBase {
 		this.WallrunTimer -= FixedDT;
 
 		const YSpeed = Controller.Rigidbody.linearVelocity.y;
-		const Magnitude = Controller.Rigidbody.linearVelocity.WithY(YSpeed / 4).magnitude;
+		const Magnitude = Controller.Momentum + YSpeed / 4;
 		const GravityAffector = 1 - this.WallrunTimer / 2;
 
 		Controller.Rigidbody.linearVelocity = Controller.GetCFrame().Rotation.mul(Vector3.forward.mul(Magnitude)).WithY(YSpeed);
@@ -470,6 +482,8 @@ export class MovesetBase {
 						Controller.Rigidbody.linearVelocity = Controller.GetCFrame().Rotation.mul(Vector3.forward).WithY(Config.LedgeGrabForwardY()).normalized.mul(TargetVelocity);
 					}
 				}
+				
+				Controller.ResetLastFallSpeed();
 
 				this.RunLedgeGrab(Controller, HitPos, Type);
 

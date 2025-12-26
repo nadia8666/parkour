@@ -60,7 +60,7 @@ export function WithGear<T>(ValueMap: { None: T } & { [K in GearRegistryKey]?: T
 const Config = {
 	Gravity: new Vector3(0, -40, 0),
 
-	JumpRequiredSpeed: 3, // jump height under this speed is scaled from 0-spd to 0-1
+	JumpRequiredSpeed: 8, // jump height under this speed is scaled from 0-spd to 0-1
 	JumpCoyoteTime: 0.25,
 
 	WallClimbMinSpeed: WithGear({ None: 2.25, SlipGlove: -10, GripGlove: 7 }), // upwards speed in wallclimb is max(spd, min)
@@ -84,6 +84,9 @@ const Config = {
 	DashCooldown: 0.15,
 
 	ReferenceFPS: 40, // the original fps before it was bumped up to 120
+
+	FallDamageThreshold: 25, // speed at which fall damage begins
+	FallDamageMultiplier: 4.15, // damage per unit speed above threshold
 };
 
 export default Config;

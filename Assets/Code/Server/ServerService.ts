@@ -1,6 +1,7 @@
 import { Airship } from "@Easy/Core/Shared/Airship";
 import type Character from "@Easy/Core/Shared/Character/Character";
 import type { Player } from "@Easy/Core/Shared/Player/Player";
+import { Network } from "Code/Shared/Network";
 import CFrame from "@inkyaker/CFrame/Code";
 import CharacterSpawner from "./Modules/Spawner";
 
@@ -19,6 +20,19 @@ export default class ServerService extends AirshipSingleton {
 
 				this.CharacterMap.delete(Player);
 			};
+		});
+
+		Airship.Damage.onDeath.Connect((Info) => {
+			const Character = Info.gameObject.GetAirshipComponent<Character>();
+			if (Character?.player) {
+				this.Spawner.SpawnCharacter(Character.player, new CFrame(new Vector3(0, 50, 0)));
+			}
+		});
+
+		Network.Effect.DamageSelf.server.OnClientEvent((Player, Damage) => {
+			if (Damage !== undefined && typeIs(Damage, "number") && Damage > 0) {
+				Player.character?.InflictDamage(Damage);
+			}
 		});
 	}
 }

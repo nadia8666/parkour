@@ -1,5 +1,6 @@
 import { Game } from "@Easy/Core/Shared/Game";
 import { Bin } from "@Easy/Core/Shared/Util/Bin";
+import { Network } from "Code/Shared/Network";
 import CFrame from "@inkyaker/CFrame/Code";
 import type GenericTrigger from "../Components/Collision/GenericTriggerComponent";
 import Config from "../Config";
@@ -47,6 +48,8 @@ export default class ClientComponent extends AirshipBehaviour {
 	public MatchCameraStates: ValidStates[] = ["Airborne", "Grounded"];
 	public FallIgnoreAnimations: ValidAnimation[] = ["VM_JumpL", "VM_JumpR", "VM_JumpLWallrun", "VM_JumpRWallrun", "VM_LongJump", "VM_Coil"];
 	public AirborneTime = 0;
+	public Momentum = 0;
+	public LastFallSpeed = 0;
 
 	public Identity: NetworkIdentity;
 
@@ -101,6 +104,7 @@ export default class ClientComponent extends AirshipBehaviour {
 				if (!this.Floor.Touching) {
 					this.State = "Airborne";
 					this.Moveset.Base.EndDash();
+					this.LastFallSpeed = 0;
 				}
 
 				this.Rigidbody.AddForce(Config.Gravity, ForceMode.Acceleration);
@@ -119,6 +123,8 @@ export default class ClientComponent extends AirshipBehaviour {
 
 				this.Rigidbody.AddForce(Config.Gravity, ForceMode.Acceleration);
 				this.Moveset.Base.JumpHold(this, FixedDT);
+
+				if (this.Rigidbody.linearVelocity.y < 0) this.LastFallSpeed = math.max(this.LastFallSpeed, -this.Rigidbody.linearVelocity.y);
 
 				this.Moveset.Base.AccelerateToInput(this, FixedDT);
 				this.Moveset.Base.TryLedgeGrab(this);
@@ -191,23 +197,41 @@ export default class ClientComponent extends AirshipBehaviour {
 		this.AirborneTime = 0;
 		this.Gear.ResetAmmo();
 
-		print(this.Rigidbody.linearVelocity.y);
+		let Damage = this.LastFallSpeed - Config.FallDamageThreshold;
 
-		let DamagingFall = false;
+		if (Damage > 0) {
+			Damage *= Config.FallDamageMultiplier;
+			warn(Damage);
+		}
 
 		if (this.Moveset.Base.DashActive()) {
-			if (DamagingFall) {
-				// try roll!
-				DamagingFall = false;
+			if (Damage > 0) {
+				const CurrentDashTime = this.Moveset.Base.DashCharge;
+				const BaseRollTime = 0.75;
+				const SurvivableDamage = 50;
+				const TargetTime = math.max(0, BaseRollTime * (1 - math.clamp(Damage / SurvivableDamage, 0, 1)));
+
+				print(CurrentDashTime, TargetTime);
+
+				if (CurrentDashTime <= TargetTime) {
+					Damage = 0;
+					print("roll success!");
+				}
 			} else {
 				this.State = "Slide";
 			}
 		}
 
-		if (DamagingFall) {
-			// calc dmg and hurt Self
+		if (Damage > 0) {
+			Network.Effect.DamageSelf.client.FireServer(Damage);
 		}
 
 		this.Moveset.Base.EndDash();
+
+		this.Momentum = this.Rigidbody.linearVelocity.WithY(0).magnitude;
+	}
+
+	public ResetLastFallSpeed() {
+		this.LastFallSpeed = 0;
 	}
 }

@@ -275,7 +275,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.5, y: 0.2, z: 0.5}
+  m_Size: {x: 0.35, y: 0.4, z: 0.35}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &9083308086761915196
 MonoBehaviour:
@@ -1138,6 +1138,24 @@ MonoBehaviour:
       serializedValue: 
       serializedObject: {fileID: 2938946416571182491}
       modified: 1
+    - name: Momentum
+      type: number
+      objectType: 
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators: []
+      nullable: 0
+      serializedValue: 0
+      serializedObject: {fileID: 0}
+      modified: 0
     displayIcon: {fileID: 0}
     displayName: 
 --- !u!114 &6647136626085009081
