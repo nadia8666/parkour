@@ -44,6 +44,7 @@ GameObject:
   - component: {fileID: 2553678752925766451}
   - component: {fileID: 4695250667359192834}
   - component: {fileID: 3133684184148850963}
+  - component: {fileID: -5601883227500428419}
   m_Layer: 3
   m_Name: Left
   m_TagString: Untagged
@@ -85,8 +86,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.7, y: 0.25, z: 0.5}
-  m_Center: {x: -0.5, y: 1, z: 0}
+  m_Size: {x: 1.5, y: 0.25, z: 0.5}
+  m_Center: {x: -1, y: 1, z: 0}
 --- !u!114 &3133684184148850963
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -128,6 +129,18 @@ MonoBehaviour:
       modified: 0
     displayIcon: {fileID: 0}
     displayName: 
+--- !u!114 &-5601883227500428419
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 923007297573249496}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3c2c140914f04a538637672395ffb4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1285228464815837465
 GameObject:
   m_ObjectHideFlags: 0
@@ -139,6 +152,7 @@ GameObject:
   - component: {fileID: 2480702029105329959}
   - component: {fileID: 575785979652922099}
   - component: {fileID: 4535046266817976427}
+  - component: {fileID: -4379157899981572492}
   m_Layer: 3
   m_Name: LedgeGrabGrounded
   m_TagString: Untagged
@@ -223,6 +237,18 @@ MonoBehaviour:
       modified: 0
     displayIcon: {fileID: 0}
     displayName: 
+--- !u!114 &-4379157899981572492
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1285228464815837465}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3c2c140914f04a538637672395ffb4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1799792029362431353
 GameObject:
   m_ObjectHideFlags: 0
@@ -234,6 +260,7 @@ GameObject:
   - component: {fileID: 7770709673320697558}
   - component: {fileID: 8768795451609096346}
   - component: {fileID: 9083308086761915196}
+  - component: {fileID: -7992525292085799290}
   m_Layer: 3
   m_Name: Floor
   m_TagString: Untagged
@@ -318,6 +345,18 @@ MonoBehaviour:
       modified: 0
     displayIcon: {fileID: 0}
     displayName: 
+--- !u!114 &-7992525292085799290
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1799792029362431353}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3c2c140914f04a538637672395ffb4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3375897256296728825
 GameObject:
   m_ObjectHideFlags: 0
@@ -329,6 +368,7 @@ GameObject:
   - component: {fileID: 2822705970531056036}
   - component: {fileID: 4616452989243110445}
   - component: {fileID: 8051915402181900416}
+  - component: {fileID: 2297650372142639614}
   m_Layer: 3
   m_Name: Wallclimb
   m_TagString: Untagged
@@ -413,6 +453,18 @@ MonoBehaviour:
       modified: 0
     displayIcon: {fileID: 0}
     displayName: 
+--- !u!114 &2297650372142639614
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3375897256296728825}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3c2c140914f04a538637672395ffb4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3564011695013630614
 GameObject:
   m_ObjectHideFlags: 0
@@ -516,6 +568,7 @@ GameObject:
   - component: {fileID: 3283148830965980119}
   - component: {fileID: 7047663558163656419}
   - component: {fileID: 2505369585705151792}
+  - component: {fileID: 7977141389473215750}
   m_Layer: 3
   m_Name: Right
   m_TagString: Untagged
@@ -557,8 +610,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.7, y: 0.25, z: 0.5}
-  m_Center: {x: 0.5, y: 1, z: 0}
+  m_Size: {x: 1.5, y: 0.25, z: 0.5}
+  m_Center: {x: 1, y: 1, z: 0}
 --- !u!114 &2505369585705151792
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -600,6 +653,18 @@ MonoBehaviour:
       modified: 0
     displayIcon: {fileID: 0}
     displayName: 
+--- !u!114 &7977141389473215750
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3733968003439496359}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3c2c140914f04a538637672395ffb4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5595275914154442464
 GameObject:
   m_ObjectHideFlags: 0
@@ -611,6 +676,7 @@ GameObject:
   - component: {fileID: 1255929829260927385}
   - component: {fileID: 8754101168591486736}
   - component: {fileID: 5272411587572441318}
+  - component: {fileID: 3803780243669786242}
   m_Layer: 3
   m_Name: LedgeGrabAirborne
   m_TagString: Untagged
@@ -695,6 +761,18 @@ MonoBehaviour:
       modified: 0
     displayIcon: {fileID: 0}
     displayName: 
+--- !u!114 &3803780243669786242
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5595275914154442464}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3c2c140914f04a538637672395ffb4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &6767161154545908016
 PrefabInstance:
   m_ObjectHideFlags: 0

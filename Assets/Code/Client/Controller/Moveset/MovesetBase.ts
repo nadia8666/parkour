@@ -142,18 +142,18 @@ export class MovesetBase {
 			case "Jump": {
 				const JumpStates = new Set<ValidStates>(["Grounded", "Wallrun", "Airborne", "Slide"]);
 				if (JumpStates.has(Controller.State)) {
-					this.Jump(Controller);
+					this.StartJump(Controller);
 				}
 				break;
 			}
 			case "Wallclimb":
 				if (Controller.State === "Airborne") {
-					this.WallclimbStart(Controller);
+					this.StartWallclimb(Controller);
 				}
 				break;
 			case "Wallrun":
 				if (Controller.State === "Airborne") {
-					this.WallrunStart(Controller);
+					this.StartWallrun(Controller);
 				}
 				break;
 			case "Dash":
@@ -162,7 +162,7 @@ export class MovesetBase {
 		}
 	}
 
-	public ActionDropped(Name: keyof typeof Actions, Controller: ClientComponent) {
+	public ActionDropped(Name: keyof typeof Actions, _Controller: ClientComponent) {
 		switch (Name) {
 			case "Dash":
 				this.DashStart = os.clock();
@@ -171,8 +171,8 @@ export class MovesetBase {
 		}
 	}
 
-	public Step(Controller: ClientComponent, FixedDT: number) {
-		if (this.DashCharge !== -1) this.UpdateDash(Controller, FixedDT);
+	public StepMoveset(Controller: ClientComponent, FixedDT: number) {
+		if (this.DashCharge !== -1) this.StepDash(Controller, FixedDT);
 	}
 
 	public AccelerateToInput(Controller: ClientComponent, FixedDT: number) {
@@ -180,29 +180,46 @@ export class MovesetBase {
 		const Grounded = Controller.State === "Grounded";
 		const LocalMoveVector = Sliding ? new Vector3(this.GetMoveVector().x, 0, 1).normalized : this.GetMoveVector();
 
-		const TargetVelocity = Controller.Rigidbody.transform.TransformVector(LocalMoveVector);
+		const TargetVelocity = Controller.Rigidbody.transform.TransformDirection(LocalMoveVector);
 		const CurrentVelocity = Controller.Rigidbody.linearVelocity.WithY(0).magnitude;
 		const AccelerationForce =
 			Controller.AccelerationCurve.Evaluate(math.clamp(CurrentVelocity, 0, 15) / 15) * 20 * (Grounded && this.DashActive() ? 1.5 : 1) * (Sliding ? 0.35 : 1);
 		const GlobalMoveVector = TargetVelocity.magnitude > 0 ? TargetVelocity.normalized : Vector3.zero;
 
 		const FrictionRate = (Grounded ? 0.45 : 0.2) * FixedDT * Config.ReferenceFPS;
-		Controller.Momentum = math.max(0, Controller.Momentum - FrictionRate);
 
-		Controller.Rigidbody.linearVelocity = Controller.Rigidbody.linearVelocity.MoveTowards(Vector3.zero, FrictionRate); // friction
-		Controller.Rigidbody.AddForce(GlobalMoveVector.mul(AccelerationForce), ForceMode.Acceleration); // acceleration
+		const MomentumDecay = FrictionRate * this.GetMomentumFriction(Controller.Momentum);
+		Controller.Momentum = math.max(0, Controller.Momentum - MomentumDecay);
 
+		Controller.Rigidbody.linearVelocity = Controller.Rigidbody.linearVelocity.MoveTowards(Vector3.zero, FrictionRate);
+		Controller.Rigidbody.AddForce(GlobalMoveVector.mul(AccelerationForce), ForceMode.Acceleration);
+
+		let AccelAlignment = 0;
 		if (GlobalMoveVector.magnitude > 0) {
-			const DeltaMomentum = (AccelerationForce / 40) * FixedDT * Config.ReferenceFPS;
-			Controller.Momentum = math.max(Controller.Momentum + DeltaMomentum, 0);
+			const HorizontalVel = Controller.Rigidbody.linearVelocity.WithY(0);
+			AccelAlignment = HorizontalVel.magnitude > 0 ? math.max(0, GlobalMoveVector.Dot(HorizontalVel.normalized)) : 1;
+		}
+
+		const DeltaMomentum = (AccelerationForce / 40) * FixedDT * Config.ReferenceFPS * AccelAlignment;
+		Controller.Momentum = math.max(Controller.Momentum + DeltaMomentum, 0);
+
+		const HorizontalSpeed = Controller.Rigidbody.linearVelocity.WithY(0).magnitude;
+		if (HorizontalSpeed - Controller.Momentum > Config.MomentumSyncThreshold) {
+			Controller.Momentum = HorizontalSpeed;
 		}
 
 		if (Grounded) {
-			const LocalForce = Controller.transform.InverseTransformVector(Controller.Rigidbody.linearVelocity);
+			const LocalForce = Controller.transform.InverseTransformDirection(Controller.Rigidbody.linearVelocity);
 
 			// extra z friction
-			Controller.Rigidbody.linearVelocity = Controller.transform.TransformVector(LocalForce.add(LocalForce.mul(new Vector3(-0.1 * FixedDT * Config.ReferenceFPS, 0, 0))));
+			Controller.Rigidbody.linearVelocity = Controller.transform.TransformDirection(LocalForce.add(LocalForce.mul(new Vector3(-0.1 * FixedDT * Config.ReferenceFPS, 0, 0))));
 		}
+	}
+
+	private GetMomentumFriction(Momentum: number) {
+		const Alpha = math.max((Momentum - 10) / 30, 0);
+
+		return 1 + Alpha ** 1.75 * 6;
 	}
 
 	// #region Dash
@@ -226,7 +243,7 @@ export class MovesetBase {
 		this.DashCharge = -1;
 	}
 
-	public UpdateDash(Controller: ClientComponent, FixedDT: number) {
+	public StepDash(Controller: ClientComponent, FixedDT: number) {
 		const Grounded = Controller.State === "Grounded";
 		this.DashCharge += FixedDT;
 
@@ -240,7 +257,7 @@ export class MovesetBase {
 	// #region Jump
 	public LastJump = "R";
 	public JumpTimer = 0;
-	public Jump(Controller: ClientComponent) {
+	public StartJump(Controller: ClientComponent) {
 		const State = Controller.State;
 		if (State === "Grounded" && this.TryLedgeGrab(Controller)) {
 			return;
@@ -296,14 +313,16 @@ export class MovesetBase {
 			}
 			case "Wallrun": {
 				const CurrentMagnitude = Controller.Momentum;
-				const CameraLook = Camera.main.transform.rotation.mul(Vector3.forward);
+
+				const CameraRot = Quaternion.Euler(0, Controller.Camera.Rotation.Y, 0);
+				const CameraLook = CameraRot.mul(Vector3.forward).add(CameraRot.mul(this.GetMoveVector())).normalized;
 				Controller.ResetLastFallSpeed();
 				Controller.Rigidbody.linearVelocity = CameraLook.WithY(0)
 					.normalized.mul(CurrentMagnitude + Config.WallrunJumpForce.x)
 					.WithY(Config.WallrunJumpForce.y);
 
 				this.AnimationController.Current = this.WallrunTarget === Controller.WallrunL ? "VM_JumpRWallrun" : "VM_JumpLWallrun";
-				Controller.Momentum = Controller.Rigidbody.linearVelocity.magnitude
+				Controller.Momentum = Controller.Rigidbody.linearVelocity.magnitude;
 
 				break;
 			}
@@ -315,7 +334,7 @@ export class MovesetBase {
 		Controller.Gear.Ammo.Jump -= 1;
 	}
 
-	public JumpHold(Controller: ClientComponent, FixedDT: number) {
+	public StepJump(Controller: ClientComponent, FixedDT: number) {
 		if (this.JumpTimer <= 0) return;
 
 		if (Actions.Jump.Active) {
@@ -329,7 +348,7 @@ export class MovesetBase {
 	// #endregion
 
 	// #region Wallclimb
-	public WallclimbStart(Controller: ClientComponent) {
+	public StartWallclimb(Controller: ClientComponent) {
 		if (Controller.Gear.Ammo.Wallclimb <= 0) return;
 		if (!Controller.Wallclimb.Touching || Controller.Rigidbody.linearVelocity.y < Config.WallClimbThreshold()) return;
 
@@ -348,7 +367,7 @@ export class MovesetBase {
 		this.WallclimbTimer = 1;
 	}
 
-	public WallclimbUpdate(Controller: ClientComponent, FixedDT: number) {
+	public StepWallclimb(Controller: ClientComponent, FixedDT: number) {
 		if (!Controller.Wallclimb.Touching || !Actions.Wallclimb.Active || this.WallclimbTimer <= 0) {
 			Controller.State = "Airborne";
 			return;
@@ -359,9 +378,9 @@ export class MovesetBase {
 		Controller.Rigidbody.AddForce(Vector3.up.mul(this.WallclimbTimer / 6), ForceMode.VelocityChange);
 		Controller.Rigidbody.AddForce(Controller.GetCFrame().Rotation.mul(Vector3.forward), ForceMode.VelocityChange);
 
-		const HorizontalSpeed = Controller.Rigidbody.transform.InverseTransformVector(Controller.Rigidbody.linearVelocity);
+		const HorizontalSpeed = Controller.Rigidbody.transform.InverseTransformDirection(Controller.Rigidbody.linearVelocity);
 
-		Controller.Rigidbody.AddForce(Controller.Rigidbody.transform.TransformVector(HorizontalSpeed.mul(Vector3.right).mul(-0.1)), ForceMode.VelocityChange);
+		Controller.Rigidbody.AddForce(Controller.Rigidbody.transform.TransformDirection(HorizontalSpeed.mul(Vector3.right).mul(-0.1)), ForceMode.VelocityChange);
 
 		this.TryLedgeGrab(Controller);
 	}
@@ -372,7 +391,7 @@ export class MovesetBase {
 	public WallrunFailTimer = 0;
 	public WallrunTimer = 0;
 	public WallrunTarget: GenericTrigger;
-	public WallrunStart(Controller: ClientComponent) {
+	public StartWallrun(Controller: ClientComponent) {
 		if (Controller.Gear.Ammo.Wallrun <= 0) return;
 		const [TouchingL, TouchingR] = [Controller.WallrunL.Touching, Controller.WallrunR.Touching];
 
@@ -409,8 +428,8 @@ export class MovesetBase {
 
 		if (!Target) return;
 
-		const LocalSpeed = Controller.transform.InverseTransformVector(Controller.Rigidbody.linearVelocity);
-		Controller.Rigidbody.linearVelocity = Controller.transform.TransformVector(LocalSpeed.WithZ(math.max(WallrunForce, Config.WallrunMinSpeed)));
+		const LocalSpeed = Controller.transform.InverseTransformDirection(Controller.Rigidbody.linearVelocity);
+		Controller.Rigidbody.linearVelocity = Controller.transform.TransformDirection(LocalSpeed.WithZ(math.max(WallrunForce, Config.WallrunMinSpeed)));
 
 		Controller.State = "Wallrun";
 		Controller.Gear.Ammo.Wallrun--;
@@ -421,7 +440,7 @@ export class MovesetBase {
 		this.KeyReleased("Jump");
 	}
 
-	public WallrunUpdate(Controller: ClientComponent, FixedDT: number) {
+	public StepWallrun(Controller: ClientComponent, FixedDT: number) {
 		if (!this.WallrunTarget.Touching) {
 			this.WallrunFailTimer += FixedDT;
 		}
@@ -486,14 +505,14 @@ export class MovesetBase {
 
 				Controller.ResetLastFallSpeed();
 
-				this.RunLedgeGrab(Controller, HitPos, Type);
+				this.StartLedgeGrab(Controller, HitPos, Type);
 
 				return true;
 			}
 		}
 	}
 
-	public RunLedgeGrab(Controller: ClientComponent, EndPosition: Vector3, Type: LedgeGrabType) {
+	public StartLedgeGrab(Controller: ClientComponent, EndPosition: Vector3, Type: LedgeGrabType) {
 		this.LedgeGrabType = Type;
 
 		Controller.Gear.ResetAmmo(["Jump"]);
@@ -534,7 +553,7 @@ export class MovesetBase {
 		this.DashStart = 0;
 	}
 
-	public SlideStep(Controller: ClientComponent, FixedDT: number) {
+	public StepSlide(Controller: ClientComponent, FixedDT: number) {
 		this.DashCharge = 0;
 
 		Controller.Rigidbody.AddForce(Config.Gravity, ForceMode.Acceleration);

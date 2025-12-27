@@ -121,7 +121,7 @@ export default class ClientComponent extends AirshipBehaviour {
 	@Client()
 	public Step(FixedDT: number) {
 		this.Moveset.Base.UpdateInputs(this);
-		this.Moveset.Base.Step(this, FixedDT);
+		this.Moveset.Base.StepMoveset(this, FixedDT);
 
 		if (this.MatchCameraStates.includes(this.State)) this.CameraRotationToCharacter();
 
@@ -141,14 +141,14 @@ export default class ClientComponent extends AirshipBehaviour {
 
 				break;
 			case "Slide":
-				this.Moveset.Base.SlideStep(this, FixedDT);
+				this.Moveset.Base.StepSlide(this, FixedDT);
 
 				break;
 			case "Airborne":
 				this.AirborneTime += FixedDT;
 
 				this.Rigidbody.AddForce(Config.Gravity, ForceMode.Acceleration);
-				this.Moveset.Base.JumpHold(this, FixedDT);
+				this.Moveset.Base.StepJump(this, FixedDT);
 
 				if (this.Rigidbody.linearVelocity.y < 0) this.LastFallSpeed = math.max(this.LastFallSpeed, -this.Rigidbody.linearVelocity.y);
 
@@ -165,7 +165,7 @@ export default class ClientComponent extends AirshipBehaviour {
 
 				break;
 			case "Wallclimb":
-				this.Moveset.Base.WallclimbUpdate(this, FixedDT);
+				this.Moveset.Base.StepWallclimb(this, FixedDT);
 
 				this.AnimationController.Current = "VM_Wallclimb";
 
@@ -175,7 +175,7 @@ export default class ClientComponent extends AirshipBehaviour {
 
 				break;
 			case "Wallrun":
-				this.Moveset.Base.WallrunUpdate(this, FixedDT);
+				this.Moveset.Base.StepWallrun(this, FixedDT);
 
 				this.AnimationController.Current = `VM_Wallrun${this.Moveset.Base.WallrunTarget === this.WallrunL ? "L" : "R"}`;
 

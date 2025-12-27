@@ -12,7 +12,6 @@ task.spawn(() => {
 	InitialLink = new DualLink(DataService.Get().Key(Game.localPlayer), Network.Data.GetInitialData.client.FireServer());
 });
 export default class DataController extends AirshipSingleton {
-	@Client()
 	public GetLink() {
 		while (!InitialLink) task.wait();
 

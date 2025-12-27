@@ -87,6 +87,8 @@ const Config = {
 
 	FallDamageThreshold: 25, // speed at which fall damage begins
 	FallDamageMultiplier: 4.15, // damage per unit speed above threshold
+
+	MomentumSyncThreshold: 0.15,
 };
 
 export default Config;
