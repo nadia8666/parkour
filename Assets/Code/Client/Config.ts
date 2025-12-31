@@ -58,13 +58,14 @@ export function WithGear<T>(ValueMap: { None: T } & { [K in GearRegistryKey]?: T
 }
 
 const Config = {
-	Gravity: new Vector3(0, -40, 0),
+	Gravity: new Vector3(0, -35, 0),
 
 	JumpRequiredSpeed: 8, // jump height under this speed is scaled from 0-spd to 0-1
 	JumpCoyoteTime: 0.25,
 
 	WallClimbMinSpeed: WithGear({ None: 2.25, SlipGlove: -10, GripGlove: 7 }), // upwards speed in wallclimb is max(spd, min)
 	WallClimbThreshold: WithGear({ None: -10, SlipGlove: -65, GripGlove: -45 }), // maximum velocity before you cant wallclimb
+	WallClimbCoyoteTime: 0.25, // time before you are dropped off a wallclimb without a wall in front of you
 
 	WallrunCoyoteTime: 0.25, // time before you are dropped off of a wallrun without a wall next to you
 	WallrunMinSpeed: 7, // forward wallrun speed is max(spd, min)
@@ -83,8 +84,12 @@ const Config = {
 	DashLengthAirborne: 1.5,
 	DashCooldown: 0.15,
 
+	SlideThreshold: 5, // required speed to activate slide
+
 	ReferenceFPS: 40, // the original fps before it was bumped up to 120
 
+	FallDamageMaxSurvivable: 75,
+	FallDamgeRollTime: 0.75,
 	FallDamageThreshold: 25, // speed at which fall damage begins
 	FallDamageMultiplier: 4.15, // damage per unit speed above threshold
 

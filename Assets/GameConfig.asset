@@ -37,8 +37,8 @@ MonoBehaviour:
     forceLatestVersion: 1
   - id: '@inkyaker/CFrame'
     assetVersion: 2
-    codeVersion: 2
-    publishVersionNumber: 2
+    codeVersion: 4
+    publishVersionNumber: 3
     game: 0
     localSource: 0
     disabled: 0

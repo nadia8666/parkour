@@ -24,8 +24,7 @@ export default class ClientComponent extends AirshipBehaviour {
 	public Wallclimb: GenericTrigger;
 	public WallrunL: GenericTrigger;
 	public WallrunR: GenericTrigger;
-	public LedgeGrabG: GenericTrigger;
-	public LedgeGrabA: GenericTrigger;
+	public LedgeGrabFail: GenericTrigger;
 
 	@Header("Curves")
 	public AccelerationCurve: AnimationCurve;
@@ -136,7 +135,9 @@ export default class ClientComponent extends AirshipBehaviour {
 				this.Rigidbody.AddForce(Config.Gravity, ForceMode.Acceleration);
 				this.Moveset.Base.AccelerateToInput(this, FixedDT);
 
-				this.AnimationController.Current = (this.Rigidbody.linearVelocity.magnitude > 0.03 && "VM_Run") || "VM_Idle";
+				if (this.AnimationController.Current !== "VM_LedgeGrab") {
+					this.AnimationController.Current = (this.Rigidbody.linearVelocity.magnitude > 0.03 && "VM_Run") || "VM_Idle";
+				}
 				this.AnimationController.Speed = this.AnimationController.Current === "VM_Idle" ? 1 : this.RunAnimationCurve.Evaluate(this.Rigidbody.linearVelocity.magnitude);
 
 				break;
@@ -153,7 +154,6 @@ export default class ClientComponent extends AirshipBehaviour {
 				if (this.Rigidbody.linearVelocity.y < 0) this.LastFallSpeed = math.max(this.LastFallSpeed, -this.Rigidbody.linearVelocity.y);
 
 				this.Moveset.Base.AccelerateToInput(this, FixedDT);
-				this.Moveset.Base.TryLedgeGrab(this);
 
 				if (this.Floor.Touching && this.Rigidbody.linearVelocity.y <= 0) {
 					this.Land();
@@ -185,7 +185,7 @@ export default class ClientComponent extends AirshipBehaviour {
 
 				break;
 			case "LedgeGrab":
-				this.AnimationController.Current = this.Moveset.Base.LedgeGrabType === LedgeGrabType.Jump ? "VM_LedgeGrab" : "VM_Vault";
+				this.AnimationController.Current = this.Moveset.Base.LedgeGrabType === LedgeGrabType.LedgeGrab ? "VM_LedgeGrab" : "VM_Vault";
 
 				break;
 		}
@@ -242,15 +242,12 @@ export default class ClientComponent extends AirshipBehaviour {
 
 		if (Damage > 0) {
 			Damage *= Config.FallDamageMultiplier;
-			warn(Damage);
 		}
 
 		if (this.Moveset.Base.DashActive()) {
 			if (Damage > 0) {
 				const CurrentDashTime = this.Moveset.Base.DashCharge;
-				const BaseRollTime = 0.75;
-				const SurvivableDamage = 50;
-				const TargetTime = math.max(0, BaseRollTime * (1 - math.clamp(Damage / SurvivableDamage, 0, 1)));
+				const TargetTime = math.max(0, Config.FallDamgeRollTime * (1 - math.clamp(Damage / Config.FallDamageMaxSurvivable, 0, 1)));
 
 				if (CurrentDashTime <= TargetTime) {
 					Damage = 0;
