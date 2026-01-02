@@ -1,0 +1,100 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &2965911379840173986
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -9079823758057179346, guid: bb5affc66a279a54ea6f16949e06d8d7, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 5cb1bfa637664d24e8f219b99db01bd1, type: 2}
+    - target: {fileID: -9000790922714473816, guid: bb5affc66a279a54ea6f16949e06d8d7, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -9000790922714473816, guid: bb5affc66a279a54ea6f16949e06d8d7, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -9000790922714473816, guid: bb5affc66a279a54ea6f16949e06d8d7, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 78.147766
+      objectReference: {fileID: 0}
+    - target: {fileID: -9000790922714473816, guid: bb5affc66a279a54ea6f16949e06d8d7, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: -9000790922714473816, guid: bb5affc66a279a54ea6f16949e06d8d7, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -9000790922714473816, guid: bb5affc66a279a54ea6f16949e06d8d7, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -9000790922714473816, guid: bb5affc66a279a54ea6f16949e06d8d7, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: -9000790922714473816, guid: bb5affc66a279a54ea6f16949e06d8d7, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -9000790922714473816, guid: bb5affc66a279a54ea6f16949e06d8d7, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -9000790922714473816, guid: bb5affc66a279a54ea6f16949e06d8d7, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -5837925568424754845, guid: bb5affc66a279a54ea6f16949e06d8d7, type: 3}
+      propertyPath: m_Name
+      value: FenceBoth
+      objectReference: {fileID: 0}
+    - target: {fileID: -5837925568424754845, guid: bb5affc66a279a54ea6f16949e06d8d7, type: 3}
+      propertyPath: m_Layer
+      value: 17
+      objectReference: {fileID: 0}
+    - target: {fileID: -5837925568424754845, guid: bb5affc66a279a54ea6f16949e06d8d7, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: -5837925568424754845, guid: bb5affc66a279a54ea6f16949e06d8d7, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3328021611068931601}
+  m_SourcePrefab: {fileID: -4161369568681901532, guid: bb5affc66a279a54ea6f16949e06d8d7, type: 3}
+--- !u!1 &563668002603976385 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -5837925568424754845, guid: bb5affc66a279a54ea6f16949e06d8d7, type: 3}
+  m_PrefabInstance: {fileID: 2965911379840173986}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &3328021611068931601
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 563668002603976385}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 4.410701, y: 0.20000042, z: 4.2}
+  m_Center: {x: 2.2053504, y: 0.00000016391282, z: 0}

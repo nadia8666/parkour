@@ -36,7 +36,7 @@ export default class ViewmodelComponent extends AirshipBehaviour {
 					continue;
 				}
 
-				this.Controller.CrossFadeInFixedTime(typeIs(Value.Name, "string") ? Value.Name : Value.Name(), TransitionTime ?? 0.15, Key);
+				this.Controller.CrossFadeInFixedTime(typeIs(Value.Name, "string") ? Value.Name : Value.Name(), TransitionTime ?? 0.1, Key);
 				this.AnimationController.WeightLayers[Key as 0].Target = 1;
 			}
 		}

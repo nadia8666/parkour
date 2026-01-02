@@ -1,0 +1,100 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &2575369872956970968
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -2356882789505315056, guid: 5b8e2d03e472a454f9f7af08b3c7b3e8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -140
+      objectReference: {fileID: 0}
+    - target: {fileID: -2356882789505315056, guid: 5b8e2d03e472a454f9f7af08b3c7b3e8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 46.928417
+      objectReference: {fileID: 0}
+    - target: {fileID: -2356882789505315056, guid: 5b8e2d03e472a454f9f7af08b3c7b3e8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -71.373375
+      objectReference: {fileID: 0}
+    - target: {fileID: -2356882789505315056, guid: 5b8e2d03e472a454f9f7af08b3c7b3e8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -2356882789505315056, guid: 5b8e2d03e472a454f9f7af08b3c7b3e8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -2356882789505315056, guid: 5b8e2d03e472a454f9f7af08b3c7b3e8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -2356882789505315056, guid: 5b8e2d03e472a454f9f7af08b3c7b3e8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -2356882789505315056, guid: 5b8e2d03e472a454f9f7af08b3c7b3e8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -2356882789505315056, guid: 5b8e2d03e472a454f9f7af08b3c7b3e8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -2356882789505315056, guid: 5b8e2d03e472a454f9f7af08b3c7b3e8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3338604628598401837, guid: 5b8e2d03e472a454f9f7af08b3c7b3e8, type: 3}
+      propertyPath: m_Name
+      value: Fence
+      objectReference: {fileID: 0}
+    - target: {fileID: 3338604628598401837, guid: 5b8e2d03e472a454f9f7af08b3c7b3e8, type: 3}
+      propertyPath: m_Layer
+      value: 17
+      objectReference: {fileID: 0}
+    - target: {fileID: 3338604628598401837, guid: 5b8e2d03e472a454f9f7af08b3c7b3e8, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 4712056165971193716, guid: 5b8e2d03e472a454f9f7af08b3c7b3e8, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 5cb1bfa637664d24e8f219b99db01bd1, type: 2}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3338604628598401837, guid: 5b8e2d03e472a454f9f7af08b3c7b3e8, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1215136517126853823}
+  m_SourcePrefab: {fileID: -4161369568681901532, guid: 5b8e2d03e472a454f9f7af08b3c7b3e8, type: 3}
+--- !u!1 &1002216366742371573 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3338604628598401837, guid: 5b8e2d03e472a454f9f7af08b3c7b3e8, type: 3}
+  m_PrefabInstance: {fileID: 2575369872956970968}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &1215136517126853823
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1002216366742371573}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.1, y: 1.0000002, z: 2.0000002}
+  m_Center: {x: 0, y: 0.5, z: 0}

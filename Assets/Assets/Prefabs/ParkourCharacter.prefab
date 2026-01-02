@@ -275,7 +275,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.35, y: 0.4, z: 0.35}
+  m_Size: {x: 0.1, y: 0.65, z: 0.1}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &9083308086761915196
 MonoBehaviour:
@@ -826,7 +826,7 @@ MonoBehaviour:
         - type: string
           serializedValue: '"Curves"'
       nullable: 0
-      serializedValue: 0,1.006912,4.350131,4.350131,0,0.2009018;1.01004,0.001693726,-1.368069,-1.368069,0.1628779,0
+      serializedValue: -0.001368831,3.268293,-2.308702,-2.308702,0,0.3636002;0.1366949,2.315799,-13.01709,-13.01709,0.3333333,0.2348981;0.2670998,1.479454,-0.0261852,-0.0261852,0.2184631,0.08487412;1.00296,0.001693726,-7.425766,-7.425766,0.05458952,0
       serializedObject: {fileID: 0}
       modified: 1
     - name: Floor

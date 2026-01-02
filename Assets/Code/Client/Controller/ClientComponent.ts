@@ -4,6 +4,7 @@ import { Network } from "Code/Shared/Network";
 import CFrame from "@inkyaker/CFrame/Code";
 import type GenericTrigger from "../Components/Collision/GenericTriggerComponent";
 import Config from "../Config";
+import UIController from "../UI/UIController";
 import AnimationController, { type ValidAnimation } from "./Animation/AnimationController";
 import type ViewmodelComponent from "./Animation/ViewmodelComponent";
 import { Camera as CameraController } from "./Camera";
@@ -115,7 +116,10 @@ export default class ClientComponent extends AirshipBehaviour {
 	}
 
 	@Client()
-	public UpdateUI() {}
+	public UpdateUI() {
+		UIController.Get().UpdateMomentumBar(math.clamp01(this.Momentum / 30));
+		this.Gear.UpdateUI();
+	}
 
 	@Client()
 	public Step(FixedDT: number) {
@@ -123,6 +127,8 @@ export default class ClientComponent extends AirshipBehaviour {
 		this.Moveset.Base.StepMoveset(this, FixedDT);
 
 		if (this.MatchCameraStates.includes(this.State)) this.CameraRotationToCharacter();
+
+		if (this.GetCFrame().Position.y <= 0) this.DamageSelf(999);
 
 		switch (this.State) {
 			case "Grounded":
@@ -148,7 +154,7 @@ export default class ClientComponent extends AirshipBehaviour {
 			case "Airborne":
 				this.AirborneTime += FixedDT;
 
-				this.Rigidbody.AddForce(Config.Gravity, ForceMode.Acceleration);
+				this.Rigidbody.AddForce(this.Moveset.Base.GetJumpGravity(), ForceMode.Acceleration);
 				this.Moveset.Base.StepJump(this, FixedDT);
 
 				if (this.Rigidbody.linearVelocity.y < 0) this.LastFallSpeed = math.max(this.LastFallSpeed, -this.Rigidbody.linearVelocity.y);
@@ -169,19 +175,11 @@ export default class ClientComponent extends AirshipBehaviour {
 
 				this.AnimationController.Current = "VM_Wallclimb";
 
-				if (this.Floor.Touching) {
-					this.Land();
-				}
-
 				break;
 			case "Wallrun":
 				this.Moveset.Base.StepWallrun(this, FixedDT);
 
 				this.AnimationController.Current = `VM_Wallrun${this.Moveset.Base.WallrunTarget === this.WallrunL ? "L" : "R"}`;
-
-				if (this.Floor.Touching) {
-					this.Land();
-				}
 
 				break;
 			case "LedgeGrab":
@@ -233,6 +231,7 @@ export default class ClientComponent extends AirshipBehaviour {
 		this.ViewmodelController.gameObject.transform.position = this.transform.position.add(Rotation.mul(Vector3.forward.mul(0.1)));
 	}
 
+	@Client()
 	public Land() {
 		this.State = "Grounded";
 		this.AirborneTime = 0;
@@ -253,12 +252,12 @@ export default class ClientComponent extends AirshipBehaviour {
 					Damage = 0;
 				}
 			} else {
-				this.State = "Slide";
+				this.Moveset.Base.StartSlide(this);
 			}
 		}
 
 		if (Damage > 0) {
-			Network.Effect.DamageSelf.client.FireServer(Damage);
+			this.DamageSelf(Damage);
 		}
 
 		this.Moveset.Base.EndDash();
@@ -266,7 +265,21 @@ export default class ClientComponent extends AirshipBehaviour {
 		this.Momentum = this.Rigidbody.linearVelocity.WithY(0).magnitude;
 	}
 
+	@Client()
+	public DamageSelf(Damage: number) {
+		Network.Effect.DamageSelf.client.FireServer(Damage);
+	}
+
 	public ResetLastFallSpeed() {
 		this.LastFallSpeed = 0;
+	}
+
+	public GetVelocity() {
+		return this.Rigidbody.linearVelocity;
+	}
+
+	public SetVelocity(Velocity: Vector3) {
+		this.Rigidbody.linearVelocity = Velocity;
+		return Velocity;
 	}
 }

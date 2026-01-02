@@ -16,6 +16,7 @@ export default class UIController extends AirshipSingleton {
 	@Header("References")
 	public EquipmentMenu: GameObject;
 	public Inventory: GameObject;
+	public MomentumBar: RectTransform;
 
 	public Connections = new Bin();
 
@@ -56,8 +57,6 @@ export default class UIController extends AirshipSingleton {
 
 	@Client()
 	public UpdateMenuState() {
-		this.Main.SetActive(this.MenuOpen); // TEMP
-
 		if (this.MenuOpen) {
 			Mouse.WarpCursorPosition(new Vector2(Camera.main.pixelWidth, Camera.main.pixelHeight).div(2));
 
@@ -70,5 +69,58 @@ export default class UIController extends AirshipSingleton {
 			this.Connections.Clean();
 			this.CloseCenterMenus();
 		}
+	}
+
+	@Client()
+	public UpdateMomentumBar(Momentum: number) {
+		this.MomentumBar.SetSizeWithCurrentAnchors(Axis.Horizontal, 1340 * Momentum);
+	}
+
+	public WallrunLeftAmmoContainer: RectTransform;
+	public WallrunRightAmmoContainer: RectTransform;
+	public WallClimbAmmoContainer: RectTransform;
+	public AmmoTemplate: RectTransform;
+	private AmmoFillUIs = {
+		WallrunLeft: [] as Image[],
+		WallrunRight: [] as Image[],
+		Wallclimb: [] as Image[],
+	};
+
+	private AddAmmoElements(Count: number, Container: RectTransform, Fills: Image[]) {
+		for (const _ of $range(1, Count)) {
+			const UI = Instantiate(this.AmmoTemplate);
+			UI.SetParent(Container);
+			UI.localRotation = Quaternion.identity;
+			Fills.push(UI.gameObject.GetComponent<Image>()!);
+		}
+	}
+
+	@Client()
+	public UpdateAmmoCount(Ammo: { Wallrun: number; WallClimb: number }) {
+		for (const [_, List] of pairs(this.AmmoFillUIs)) {
+			List.forEach((Target) => {
+				Destroy(Target.gameObject);
+			});
+			List.clear();
+		}
+
+		this.AddAmmoElements(Ammo.WallClimb, this.WallClimbAmmoContainer, this.AmmoFillUIs.Wallclimb);
+		this.AddAmmoElements(Ammo.Wallrun, this.WallrunLeftAmmoContainer, this.AmmoFillUIs.WallrunLeft);
+		this.AddAmmoElements(Ammo.Wallrun, this.WallrunRightAmmoContainer, this.AmmoFillUIs.WallrunRight);
+
+		this.UpdateAmmoFill(Ammo);
+	}
+
+	private UpdateAmmoElements(UIs: Image[], MaxAmmo: number) {
+		for (const [Index, Image] of pairs(UIs)) {
+			Image.color = UIs.size() - Index < MaxAmmo ? new Color(0.5, 0.5, 0.5, MaxAmmo === UIs.size() ? 0 : 0.5) : new Color(1, 1, 1, 1);
+		}
+	}
+
+	@Client()
+	public UpdateAmmoFill(Ammo: { Wallrun: number; WallClimb: number }) {
+		this.UpdateAmmoElements(this.AmmoFillUIs.Wallclimb, Ammo.WallClimb);
+		this.UpdateAmmoElements(this.AmmoFillUIs.WallrunLeft, Ammo.Wallrun);
+		this.UpdateAmmoElements(this.AmmoFillUIs.WallrunRight, Ammo.Wallrun);
 	}
 }

@@ -38,7 +38,7 @@ export const Animations = {
 		0: { Name: "VM_Fall" },
 		Transitions: {
 			From: {
-				All: 0.5,
+				All: 0.35,
 			},
 		},
 	},
