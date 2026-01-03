@@ -1914,6 +1914,26 @@
 			"inherits": []
 		},
 		{
+			"name": "ClientComponent",
+			"id": "Code/Client/Controller/ClientComponent@ClientComponent",
+			"file": "Code/Client/Controller/ClientComponent.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "GearController",
+			"id": "Code/Client/Controller/Gear/GearController@GearController",
+			"file": "Code/Client/Controller/Gear/GearController.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
 			"name": "DraggableSlotComponent",
 			"id": "Code/Client/UI/Drag/DraggableSlotComponent@DraggableSlotComponent",
 			"file": "Code/Client/UI/Drag/DraggableSlotComponent.ts",
@@ -2589,26 +2609,6 @@
 			"name": "GenericTriggerComponent",
 			"id": "Code/Client/Components/Collision/GenericTriggerComponent@GenericTriggerComponent",
 			"file": "Code/Client/Components/Collision/GenericTriggerComponent.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "GearController",
-			"id": "Code/Client/Controller/Gear/GearController@GearController",
-			"file": "Code/Client/Controller/Gear/GearController.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "ClientComponent",
-			"id": "Code/Client/Controller/ClientComponent@ClientComponent",
-			"file": "Code/Client/Controller/ClientComponent.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"

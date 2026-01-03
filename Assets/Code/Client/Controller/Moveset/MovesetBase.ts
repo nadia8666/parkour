@@ -24,11 +24,13 @@ class InputEntry {
 export const Actions = {
 	LedgeGrab: new InputEntry(Key.Space, 4),
 	Jump: new InputEntry(Key.Space, 3),
-	Wallclimb: new InputEntry(Key.Space, 2),
-	Wallrun: new InputEntry(Key.Space, 1),
+	Wallrun: new InputEntry(Key.Space, 2),
+	Wallclimb: new InputEntry(Key.Space, 1),
 
 	Dash: new InputEntry(Key.LeftShift, 2),
 	Slide: new InputEntry(Key.LeftShift, 1),
+
+	Respawn: new InputEntry(Key.R, 1),
 };
 
 const InverseMap = new Map<Key, (keyof typeof Actions)[]>();
@@ -68,6 +70,10 @@ function WrapCastResults(Input: LuaTuple<[hit: boolean, point: Vector3 | undefin
 function Raycast(Origin: Vector3, Direction: Vector3, Distance: number, TargetColor?: Color) {
 	Debug.DrawRay(Origin, Direction.normalized.mul(Distance), TargetColor ?? Color.white, 15);
 	return WrapCastResults(Physics.Raycast(Origin, Direction, Distance, CollisionLayer));
+}
+
+function AbsVector(Vector: Vector3) {
+	return new Vector3(math.abs(Vector.x), math.abs(Vector.y), math.abs(Vector.z));
 }
 
 export enum LedgeGrabType {
@@ -185,6 +191,9 @@ export class MovesetBase {
 			case "Dash":
 				this.StartDash(Controller);
 				break;
+			case "Respawn":
+				Controller.DamageSelf(999);
+				break;
 		}
 	}
 
@@ -230,11 +239,15 @@ export class MovesetBase {
 			AccelAlignment = HorizontalVel.magnitude > 0 ? math.max(0, GlobalMoveVector.Dot(HorizontalVel.normalized)) : 1;
 		}
 
-		// extra z friction
+		// extra friction for smoother control
 		const LocalForce = Controller.transform.InverseTransformDirection(Controller.Rigidbody.linearVelocity);
-		Controller.Rigidbody.linearVelocity = Controller.transform.TransformDirection(
-			LocalForce.add(LocalForce.mul(new Vector3(-(Grounded ? 0.1 : 0.035) * FixedDT * Config.ReferenceFPS, 0, 0))),
+		const FrictionVector = LocalForce.mul(
+			Vector3.one
+				.WithY(0)
+				.sub(AbsVector(LocalMoveVector))
+				.mul(-(Grounded ? 0.1 : 0.035) * FixedDT * Config.ReferenceFPS),
 		);
+		Controller.Rigidbody.linearVelocity = Controller.transform.TransformDirection(LocalForce.add(FrictionVector));
 
 		const DeltaMomentum = (AccelerationForce / 40) * FixedDT * Config.ReferenceFPS * AccelAlignment;
 		Controller.Momentum = math.max(Controller.Momentum + DeltaMomentum, 0);
@@ -450,14 +463,14 @@ export class MovesetBase {
 		let Target: GenericTrigger | undefined;
 
 		const Root = Controller.GetCFrame();
-		const [LeftHit, _1, LeftNormal] = Physics.Raycast(Root.Position, Root.Rotation.mul(Vector3.left), 10, CollisionLayer);
-		const [RightHit, _2, RightNormal] = Physics.Raycast(Root.Position, Root.Rotation.mul(Vector3.right), 10, CollisionLayer);
-		const LDot = LeftHit ? LeftNormal.mul(-1).Dot(Root.Rotation.mul(Vector3.left)) : -1;
-		const RDot = RightHit ? RightNormal.mul(-1).Dot(Root.Rotation.mul(Vector3.right)) : -1;
+		const [LeftHit, _1, LeftNormal] = Physics.Raycast(Root.Position, Root.Rotation.mul(Vector3.left), 2.5, CollisionLayer);
+		const [RightHit, _2, RightNormal] = Physics.Raycast(Root.Position, Root.Rotation.mul(Vector3.right), 2.5, CollisionLayer);
+		const LDot = LeftHit ? LeftNormal.mul(-1).Dot(Root.Rotation.mul(Vector3.left)) : 0;
+		const RDot = RightHit ? RightNormal.mul(-1).Dot(Root.Rotation.mul(Vector3.right)) : 0;
 
-		if (LDot < 0.75 && RDot < 0.75) return;
+		print(LDot, RDot);
+		if ((LDot && LDot < 0.75) || (RDot && RDot < 0.75)) return;
 
-		print(Controller.GetVelocity().WithY(0).magnitude, Controller.Momentum, Controller.Momentum / 6);
 		const WallrunForce = math.max(Controller.GetVelocity().WithY(0).magnitude, Controller.Momentum / 6); // * Config.WallrunSpeedBoost;
 
 		if (TouchingL && TouchingR) {
