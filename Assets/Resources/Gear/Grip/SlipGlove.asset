@@ -94,8 +94,8 @@ MonoBehaviour:
 
           -10 WC Minimum Speed
 
-          -135
-          Max WR Activation Speed
+          -Uncapped
+          WR Activation Speed
 
           -18% Wallrun Gravity'
         objectRefs:

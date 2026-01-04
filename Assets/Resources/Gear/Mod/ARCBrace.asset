@@ -90,7 +90,7 @@ MonoBehaviour:
         type: string
         objectType: 
         serializedItems:
-        - +12 Forward Ledge Grab Speed
+        - +12 Vault Velocity
         objectRefs:
         - {fileID: 0}
       refPath: 

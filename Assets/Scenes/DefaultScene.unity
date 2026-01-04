@@ -3132,6 +3132,7 @@ GameObject:
   - component: {fileID: 667655506}
   - component: {fileID: 667655507}
   - component: {fileID: 667655508}
+  - component: {fileID: 667655509}
   m_Layer: 0
   m_Name: Controllers
   m_TagString: Untagged
@@ -3278,24 +3279,6 @@ MonoBehaviour:
       serializedValue: 
       serializedObject: {fileID: 1273300666}
       modified: 1
-    - name: WallClimbAmmoContainer
-      type: object
-      objectType: RectTransform
-      items:
-        type: 
-        objectType: 
-        serializedItems: []
-        objectRefs: []
-      refPath: 
-      fileRef: 
-      jsDocs:
-        text: []
-        tags: []
-      decorators: []
-      nullable: 0
-      serializedValue: 
-      serializedObject: {fileID: 1253916847}
-      modified: 1
     - name: AmmoTemplate
       type: object
       objectType: RectTransform
@@ -3349,6 +3332,24 @@ MonoBehaviour:
       nullable: 0
       serializedValue: 
       serializedObject: {fileID: 1049787528}
+      modified: 1
+    - name: WallclimbAmmoContainer
+      type: object
+      objectType: RectTransform
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators: []
+      nullable: 0
+      serializedValue: 
+      serializedObject: {fileID: 1253916847}
       modified: 1
     displayIcon: {fileID: 0}
     displayName: 
@@ -3434,6 +3435,29 @@ MonoBehaviour:
   forceContext: 0
   metadata:
     name: GearController
+    singleton: 0
+    decorators: []
+    properties: []
+    displayIcon: {fileID: 0}
+    displayName: 
+--- !u!114 &667655509
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 667655501}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa4feffba88dce746a2607f0ec6233b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  guid: a2be560b-f604-4109-aa3c-982f7e542b9b
+  script: {fileID: 1112141075043902303, guid: 0684596b44b1a0b4aba4b4f6e3b4cc51, type: 3}
+  scriptPath: Assets/Code/Client/Framework/SettingsController.lua
+  forceContext: 0
+  metadata:
+    name: SettingsController
     singleton: 0
     decorators: []
     properties: []

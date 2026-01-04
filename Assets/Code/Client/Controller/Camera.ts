@@ -2,6 +2,7 @@ import { Airship } from "@Easy/Core/Shared/Airship";
 import { Mouse } from "@Easy/Core/Shared/UserInput";
 import CFrame from "@inkyaker/CFrame/Code";
 import UIController from "../UI/UIController";
+import { Settings } from "../Framework/SettingsController";
 
 const MouseSensitivity = new Vector2(1, 0.77).mul(math.rad(0.5));
 const PitchMax = 85;
@@ -18,7 +19,7 @@ export class Camera {
 		if (!UIController.Get().MenuOpen) {
 			let CamDelta = Mouse.GetDelta();
 
-			const Delta = CamDelta.mul(MouseSensitivity).mul(Airship.Input.GetMouseSensitivity() * 50);
+			const Delta = CamDelta.mul(MouseSensitivity).mul(Settings.CameraSensitivityMouse).mul(Airship.Input.GetMouseSensitivity() * 50);
 
 			const PitchMod = -Delta.y;
 			const YawMod = Delta.x;

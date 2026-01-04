@@ -78,7 +78,7 @@ export default class UIController extends AirshipSingleton {
 
 	public WallrunLeftAmmoContainer: RectTransform;
 	public WallrunRightAmmoContainer: RectTransform;
-	public WallClimbAmmoContainer: RectTransform;
+	public WallclimbAmmoContainer: RectTransform;
 	public AmmoTemplate: RectTransform;
 	private AmmoFillUIs = {
 		WallrunLeft: [] as Image[],
@@ -96,7 +96,7 @@ export default class UIController extends AirshipSingleton {
 	}
 
 	@Client()
-	public UpdateAmmoCount(Ammo: { Wallrun: number; WallClimb: number }) {
+	public UpdateAmmoCount(Ammo: { Wallrun: number; Wallclimb: number }) {
 		for (const [_, List] of pairs(this.AmmoFillUIs)) {
 			List.forEach((Target) => {
 				Destroy(Target.gameObject);
@@ -104,7 +104,7 @@ export default class UIController extends AirshipSingleton {
 			List.clear();
 		}
 
-		this.AddAmmoElements(Ammo.WallClimb, this.WallClimbAmmoContainer, this.AmmoFillUIs.Wallclimb);
+		this.AddAmmoElements(Ammo.Wallclimb, this.WallclimbAmmoContainer, this.AmmoFillUIs.Wallclimb);
 		this.AddAmmoElements(Ammo.Wallrun, this.WallrunLeftAmmoContainer, this.AmmoFillUIs.WallrunLeft);
 		this.AddAmmoElements(Ammo.Wallrun, this.WallrunRightAmmoContainer, this.AmmoFillUIs.WallrunRight);
 
@@ -118,8 +118,8 @@ export default class UIController extends AirshipSingleton {
 	}
 
 	@Client()
-	public UpdateAmmoFill(Ammo: { Wallrun: number; WallClimb: number }) {
-		this.UpdateAmmoElements(this.AmmoFillUIs.Wallclimb, Ammo.WallClimb);
+	public UpdateAmmoFill(Ammo: { Wallrun: number; Wallclimb: number }) {
+		this.UpdateAmmoElements(this.AmmoFillUIs.Wallclimb, Ammo.Wallclimb);
 		this.UpdateAmmoElements(this.AmmoFillUIs.WallrunLeft, Ammo.Wallrun);
 		this.UpdateAmmoElements(this.AmmoFillUIs.WallrunRight, Ammo.Wallrun);
 	}

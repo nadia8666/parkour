@@ -5,6 +5,7 @@ import { Tween } from "@Easy/Core/Shared/Tween/Tween";
 import { Keyboard } from "@Easy/Core/Shared/UserInput";
 import { Bin } from "@Easy/Core/Shared/Util/Bin";
 import Config from "Code/Client/Config";
+import { Settings } from "Code/Client/Framework/SettingsController";
 import CFrame from "@inkyaker/CFrame/Code";
 import type GenericTrigger from "../../Components/Collision/GenericTriggerComponent";
 import AnimationController from "../Animation/AnimationController";
@@ -72,8 +73,20 @@ function Raycast(Origin: Vector3, Direction: Vector3, Distance: number, TargetCo
 	return WrapCastResults(Physics.Raycast(Origin, Direction, Distance, CollisionLayer));
 }
 
-function AbsVector(Vector: Vector3) {
-	return new Vector3(math.abs(Vector.x), math.abs(Vector.y), math.abs(Vector.z));
+function SignVector(Vector: Vector3) {
+	return new Vector3(Vector.x !== 0 ? (Vector.x > 0 ? 1 : -1) : 0, Vector.y !== 0 ? (Vector.y > 0 ? 1 : -1) : 0, Vector.z !== 0 ? (Vector.z > 0 ? 1 : -1) : 0);
+}
+
+function WrapFriction(Current: number, Input: number) {
+	if (Input === 0) {
+		return 1;
+	} else {
+		if (math.sign(Current) === math.sign(Input)) {
+			return 0;
+		} else {
+			return 1;
+		}
+	}
 }
 
 export enum LedgeGrabType {
@@ -102,7 +115,12 @@ export class MovesetBase {
 		}
 	}
 
-	public KeyReleased(Name: keyof typeof Actions) {
+	/**
+	 * queues a button to be removed from the list. if you pass in controller it will immediately drop the key
+	 * @param Name
+	 * @param Controller
+	 */
+	public KeyReleased(Name: keyof typeof Actions, Controller?: ClientComponent) {
 		const Entry = Actions[Name];
 		const ExistingKeys = this.KeyMap.get(Entry.Key);
 
@@ -111,16 +129,26 @@ export class MovesetBase {
 
 			if (Index > -1) {
 				ExistingKeys.remove(Index);
+
+				if (Controller) {
+					Entry.Active = false;
+					this.ActionDropped(Name, Controller);
+				}
 			}
 		}
 	}
 
-	public KeyPressed(Name: keyof typeof Actions) {
+	public KeyPressed(Name: keyof typeof Actions, Controller?: ClientComponent) {
 		const Entry = Actions[Name];
 
 		const ExistingKeys = this.KeyMap.get(Entry.Key);
 		if (ExistingKeys) {
 			ExistingKeys.push(Name);
+
+			if (Controller) {
+				Entry.Active = true;
+				this.ActionPressed(Name, Controller);
+			}
 		} else {
 			this.KeyMap.set(Entry.Key, [Name]);
 		}
@@ -219,14 +247,10 @@ export class MovesetBase {
 		const TargetVelocity = Controller.Rigidbody.transform.TransformDirection(LocalMoveVector);
 		const CurrentVelocity = Controller.Rigidbody.linearVelocity.WithY(0).magnitude;
 		const AccelerationForce =
-			Controller.AccelerationCurve.Evaluate(math.clamp(CurrentVelocity, 0, 20) / 20) *
-			20 *
-			(Grounded ? 1 : 0.85) *
-			(Grounded && this.DashActive() ? 1.5 : 1) *
-			(Sliding ? 0.35 : 1);
+			Controller.AccelerationCurve.Evaluate(CurrentVelocity / 20) * 20 * (Grounded ? 1 : 1) * (Grounded && this.DashActive() ? 1.5 : 1) * (Sliding ? 0.35 : 1);
 		const GlobalMoveVector = TargetVelocity.magnitude > 0 ? TargetVelocity.normalized : Vector3.zero;
 
-		const FrictionRate = (Grounded ? 0.45 : 0.25) * FixedDT * Config.ReferenceFPS;
+		const FrictionRate = (Grounded ? 0.25 : 0.1) * FixedDT * Config.ReferenceFPS;
 
 		const MomentumDecay = FrictionRate * this.GetMomentumFriction(Controller.Momentum);
 		Controller.Momentum = math.max(0, Controller.Momentum - MomentumDecay);
@@ -241,13 +265,11 @@ export class MovesetBase {
 		}
 
 		// extra friction for smoother control
+		const FrictionScalar = -(Grounded ? 0.3 : 0.15) * FixedDT * Config.ReferenceFPS;
+		const SignVec = SignVector(LocalMoveVector);
 		const LocalForce = Controller.transform.InverseTransformDirection(Controller.Rigidbody.linearVelocity);
-		const FrictionVector = LocalForce.mul(
-			Vector3.one
-				.WithY(0)
-				.sub(AbsVector(LocalMoveVector))
-				.mul(-(Grounded ? 0.1 : 0.035) * FixedDT * Config.ReferenceFPS),
-		);
+		const TargetFriction = new Vector3(WrapFriction(LocalForce.x, SignVec.x), 0, WrapFriction(LocalForce.z, SignVec.z)).mul(FrictionScalar);
+		const FrictionVector = LocalForce.mul(TargetFriction);
 		Controller.Rigidbody.linearVelocity = Controller.transform.TransformDirection(LocalForce.add(FrictionVector));
 
 		const DeltaMomentum = (AccelerationForce / 40) * FixedDT * Config.ReferenceFPS * AccelAlignment;
@@ -334,9 +356,9 @@ export class MovesetBase {
 			}
 		}
 
-		this.KeyReleased("LedgeGrab");
-		this.KeyReleased("Wallclimb");
-		this.KeyReleased("Wallrun");
+		this.KeyReleased("LedgeGrab", Controller);
+		this.KeyReleased("Wallclimb", Controller);
+		this.KeyReleased("Wallrun", Controller);
 
 		switch (JumpType) {
 			case "Default": {
@@ -362,23 +384,22 @@ export class MovesetBase {
 				break;
 			}
 			case "Wallrun": {
-				const CurrentMagnitude = Controller.Momentum;
+				const CurrentMagnitude = math.min(Controller.Momentum + Config.WallrunJumpForce.x, Config.WallrunMaxSpeed());
 
 				const CameraRot = Quaternion.Euler(0, Controller.Camera.Rotation.Y, 0);
 				const CameraLook = CameraRot.mul(Vector3.forward).add(CameraRot.mul(this.GetMoveVector())).normalized;
 				Controller.ResetLastFallSpeed();
-				Controller.Rigidbody.linearVelocity = CameraLook.WithY(0)
-					.normalized.mul(CurrentMagnitude + Config.WallrunJumpForce.x)
-					.WithY(Config.WallrunJumpForce.y);
+				Controller.Rigidbody.linearVelocity = CameraLook.WithY(0).normalized.mul(CurrentMagnitude).WithY(Config.WallrunJumpForce.y);
 
 				this.AnimationController.Current = this.WallrunTarget === Controller.WallrunL ? "VM_JumpRWallrun" : "VM_JumpLWallrun";
-				Controller.Momentum = Controller.Rigidbody.linearVelocity.magnitude;
 
 				if (Controller.Floor.Touching) Controller.Gear.ResetAmmo(["Jump"]);
 
 				break;
 			}
 		}
+
+		this.SyncMomentum(Controller, 1);
 
 		Controller.State = "Airborne";
 
@@ -408,7 +429,7 @@ export class MovesetBase {
 	public StartWallclimb(Controller: ClientComponent) {
 		if (Controller.Gear.Ammo.Wallclimb <= 0) return;
 
-		if (Controller.Rigidbody.linearVelocity.y < Config.WallClimbThreshold()) return;
+		if (Controller.Rigidbody.linearVelocity.y < Config.WallclimbThreshold()) return;
 
 		const Distance = Controller.Momentum / 6;
 
@@ -416,11 +437,15 @@ export class MovesetBase {
 		const ForwardCast = Raycast(Root.Position, Root.Rotation.mul(Vector3.forward), Distance);
 		if (!ForwardCast.Hit) return;
 
+		if (!Settings.HoldWallclimb) {
+			this.KeyReleased("Wallclimb", Controller);
+		}
+
 		const TargetLook = Quaternion.LookRotation(ForwardCast.Normal.mul(-1), Vector3.up);
 		Controller.Rigidbody.rotation = TargetLook;
 
 		Controller.ResetLastFallSpeed();
-		Controller.Rigidbody.linearVelocity = Controller.Rigidbody.linearVelocity.WithY(math.max(Controller.Rigidbody.linearVelocity.y, Config.WallClimbMinSpeed()));
+		Controller.Rigidbody.linearVelocity = Controller.Rigidbody.linearVelocity.WithY(math.max(Controller.Rigidbody.linearVelocity.y, Config.WallclimbMinSpeed()));
 
 		Controller.Gear.Ammo.Wallclimb--;
 		Controller.State = "Wallclimb";
@@ -429,7 +454,11 @@ export class MovesetBase {
 	}
 
 	public StepWallclimb(Controller: ClientComponent, FixedDT: number) {
-		if ((!Controller.Wallclimb.Touching && this.WallclimbFailTimer >= Config.WallClimbCoyoteTime) || !Actions.Wallclimb.Active || this.WallclimbTimer <= 0) {
+		if (
+			(!Controller.Wallclimb.Touching && this.WallclimbFailTimer >= Config.WallclimbCoyoteTime) ||
+			(Settings.HoldWallclimb && !Actions.Wallclimb.Active) ||
+			this.WallclimbTimer <= 0
+		) {
 			Controller.State = "Airborne";
 			if (Controller.Floor.Touching) Controller.Land();
 
@@ -446,6 +475,8 @@ export class MovesetBase {
 		const HorizontalSpeed = Controller.Rigidbody.transform.InverseTransformDirection(Controller.Rigidbody.linearVelocity);
 
 		Controller.Rigidbody.AddForce(Controller.Rigidbody.transform.TransformDirection(HorizontalSpeed.mul(Vector3.right).mul(-0.1)), ForceMode.VelocityChange);
+
+		if (!Settings.HoldWallclimb && Actions.Wallclimb.Active) this.WallclimbTimer = 0;
 
 		this.StartLedgeGrab(Controller, LedgeGrabType.LedgeGrab);
 	}
@@ -469,10 +500,9 @@ export class MovesetBase {
 		const LDot = LeftHit ? LeftNormal.mul(-1).Dot(Root.Rotation.mul(Vector3.left)) : 0;
 		const RDot = RightHit ? RightNormal.mul(-1).Dot(Root.Rotation.mul(Vector3.right)) : 0;
 
-		print(LDot, RDot);
 		if ((LDot && LDot < 0.75) || (RDot && RDot < 0.75)) return;
 
-		const WallrunForce = math.max(Controller.GetVelocity().WithY(0).magnitude, Controller.Momentum / 6); // * Config.WallrunSpeedBoost;
+		const WallrunForce = math.max(Controller.GetVelocity().WithY(0).magnitude, Controller.Momentum / 6);
 
 		if (TouchingL && TouchingR) {
 			if (LeftHit && RightHit) {
@@ -493,7 +523,6 @@ export class MovesetBase {
 
 		if (!Target) return;
 
-		const LocalSpeed = Controller.transform.InverseTransformDirection(Controller.Rigidbody.linearVelocity);
 		Controller.Rigidbody.linearVelocity = Controller.transform.TransformDirection(new Vector3(0, Controller.GetVelocity().y, math.max(WallrunForce, Config.WallrunMinSpeed)));
 
 		Controller.State = "Wallrun";
@@ -502,11 +531,15 @@ export class MovesetBase {
 		this.WallrunTimer = 2;
 		this.WallrunFailTimer = 0;
 		this.WallrunTarget = Target;
-		this.KeyReleased("Jump");
+		this.KeyReleased("Jump", Controller);
+
+		if (!Settings.HoldWallrun) {
+			this.KeyReleased("Wallrun", Controller);
+		}
 	}
 
 	public StepWallrun(Controller: ClientComponent, FixedDT: number) {
-		if (!this.WallrunTarget.Touching || Controller.Floor.Touching || Controller.Rigidbody.linearVelocity.y <= Config.WallrunFailThreshold()) {
+		if (!this.WallrunTarget.Touching || Controller.Floor.Touching || Controller.Rigidbody.linearVelocity.y <= Config.WallrunThreshold()) {
 			this.WallrunFailTimer += FixedDT;
 		}
 
@@ -526,6 +559,10 @@ export class MovesetBase {
 		Controller.Rigidbody.linearVelocity = Controller.GetCFrame().Rotation.mul(Vector3.forward.mul(Magnitude)).WithY(YSpeed);
 
 		Controller.Rigidbody.AddForce(Config.Gravity.mul(GravityAffector * Config.WallrunGravity()), ForceMode.Acceleration);
+
+		if (Settings.HoldWallrun && !Actions.Wallrun.Active) {
+			this.StartJump(Controller);
+		}
 	}
 	// #endregion
 
@@ -624,8 +661,8 @@ export class MovesetBase {
 		}
 
 		Controller.BodyCollider.center = new Vector3(0, 0.5, 0);
-		Controller.BodyCollider.radius = 0.3;
-		Controller.BodyCollider.height = 1;
+		Controller.BodyCollider.radius = Config.PlayerRadius;
+		Controller.BodyCollider.height = Config.PlayerHeight;
 		Controller.State = "Airborne";
 
 		Controller.Gear.ResetAmmo(["Jump"]);
@@ -637,9 +674,9 @@ export class MovesetBase {
 					// purely vertical speed
 					Controller.Rigidbody.linearVelocity = Controller.GetCFrame()
 						.Rotation.mul(Vector3.forward)
-						.mul(CurrentMagnitude + Config.LedgeGrabForwardSpeed())
+						.mul(CurrentMagnitude)
 						.div(4)
-						.WithY(12);
+						.WithY(CurrentMagnitude + Config.LedgeGrabUpSpeed());
 				} else {
 					// horizontal launch
 					const TargetVelocity = CurrentMagnitude + Config.LedgeGrabForwardSpeed();
