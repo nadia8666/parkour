@@ -1911,16 +1911,6 @@
 			"inherits": []
 		},
 		{
-			"name": "ViewmodelComponent",
-			"id": "Code/Client/Controller/Animation/ViewmodelComponent@ViewmodelComponent",
-			"file": "Code/Client/Controller/Animation/ViewmodelComponent.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
 			"name": "GearController",
 			"id": "Code/Client/Controller/Gear/GearController@GearController",
 			"file": "Code/Client/Controller/Gear/GearController.ts",
@@ -1944,16 +1934,6 @@
 			"name": "DragController",
 			"id": "Code/Client/UI/Drag/DragController@DragController",
 			"file": "Code/Client/UI/Drag/DragController.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "UIController",
-			"id": "Code/Client/UI/UIController@UIController",
-			"file": "Code/Client/UI/UIController.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"
@@ -2266,16 +2246,6 @@
 			"name": "PartyHudMember",
 			"id": "AirshipPackages/@Easy/Core/Shared/UI/PartyHud/PartyHudMember@PartyHudMember",
 			"file": "AirshipPackages/@Easy/Core/Shared/UI/PartyHud/PartyHudMember.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "SettingsController",
-			"id": "Code/Client/Framework/SettingsController@SettingsController",
-			"file": "Code/Client/Framework/SettingsController.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"
@@ -2616,6 +2586,36 @@
 			"name": "GenericTriggerComponent",
 			"id": "Code/Client/Components/Collision/GenericTriggerComponent@GenericTriggerComponent",
 			"file": "Code/Client/Components/Collision/GenericTriggerComponent.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "SettingsController",
+			"id": "Code/Client/Framework/SettingsController@SettingsController",
+			"file": "Code/Client/Framework/SettingsController.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "UIController",
+			"id": "Code/Client/UI/UIController@UIController",
+			"file": "Code/Client/UI/UIController.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "ViewmodelComponent",
+			"id": "Code/Client/Controller/Animation/ViewmodelComponent@ViewmodelComponent",
+			"file": "Code/Client/Controller/Animation/ViewmodelComponent.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"

@@ -30,6 +30,7 @@ export default class ClientComponent extends AirshipBehaviour {
 	@Header("Curves")
 	public AccelerationCurve: AnimationCurve;
 	public RunAnimationCurve: AnimationCurve;
+	public WallclimbProgressionCurve: AnimationCurve;
 
 	@Header("Rendering")
 	public AccessoryBuilder: AccessoryBuilder;
@@ -50,7 +51,7 @@ export default class ClientComponent extends AirshipBehaviour {
 
 	// Animation
 	private AnimationController = AnimationController.Get();
-	private ViewmodelController: ViewmodelComponent;
+	@NonSerialized() public Animator: ViewmodelComponent;
 
 	// Physics
 	@NonSerialized() public AirborneTime = 0;
@@ -60,7 +61,7 @@ export default class ClientComponent extends AirshipBehaviour {
 	// States
 	@NonSerialized() public State: ValidStates = "Airborne";
 	public MatchCameraStates: ValidStates[] = ["Airborne", "Grounded"];
-	public FallIgnoreAnimations: ValidAnimation[] = ["VM_JumpL", "VM_JumpR", "VM_JumpLWallrun", "VM_JumpRWallrun", "VM_LongJump", "VM_Coil"];
+	public FallIgnoreAnimations: ValidAnimation[] = ["VM_JumpL", "VM_JumpR", "VM_JumpLWallrun", "VM_JumpRWallrun", "VM_LongJump", "VM_Coil", "VM_Fall", "VM_LedgeGrab", "VM_Vault"];
 
 	// Main
 	@Client()
@@ -74,10 +75,10 @@ export default class ClientComponent extends AirshipBehaviour {
 			}
 		}
 
-		this.Moveset.Base.BindInputs();
+		this.Animator = this.AnimationController.gameObject.GetAirshipComponent<ViewmodelComponent>() as ViewmodelComponent;
+		this.Animator.AnimationController = this.AnimationController;
 
-		this.ViewmodelController = this.AnimationController.gameObject.GetAirshipComponent<ViewmodelComponent>() as ViewmodelComponent;
-		this.ViewmodelController.AnimationController = this.AnimationController;
+		this.Moveset.Base.BindInputs(this);
 
 		this.AccessoryBuilder.OnMeshCombined.Connect(() => this.ReloadShadows());
 		this.AccessoryBuilder.OnAccessoryAdded.Connect(() => this.ReloadShadows());
@@ -141,7 +142,7 @@ export default class ClientComponent extends AirshipBehaviour {
 				this.Rigidbody.AddForce(Config.Gravity, ForceMode.Acceleration);
 				this.Moveset.Base.AccelerateToInput(this, FixedDT);
 
-				if (this.AnimationController.Current !== "VM_LedgeGrab") {
+				if (this.AnimationController.Current !== "VM_LedgeGrab" && this.AnimationController.Current !== "VM_Vault") {
 					this.AnimationController.Current = (this.Rigidbody.linearVelocity.magnitude > 0.03 && "VM_Run") || "VM_Idle";
 				}
 				this.AnimationController.Speed = this.AnimationController.Current === "VM_Idle" ? 1 : this.RunAnimationCurve.Evaluate(this.Rigidbody.linearVelocity.magnitude);
@@ -165,7 +166,7 @@ export default class ClientComponent extends AirshipBehaviour {
 					this.Land();
 				}
 
-				if (!this.FallIgnoreAnimations.includes(this.AnimationController.Current) && this.AirborneTime >= Config.JumpCoyoteTime && this.AnimationController.Current !== "VM_Fall") {
+				if (!this.FallIgnoreAnimations.includes(this.AnimationController.Current) && this.AirborneTime >= Config.JumpCoyoteTime) {
 					this.AnimationController.Current = "VM_Fall";
 				}
 
@@ -194,7 +195,7 @@ export default class ClientComponent extends AirshipBehaviour {
 	@Client()
 	public LateUpdate(DeltaTime: number) {
 		this.UpdateViewmodel();
-		let Target = CFrame.FromTransform(this.ViewmodelController.HeadTransform);
+		let Target = CFrame.FromTransform(this.Animator.HeadTransform);
 
 		if (this.State === "Slide") {
 			Target = new CFrame(Target.Position, Target.Rotation.mul(Quaternion.Euler(-Target.Rotation.eulerAngles.x, 0, 0)));
@@ -204,7 +205,7 @@ export default class ClientComponent extends AirshipBehaviour {
 
 		if (this.MatchCameraStates.includes(this.State)) this.CameraRotationToCharacter();
 
-		this.ViewmodelController.Animate(DeltaTime);
+		this.Animator.Animate(DeltaTime);
 	}
 
 	@Client()
@@ -227,8 +228,8 @@ export default class ClientComponent extends AirshipBehaviour {
 			}
 		}
 
-		this.ViewmodelController.gameObject.transform.rotation = TargetRotation;
-		this.ViewmodelController.gameObject.transform.position = this.transform.position.add(Rotation.mul(Vector3.forward.mul(0.1)));
+		this.Animator.gameObject.transform.rotation = TargetRotation;
+		this.Animator.gameObject.transform.position = this.transform.position.add(Rotation.mul(Vector3.forward.mul(0.1)));
 	}
 
 	@Client()

@@ -1003,6 +1003,24 @@ MonoBehaviour:
       serializedValue: 
       serializedObject: {fileID: 4535046266817976427}
       modified: 1
+    - name: WallclimbProgressionCurve
+      type: AnimationCurve
+      objectType: 
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators: []
+      nullable: 0
+      serializedValue: 0,1.192093E-06,2.562038,2.562038,0,0.05912652;1,1.000003,-2.426978,-2.426978,0.05082726,0
+      serializedObject: {fileID: 0}
+      modified: 1
     displayIcon: {fileID: 0}
     displayName: 
 --- !u!114 &6647136626085009081

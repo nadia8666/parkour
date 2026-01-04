@@ -34,9 +34,7 @@ if ($CLIENT) task.spawn(() => InitializeCache());
 
 export function WithGear<T>(ValueMap: { None: T } & { [K in GearRegistryKey]?: T }) {
 	let CachedValue: T | undefined;
-	RecacheSignal.Connect(() => {
-		CachedValue = undefined;
-	});
+	RecacheSignal.Connect(() => (CachedValue = undefined));
 
 	return (): T => {
 		if (CachedValue !== undefined) return CachedValue;
@@ -57,7 +55,7 @@ export function WithGear<T>(ValueMap: { None: T } & { [K in GearRegistryKey]?: T
 	};
 }
 
-const inf = 9000
+const inf = 9000;
 
 const Config = {
 	Gravity: new Vector3(0, -35, 0),
@@ -70,13 +68,17 @@ const Config = {
 	WallclimbMinSpeed: WithGear({ None: 2.25, SlipGlove: -10, GripGlove: 7 }), // upwards speed in wallclimb is max(spd, min)
 	WallclimbThreshold: WithGear({ None: -15, SlipGlove: -65, GripGlove: -45 }), // maximum velocity before you cant wallclimb
 	WallclimbCoyoteTime: 0.25, // time before you are dropped off a wallclimb without a wall in front of you
+	WallclimbStepStrength: WithGear({ None: 115, GripGlove: 135 }), // strength for each push of the wallclimb
+	WallclimbLength: WithGear({ None: 1, SlipGlove: 1.25, GripGlove: 1.45 }),
 
 	WallrunCoyoteTime: 0.1, // time before you are dropped off of a wallrun without a wall next to you
 	WallrunMinSpeed: 6, // forward wallrun speed is max(spd, min)
-	WallrunMaxSpeed: WithGear({ None: 18, SlipGlove: inf, GripGlove: 22.5}), //forward wallrun speed on jump is min(spd, max)
+	WallrunMomentumMaxSpeed: 16,
+	WallrunMaxSpeed: WithGear({ None: 18, SlipGlove: inf, GripGlove: 22.5 }), //forward wallrun speed on jump is min(spd, max)
 	WallrunGravity: WithGear({ None: 0.85, SlipGlove: 0.7 }), // multiplier for global gravity while wallrunning
 	WallrunThreshold: WithGear({ None: -35, SlipGlove: -inf, GripGlove: -40 }), // maximum y velocity before you cant wallrun
 	WallrunJumpForce: new Vector2(0, 15),
+	WallrunLength: WithGear({ None: 2, SlipGlove: 3, GripGlove: 2.5 }),
 
 	LedgeGrabForwardSpeed: WithGear({ None: 2, ARCBrace: 12 }), // how much extra velocity should be added for forward ledgegrabs
 	LedgeGrabForwardY: WithGear({ None: 0.35, ARCBrace: 0.85 }), // how much forward velocity should be converted into y velocity on ledgegrab forward

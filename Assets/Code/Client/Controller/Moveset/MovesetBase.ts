@@ -106,13 +106,23 @@ export class MovesetBase {
 	private readonly KeyMap = new Map<Key, Array<keyof typeof Actions>>();
 	public Bin = new Bin();
 
-	public BindInputs() {
+	public BindInputs(Controller: ClientComponent) {
 		this.Bin.Clean();
 
 		for (const [Name] of pairs(Actions)) {
 			this.Bin.Add(Airship.Input.OnDown(Name).Connect(() => this.KeyPressed(Name)));
 			this.Bin.Add(Airship.Input.OnUp(Name).Connect(() => this.KeyReleased(Name)));
 		}
+
+		this.Bin.Add(
+			Controller.Animator.EventTriggered.Connect((Key) => {
+				switch (Key) {
+					case "WallclimbStep":
+						this.WallclimbStep(Controller);
+						break;
+				}
+			}),
+		);
 	}
 
 	/**
@@ -449,7 +459,7 @@ export class MovesetBase {
 
 		Controller.Gear.Ammo.Wallclimb--;
 		Controller.State = "Wallclimb";
-		this.WallclimbTimer = 1;
+		this.WallclimbTimer = Config.WallclimbLength();
 		this.WallclimbFailTimer = 0;
 	}
 
@@ -469,16 +479,22 @@ export class MovesetBase {
 
 		this.WallclimbTimer -= FixedDT;
 		Controller.ResetLastFallSpeed();
-		Controller.Rigidbody.AddForce(Vector3.up.mul(this.WallclimbTimer / 6), ForceMode.VelocityChange);
-		Controller.Rigidbody.AddForce(Controller.GetCFrame().Rotation.mul(Vector3.forward), ForceMode.VelocityChange);
+		Controller.Rigidbody.AddForce(Controller.GetCFrame().Rotation.mul(Vector3.forward), ForceMode.Acceleration);
+		Controller.Rigidbody.AddForce(Config.Gravity, ForceMode.Acceleration);
 
 		const HorizontalSpeed = Controller.Rigidbody.transform.InverseTransformDirection(Controller.Rigidbody.linearVelocity);
+		Controller.Rigidbody.AddForce(Controller.Rigidbody.transform.TransformDirection(HorizontalSpeed.mul(Vector3.right).mul(-3.65)), ForceMode.Acceleration);
 
-		Controller.Rigidbody.AddForce(Controller.Rigidbody.transform.TransformDirection(HorizontalSpeed.mul(Vector3.right).mul(-0.1)), ForceMode.VelocityChange);
-
+		Controller.Animator.AnimationController.Speed = Controller.WallclimbProgressionCurve.Evaluate(this.WallclimbTimer / Config.WallclimbLength());
 		if (!Settings.HoldWallclimb && Actions.Wallclimb.Active) this.WallclimbTimer = 0;
 
 		this.StartLedgeGrab(Controller, LedgeGrabType.LedgeGrab);
+	}
+
+	public WallclimbStep(Controller: ClientComponent) {
+		if (Controller.State !== "Wallclimb") return;
+
+		Controller.Rigidbody.AddForce(Vector3.up.mul((this.WallclimbTimer / Config.WallclimbLength()) * Config.WallclimbStepStrength()), ForceMode.Impulse);
 	}
 	// #endregion
 
@@ -502,7 +518,7 @@ export class MovesetBase {
 
 		if ((LDot && LDot < 0.75) || (RDot && RDot < 0.75)) return;
 
-		const WallrunForce = math.max(Controller.GetVelocity().WithY(0).magnitude, Controller.Momentum / 6);
+		const WallrunForce = math.max(Controller.GetVelocity().WithY(0).magnitude, math.min(Controller.Momentum * 0.85, Config.WallrunMomentumMaxSpeed));
 
 		if (TouchingL && TouchingR) {
 			if (LeftHit && RightHit) {
@@ -528,7 +544,7 @@ export class MovesetBase {
 		Controller.State = "Wallrun";
 		Controller.Gear.Ammo.Wallrun--;
 
-		this.WallrunTimer = 2;
+		this.WallrunTimer = Config.WallrunLength();
 		this.WallrunFailTimer = 0;
 		this.WallrunTarget = Target;
 		this.KeyReleased("Jump", Controller);
@@ -552,13 +568,13 @@ export class MovesetBase {
 
 		this.WallrunTimer -= FixedDT;
 
-		const YSpeed = Controller.Rigidbody.linearVelocity.y;
-		const Magnitude = Controller.Momentum + YSpeed / 4;
-		const GravityAffector = 1 - this.WallrunTimer / 2;
+		const CurrentVelocity = Controller.GetVelocity();
+		Controller.SetVelocity(Controller.GetCFrame().mul(Vector3.forward).mul(CurrentVelocity.WithY(0).magnitude).add(Vector3.up.mul(CurrentVelocity.y)));
 
-		Controller.Rigidbody.linearVelocity = Controller.GetCFrame().Rotation.mul(Vector3.forward.mul(Magnitude)).WithY(YSpeed);
-
+		const GravityAffector = 1 - this.WallrunTimer / Config.WallrunLength();
 		Controller.Rigidbody.AddForce(Config.Gravity.mul(GravityAffector * Config.WallrunGravity()), ForceMode.Acceleration);
+
+		Controller.Animator.AnimationController.Speed = Controller.GetVelocity().magnitude / 10;
 
 		if (Settings.HoldWallrun && !Actions.Wallrun.Active) {
 			this.StartJump(Controller);

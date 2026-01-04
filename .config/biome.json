@@ -3,6 +3,9 @@
 		"rules": {
 			"style": {
 				"useConst": "off"
+			},
+			"suspicious": {
+				"noAssignInExpressions": "off"
 			}
 		}
 	},

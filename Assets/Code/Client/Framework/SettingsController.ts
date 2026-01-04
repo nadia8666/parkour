@@ -1,28 +1,29 @@
-import { Airship } from "@Easy/Core/Shared/Airship"
+import { Airship } from "@Easy/Core/Shared/Airship";
 
 export const Settings = {
-    HoldWallclimb: true,
-    HoldWallrun: false,
+	HoldWallclimb: true,
+	HoldWallrun: false,
 
-    CameraSensitivityMouse: 0,
-}
+	CameraSensitivityMouse: 0,
+};
 
 export default class SettingsController extends AirshipSingleton {
-    @Client()
-    override Start() {
-        Airship.Settings.AddToggle("Hold to Wallclimb", Settings.HoldWallclimb)
-        Airship.Settings.ObserveToggle("Hold to Wallclimb", (Value) => {
-            Settings.HoldWallclimb = Value
-        })
+	@Client()
+	override Start() {
+		this.AddBool("HoldWallclimb", "Hold to Wallclimb");
 
-        Airship.Settings.AddToggle("Hold to Wallrun", Settings.HoldWallrun)
-        Airship.Settings.ObserveToggle("Hold to Wallrun", (Value) => {
-            Settings.HoldWallrun = Value
-        })
+		this.AddBool("HoldWallrun", "Hold to Wallrun");
 
-        Airship.Settings.AddSlider("Mouse Camera Sens.", 1, 0, 3, .01)
-        Airship.Settings.ObserveSlider("Mouse Camera Sens.", (Sens) => {
-            Settings.CameraSensitivityMouse = Sens
-        })
-    }
+		this.AddSlider("CameraSensitivityMouse", "Mouse Camera Sens.", [0, 3], 0.01);
+	}
+
+	public AddBool(Key: ExtractKeys<typeof Settings, boolean>, DisplayName: string) {
+		Airship.Settings.AddToggle(DisplayName, Settings[Key]);
+		Airship.Settings.ObserveToggle(DisplayName, (Value) => (Settings[Key] = Value));
+	}
+
+	public AddSlider(Key: ExtractKeys<typeof Settings, number>, DisplayName: string, MinMax: [number, number], Increment: number) {
+		Airship.Settings.AddSlider(DisplayName, Settings[Key], MinMax[0], MinMax[1], Increment);
+		Airship.Settings.ObserveSlider(DisplayName, (Value) => (Settings[Key] = Value));
+	}
 }

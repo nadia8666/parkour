@@ -1,3 +1,4 @@
+import { Signal } from "@Easy/Core/Shared/Util/Signal";
 import AnimationController, { type InferredAnimation, type SetAnimation } from "./AnimationController";
 
 export default class ViewmodelComponent extends AirshipBehaviour {
@@ -5,6 +6,8 @@ export default class ViewmodelComponent extends AirshipBehaviour {
 	public Controller: Animator;
 	public EventListener: AnimationEventListener;
 	public HeadTransform: Transform;
+
+	public EventTriggered = new Signal<string>()
 
 	@Client()
 	override Start() {
@@ -15,6 +18,8 @@ export default class ViewmodelComponent extends AirshipBehaviour {
 				if (Animation.EndAnimation) {
 					this.AnimationController.Current = Animation.EndAnimation;
 				}
+			} else {
+				this.EventTriggered.Fire(Key)
 			}
 		});
 	}

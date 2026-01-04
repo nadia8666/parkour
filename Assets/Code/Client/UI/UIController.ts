@@ -9,6 +9,7 @@ import type DraggableSlotComponent from "./Drag/DraggableSlotComponent";
 
 export default class UIController extends AirshipSingleton {
 	@NonSerialized() public MenuOpen = false;
+	@NonSerialized() public ESCMenuOpen = false;
 
 	@Header("Main")
 	public Main: GameObject;
@@ -23,6 +24,7 @@ export default class UIController extends AirshipSingleton {
 	@Client()
 	override Start() {
 		Airship.Menu.SetTabListEnabled(false);
+		Airship.Menu.onMenuToggled.Connect((Open) => (this.ESCMenuOpen = Open));
 
 		Airship.Input.CreateAction("Menu", Binding.Key(Key.Tab));
 
