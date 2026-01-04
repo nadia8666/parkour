@@ -61,7 +61,19 @@ export default class ClientComponent extends AirshipBehaviour {
 	// States
 	@NonSerialized() public State: ValidStates = "Airborne";
 	public MatchCameraStates: ValidStates[] = ["Airborne", "Grounded"];
-	public FallIgnoreAnimations: ValidAnimation[] = ["VM_JumpL", "VM_JumpR", "VM_JumpLWallrun", "VM_JumpRWallrun", "VM_LongJump", "VM_Coil", "VM_Fall", "VM_LedgeGrab", "VM_Vault"];
+	public FallIgnoreAnimations: ValidAnimation[] = [
+		"VM_JumpL",
+		"VM_JumpR",
+		"VM_JumpLWallrun",
+		"VM_JumpRWallrun",
+		"VM_LongJump",
+		"VM_Coil",
+		"VM_Fall",
+		"VM_LedgeGrab",
+		"VM_VaultStart",
+		"VM_VaultLaunch",
+		"VM_VaultEnd",
+	];
 
 	// Main
 	@Client()
@@ -142,10 +154,10 @@ export default class ClientComponent extends AirshipBehaviour {
 				this.Rigidbody.AddForce(Config.Gravity, ForceMode.Acceleration);
 				this.Moveset.Base.AccelerateToInput(this, FixedDT);
 
-				if (this.AnimationController.Current !== "VM_LedgeGrab" && this.AnimationController.Current !== "VM_Vault") {
+				if (!["VM_VaultStart", "VM_VaultLaunch", "VM_VaultEnd", "VM_LedgeGrab"].includes(this.AnimationController.Current)) {
 					this.AnimationController.Current = (this.Rigidbody.linearVelocity.magnitude > 0.03 && "VM_Run") || "VM_Idle";
 				}
-				this.AnimationController.Speed = this.AnimationController.Current === "VM_Idle" ? 1 : this.RunAnimationCurve.Evaluate(this.Rigidbody.linearVelocity.magnitude);
+				this.AnimationController.Speed = this.AnimationController.Current === "VM_Run" ? this.RunAnimationCurve.Evaluate(this.Rigidbody.linearVelocity.magnitude) : 1;
 
 				break;
 			case "Slide":
@@ -172,20 +184,17 @@ export default class ClientComponent extends AirshipBehaviour {
 
 				break;
 			case "Wallclimb":
-				this.Moveset.Base.StepWallclimb(this, FixedDT);
-
-				this.AnimationController.Current = "VM_Wallclimb";
+				if (this.Moveset.Base.StepWallclimb(this, FixedDT)) {
+					this.AnimationController.Current = "VM_Wallclimb";
+					print("set wll cimb");
+				}
 
 				break;
 			case "Wallrun":
-				this.Moveset.Base.StepWallrun(this, FixedDT);
-
-				this.AnimationController.Current = `VM_Wallrun${this.Moveset.Base.WallrunTarget === this.WallrunL ? "L" : "R"}`;
+				if (this.Moveset.Base.StepWallrun(this, FixedDT)) this.AnimationController.Current = `VM_Wallrun${this.Moveset.Base.WallrunTarget === this.WallrunL ? "L" : "R"}`;
 
 				break;
 			case "LedgeGrab":
-				this.AnimationController.Current = this.Moveset.Base.LedgeGrabType === LedgeGrabType.LedgeGrab ? "VM_LedgeGrab" : "VM_Vault";
-
 				break;
 		}
 

@@ -72,8 +72,15 @@ export const Animations = {
 		0: { Name: "VM_LedgeGrab" },
 		EndAnimation: "VM_Fall",
 	},
-	VM_Vault: {
-		0: { Name: "VM_Vault" },
+	VM_VaultStart: {
+		0: { Name: "VM_VaultStart" },
+	},
+	VM_VaultLaunch: {
+		0: { Name: "VM_VaultLaunch" },
+		EndAnimation: "VM_Fall",
+	},
+	VM_VaultEnd: {
+		0: { Name: "VM_VaultEnd" },
 		EndAnimation: "VM_Fall",
 	},
 

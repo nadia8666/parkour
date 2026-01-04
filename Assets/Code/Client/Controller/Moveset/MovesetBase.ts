@@ -472,7 +472,7 @@ export class MovesetBase {
 			Controller.State = "Airborne";
 			if (Controller.Floor.Touching) Controller.Land();
 
-			return;
+			return false;
 		}
 
 		if (!Controller.Wallclimb.Touching || Controller.Floor.Touching) this.WallclimbFailTimer += FixedDT;
@@ -488,7 +488,8 @@ export class MovesetBase {
 		Controller.Animator.AnimationController.Speed = Controller.WallclimbProgressionCurve.Evaluate(this.WallclimbTimer / Config.WallclimbLength());
 		if (!Settings.HoldWallclimb && Actions.Wallclimb.Active) this.WallclimbTimer = 0;
 
-		this.StartLedgeGrab(Controller, LedgeGrabType.LedgeGrab);
+		const Result = this.StartLedgeGrab(Controller, LedgeGrabType.LedgeGrab);
+		return !Result;
 	}
 
 	public WallclimbStep(Controller: ClientComponent) {
@@ -563,7 +564,7 @@ export class MovesetBase {
 			Controller.State = "Airborne";
 			if (Controller.Floor.Touching) Controller.Land();
 
-			return;
+			return false;
 		}
 
 		this.WallrunTimer -= FixedDT;
@@ -574,11 +575,15 @@ export class MovesetBase {
 		const GravityAffector = 1 - this.WallrunTimer / Config.WallrunLength();
 		Controller.Rigidbody.AddForce(Config.Gravity.mul(GravityAffector * Config.WallrunGravity()), ForceMode.Acceleration);
 
-		Controller.Animator.AnimationController.Speed = Controller.GetVelocity().magnitude / 10;
+		Controller.Animator.AnimationController.Speed = Controller.GetVelocity().magnitude / 15;
 
 		if (Settings.HoldWallrun && !Actions.Wallrun.Active) {
 			this.StartJump(Controller);
+
+			return false;
 		}
+
+		return true;
 	}
 	// #endregion
 
@@ -590,7 +595,7 @@ export class MovesetBase {
 		const Speed = Controller.Momentum / 12.5;
 
 		const Overlapping = Physics.CheckBox(Position.add(Rotation.mul(new Vector3(0, 1.75, 0.5 + Speed / 2))), new Vector3(0.125, 0.125, Speed), Rotation, CollisionLayer);
-		if (Overlapping) return;
+		if (Overlapping) return false;
 
 		const Grounded = Controller.State === "Grounded";
 
@@ -601,9 +606,9 @@ export class MovesetBase {
 
 		if (!Grounded) {
 			if (Raycast(Root.mul(new CFrame(new Vector3(0, 1.75, -GrabMargin / 2))).Position, new Vector3(0, -1, 0), 1.75, Color.green).Hit) {
-				return;
+				return false;
 			}
-		} else if (!Raycast(Root.mul(new CFrame(new Vector3(0, 0.5, 0))).Position, Root.mul(Vector3.forward), 1, Color.red).Hit) return;
+		} else if (!Raycast(Root.mul(new CFrame(new Vector3(0, 0.5, 0))).Position, Root.mul(Vector3.forward), 1, Color.red).Hit) return false;
 
 		let DownCast: CastResults | undefined;
 		let FloorCast: CastResults | undefined;
@@ -617,7 +622,7 @@ export class MovesetBase {
 			}
 		}
 
-		if (!FloorCast || FloorCast.Hit || !DownCast || !DownCast.Hit) return;
+		if (!FloorCast || FloorCast.Hit || !DownCast || !DownCast.Hit) return false;
 
 		const HeadHeight = Controller.GetCFrame(true).mul(new CFrame(new Vector3(0, 1.25, 0))).Position.y;
 		const ChestHeight = Controller.GetCFrame().Position.y;
@@ -625,7 +630,7 @@ export class MovesetBase {
 
 		const Type = ForceType ?? (Height > HeadHeight ? LedgeGrabType.LedgeGrab : Height > ChestHeight ? LedgeGrabType.VaultHigh : LedgeGrabType.VaultLow);
 
-		if (Grounded && Height >= HeadHeight) return;
+		if (Grounded && Height >= HeadHeight) return false;
 
 		Controller.ResetLastFallSpeed();
 		task.spawn(() => this.StepLedgeGrab(Controller, DownCast.Pos, Type));
@@ -651,6 +656,9 @@ export class MovesetBase {
 		} else {
 			Controller.Rigidbody.linearVelocity = Controller.transform.TransformVector(Vector3.forward.mul(CurrentMagnitude));
 		}
+
+		Controller.Animator.AnimationController.Current = IsKinematic ? "VM_LedgeGrab" : "VM_VaultStart";
+		warn("set to ledgegrab", Controller.Animator.AnimationController.Current);
 
 		let LastPosition = Controller.GetCFrame(true).Position;
 		const PositionTween = Tween.Vector3(
@@ -698,9 +706,13 @@ export class MovesetBase {
 					const TargetVelocity = CurrentMagnitude + Config.LedgeGrabForwardSpeed();
 					Controller.Rigidbody.linearVelocity = Controller.GetCFrame().Rotation.mul(Vector3.forward).WithY(Config.LedgeGrabForwardY()).normalized.mul(TargetVelocity);
 				}
+
+				Controller.Animator.AnimationController.Current = "VM_VaultLaunch";
 			} else {
 				// generic forward vault
 				Controller.Rigidbody.linearVelocity = Controller.GetCFrame().Rotation.mul(Vector3.forward).WithY(0.25).normalized.mul(CurrentMagnitude);
+
+				Controller.Animator.AnimationController.Current = "VM_VaultEnd";
 			}
 
 			this.JumpTimer = 1;
