@@ -44,7 +44,7 @@ MonoBehaviour:
         - type: string
           serializedValue: '"Metadata"'
       nullable: 0
-      serializedValue: Grip Glove
+      serializedValue: Glove
       serializedObject: {fileID: 0}
       modified: 1
     - name: Slot
@@ -80,7 +80,7 @@ MonoBehaviour:
         tags: []
       decorators: []
       nullable: 0
-      serializedValue: 0
+      serializedValue: 1
       serializedObject: {fileID: 0}
       modified: 1
     - name: Perks
@@ -90,9 +90,7 @@ MonoBehaviour:
         type: string
         objectType: 
         serializedItems:
-        - '-45 Max WC Activation Speed
-
-          +7 WC Minimum Speed'
+        - 
         objectRefs:
         - {fileID: 0}
       refPath: 

@@ -3,6 +3,7 @@ import GearObject from "./Object/GearObject";
 export type GearRegistryKey = { [K in keyof GearRegistrySingleton]: GearRegistrySingleton[K] extends GearObject ? K : never }[keyof GearRegistrySingleton] & string;
 export default class GearRegistrySingleton extends AirshipSingleton {
 	@Header("Grip")
+	public BaseGlove: GearObject;
 	public SlipGlove: GearObject;
 	public GripGlove: GearObject;
 

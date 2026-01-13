@@ -80,7 +80,7 @@ MonoBehaviour:
         tags: []
       decorators: []
       nullable: 0
-      serializedValue: 0
+      serializedValue: 2
       serializedObject: {fileID: 0}
       modified: 1
     - name: Perks
@@ -98,7 +98,16 @@ MonoBehaviour:
           WR Activation Speed
 
           -18% Wallrun Gravity'
+        - '-45 Max WC Activation Speed
+
+          -10 WC Minimum Speed
+
+          -Uncapped
+          WR Activation Speed
+
+          -18% Wallrun Gravity'
         objectRefs:
+        - {fileID: 0}
         - {fileID: 0}
       refPath: 
       fileRef: 

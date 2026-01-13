@@ -167,7 +167,7 @@
 		"PartyCard": {
 			"component": true,
 			"type": "AirshipBehaviour",
-			"filePath": "AirshipPackages\\@Easy\\Core\\Prefabs\\MainMenu\\Party\\Components\\PartyCard.lua",
+			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\MainMenu\\Components\\Party\\PartyCard.lua",
 			"extends": [],
 			"singleton": false
 		},
@@ -213,13 +213,6 @@
 			"extends": [],
 			"singleton": false
 		},
-		"PartyChatButton": {
-			"component": true,
-			"type": "AirshipBehaviour",
-			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\MainMenu\\Components\\PartyChatButton.lua",
-			"extends": [],
-			"singleton": false
-		},
 		"MobileChatToggleButton": {
 			"component": true,
 			"type": "AirshipBehaviour",
@@ -241,10 +234,45 @@
 			"extends": [],
 			"singleton": false
 		},
+		"PartyCardMember": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\MainMenu\\Components\\Party\\PartyCardMember.lua",
+			"extends": [],
+			"singleton": false
+		},
 		"PartyMember": {
 			"component": true,
 			"type": "AirshipBehaviour",
 			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\MainMenu\\Components\\PartyMember.lua",
+			"extends": [],
+			"singleton": false
+		},
+		"PartyInviteModalFriend": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\MainMenu\\Components\\Party\\PartyInviteModalFriend.lua",
+			"extends": [],
+			"singleton": false
+		},
+		"PartyInviteModal": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\MainMenu\\Components\\Party\\PartyInviteModal.lua",
+			"extends": [],
+			"singleton": false
+		},
+		"PlayerEntry": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\MainMenu\\Components\\Settings\\General\\PlayerEntry.lua",
+			"extends": [],
+			"singleton": false
+		},
+		"PlayerList": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\MainMenu\\Components\\Settings\\General\\PlayerList.lua",
 			"extends": [],
 			"singleton": false
 		},
@@ -332,20 +360,6 @@
 			"extends": [],
 			"singleton": false
 		},
-		"PlayerEntry": {
-			"component": true,
-			"type": "AirshipBehaviour",
-			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\MainMenu\\Components\\Settings\\General\\PlayerEntry.lua",
-			"extends": [],
-			"singleton": false
-		},
-		"PlayerList": {
-			"component": true,
-			"type": "AirshipBehaviour",
-			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\MainMenu\\Components\\Settings\\General\\PlayerList.lua",
-			"extends": [],
-			"singleton": false
-		},
 		"GearUnlockManager": {
 			"component": true,
 			"type": "AirshipBehaviour",
@@ -409,6 +423,13 @@
 			"extends": [],
 			"singleton": false
 		},
+		"PartyChatButton": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\MainMenu\\Components\\PartyChatButton.lua",
+			"extends": [],
+			"singleton": false
+		},
 		"GameSearchResult": {
 			"component": true,
 			"type": "AirshipBehaviour",
@@ -429,13 +450,6 @@
 			"component": true,
 			"type": "AirshipBehaviour",
 			"filePath": "AirshipPackages\\@Easy\\Core\\Client\\ProtectedControllers\\AvatarMenu\\AvatarMenuProfileComponent.lua",
-			"extends": [],
-			"singleton": false
-		},
-		"SocialFriendRequestsButtonComponent": {
-			"component": true,
-			"type": "AirshipBehaviour",
-			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\MainMenu\\Components\\SocialFriendRequestsButtonComponent.lua",
 			"extends": [],
 			"singleton": false
 		},
@@ -532,10 +546,24 @@
 			"extends": [],
 			"singleton": false
 		},
+		"SocialFriendRequestsButtonComponent": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\MainMenu\\Components\\SocialFriendRequestsButtonComponent.lua",
+			"extends": [],
+			"singleton": false
+		},
 		"ModalCloseButton": {
 			"component": true,
 			"type": "AirshipBehaviour",
 			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\MainMenu\\Components\\Modal\\ModalCloseButton.lua",
+			"extends": [],
+			"singleton": false
+		},
+		"ModalMobileCloseBtn": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\MainMenu\\Components\\Modal\\ModalMobileCloseBtn.lua",
 			"extends": [],
 			"singleton": false
 		},
@@ -553,10 +581,17 @@
 			"extends": [],
 			"singleton": true
 		},
-		"DataController": {
+		"ServerService": {
 			"component": true,
 			"type": "AirshipBehaviour",
-			"filePath": "Code\\Client\\Framework\\DataController.lua",
+			"filePath": "Code\\Server\\ServerService.lua",
+			"extends": [],
+			"singleton": true
+		},
+		"_CoreSingleton": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "Code\\Core\\CoreSingleton.lua",
 			"extends": [],
 			"singleton": true
 		},
@@ -564,6 +599,13 @@
 			"component": true,
 			"type": "AirshipBehaviour",
 			"filePath": "Code\\Client\\Controller\\Animation\\AnimationController.lua",
+			"extends": [],
+			"singleton": true
+		},
+		"ClientController": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "Code\\Client\\ClientController.lua",
 			"extends": [],
 			"singleton": true
 		},
@@ -588,6 +630,13 @@
 			"extends": [],
 			"singleton": true
 		},
+		"DataController": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "Code\\Client\\Framework\\DataController.lua",
+			"extends": [],
+			"singleton": true
+		},
 		"DraggableSlotComponent": {
 			"component": true,
 			"type": "AirshipBehaviour",
@@ -606,13 +655,6 @@
 			"component": true,
 			"type": "AirshipBehaviour",
 			"filePath": "Code\\Client\\UI\\UIController.lua",
-			"extends": [],
-			"singleton": true
-		},
-		"ServerService": {
-			"component": true,
-			"type": "AirshipBehaviour",
-			"filePath": "Code\\Server\\ServerService.lua",
 			"extends": [],
 			"singleton": true
 		},
@@ -744,10 +786,10 @@
 			"extends": [],
 			"singleton": false
 		},
-		"MenuCanvasSaleFactor": {
+		"MenuCanvasScaleFactor": {
 			"component": true,
 			"type": "AirshipBehaviour",
-			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\MainMenu\\Components\\MenuCanvasSaleFactor.lua",
+			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\MainMenu\\Components\\MenuCanvasScaleFactor.lua",
 			"extends": [],
 			"singleton": false
 		},
@@ -832,13 +874,6 @@
 			"component": true,
 			"type": "AirshipBehaviour",
 			"filePath": "Code\\Client\\Framework\\SettingsController.lua",
-			"extends": [],
-			"singleton": true
-		},
-		"FrameworkController": {
-			"component": true,
-			"type": "AirshipBehaviour",
-			"filePath": "Code\\Client\\Framework\\FrameworkController.lua",
 			"extends": [],
 			"singleton": true
 		},
@@ -1397,16 +1432,6 @@
 			"inherits": []
 		},
 		{
-			"name": "PartyChatButton",
-			"id": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/PartyChatButton@PartyChatButton",
-			"file": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/PartyChatButton.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
 			"name": "MobileChatToggleButton",
 			"id": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/MobileChatToggleButton@MobileChatToggleButton",
 			"file": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/MobileChatToggleButton.ts",
@@ -1437,9 +1462,59 @@
 			"inherits": []
 		},
 		{
+			"name": "PartyCardMember",
+			"id": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Party/PartyCardMember@PartyCardMember",
+			"file": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Party/PartyCardMember.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
 			"name": "PartyMember",
 			"id": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/PartyMember@PartyMember",
 			"file": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/PartyMember.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "PartyInviteModalFriend",
+			"id": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Party/PartyInviteModalFriend@PartyInviteModalFriend",
+			"file": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Party/PartyInviteModalFriend.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "PartyInviteModal",
+			"id": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Party/PartyInviteModal@PartyInviteModal",
+			"file": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Party/PartyInviteModal.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "PlayerEntry",
+			"id": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Settings/General/PlayerEntry@PlayerEntry",
+			"file": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Settings/General/PlayerEntry.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "PlayerList",
+			"id": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Settings/General/PlayerList@PlayerList",
+			"file": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Settings/General/PlayerList.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"
@@ -1567,36 +1642,6 @@
 			"inherits": []
 		},
 		{
-			"name": "PartyCard",
-			"id": "AirshipPackages/@Easy/Core/Prefabs/MainMenu/Party/Components/PartyCard@PartyCard",
-			"file": "AirshipPackages/@Easy/Core/Prefabs/MainMenu/Party/Components/PartyCard.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "PlayerEntry",
-			"id": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Settings/General/PlayerEntry@PlayerEntry",
-			"file": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Settings/General/PlayerEntry.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "PlayerList",
-			"id": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Settings/General/PlayerList@PlayerList",
-			"file": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Settings/General/PlayerList.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
 			"name": "GearUnlockManager",
 			"id": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/GearUnlock/GearUnlockManager@GearUnlockManager",
 			"file": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/GearUnlock/GearUnlockManager.ts",
@@ -1687,6 +1732,16 @@
 			"inherits": []
 		},
 		{
+			"name": "PartyChatButton",
+			"id": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/PartyChatButton@PartyChatButton",
+			"file": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/PartyChatButton.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
 			"name": "GameSearchResult",
 			"id": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Search/GameSearchResult@GameSearchResult",
 			"file": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Search/GameSearchResult.ts",
@@ -1712,16 +1767,6 @@
 			"name": "AvatarMenuProfileComponent",
 			"id": "AirshipPackages/@Easy/Core/Client/ProtectedControllers/AvatarMenu/AvatarMenuProfileComponent@AvatarMenuProfileComponent",
 			"file": "AirshipPackages/@Easy/Core/Client/ProtectedControllers/AvatarMenu/AvatarMenuProfileComponent.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "SocialFriendRequestsButtonComponent",
-			"id": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/SocialFriendRequestsButtonComponent@SocialFriendRequestsButtonComponent",
-			"file": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/SocialFriendRequestsButtonComponent.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"
@@ -1861,9 +1906,29 @@
 			"inherits": []
 		},
 		{
+			"name": "SocialFriendRequestsButtonComponent",
+			"id": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/SocialFriendRequestsButtonComponent@SocialFriendRequestsButtonComponent",
+			"file": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/SocialFriendRequestsButtonComponent.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
 			"name": "ModalCloseButton",
 			"id": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Modal/ModalCloseButton@ModalCloseButton",
 			"file": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Modal/ModalCloseButton.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "ModalMobileCloseBtn",
+			"id": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Modal/ModalMobileCloseBtn@ModalMobileCloseBtn",
+			"file": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Modal/ModalMobileCloseBtn.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"
@@ -1891,9 +1956,19 @@
 			"inherits": []
 		},
 		{
-			"name": "DataController",
-			"id": "Code/Client/Framework/DataController@DataController",
-			"file": "Code/Client/Framework/DataController.ts",
+			"name": "ServerService",
+			"id": "Code/Server/ServerService@ServerService",
+			"file": "Code/Server/ServerService.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "_CoreSingleton",
+			"id": "Code/Core/CoreSingleton@_CoreSingleton",
+			"file": "Code/Core/CoreSingleton.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"
@@ -1904,6 +1979,16 @@
 			"name": "AnimationController",
 			"id": "Code/Client/Controller/Animation/AnimationController@AnimationController",
 			"file": "Code/Client/Controller/Animation/AnimationController.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "ClientController",
+			"id": "Code/Client/ClientController@ClientController",
+			"file": "Code/Client/ClientController.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"
@@ -1941,6 +2026,16 @@
 			"inherits": []
 		},
 		{
+			"name": "DataController",
+			"id": "Code/Client/Framework/DataController@DataController",
+			"file": "Code/Client/Framework/DataController.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
 			"name": "DraggableSlotComponent",
 			"id": "Code/Client/UI/Drag/DraggableSlotComponent@DraggableSlotComponent",
 			"file": "Code/Client/UI/Drag/DraggableSlotComponent.ts",
@@ -1964,16 +2059,6 @@
 			"name": "UIController",
 			"id": "Code/Client/UI/UIController@UIController",
 			"file": "Code/Client/UI/UIController.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "ServerService",
-			"id": "Code/Server/ServerService@ServerService",
-			"file": "Code/Server/ServerService.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"
@@ -2163,9 +2248,9 @@
 			"inherits": []
 		},
 		{
-			"name": "MenuCanvasSaleFactor",
-			"id": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/MenuCanvasSaleFactor@MenuCanvasSaleFactor",
-			"file": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/MenuCanvasSaleFactor.ts",
+			"name": "MenuCanvasScaleFactor",
+			"id": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/MenuCanvasScaleFactor@MenuCanvasScaleFactor",
+			"file": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/MenuCanvasScaleFactor.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"
@@ -2286,16 +2371,6 @@
 			"name": "SettingsController",
 			"id": "Code/Client/Framework/SettingsController@SettingsController",
 			"file": "Code/Client/Framework/SettingsController.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "FrameworkController",
-			"id": "Code/Client/Framework/FrameworkController@FrameworkController",
-			"file": "Code/Client/Framework/FrameworkController.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"
@@ -2637,21 +2712,22 @@
 		"version": 1,
 		"identifiers": {
 			"typescript:Code/Server/Data/DataService@DataService": "Server/Data/DataService@DataService",
-			"typescript:Code/Client/Framework/DataController@DataController": "Client/Framework/DataController@DataController",
+			"typescript:Code/Server/ServerService@ServerService": "Server/ServerService@ServerService",
+			"typescript:Code/Core/CoreSingleton@_CoreSingleton": "Core/CoreSingleton@_CoreSingleton",
 			"typescript:Code/Client/Controller/Animation/AnimationController@AnimationController": "Client/Controller/Animation/AnimationController@AnimationController",
+			"typescript:Code/Client/ClientController@ClientController": "Client/ClientController@ClientController",
 			"typescript:Code/Client/Controller/Animation/ViewmodelComponent@ViewmodelComponent": "Client/Controller/Animation/ViewmodelComponent@ViewmodelComponent",
 			"typescript:Code/Client/Controller/ClientComponent@ClientComponent": "Client/Controller/ClientComponent@ClientComponent",
 			"typescript:Code/Client/Controller/Moveset/MovesetBase@InputEntry": "Client/Controller/Moveset/MovesetBase@InputEntry",
 			"typescript:Code/Client/Controller/Moveset/MovesetBase@MovesetBase": "Client/Controller/Moveset/MovesetBase@MovesetBase",
 			"typescript:Code/Client/Controller/Gear/GearController@GearController": "Client/Controller/Gear/GearController@GearController",
+			"typescript:Code/Client/Framework/DataController@DataController": "Client/Framework/DataController@DataController",
 			"typescript:Code/Client/UI/Drag/DraggableSlotComponent@DraggableSlotComponent": "Client/UI/Drag/DraggableSlotComponent@DraggableSlotComponent",
 			"typescript:Code/Client/UI/Drag/DragController@DragController": "Client/UI/Drag/DragController@DragController",
 			"typescript:Code/Client/UI/UIController@UIController": "Client/UI/UIController@UIController",
 			"typescript:Code/Client/Controller/Camera@Camera": "Client/Controller/Camera@Camera",
-			"typescript:Code/Server/ServerService@ServerService": "Server/ServerService@ServerService",
 			"typescript:Code/Server/Modules/Spawner@CharacterSpawner": "Server/Modules/Spawner@CharacterSpawner",
 			"typescript:Code/Client/Framework/SettingsController@SettingsController": "Client/Framework/SettingsController@SettingsController",
-			"typescript:Code/Client/Framework/FrameworkController@FrameworkController": "Client/Framework/FrameworkController@FrameworkController",
 			"typescript:Code/Shared/Object/GearObject@GearObject": "Shared/Object/GearObject@GearObject",
 			"typescript:Code/Shared/GearRegistry@GearRegistrySingleton": "Shared/GearRegistry@GearRegistrySingleton",
 			"typescript:Code/Client/Components/Collision/GenericTriggerComponent@GenericTriggerComponent": "Client/Components/Collision/GenericTriggerComponent@GenericTriggerComponent"

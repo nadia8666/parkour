@@ -1,6 +1,8 @@
 import { Airship } from "@Easy/Core/Shared/Airship";
 
 export const Settings = {
+	CameraRotation: true,
+
 	HoldWallclimb: true,
 	HoldWallrun: false,
 
@@ -10,8 +12,9 @@ export const Settings = {
 export default class SettingsController extends AirshipSingleton {
 	@Client()
 	override Start() {
-		this.AddBool("HoldWallclimb", "Hold to Wallclimb");
+		this.AddBool("CameraRotation", "Camera Rotation")
 
+		this.AddBool("HoldWallclimb", "Hold to Wallclimb");
 		this.AddBool("HoldWallrun", "Hold to Wallrun");
 
 		this.AddSlider("CameraSensitivityMouse", "Mouse Camera Sens.", [0, 3], 0.01);

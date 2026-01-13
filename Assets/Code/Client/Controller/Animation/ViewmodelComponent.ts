@@ -1,13 +1,14 @@
 import { Signal } from "@Easy/Core/Shared/Util/Signal";
-import AnimationController, { type InferredAnimation, type SetAnimation } from "./AnimationController";
+import Core from "Code/Core/Core";
+import type { InferredAnimation, SetAnimation } from "./AnimationController";
 
 export default class ViewmodelComponent extends AirshipBehaviour {
-	public AnimationController = AnimationController.Get();
+	public AnimationController = Core().Client.Animation;
 	public Controller: Animator;
 	public EventListener: AnimationEventListener;
 	public HeadTransform: Transform;
 
-	public EventTriggered = new Signal<string>()
+	public EventTriggered = new Signal<string>();
 
 	@Client()
 	override Start() {
@@ -19,17 +20,11 @@ export default class ViewmodelComponent extends AirshipBehaviour {
 					this.AnimationController.Current = Animation.EndAnimation;
 				}
 			} else {
-				this.EventTriggered.Fire(Key)
+				this.EventTriggered.Fire(Key);
 			}
 		});
 	}
 
-	/**
-	 * Do not run
-	 * @param Animation
-	 * @param Playing
-	 */
-	@Client()
 	private UpdateState(Animation: InferredAnimation, Playing: boolean, TransitionTime?: number) {
 		if (Playing) {
 			for (let i of $range(0, this.Controller.layerCount - 1)) {
@@ -47,7 +42,6 @@ export default class ViewmodelComponent extends AirshipBehaviour {
 		}
 	}
 
-	@Client()
 	private GetCurrentTrack(Animation: InferredAnimation) {
 		let [Track, Layer] = [Animation[0].Name, 0];
 
@@ -77,7 +71,6 @@ export default class ViewmodelComponent extends AirshipBehaviour {
 		return $tuple(Track, Layer);
 	}
 
-	@Client()
 	private UpdateSpeed(Value: InferredAnimation[0]) {
 		let Speed: number;
 
@@ -93,7 +86,6 @@ export default class ViewmodelComponent extends AirshipBehaviour {
 		this.Controller.SetFloat("AnimSpeed", Speed);
 	}
 
-	@Client()
 	private CalculateWeightAndSpeed(Animation: InferredAnimation, Initial: boolean = false) {
 		for (const [Key, Value] of pairs(Animation)) {
 			if (typeOf(Key) !== "number") {
@@ -110,12 +102,6 @@ export default class ViewmodelComponent extends AirshipBehaviour {
 		}
 	}
 
-	/**
-	 * Do not run
-	 * @param Client
-	 * @param Animation
-	 */
-	@Client()
 	private UpdateCurrent(Animation: InferredAnimation, Delta: number) {
 		this.CalculateWeightAndSpeed(Animation);
 
@@ -127,18 +113,9 @@ export default class ViewmodelComponent extends AirshipBehaviour {
 		}
 	}
 
-	@Client()
 	public GetTransitions(Previous: SetAnimation, Animation: SetAnimation) {
 		let [LastFrom, LastTo]: [number?, number?] = [undefined, undefined];
 		let [NextFrom]: [number?, number?] = [undefined, undefined];
-
-		/* 
-            Order of priorities
-            LastFrom -> New
-            LastTo -> New
-            NewFrom -> New
-            NewTo -> New - triggers lastto -> new instead
-        */
 
 		if (Previous.Transitions) {
 			if (Previous.Transitions.From) {
@@ -161,11 +138,6 @@ export default class ViewmodelComponent extends AirshipBehaviour {
 		return TargetTime;
 	}
 
-	/**
-	 * Change current Clients animation and update
-	 * @param Client
-	 */
-	@Client()
 	public Animate(DeltaTime: number) {
 		const Previous = this.AnimationController.AnimList[this.AnimationController.Last] as SetAnimation;
 		const Next = this.AnimationController.AnimList[this.AnimationController.Current] as SetAnimation;
@@ -184,7 +156,6 @@ export default class ViewmodelComponent extends AirshipBehaviour {
 		this.UpdateCurrent(Next, DeltaTime);
 	}
 
-	@Client()
 	public GetRate() {
 		const [_, Layer] = this.GetCurrentTrack(this.AnimationController.AnimList[this.AnimationController.Current]);
 		const Clip = this.Controller.GetCurrentAnimatorStateInfo(Layer);

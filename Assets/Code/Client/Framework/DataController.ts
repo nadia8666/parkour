@@ -1,5 +1,5 @@
 import { Game } from "@Easy/Core/Shared/Game";
-import DataService from "Code/Server/Data/DataService";
+import Core from "Code/Core/Core";
 import { Network } from "Code/Shared/Network";
 import type { DataFormat } from "Code/Shared/Types";
 import { DualLink } from "@inkyaker/DualLink/Code";
@@ -9,7 +9,7 @@ let InitialLink: DualLink<DataFormat>;
 task.spawn(() => {
 	Game.WaitForLocalPlayerLoaded();
 
-	InitialLink = new DualLink(DataService.Get().Key(Game.localPlayer), Network.Data.GetInitialData.client.FireServer());
+	InitialLink = new DualLink(Core().Server.DataService.Key(Game.localPlayer), Network.Data.GetInitialData.client.FireServer());
 });
 export default class DataController extends AirshipSingleton {
 	public GetLink() {
@@ -19,7 +19,7 @@ export default class DataController extends AirshipSingleton {
 	}
 
 	@Client()
-	override LateUpdate() {
+	protected override LateUpdate() {
 		if (InitialLink) InitialLink.PrepareReplicate();
 	}
 }

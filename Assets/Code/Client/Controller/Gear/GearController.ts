@@ -1,9 +1,7 @@
 import { deepCopy as DeepCopy } from "@Easy/Core/Shared/Util/ObjectUtils";
-import DataController from "Code/Client/Framework/DataController";
-import UIController from "Code/Client/UI/UIController";
-import GearRegistrySingleton from "Code/Shared/GearRegistry";
-import type GearObject from "Code/Shared/Object/GearObject";
-import type { GearSlots } from "Code/Shared/Types";
+import Core from "Code/Core/Core";
+import type { GearRegistryKey } from "Code/Shared/GearRegistry";
+import type { AnyItem, GearSlots, InventoryKey, ItemInfo } from "Code/Shared/Types";
 
 const MaxAmmo = {
 	Wallrun: 2,
@@ -12,6 +10,7 @@ const MaxAmmo = {
 };
 
 export default class GearController extends AirshipSingleton {
+	// Ammo
 	public Ammo = DeepCopy(MaxAmmo);
 	public MaxAmmo = DeepCopy(MaxAmmo);
 
@@ -28,24 +27,57 @@ export default class GearController extends AirshipSingleton {
 		return this.Ammo.Wallclimb === this.MaxAmmo.Wallclimb && this.Ammo.Wallrun === this.MaxAmmo.Wallrun && this.Ammo.Jump === this.MaxAmmo.Jump;
 	}
 
+	// UI
 	public RefreshUI() {
-		UIController.Get().UpdateAmmoCount({ Wallrun: this.MaxAmmo.Wallrun, Wallclimb: this.MaxAmmo.Wallclimb });
+		Core().Client.UI.UpdateAmmoCount({ Wallrun: this.MaxAmmo.Wallrun, Wallclimb: this.MaxAmmo.Wallclimb });
 	}
 
 	public UpdateUI() {
-		UIController.Get().UpdateAmmoFill({ Wallrun: this.Ammo.Wallrun, Wallclimb: this.Ammo.Wallclimb });
+		Core().Client.UI.UpdateAmmoFill({ Wallrun: this.Ammo.Wallrun, Wallclimb: this.Ammo.Wallclimb });
 	}
 
-	public TryEquipGear(Slot: GearSlots, Index: number, Contents: GearObject) {
-		const Key = GearRegistrySingleton.Get().KeyFromGear(Contents);
-		if (Key === "None" ? false : Contents.Slot !== Slot) return;
+	// Gear functions
+	public TryEquipGear(Slot: GearSlots, Index: number, Contents?: AnyItem) {
+		if (Contents && Contents.Type !== "Gear") return;
 
-		const Data = DataController.Get().GetLink().Data;
+		const Key = Contents ? (Contents as ItemInfo<"Gear">).Key : "None";
+		const Gear = Core().Gear[Key];
+		if (Key === "None" ? false : Gear.Slot !== Slot) return;
 
+		const Data = Core().Client.Data.GetLink().Data;
 		Data.EquippedGear[Slot][Index - 1] = Key;
 
-		const _CurrentContent = Data.EquippedGear[Slot][Index - 1]; // push to inventory
-
 		return true;
+	}
+
+	public HasLevel(GearName: GearRegistryKey, Level: number) {
+		const Gear = Core().Gear[GearName];
+		const Slot = Core().Client.Data.GetLink().Data.EquippedGear[Gear.Slot];
+
+		for (const [_, ID] of pairs(Slot)) {
+			const Item = this.GetItem(ID) as ItemInfo<"Gear">;
+			if (!Item) continue;
+			if (Item.Key === GearName && Item.Level >= Level) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	// Utillity
+	public GetName(Item: AnyItem) {
+		if (Item.Type === "Gear") {
+			return Core().Gear[(Item as ItemInfo<"Gear">).Key].Name;
+		} else {
+			// TEMP
+			return Item.Key;
+		}
+	}
+
+	public GetItem(ID: InventoryKey) {
+		if (ID === "None") return;
+
+		return Core().Client.Data.GetLink().Data.Inventory[ID];
 	}
 }

@@ -45,9 +45,14 @@ export default class DataService extends AirshipSingleton {
 			Store.SetKey(Key, ExistingData);
 		}
 
+		for (const [Index, Value] of pairs(DataTemplate)) {
+			if (ExistingData[Index] === undefined) {
+				ExistingData[Index] = Value as UnionToIntersection<typeof Value>
+			}
+		}
+
 		this.DataMap[Key] = new DualLink(Key, ExistingData, {
-			// biome-ignore lint/style/noNonNullAssertion: can be undefined
-			AllowUpdateFrom: [this.GetPlayer(Key)!],
+			AllowUpdateFrom: [this.GetPlayer(Key) as Player],
 		});
 	}
 

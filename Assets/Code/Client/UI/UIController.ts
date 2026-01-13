@@ -3,8 +3,7 @@ import { Asset } from "@Easy/Core/Shared/Asset";
 import { Binding } from "@Easy/Core/Shared/Input/Binding";
 import { Mouse } from "@Easy/Core/Shared/UserInput";
 import { Bin } from "@Easy/Core/Shared/Util/Bin";
-import GearRegistrySingleton from "Code/Shared/GearRegistry";
-import GearObject from "Code/Shared/Object/GearObject";
+import Core from "Code/Core/Core";
 import type DraggableSlotComponent from "./Drag/DraggableSlotComponent";
 
 export default class UIController extends AirshipSingleton {
@@ -36,16 +35,28 @@ export default class UIController extends AirshipSingleton {
 
 		this.UpdateMenuState();
 
-		// TEMP
-		for (const [_, Gear] of pairs(GearRegistrySingleton.Get())) {
-			if (Gear instanceof GearObject) {
+		this.RefreshContents();
+		Core()
+			.Client.Data.GetLink()
+			.AnyChanged.Connect(() => this.RefreshContents());
+	}
+
+	private Contents: GameObject[] = [];
+	public RefreshContents() {
+		this.Contents.mapFiltered((Target) => {
+			Destroy(Target);
+		});
+
+		for (const [_Index, Value] of pairs(Core().Client.Data.GetLink().Data.Inventory)) {
+			if (Value.Type === "Gear") {
 				const GearSlot = Instantiate(Asset.LoadAsset("Assets/Resources/UI/ItemSlot.prefab"));
+				this.Contents.push(GearSlot);
 				GearSlot.transform.SetParent(this.Inventory.transform);
 				(GearSlot.transform as RectTransform).localScale = Vector3.one;
 
 				const Slot = GearSlot.GetAirshipComponent<DraggableSlotComponent>();
 				if (!Slot) continue;
-				Slot.SlotContents = Gear;
+				Slot.SlotContents = Value;
 				Slot.UpdateFilled();
 			}
 		}
@@ -122,6 +133,6 @@ export default class UIController extends AirshipSingleton {
 	}
 
 	public InputDisabled() {
-		return this.MenuOpen || this.ESCMenuOpen || Airship.Chat.IsOpen()
+		return this.MenuOpen || this.ESCMenuOpen || Airship.Chat.IsOpen();
 	}
 }

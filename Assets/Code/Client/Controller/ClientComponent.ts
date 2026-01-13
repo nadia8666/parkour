@@ -1,14 +1,13 @@
 import { Game } from "@Easy/Core/Shared/Game";
 import { Bin } from "@Easy/Core/Shared/Util/Bin";
+import Core from "Code/Core/Core";
 import { Network } from "Code/Shared/Network";
 import CFrame from "@inkyaker/CFrame/Code";
 import type GenericTrigger from "../Components/Collision/GenericTriggerComponent";
 import Config from "../Config";
-import UIController from "../UI/UIController";
-import AnimationController, { type ValidAnimation } from "./Animation/AnimationController";
+import type { ValidAnimation } from "./Animation/AnimationController";
 import type ViewmodelComponent from "./Animation/ViewmodelComponent";
 import { Camera as CameraController } from "./Camera";
-import GearController from "./Gear/GearController";
 import { CollisionLayer, MovesetBase } from "./Moveset/MovesetBase";
 
 export type ValidStates = "Airborne" | "Grounded" | "Wallclimb" | "Wallrun" | "LedgeGrab" | "Slide";
@@ -39,7 +38,7 @@ export default class ClientComponent extends AirshipBehaviour {
 	public Bin = new Bin();
 
 	// Control
-	@NonSerialized() public Gear = GearController.Get();
+	@NonSerialized() public Gear = Core().Client.Gear;
 	public Moveset = {
 		Base: new MovesetBase(),
 	};
@@ -50,7 +49,7 @@ export default class ClientComponent extends AirshipBehaviour {
 	});
 
 	// Animation
-	private AnimationController = AnimationController.Get();
+	private AnimationController = Core().Client.Animation;
 	@NonSerialized() public Animator: ViewmodelComponent;
 
 	// Physics
@@ -127,7 +126,7 @@ export default class ClientComponent extends AirshipBehaviour {
 	}
 
 	public UpdateUI() {
-		UIController.Get().UpdateMomentumBar(math.clamp01(this.Momentum / 30));
+		Core().Client.UI.UpdateMomentumBar(math.clamp01(this.Momentum / 30));
 		this.Gear.UpdateUI();
 	}
 
@@ -182,7 +181,6 @@ export default class ClientComponent extends AirshipBehaviour {
 			case "Wallclimb":
 				if (this.Moveset.Base.StepWallclimb(this, FixedDT)) {
 					this.AnimationController.Current = "VM_Wallclimb";
-					print("set wll cimb");
 				}
 
 				break;

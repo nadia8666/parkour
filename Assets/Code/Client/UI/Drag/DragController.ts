@@ -1,6 +1,6 @@
 /** biome-ignore-all lint/style/noNonNullAssertion: abc */
 import { Mouse } from "@Easy/Core/Shared/UserInput/Mouse";
-import UIController from "../UIController";
+import Core from "Code/Core/Core";
 import type DraggableSlotComponent from "./DraggableSlotComponent";
 
 export default class DragController extends AirshipSingleton {
@@ -9,13 +9,12 @@ export default class DragController extends AirshipSingleton {
 
 	public DragTemplate: GameObject;
 
-	@Client()
 	public StartDrag(Slot: DraggableSlotComponent) {
 		if (this.CurrentDrag) return;
 
 		this.CurrentDrag = Slot;
 
-		const MainUI = UIController.Get().Main;
+		const MainUI = Core().Client.UI.Main;
 		const UI = Instantiate(this.DragTemplate);
 		UI.transform.SetParent(MainUI.transform);
 
@@ -28,7 +27,6 @@ export default class DragController extends AirshipSingleton {
 		this.CurrentUI = UI.transform as RectTransform;
 	}
 
-	@Client()
 	public RaycastUI(): GameObject | undefined {
 		const System = EventSystem.current;
 		const EventData = new PointerEventData(System);
@@ -37,7 +35,6 @@ export default class DragController extends AirshipSingleton {
 		return System.RaycastAll(EventData)[0]?.gameObject;
 	}
 
-	@Client()
 	public EndDrag() {
 		const DragOrigin = this.CurrentDrag;
 
@@ -49,7 +46,6 @@ export default class DragController extends AirshipSingleton {
 		DragOrigin?.DraggedOnto(UITarget?.GetAirshipComponent<DraggableSlotComponent>());
 	}
 
-	@Client()
 	override Update() {
 		if (this.CurrentDrag) {
 			if (Mouse.isLeftDown) {

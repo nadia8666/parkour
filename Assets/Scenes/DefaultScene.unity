@@ -129,6 +129,7 @@ GameObject:
   m_Component:
   - component: {fileID: 107226}
   - component: {fileID: 107227}
+  - component: {fileID: 107228}
   m_Layer: 0
   m_Name: Singletons
   m_TagString: Untagged
@@ -228,6 +229,105 @@ MonoBehaviour:
       serializedValue: 
       serializedObject: {fileID: 11400000, guid: 25fb67b7807d03b4bac46ffe578d49c4, type: 2}
       modified: 0
+    - name: BaseGlove
+      type: AirshipScriptableObject
+      objectType: GearObject
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: Code/Shared/Object/GearObject.ts
+      jsDocs:
+        text: []
+        tags: []
+      decorators:
+      - name: Header
+        parameters:
+        - type: string
+          serializedValue: '"Grip"'
+      nullable: 0
+      serializedValue: 
+      serializedObject: {fileID: 0}
+      modified: 0
+    displayIcon: {fileID: 0}
+    displayName: 
+--- !u!114 &107228
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 107225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa4feffba88dce746a2607f0ec6233b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  guid: c91a83af-e4d5-40f3-b493-fcdae128cbee
+  script: {fileID: -9068599510770270720, guid: 379b4283fb9d36b4ab34e8ac4dfcbbb0, type: 3}
+  scriptPath: Assets/Code/Core/CoreSingleton.lua
+  forceContext: 0
+  metadata:
+    name: _CoreSingleton
+    singleton: 0
+    decorators: []
+    properties:
+    - name: Client
+      type: AirshipBehaviour
+      objectType: ClientController
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: Code/Client/ClientController.ts
+      jsDocs:
+        text: []
+        tags: []
+      decorators: []
+      nullable: 0
+      serializedValue: 
+      serializedObject: {fileID: 667655503}
+      modified: 1
+    - name: Gear
+      type: AirshipBehaviour
+      objectType: GearRegistrySingleton
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: Code/Shared/GearRegistry.ts
+      jsDocs:
+        text: []
+        tags: []
+      decorators: []
+      nullable: 0
+      serializedValue: 
+      serializedObject: {fileID: 107227}
+      modified: 1
+    - name: Server
+      type: AirshipBehaviour
+      objectType: ServerService
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: Code/Server/ServerService.ts
+      jsDocs:
+        text: []
+        tags: []
+      decorators: []
+      nullable: 0
+      serializedValue: 
+      serializedObject: {fileID: 1904944121}
+      modified: 1
     displayIcon: {fileID: 0}
     displayName: 
 --- !u!1 &6991713
@@ -3168,14 +3268,122 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   guid: 0fe1730b-18f2-4da0-bfe1-c7c099a5864e
-  script: {fileID: -1178684307952563565, guid: 41718834516756940b4d837cb5c56f47, type: 3}
-  scriptPath: Assets/Code/Client/Framework/FrameworkController.lua
+  script: {fileID: -5896027363215704526, guid: ae4d186e8a84ff04ca59ed47ee0ddc0c, type: 3}
+  scriptPath: Assets/Code/Client/ClientController.lua
   forceContext: 0
   metadata:
-    name: FrameworkController
+    name: ClientController
     singleton: 0
     decorators: []
-    properties: []
+    properties:
+    - name: Data
+      type: AirshipBehaviour
+      objectType: DataController
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: Code/Client/Framework/DataController.ts
+      jsDocs:
+        text: []
+        tags: []
+      decorators: []
+      nullable: 0
+      serializedValue: 
+      serializedObject: {fileID: 667655507}
+      modified: 1
+    - name: Gear
+      type: AirshipBehaviour
+      objectType: GearController
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: Code/Client/Controller/Gear/GearController.ts
+      jsDocs:
+        text: []
+        tags: []
+      decorators: []
+      nullable: 0
+      serializedValue: 
+      serializedObject: {fileID: 667655508}
+      modified: 1
+    - name: UI
+      type: AirshipBehaviour
+      objectType: UIController
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: Code/Client/UI/UIController.ts
+      jsDocs:
+        text: []
+        tags: []
+      decorators: []
+      nullable: 0
+      serializedValue: 
+      serializedObject: {fileID: 667655504}
+      modified: 1
+    - name: Animation
+      type: AirshipBehaviour
+      objectType: AnimationController
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: Code/Client/Controller/Animation/AnimationController.ts
+      jsDocs:
+        text: []
+        tags: []
+      decorators: []
+      nullable: 0
+      serializedValue: 
+      serializedObject: {fileID: 0}
+      modified: 0
+    - name: Drag
+      type: AirshipBehaviour
+      objectType: DragController
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: Code/Client/UI/Drag/DragController.ts
+      jsDocs:
+        text: []
+        tags: []
+      decorators: []
+      nullable: 0
+      serializedValue: 
+      serializedObject: {fileID: 667655506}
+      modified: 1
+    - name: Settings
+      type: AirshipBehaviour
+      objectType: SettingsController
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: Code/Client/Framework/SettingsController.ts
+      jsDocs:
+        text: []
+        tags: []
+      decorators: []
+      nullable: 0
+      serializedValue: 
+      serializedObject: {fileID: 667655509}
+      modified: 1
     displayIcon: {fileID: 0}
     displayName: 
 --- !u!114 &667655504
@@ -7392,7 +7600,25 @@ MonoBehaviour:
     name: ServerService
     singleton: 0
     decorators: []
-    properties: []
+    properties:
+    - name: DataService
+      type: AirshipBehaviour
+      objectType: DataService
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: Code/Server/Data/DataService.ts
+      jsDocs:
+        text: []
+        tags: []
+      decorators: []
+      nullable: 0
+      serializedValue: 
+      serializedObject: {fileID: 1904944122}
+      modified: 1
     displayIcon: {fileID: 0}
     displayName: 
 --- !u!114 &1904944122

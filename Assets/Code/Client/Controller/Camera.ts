@@ -1,8 +1,8 @@
 import { Airship } from "@Easy/Core/Shared/Airship";
 import { Mouse } from "@Easy/Core/Shared/UserInput";
+import Core from "Code/Core/Core";
 import CFrame from "@inkyaker/CFrame/Code";
 import { Settings } from "../Framework/SettingsController";
-import UIController from "../UI/UIController";
 
 const MouseSensitivity = new Vector2(1, 0.77).mul(math.rad(0.5));
 const PitchMax = 85;
@@ -16,7 +16,7 @@ export class Camera {
 	public Update(_DeltaTime: number, Source: CFrame) {
 		const RenderPos = Source.Position;
 
-		if (!UIController.Get().InputDisabled()) {
+		if (!Core().Client.UI.InputDisabled()) {
 			let CamDelta = Mouse.GetDelta();
 
 			const Delta = CamDelta.mul(MouseSensitivity)
@@ -36,7 +36,7 @@ export class Camera {
 
 		this.TargetRotation = Rotation;
 
-		const Euler = Source.Rotation.eulerAngles;
+		const Euler = Settings.CameraRotation ? Source.Rotation.eulerAngles : Vector3.zero;
 		const Current = Rotation.eulerAngles;
 
 		this.Transform.rotation = Quaternion.Euler(Euler.x + Current.x, Current.y, Euler.z + Current.z);

@@ -3,11 +3,13 @@ import type Character from "@Easy/Core/Shared/Character/Character";
 import type { Player } from "@Easy/Core/Shared/Player/Player";
 import { Network } from "Code/Shared/Network";
 import CFrame from "@inkyaker/CFrame/Code";
+import type DataService from "./Data/DataService";
 import CharacterSpawner from "./Modules/Spawner";
 
 export default class ServerService extends AirshipSingleton {
 	public Spawner = new CharacterSpawner();
 	public CharacterMap = new Map<Player, Character>();
+	public DataService: DataService;
 
 	@Server()
 	public SafeSpawnCharacter(Player: Player) {

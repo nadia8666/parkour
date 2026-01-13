@@ -1,11 +1,7 @@
 import { Mouse } from "@Easy/Core/Shared/UserInput";
 import { Bin } from "@Easy/Core/Shared/Util/Bin";
-import GearController from "Code/Client/Controller/Gear/GearController";
-import DataController from "Code/Client/Framework/DataController";
-import GearRegistrySingleton from "Code/Shared/GearRegistry";
-import type GearObject from "Code/Shared/Object/GearObject";
-import type { GearSlots } from "Code/Shared/Types";
-import DragController from "./DragController";
+import Core from "Code/Core/Core";
+import type { AnyItem, GearSlots } from "Code/Shared/Types";
 
 export enum CallbackType {
 	Loadout,
@@ -32,7 +28,7 @@ export default class DraggableSlotComponent extends AirshipBehaviour {
 
 	// InventorySlot
 
-	@NonSerialized() public SlotContents: GearObject | undefined;
+	@NonSerialized() public SlotContents: AnyItem | undefined;
 
 	@Client()
 	override OnEnable() {
@@ -40,7 +36,7 @@ export default class DraggableSlotComponent extends AirshipBehaviour {
 			Mouse.onLeftDown.Connect(() => {
 				if (this.IsDraggable()) return;
 
-				if (DragController.Get().RaycastUI() === this.gameObject) this.DragStart();
+				if (Core().Client.Drag.RaycastUI() === this.gameObject) this.DragStart();
 			}),
 		);
 
@@ -52,26 +48,22 @@ export default class DraggableSlotComponent extends AirshipBehaviour {
 		this.Connections.Clean();
 	}
 
-	@Client()
 	public IsDraggable() {
 		return !this.Draggable || !this.SlotContents;
 	}
 
-	@Client()
 	public DragStart() {
-		DragController.Get().StartDrag(this);
+		Core().Client.Drag.StartDrag(this);
 	}
 
-	@Client()
 	public UpdateFilled() {
 		if (this.SlotContents) {
-			this.Text.text = this.SlotContents.Name;
+			this.Text.text = Core().Client.Gear.GetName(this.SlotContents);
 		} else {
 			this.Text.text = "";
 		}
 	}
 
-	@Client()
 	public DraggedOnto(Target?: DraggableSlotComponent) {
 		const IsLoadout = this.CallbackType === CallbackType.Loadout;
 		if (Target) {
@@ -79,21 +71,21 @@ export default class DraggableSlotComponent extends AirshipBehaviour {
 
 			if (TargetIsLoadout) {
 				// biome-ignore lint/style/noNonNullAssertion: cannot drag unfilled slots
-				if (GearController.Get().TryEquipGear(Target.LS_TargetSlot, Target.LS_SlotID, this.SlotContents!)) Target.LS_FetchSlotContents();
+				if (Core().Client.Gear.TryEquipGear(Target.LS_TargetSlot, Target.LS_SlotID, this.SlotContents!)) Target.LS_FetchSlotContents();
 			}
 		} else {
 			if (IsLoadout) {
 				// unequip
-				if (GearController.Get().TryEquipGear(this.LS_TargetSlot, this.LS_SlotID, GearRegistrySingleton.Get().None)) this.LS_FetchSlotContents();
+				if (Core().Client.Gear.TryEquipGear(this.LS_TargetSlot, this.LS_SlotID)) this.LS_FetchSlotContents();
 			}
 		}
 	}
 
-	@Client()
 	public LS_FetchSlotContents() {
-		const Data = DataController.Get().GetLink().Data;
+		const Data = Core().Client.Data.GetLink().Data;
 
-		this.SlotContents = GearRegistrySingleton.Get().GearFromKey(Data.EquippedGear[this.LS_TargetSlot][this.LS_SlotID - 1]);
+		const ID = Data.EquippedGear[this.LS_TargetSlot][this.LS_SlotID - 1];
+		this.SlotContents = Core().Client.Gear.GetItem(ID);
 		this.UpdateFilled();
 	}
 }

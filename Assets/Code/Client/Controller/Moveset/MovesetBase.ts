@@ -6,10 +6,9 @@ import { Keyboard } from "@Easy/Core/Shared/UserInput";
 import { Bin } from "@Easy/Core/Shared/Util/Bin";
 import Config from "Code/Client/Config";
 import { Settings } from "Code/Client/Framework/SettingsController";
-import UIController from "Code/Client/UI/UIController";
+import Core from "Code/Core/Core";
 import CFrame from "@inkyaker/CFrame/Code";
 import type GenericTrigger from "../../Components/Collision/GenericTriggerComponent";
-import AnimationController from "../Animation/AnimationController";
 import type ClientComponent from "../ClientComponent";
 
 export const CollisionLayer = LayerMask.GetMask("GameLayer0");
@@ -97,7 +96,7 @@ export enum LedgeGrabType {
 }
 
 export class MovesetBase {
-	private AnimationController = AnimationController.Get();
+	private AnimationController = Core().Client.Animation;
 
 	// Dash
 	public DashStart = 0;
@@ -150,7 +149,7 @@ export class MovesetBase {
 	}
 
 	public KeyPressed(Name: keyof typeof Actions, Controller?: ClientComponent) {
-		if (UIController.Get().InputDisabled()) return;
+		if (Core().Client.UI.InputDisabled()) return;
 
 		const Entry = Actions[Name];
 
@@ -202,7 +201,7 @@ export class MovesetBase {
 	}
 
 	public GetMoveVector() {
-		return UIController.Get().InputDisabled()
+		return Core().Client.UI.InputDisabled()
 			? Vector3.zero
 			: new Vector3((Keyboard.IsKeyDown(Key.A) ? -1 : 0) + (Keyboard.IsKeyDown(Key.D) ? 1 : 0), 0, (Keyboard.IsKeyDown(Key.S) ? -1 : 0) + (Keyboard.IsKeyDown(Key.W) ? 1 : 0))
 					.normalized;

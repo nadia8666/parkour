@@ -1,6 +1,7 @@
 import { Signal } from "@Easy/Core/Shared/Util/Signal";
+import Core from "Code/Core/Core";
 import type { GearRegistryKey } from "Code/Shared/GearRegistry";
-import DataController from "./Framework/DataController";
+import type { ItemInfo } from "Code/Shared/Types";
 
 const RecacheSignal = new Signal();
 const CacheMap: GearRegistryKey[] = [];
@@ -9,17 +10,21 @@ function InitializeCache() {
 	if (HasCached) return;
 	HasCached = true;
 
-	const Link = DataController.Get().GetLink();
+	const Link = Core().Client.Data.GetLink();
+	task.wait(2);
 
 	function GenerateCache() {
 		CacheMap.clear();
 		for (const [_, Gear] of pairs(Link.Data.EquippedGear)) {
 			for (const [_, Value] of pairs(Gear)) {
 				if (Value !== "None") {
-					CacheMap.push(Value);
+					const Item = Core().Client.Gear.GetItem(Value) as ItemInfo<"Gear">;
+					CacheMap.push(Item.Key);
 				}
 			}
 		}
+
+		print(CacheMap);
 
 		RecacheSignal.Fire();
 	}
