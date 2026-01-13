@@ -9,7 +9,7 @@ import AnimationController, { type ValidAnimation } from "./Animation/AnimationC
 import type ViewmodelComponent from "./Animation/ViewmodelComponent";
 import { Camera as CameraController } from "./Camera";
 import GearController from "./Gear/GearController";
-import { CollisionLayer, LedgeGrabType, MovesetBase } from "./Moveset/MovesetBase";
+import { CollisionLayer, MovesetBase } from "./Moveset/MovesetBase";
 
 export type ValidStates = "Airborne" | "Grounded" | "Wallclimb" | "Wallrun" | "LedgeGrab" | "Slide";
 
@@ -98,7 +98,6 @@ export default class ClientComponent extends AirshipBehaviour {
 		this.ReloadShadows();
 	}
 
-	@Client()
 	public ReloadShadows() {
 		const MainRenderer = this.AccessoryBuilder.GetCombinedSkinnedMesh();
 		const AccessoryRenderers = this.AccessoryBuilder.GetAllAccessoryRenderers();
@@ -115,7 +114,6 @@ export default class ClientComponent extends AirshipBehaviour {
 		this.Moveset.Base.Bin.Clean();
 	}
 
-	@Client()
 	public CameraRotationToCharacter() {
 		const YRotation = Camera.main.transform.rotation.eulerAngles.y;
 		this.Rigidbody.rotation = Quaternion.FromToRotation(
@@ -128,13 +126,11 @@ export default class ClientComponent extends AirshipBehaviour {
 		return new CFrame(Raw ? this.transform.position : this.Rigidbody.worldCenterOfMass, this.Rigidbody.rotation);
 	}
 
-	@Client()
 	public UpdateUI() {
 		UIController.Get().UpdateMomentumBar(math.clamp01(this.Momentum / 30));
 		this.Gear.UpdateUI();
 	}
 
-	@Client()
 	public Step(FixedDT: number) {
 		this.Moveset.Base.UpdateInputs(this);
 		this.Moveset.Base.StepMoveset(this, FixedDT);
@@ -225,7 +221,6 @@ export default class ClientComponent extends AirshipBehaviour {
 		this.Step(FixedDT);
 	}
 
-	@Client()
 	public UpdateViewmodel() {
 		const Rotation = this.GetCFrame().Rotation;
 
@@ -241,7 +236,6 @@ export default class ClientComponent extends AirshipBehaviour {
 		this.Animator.gameObject.transform.position = this.transform.position.add(Rotation.mul(Vector3.forward.mul(0.1)));
 	}
 
-	@Client()
 	public Land() {
 		this.State = "Grounded";
 		this.AirborneTime = 0;
@@ -275,7 +269,6 @@ export default class ClientComponent extends AirshipBehaviour {
 		this.Momentum = this.Rigidbody.linearVelocity.WithY(0).magnitude;
 	}
 
-	@Client()
 	public DamageSelf(Damage: number) {
 		Network.Effect.DamageSelf.client.FireServer(Damage);
 	}

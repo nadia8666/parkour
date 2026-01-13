@@ -13,10 +13,10 @@ export class Camera {
 
 	constructor(public Rotation: { X: number; Y: number; Z: number }) {}
 
-	public Update(DeltaTime: number, Source: CFrame) {
+	public Update(_DeltaTime: number, Source: CFrame) {
 		const RenderPos = Source.Position;
 
-		if (!UIController.Get().MenuOpen && !UIController.Get().ESCMenuOpen && !Airship.Chat.IsOpen()) {
+		if (!UIController.Get().InputDisabled()) {
 			let CamDelta = Mouse.GetDelta();
 
 			const Delta = CamDelta.mul(MouseSensitivity)

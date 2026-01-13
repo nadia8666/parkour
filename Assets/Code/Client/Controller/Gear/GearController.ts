@@ -15,7 +15,6 @@ export default class GearController extends AirshipSingleton {
 	public Ammo = DeepCopy(MaxAmmo);
 	public MaxAmmo = DeepCopy(MaxAmmo);
 
-	@Client()
 	public ResetAmmo(Skip?: (keyof typeof MaxAmmo)[]) {
 		for (const [Index, Ammo] of pairs(this.MaxAmmo)) {
 			if (Skip?.includes(Index)) continue;
@@ -25,22 +24,18 @@ export default class GearController extends AirshipSingleton {
 		this.RefreshUI();
 	}
 
-	@Client()
 	public IsAmmoReset() {
 		return this.Ammo.Wallclimb === this.MaxAmmo.Wallclimb && this.Ammo.Wallrun === this.MaxAmmo.Wallrun && this.Ammo.Jump === this.MaxAmmo.Jump;
 	}
 
-	@Client()
 	public RefreshUI() {
 		UIController.Get().UpdateAmmoCount({ Wallrun: this.MaxAmmo.Wallrun, Wallclimb: this.MaxAmmo.Wallclimb });
 	}
 
-	@Client()
 	public UpdateUI() {
 		UIController.Get().UpdateAmmoFill({ Wallrun: this.Ammo.Wallrun, Wallclimb: this.Ammo.Wallclimb });
 	}
 
-	@Client()
 	public TryEquipGear(Slot: GearSlots, Index: number, Contents: GearObject) {
 		const Key = GearRegistrySingleton.Get().KeyFromGear(Contents);
 		if (Key === "None" ? false : Contents.Slot !== Slot) return;
@@ -49,7 +44,7 @@ export default class GearController extends AirshipSingleton {
 
 		Data.EquippedGear[Slot][Index - 1] = Key;
 
-		const CurrentContent = Data.EquippedGear[Slot][Index - 1]; // push to inventory
+		const _CurrentContent = Data.EquippedGear[Slot][Index - 1]; // push to inventory
 
 		return true;
 	}

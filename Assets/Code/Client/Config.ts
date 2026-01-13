@@ -42,7 +42,6 @@ export function WithGear<T>(ValueMap: { None: T } & { [K in GearRegistryKey]?: T
 		for (const [_, Gear] of pairs(CacheMap)) {
 			let Mapped: unknown;
 
-			// biome-ignore lint/suspicious/noAssignInExpressions: clean
 			if ((Mapped = ValueMap[Gear])) {
 				CachedValue = Mapped as T;
 				break;

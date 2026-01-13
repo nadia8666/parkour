@@ -6,6 +6,7 @@ import { Keyboard } from "@Easy/Core/Shared/UserInput";
 import { Bin } from "@Easy/Core/Shared/Util/Bin";
 import Config from "Code/Client/Config";
 import { Settings } from "Code/Client/Framework/SettingsController";
+import UIController from "Code/Client/UI/UIController";
 import CFrame from "@inkyaker/CFrame/Code";
 import type GenericTrigger from "../../Components/Collision/GenericTriggerComponent";
 import AnimationController from "../Animation/AnimationController";
@@ -149,6 +150,8 @@ export class MovesetBase {
 	}
 
 	public KeyPressed(Name: keyof typeof Actions, Controller?: ClientComponent) {
+		if (UIController.Get().InputDisabled()) return;
+
 		const Entry = Actions[Name];
 
 		const ExistingKeys = this.KeyMap.get(Entry.Key);
@@ -199,8 +202,10 @@ export class MovesetBase {
 	}
 
 	public GetMoveVector() {
-		return new Vector3((Keyboard.IsKeyDown(Key.A) ? -1 : 0) + (Keyboard.IsKeyDown(Key.D) ? 1 : 0), 0, (Keyboard.IsKeyDown(Key.S) ? -1 : 0) + (Keyboard.IsKeyDown(Key.W) ? 1 : 0))
-			.normalized;
+		return UIController.Get().InputDisabled()
+			? Vector3.zero
+			: new Vector3((Keyboard.IsKeyDown(Key.A) ? -1 : 0) + (Keyboard.IsKeyDown(Key.D) ? 1 : 0), 0, (Keyboard.IsKeyDown(Key.S) ? -1 : 0) + (Keyboard.IsKeyDown(Key.W) ? 1 : 0))
+					.normalized;
 	}
 	// #endregion
 

@@ -51,13 +51,11 @@ export default class UIController extends AirshipSingleton {
 		}
 	}
 
-	@Client()
 	public CloseCenterMenus() {
 		this.EquipmentMenu.SetActive(false);
 		this.Inventory.SetActive(false);
 	}
 
-	@Client()
 	public UpdateMenuState() {
 		if (this.MenuOpen) {
 			Mouse.WarpCursorPosition(new Vector2(Camera.main.pixelWidth, Camera.main.pixelHeight).div(2));
@@ -73,7 +71,6 @@ export default class UIController extends AirshipSingleton {
 		}
 	}
 
-	@Client()
 	public UpdateMomentumBar(Momentum: number) {
 		this.MomentumBar.SetSizeWithCurrentAnchors(Axis.Horizontal, 1340 * Momentum);
 	}
@@ -93,11 +90,10 @@ export default class UIController extends AirshipSingleton {
 			const UI = Instantiate(this.AmmoTemplate);
 			UI.SetParent(Container);
 			UI.localRotation = Quaternion.identity;
-			Fills.push(UI.gameObject.GetComponent<Image>()!);
+			Fills.push(UI.gameObject.GetComponent<Image>() as Image);
 		}
 	}
 
-	@Client()
 	public UpdateAmmoCount(Ammo: { Wallrun: number; Wallclimb: number }) {
 		for (const [_, List] of pairs(this.AmmoFillUIs)) {
 			List.forEach((Target) => {
@@ -119,10 +115,13 @@ export default class UIController extends AirshipSingleton {
 		}
 	}
 
-	@Client()
 	public UpdateAmmoFill(Ammo: { Wallrun: number; Wallclimb: number }) {
 		this.UpdateAmmoElements(this.AmmoFillUIs.Wallclimb, Ammo.Wallclimb);
 		this.UpdateAmmoElements(this.AmmoFillUIs.WallrunLeft, Ammo.Wallrun);
 		this.UpdateAmmoElements(this.AmmoFillUIs.WallrunRight, Ammo.Wallrun);
+	}
+
+	public InputDisabled() {
+		return this.MenuOpen || this.ESCMenuOpen || Airship.Chat.IsOpen()
 	}
 }
