@@ -333,6 +333,7 @@ export default class ClientComponent extends AirshipBehaviour {
 			if (this._LastHealth > this.Health) {
 				this._LastHealthLowered = os.clock();
 			}
+			this._LastHealthChanged = os.clock();
 			this._LastHealth = this.Health;
 		}
 

@@ -2756,9 +2756,9 @@
 			"inherits": []
 		},
 		{
-			"name": "UIController",
-			"id": "Code/Client/UI/UIController@UIController",
-			"file": "Code/Client/UI/UIController.ts",
+			"name": "ClientComponent",
+			"id": "Code/Client/Controller/ClientComponent@ClientComponent",
+			"file": "Code/Client/Controller/ClientComponent.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"
@@ -2766,9 +2766,9 @@
 			"inherits": []
 		},
 		{
-			"name": "ClientComponent",
-			"id": "Code/Client/Controller/ClientComponent@ClientComponent",
-			"file": "Code/Client/Controller/ClientComponent.ts",
+			"name": "UIController",
+			"id": "Code/Client/UI/UIController@UIController",
+			"file": "Code/Client/UI/UIController.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"
