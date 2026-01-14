@@ -281,6 +281,7 @@ export default class ClientComponent extends AirshipBehaviour {
 	}
 
 	public ResetState() {
+		this.Health = 100;
 		this.ResetLastFallSpeed();
 		this.Moveset.Base.EndDash();
 
@@ -304,6 +305,10 @@ export default class ClientComponent extends AirshipBehaviour {
 			}
 		} else {
 			this.Health -= Damage;
+
+			if (Damage > 25) {
+				this.SetVelocity(Vector3.up.mul(this.GetVelocity().y));
+			}
 		}
 	}
 
@@ -313,7 +318,11 @@ export default class ClientComponent extends AirshipBehaviour {
 	@NonSerialized() public _LastHealthChanged = 0;
 	private _HealthUpdated() {
 		if (this.Health <= 0) {
-			Network.Effect.Respawn.client.FireServer();
+			if (Core().Client.Objective.TimeTrials.IsActive()) {
+				Core().Client.Objective.TimeTrials.Restart(this);
+			} else {
+				Network.Effect.Respawn.client.FireServer();
+			}
 		}
 	}
 
@@ -324,7 +333,6 @@ export default class ClientComponent extends AirshipBehaviour {
 			if (this._LastHealth > this.Health) {
 				this._LastHealthLowered = os.clock();
 			}
-			this._LastHealthChanged = os.clock();
 			this._LastHealth = this.Health;
 		}
 

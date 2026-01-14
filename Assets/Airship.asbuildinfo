@@ -1310,26 +1310,6 @@
 			"inherits": []
 		},
 		{
-			"name": "ClientComponent",
-			"id": "Code/Client/Controller/ClientComponent@ClientComponent",
-			"file": "Code/Client/Controller/ClientComponent.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "UIController",
-			"id": "Code/Client/UI/UIController@UIController",
-			"file": "Code/Client/UI/UIController.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
 			"name": "GearController",
 			"id": "Code/Client/Controller/Gear/GearController@GearController",
 			"file": "Code/Client/Controller/Gear/GearController.ts",
@@ -2770,6 +2750,26 @@
 			"id": "Code/Shared/Object/SoundBankObject@SoundBankObject",
 			"file": "Code/Shared/Object/SoundBankObject.ts",
 			"declarationType": "AirshipScriptableObject",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "UIController",
+			"id": "Code/Client/UI/UIController@UIController",
+			"file": "Code/Client/UI/UIController.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "ClientComponent",
+			"id": "Code/Client/Controller/ClientComponent@ClientComponent",
+			"file": "Code/Client/Controller/ClientComponent.ts",
+			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"
 			],

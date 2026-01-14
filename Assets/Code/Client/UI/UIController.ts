@@ -94,7 +94,7 @@ export default class UIController extends AirshipSingleton {
 		this.HealthBar.SetSizeWithCurrentAnchors(Axis.Horizontal, 885 * this.HealthAlpha);
 
 		this.MomentumCanvas.alpha = math.lerpClamped(this.MomentumCanvas.alpha, Controller.Momentum <= 0 ? 0 : 1, DeltaTime * 5);
-		this.HealthCanvas.alpha = math.lerpClamped(this.HealthCanvas.alpha, os.clock() - Controller._LastHealthChanged >= 1.25 ? 0 : 1, DeltaTime * 5);
+		this.HealthCanvas.alpha = math.lerpClamped(this.HealthCanvas.alpha, Controller.Health < 100 || os.clock() - Controller._LastHealthChanged >= 1.25 ? 0 : 1, DeltaTime * 5);
 	}
 
 	public WallrunLeftAmmoContainer: RectTransform;
