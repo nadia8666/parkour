@@ -13,6 +13,6 @@
 		"lineWidth": 180
 	},
 	"files": {
-		"includes": ["**", "!**/Assets/AirshipPackages"]
+		"includes": ["**", "!**/Assets/AirshipPackages/@Easy"]
 	}
 }

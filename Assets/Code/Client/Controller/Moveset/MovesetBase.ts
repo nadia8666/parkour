@@ -1,56 +1,12 @@
-import { Airship } from "@Easy/Core/Shared/Airship";
-import { Binding } from "@Easy/Core/Shared/Input/Binding";
 import { TweenEasingFunction } from "@Easy/Core/Shared/Tween/EasingFunctions";
 import { Tween } from "@Easy/Core/Shared/Tween/Tween";
-import { Keyboard } from "@Easy/Core/Shared/UserInput";
-import { Bin } from "@Easy/Core/Shared/Util/Bin";
 import Config from "Code/Client/Config";
 import { Settings } from "Code/Client/Framework/SettingsController";
 import Core from "Code/Core/Core";
 import CFrame from "@inkyaker/CFrame/Code";
 import type GenericTrigger from "../../Components/Collision/GenericTriggerComponent";
 import type ClientComponent from "../ClientComponent";
-
-export const CollisionLayer = LayerMask.GetMask("GameLayer0");
-
-class InputEntry {
-	public Active = false;
-
-	constructor(
-		public readonly Key: Key,
-		public readonly Priority: number,
-	) {}
-}
-
-export const Actions = {
-	LedgeGrab: new InputEntry(Key.Space, 4),
-	Jump: new InputEntry(Key.Space, 3),
-	Wallrun: new InputEntry(Key.Space, 2),
-	Wallclimb: new InputEntry(Key.Space, 1),
-
-	Dash: new InputEntry(Key.LeftShift, 2),
-	Slide: new InputEntry(Key.LeftShift, 1),
-
-	Respawn: new InputEntry(Key.R, 1),
-};
-
-const InverseMap = new Map<Key, (keyof typeof Actions)[]>();
-
-for (const [Name, Entry] of pairs(Actions)) {
-	const List = InverseMap.get(Entry.Key);
-
-	if (List) {
-		List.push(Name);
-		List.sort((Name1, Name2) => {
-			const [Entry1, Entry2] = [Actions[Name1], Actions[Name2]];
-			return Entry1.Priority > Entry2.Priority;
-		});
-	} else {
-		InverseMap.set(Entry.Key, [Name]);
-	}
-
-	Airship.Input.CreateAction(Name, Binding.Key(Entry.Key));
-}
+import { Actions } from "../Input";
 
 interface CastResults {
 	Hit: boolean;
@@ -70,7 +26,7 @@ function WrapCastResults(Input: LuaTuple<[hit: boolean, point: Vector3 | undefin
 
 function Raycast(Origin: Vector3, Direction: Vector3, Distance: number, TargetColor?: Color) {
 	Debug.DrawRay(Origin, Direction.normalized.mul(Distance), TargetColor ?? Color.white, 15);
-	return WrapCastResults(Physics.Raycast(Origin, Direction, Distance, CollisionLayer));
+	return WrapCastResults(Physics.Raycast(Origin, Direction, Distance, Config.CollisionLayer));
 }
 
 function SignVector(Vector: Vector3) {
@@ -103,110 +59,22 @@ export class MovesetBase {
 	public DashCharge = -1;
 
 	// #region Input
-	private readonly KeyMap = new Map<Key, Array<keyof typeof Actions>>();
-	public Bin = new Bin();
 
-	public BindInputs(Controller: ClientComponent) {
-		this.Bin.Clean();
-
-		for (const [Name] of pairs(Actions)) {
-			this.Bin.Add(Airship.Input.OnDown(Name).Connect(() => this.KeyPressed(Name)));
-			this.Bin.Add(Airship.Input.OnUp(Name).Connect(() => this.KeyReleased(Name)));
-		}
-
-		this.Bin.Add(
-			Controller.Animator.EventTriggered.Connect((Key) => {
-				switch (Key) {
-					case "WallclimbStep":
-						this.WallclimbStep(Controller);
-						break;
-				}
-			}),
-		);
-	}
-
-	/**
-	 * queues a button to be removed from the list. if you pass in controller it will immediately drop the key
-	 * @param Name
-	 * @param Controller
-	 */
-	public KeyReleased(Name: keyof typeof Actions, Controller?: ClientComponent) {
-		const Entry = Actions[Name];
-		const ExistingKeys = this.KeyMap.get(Entry.Key);
-
-		if (ExistingKeys) {
-			const Index = ExistingKeys.indexOf(Name);
-
-			if (Index > -1) {
-				ExistingKeys.remove(Index);
-
-				if (Controller) {
-					Entry.Active = false;
-					this.ActionDropped(Name, Controller);
-				}
-			}
-		}
-	}
-
-	public KeyPressed(Name: keyof typeof Actions, Controller?: ClientComponent) {
-		if (Core().Client.UI.InputDisabled()) return;
-
-		const Entry = Actions[Name];
-
-		const ExistingKeys = this.KeyMap.get(Entry.Key);
-		if (ExistingKeys) {
-			ExistingKeys.push(Name);
-
-			if (Controller) {
-				Entry.Active = true;
-				this.ActionPressed(Name, Controller);
-			}
-		} else {
-			this.KeyMap.set(Entry.Key, [Name]);
-		}
-	}
-
-	public UpdateInputs(Controller: ClientComponent) {
-		for (const [Key, Names] of pairs(InverseMap)) {
-			const ExistingKeys = this.KeyMap.get(Key);
-
-			if (ExistingKeys) {
-				for (const [_, Name] of pairs(Names)) {
-					const Index = ExistingKeys.indexOf(Name);
-					const Entry = Actions[Name];
-
-					if (Index === -1) {
-						if (Entry.Active) {
-							Entry.Active = false;
-							this.ActionDropped(Name, Controller);
-						}
-					} else {
-						if (!Entry.Active) {
-							Entry.Active = true;
-							this.ActionPressed(Name, Controller);
-						}
-					}
-				}
-			} else {
-				for (const [_, Name] of pairs(Names)) {
-					const Entry = Actions[Name];
-
-					if (Entry.Active) {
-						Entry.Active = false;
-						this.ActionDropped(Name, Controller);
-					}
-				}
-			}
-		}
-	}
-
-	public GetMoveVector() {
-		return Core().Client.UI.InputDisabled()
-			? Vector3.zero
-			: new Vector3((Keyboard.IsKeyDown(Key.A) ? -1 : 0) + (Keyboard.IsKeyDown(Key.D) ? 1 : 0), 0, (Keyboard.IsKeyDown(Key.S) ? -1 : 0) + (Keyboard.IsKeyDown(Key.W) ? 1 : 0))
-					.normalized;
-	}
 	// #endregion
+	public OnAnimationEvent(Key: string, Controller: ClientComponent) {
+		switch (Key) {
+			case "WallclimbStep":
+				this.WallclimbStep(Controller);
+				break;
+			case "Footstep": {
+				const IsFast = Controller.GetVelocity().WithY(0).magnitude > 20;
+				Core().Client.Sound.Play(`footstep${IsFast ? "fast" : ""}`);
+				task.delay(0.25, () => Core().Client.Sound.Play("cloth"));
+
+				break;
+			}
+		}
+	}
 
 	public ActionPressed(Name: keyof typeof Actions, Controller: ClientComponent) {
 		switch (Name) {
@@ -235,7 +103,9 @@ export class MovesetBase {
 				this.StartDash(Controller);
 				break;
 			case "Respawn":
-				Controller.DamageSelf(999);
+				if (!Core().Client.Objective.TimeTrials.IsActive()) {
+					Controller.DamageSelf(999);
+				}
 				break;
 		}
 	}
@@ -253,10 +123,11 @@ export class MovesetBase {
 		if (this.DashCharge !== -1) this.StepDash(Controller, FixedDT);
 	}
 
+	//TODO: rewrite this function so it isnt evil and messy
 	public AccelerateToInput(Controller: ClientComponent, FixedDT: number) {
 		const Sliding = Controller.State === "Slide";
 		const Grounded = Controller.State === "Grounded";
-		const LocalMoveVector = Sliding ? new Vector3(this.GetMoveVector().x, 0, 1).normalized : this.GetMoveVector();
+		const LocalMoveVector = Sliding ? new Vector3(Controller.Input.GetMoveVector().x, 0, 1).normalized : Controller.Input.GetMoveVector();
 
 		const TargetVelocity = Controller.Rigidbody.transform.TransformDirection(LocalMoveVector);
 		const CurrentVelocity = Controller.Rigidbody.linearVelocity.WithY(0).magnitude;
@@ -264,7 +135,8 @@ export class MovesetBase {
 			Controller.AccelerationCurve.Evaluate(CurrentVelocity / 20) * 20 * (Grounded ? 1 : 1) * (Grounded && this.DashActive() ? 1.5 : 1) * (Sliding ? 0.35 : 1);
 		const GlobalMoveVector = TargetVelocity.magnitude > 0 ? TargetVelocity.normalized : Vector3.zero;
 
-		const FrictionRate = (Grounded ? 0.25 : 0.1) * FixedDT * Config.ReferenceFPS;
+		const MVFriction = (LocalMoveVector.magnitude > 0 ? 1 : Grounded ? 1 : .1)
+		const FrictionRate = (Grounded ? 0.25 : 0.1) * FixedDT * Config.ReferenceFPS * MVFriction;
 
 		const MomentumDecay = FrictionRate * this.GetMomentumFriction(Controller.Momentum);
 		Controller.Momentum = math.max(0, Controller.Momentum - MomentumDecay);
@@ -279,7 +151,7 @@ export class MovesetBase {
 		}
 
 		// extra friction for smoother control
-		const FrictionScalar = -(Grounded ? 0.3 : 0.15) * FixedDT * Config.ReferenceFPS;
+		const FrictionScalar = -(Grounded ? 0.3 : 0.15) * FixedDT * Config.ReferenceFPS * MVFriction;
 		const SignVec = SignVector(LocalMoveVector);
 		const LocalForce = Controller.transform.InverseTransformDirection(Controller.Rigidbody.linearVelocity);
 		const TargetFriction = new Vector3(WrapFriction(LocalForce.x, SignVec.x), 0, WrapFriction(LocalForce.z, SignVec.z)).mul(FrictionScalar);
@@ -288,6 +160,17 @@ export class MovesetBase {
 
 		const DeltaMomentum = (AccelerationForce / 40) * FixedDT * Config.ReferenceFPS * AccelAlignment;
 		Controller.Momentum = math.max(Controller.Momentum + DeltaMomentum, 0);
+
+		// velocity angling
+		if (TargetVelocity.magnitude > .25) {
+			const Speed = Controller.GetVelocity();
+			Controller.SetVelocity(
+				Speed.WithY(0)
+					.normalized.Slerp(TargetVelocity.WithY(0), math.clamp01(FixedDT * 2.5))
+					.mul(Speed.WithY(0).magnitude)
+					.WithY(Speed.y),
+			);
+		}
 
 		this.SyncMomentum(Controller, FixedDT);
 	}
@@ -356,7 +239,7 @@ export class MovesetBase {
 				Controller.GetCFrame().Position,
 				new Vector3(0, -1, 0),
 				math.clamp(-Controller.Rigidbody.linearVelocity.y / 10, 0.9, 2.25),
-				CollisionLayer,
+				Config.CollisionLayer,
 			);
 			if (!FloorHit && Controller.AirborneTime >= Config.JumpCoyoteTime) {
 				return;
@@ -370,9 +253,9 @@ export class MovesetBase {
 			}
 		}
 
-		this.KeyReleased("LedgeGrab", Controller);
-		this.KeyReleased("Wallclimb", Controller);
-		this.KeyReleased("Wallrun", Controller);
+		Controller.Input.KeyReleased("LedgeGrab", true);
+		Controller.Input.KeyReleased("Wallclimb", true);
+		Controller.Input.KeyReleased("Wallrun", true);
 
 		switch (JumpType) {
 			case "Default": {
@@ -401,7 +284,7 @@ export class MovesetBase {
 				const CurrentMagnitude = math.min(Controller.Momentum + Config.WallrunJumpForce.x, Config.WallrunMaxSpeed());
 
 				const CameraRot = Quaternion.Euler(0, Controller.Camera.Rotation.Y, 0);
-				const CameraLook = CameraRot.mul(Vector3.forward).add(CameraRot.mul(this.GetMoveVector())).normalized;
+				const CameraLook = CameraRot.mul(Vector3.forward).add(CameraRot.mul(Controller.Input.GetMoveVector())).normalized;
 				Controller.ResetLastFallSpeed();
 				Controller.Rigidbody.linearVelocity = CameraLook.WithY(0).normalized.mul(CurrentMagnitude).WithY(Config.WallrunJumpForce.y);
 
@@ -419,6 +302,8 @@ export class MovesetBase {
 
 		this.JumpTimer = 0.75;
 		Controller.Gear.Ammo.Jump -= 1;
+
+		Core().Client.Sound.Play("footstep"); // TEMP
 	}
 
 	public StepJump(Controller: ClientComponent, FixedDT: number) {
@@ -433,7 +318,7 @@ export class MovesetBase {
 	}
 
 	public GetJumpGravity() {
-		return this.JumpTimer > 0 ? Config.Gravity.mul(1 - this.JumpTimer / 1.85) : Config.Gravity;
+		return this.JumpTimer > 0 ? Config.Gravity.mul(1 - this.JumpTimer / 1.65) : Config.Gravity;
 	}
 	// #endregion
 
@@ -452,7 +337,7 @@ export class MovesetBase {
 		if (!ForwardCast.Hit) return;
 
 		if (!Settings.HoldWallclimb) {
-			this.KeyReleased("Wallclimb", Controller);
+			Controller.Input.KeyReleased("Wallclimb", true);
 		}
 
 		const TargetLook = Quaternion.LookRotation(ForwardCast.Normal.mul(-1), Vector3.up);
@@ -483,14 +368,19 @@ export class MovesetBase {
 
 		this.WallclimbTimer -= FixedDT;
 		Controller.ResetLastFallSpeed();
-		Controller.Rigidbody.AddForce(Controller.GetCFrame().Rotation.mul(Vector3.forward), ForceMode.Acceleration);
 		Controller.Rigidbody.AddForce(Config.Gravity, ForceMode.Acceleration);
 
-		const HorizontalSpeed = Controller.Rigidbody.transform.InverseTransformDirection(Controller.Rigidbody.linearVelocity);
-		Controller.Rigidbody.AddForce(Controller.Rigidbody.transform.TransformDirection(HorizontalSpeed.mul(Vector3.right).mul(-3.65)), ForceMode.Acceleration);
+		const LocalSpeed = Controller.transform.InverseTransformDirection(Controller.GetVelocity());
+		Controller.SetVelocity(Controller.transform.TransformDirection(LocalSpeed.WithZ(0).mul(new Vector3(-FixedDT / 40, 1, 1))));
 
 		Controller.Animator.AnimationController.Speed = Controller.WallclimbProgressionCurve.Evaluate(this.WallclimbTimer / Config.WallclimbLength());
 		if (!Settings.HoldWallclimb && Actions.Wallclimb.Active) this.WallclimbTimer = 0;
+
+		const CFrame = Controller.GetCFrame(true);
+		const Cast = Raycast(CFrame.Position, CFrame.mul(Vector3.forward), 3);
+		if (Cast.Hit) {
+			Controller.transform.position = Controller.transform.position.Lerp(Cast.Pos.add(CFrame.mul(Vector3.back.mul(0.5))), math.clamp01(FixedDT * 5));
+		}
 
 		const Result = this.StartLedgeGrab(Controller, LedgeGrabType.LedgeGrab);
 		return !Result;
@@ -500,6 +390,7 @@ export class MovesetBase {
 		if (Controller.State !== "Wallclimb") return;
 
 		Controller.Rigidbody.AddForce(Vector3.up.mul((this.WallclimbTimer / Config.WallclimbLength()) * Config.WallclimbStepStrength()), ForceMode.Impulse);
+		Core().Client.Sound.Play("footstepfast");
 	}
 	// #endregion
 
@@ -516,8 +407,8 @@ export class MovesetBase {
 		let Target: GenericTrigger | undefined;
 
 		const Root = Controller.GetCFrame();
-		const [LeftHit, _1, LeftNormal] = Physics.Raycast(Root.Position, Root.Rotation.mul(Vector3.left), 2.5, CollisionLayer);
-		const [RightHit, _2, RightNormal] = Physics.Raycast(Root.Position, Root.Rotation.mul(Vector3.right), 2.5, CollisionLayer);
+		const [LeftHit, _1, LeftNormal] = Physics.Raycast(Root.Position, Root.Rotation.mul(Vector3.left), 2.5, Config.CollisionLayer);
+		const [RightHit, _2, RightNormal] = Physics.Raycast(Root.Position, Root.Rotation.mul(Vector3.right), 2.5, Config.CollisionLayer);
 		const LDot = LeftHit ? LeftNormal.mul(-1).Dot(Root.Rotation.mul(Vector3.left)) : 0;
 		const RDot = RightHit ? RightNormal.mul(-1).Dot(Root.Rotation.mul(Vector3.right)) : 0;
 
@@ -552,10 +443,10 @@ export class MovesetBase {
 		this.WallrunTimer = Config.WallrunLength();
 		this.WallrunFailTimer = 0;
 		this.WallrunTarget = Target;
-		this.KeyReleased("Jump", Controller);
+		Controller.Input.KeyReleased("Jump", true);
 
 		if (!Settings.HoldWallrun) {
-			this.KeyReleased("Wallrun", Controller);
+			Controller.Input.KeyReleased("Wallrun", true);
 		}
 	}
 
@@ -579,7 +470,7 @@ export class MovesetBase {
 		const GravityAffector = 1 - this.WallrunTimer / Config.WallrunLength();
 		Controller.Rigidbody.AddForce(Config.Gravity.mul(GravityAffector * Config.WallrunGravity()), ForceMode.Acceleration);
 
-		Controller.Animator.AnimationController.Speed = Controller.GetVelocity().magnitude / 15;
+		Controller.Animator.AnimationController.Speed = Controller.GetVelocity().magnitude / 12.5;
 
 		if (Settings.HoldWallrun && !Actions.Wallrun.Active) {
 			this.StartJump(Controller);
@@ -598,7 +489,7 @@ export class MovesetBase {
 		const Position = Controller.LedgeGrabFail.transform.position;
 		const Speed = Controller.Momentum / 12.5;
 
-		const Overlapping = Physics.CheckBox(Position.add(Rotation.mul(new Vector3(0, 1.75, 0.5 + Speed / 2))), new Vector3(0.125, 0.125, Speed), Rotation, CollisionLayer);
+		const Overlapping = Physics.CheckBox(Position.add(Rotation.mul(new Vector3(0, 1.75, 0.5 + Speed / 2))), new Vector3(0.125, 0.125, Speed), Rotation, Config.CollisionLayer);
 		if (Overlapping) return false;
 
 		const Grounded = Controller.State === "Grounded";
@@ -662,7 +553,8 @@ export class MovesetBase {
 		}
 
 		Controller.Animator.AnimationController.Current = IsKinematic ? "VM_LedgeGrab" : "VM_VaultStart";
-		warn("set to ledgegrab", Controller.Animator.AnimationController.Current);
+
+		Core().Client.Sound.Play("grab");
 
 		let LastPosition = Controller.GetCFrame(true).Position;
 		const PositionTween = Tween.Vector3(
@@ -695,7 +587,7 @@ export class MovesetBase {
 
 		Controller.Gear.ResetAmmo(["Jump"]);
 		if (Type === LedgeGrabType.VaultHigh || Type === LedgeGrabType.VaultLow) {
-			const MoveVector = this.GetMoveVector();
+			const MoveVector = Controller.Input.GetMoveVector();
 
 			if (Actions.LedgeGrab.Active) {
 				if (MoveVector.magnitude <= 0) {
@@ -734,6 +626,7 @@ export class MovesetBase {
 	public StartSlide(Controller: ClientComponent) {
 		if (Controller.Rigidbody.linearVelocity.WithY(0).magnitude < Config.SlideThreshold) return;
 		Controller.State = "Slide";
+		Core().Client.Sound.Play("slidestart");
 	}
 
 	public EndSlide(Controller: ClientComponent) {

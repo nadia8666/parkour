@@ -16,7 +16,7 @@ export class Camera {
 	public Update(_DeltaTime: number, Source: CFrame) {
 		const RenderPos = Source.Position;
 
-		if (!Core().Client.UI.InputDisabled()) {
+		if (!Core().Client.UI.InputDisabledFromMenu() && !Core().Client.UI.MenuOpen) {
 			let CamDelta = Mouse.GetDelta();
 
 			const Delta = CamDelta.mul(MouseSensitivity)

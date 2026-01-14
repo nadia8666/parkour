@@ -50,7 +50,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3338604628598401837, guid: 5b8e2d03e472a454f9f7af08b3c7b3e8, type: 3}
       propertyPath: m_Name
-      value: Fence
+      value: ShortFence
       objectReference: {fileID: 0}
     - target: {fileID: 3338604628598401837, guid: 5b8e2d03e472a454f9f7af08b3c7b3e8, type: 3}
       propertyPath: m_Layer

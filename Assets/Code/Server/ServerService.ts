@@ -26,16 +26,9 @@ export default class ServerService extends AirshipSingleton {
 
 			return () => this.CharacterMap.delete(Player);
 		});
-
-		Airship.Damage.onDeath.Connect((Info) => {
-			const Character = Info.gameObject.GetAirshipComponent<Character>();
-			if (Character?.player) this.SafeSpawnCharacter(Character.player);
-		});
-
-		Network.Effect.DamageSelf.server.OnClientEvent((Player, Damage) => {
-			if (Damage !== undefined && typeIs(Damage, "number") && Damage > 0) {
-				Player.character?.InflictDamage(Damage);
-			}
+		
+		Network.Effect.Respawn.server.OnClientEvent((Player) => {
+			this.SafeSpawnCharacter(Player)
 		});
 	}
 }

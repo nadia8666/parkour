@@ -8,6 +8,6 @@ export const Network = {
 	},
 
 	Effect: {
-		DamageSelf: new NetworkSignal<number>("Network/Effect/DamageSelf"),
+		Respawn: new NetworkSignal<void>("Network/Effect/Respawn"),
 	},
 };

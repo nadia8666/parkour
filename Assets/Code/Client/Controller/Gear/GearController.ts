@@ -45,7 +45,7 @@ export default class GearController extends AirshipSingleton {
 		if (Key === "None" ? false : Gear.Slot !== Slot) return;
 
 		const Data = Core().Client.Data.GetLink().Data;
-		Data.EquippedGear[Slot][Index - 1] = Key;
+		Data.EquippedGear[Slot][Index - 1] = Contents?.UID ?? "None";
 
 		return true;
 	}

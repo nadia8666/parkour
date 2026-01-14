@@ -7,6 +7,7 @@ export interface ItemInfo<Type extends ItemTypes> {
 	Key: Type extends "Gear" ? GearRegistryKey : string;
 	Level: Type extends "Gear" ? number : undefined;
 	ObtainedTime: number;
+	UID: string;
 }
 
 export type AnyItem = ItemInfo<ItemTypes>;
@@ -36,36 +37,42 @@ export const DataTemplate: DataFormat = {
 			Key: "BaseGlove",
 			Level: 1,
 			ObtainedTime: 0,
+			UID: "DebugGlove",
 		},
 		DebugGrip1: {
 			Type: "Gear",
 			Key: "GripGlove",
 			Level: 1,
 			ObtainedTime: 0,
+			UID: "DebugGrip1",
 		},
 		DebugGrip2: {
 			Type: "Gear",
 			Key: "GripGlove",
 			Level: 2,
 			ObtainedTime: 0,
+			UID: "DebugGrip2",
 		},
 		DebugSlip1: {
 			Type: "Gear",
 			Key: "SlipGlove",
 			Level: 1,
 			ObtainedTime: 0,
+			UID: "DebugSlip1",
 		},
 		DebugSlip2: {
 			Type: "Gear",
 			Key: "SlipGlove",
 			Level: 2,
 			ObtainedTime: 0,
+			UID: "DebugSlip2",
 		},
 		DebugARCBrace: {
 			Type: "Gear",
 			Key: "ARCBrace",
 			Level: 1,
 			ObtainedTime: 0,
+			UID: "DebugARCBrace",
 		},
 	},
 };

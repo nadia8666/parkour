@@ -8,7 +8,8 @@ import Config from "../Config";
 import type { ValidAnimation } from "./Animation/AnimationController";
 import type ViewmodelComponent from "./Animation/ViewmodelComponent";
 import { Camera as CameraController } from "./Camera";
-import { CollisionLayer, MovesetBase } from "./Moveset/MovesetBase";
+import { Input } from "./Input";
+import { MovesetBase } from "./Moveset/MovesetBase";
 
 export type ValidStates = "Airborne" | "Grounded" | "Wallclimb" | "Wallrun" | "LedgeGrab" | "Slide";
 
@@ -37,17 +38,6 @@ export default class ClientComponent extends AirshipBehaviour {
 	// Misc
 	public Bin = new Bin();
 
-	// Control
-	@NonSerialized() public Gear = Core().Client.Gear;
-	public Moveset = {
-		Base: new MovesetBase(),
-	};
-	public Camera = new CameraController({
-		X: this.transform.rotation.eulerAngles.x,
-		Y: this.transform.rotation.eulerAngles.y,
-		Z: this.transform.rotation.eulerAngles.z,
-	});
-
 	// Animation
 	private AnimationController = Core().Client.Animation;
 	@NonSerialized() public Animator: ViewmodelComponent;
@@ -74,6 +64,18 @@ export default class ClientComponent extends AirshipBehaviour {
 		"VM_VaultEnd",
 	];
 
+	// Control
+	@NonSerialized() public Gear = Core().Client.Gear;
+	public Moveset = {
+		Base: new MovesetBase(),
+	};
+	public Camera = new CameraController({
+		X: this.transform.rotation.eulerAngles.x,
+		Y: this.transform.rotation.eulerAngles.y,
+		Z: this.transform.rotation.eulerAngles.z,
+	});
+	public Input = new Input(this);
+
 	// Main
 	@Client()
 	override OnEnable() {
@@ -89,12 +91,14 @@ export default class ClientComponent extends AirshipBehaviour {
 		this.Animator = this.AnimationController.gameObject.GetAirshipComponent<ViewmodelComponent>() as ViewmodelComponent;
 		this.Animator.AnimationController = this.AnimationController;
 
-		this.Moveset.Base.BindInputs(this);
+		this.Input.BindInputs();
 
 		this.AccessoryBuilder.OnMeshCombined.Connect(() => this.ReloadShadows());
 		this.AccessoryBuilder.OnAccessoryAdded.Connect(() => this.ReloadShadows());
 		this.AccessoryBuilder.OnAccessoryRemoved.Connect(() => this.ReloadShadows());
 		this.ReloadShadows();
+
+		Core().Client.Actor = this;
 	}
 
 	public ReloadShadows() {
@@ -109,8 +113,13 @@ export default class ClientComponent extends AirshipBehaviour {
 
 	@Client()
 	override OnDisable() {
+		Core().Client.Actor = undefined;
+
 		this.Bin.Clean();
-		this.Moveset.Base.Bin.Clean();
+		this.Input.Bin.Clean();
+
+		if (Core().Client.Objective.TimeTrials.IsActive()) {
+		}
 	}
 
 	public CameraRotationToCharacter() {
@@ -125,13 +134,13 @@ export default class ClientComponent extends AirshipBehaviour {
 		return new CFrame(Raw ? this.transform.position : this.Rigidbody.worldCenterOfMass, this.Rigidbody.rotation);
 	}
 
-	public UpdateUI() {
-		Core().Client.UI.UpdateMomentumBar(math.clamp01(this.Momentum / 30));
+	public UpdateUI(DeltaTime: number) {
 		this.Gear.UpdateUI();
+		Core().Client.UI.UpdateUI(this, DeltaTime);
 	}
 
 	public Step(FixedDT: number) {
-		this.Moveset.Base.UpdateInputs(this);
+		this.Input.UpdateInputs();
 		this.Moveset.Base.StepMoveset(this, FixedDT);
 
 		if (this.MatchCameraStates.includes(this.State)) this.CameraRotationToCharacter();
@@ -169,7 +178,7 @@ export default class ClientComponent extends AirshipBehaviour {
 
 				this.Moveset.Base.AccelerateToInput(this, FixedDT);
 
-				if (this.Floor.Touching && this.Rigidbody.linearVelocity.y <= 0) {
+				if (this.Floor.Touching && this.Rigidbody.linearVelocity.y <= 1) {
 					this.Land();
 				}
 
@@ -192,7 +201,7 @@ export default class ClientComponent extends AirshipBehaviour {
 				break;
 		}
 
-		this.UpdateUI();
+		this.HealTick(FixedDT);
 	}
 
 	@Client()
@@ -209,6 +218,7 @@ export default class ClientComponent extends AirshipBehaviour {
 		if (this.MatchCameraStates.includes(this.State)) this.CameraRotationToCharacter();
 
 		this.Animator.Animate(DeltaTime);
+		this.UpdateUI(DeltaTime);
 	}
 
 	@Client()
@@ -224,7 +234,7 @@ export default class ClientComponent extends AirshipBehaviour {
 
 		let TargetRotation = Quaternion.LookRotation(Rotation.mul(Vector3.forward), Vector3.up);
 		if (this.State === "Slide") {
-			const [Hit, _, Normal] = Physics.Raycast(this.GetCFrame().Position, new Vector3(0, -1, 0), 2, CollisionLayer);
+			const [Hit, _, Normal] = Physics.Raycast(this.GetCFrame().Position, new Vector3(0, -1, 0), 2, Config.CollisionLayer);
 			if (Hit) {
 				TargetRotation = Quaternion.FromToRotation(Vector3.up, Normal).mul(TargetRotation);
 			}
@@ -251,6 +261,7 @@ export default class ClientComponent extends AirshipBehaviour {
 				const TargetTime = math.max(0, Config.FallDamgeRollTime * (1 - math.clamp(Damage / Config.FallDamageMaxSurvivable, 0, 1)));
 
 				if (CurrentDashTime <= TargetTime) {
+					Core().Client.Sound.Play("roll");
 					Damage = 0;
 				}
 			} else {
@@ -259,6 +270,8 @@ export default class ClientComponent extends AirshipBehaviour {
 		}
 
 		if (Damage > 0) {
+			Core().Client.Sound.Play(Damage <= 25 ? "strongland" : "landhard");
+
 			this.DamageSelf(Damage);
 		}
 
@@ -267,8 +280,58 @@ export default class ClientComponent extends AirshipBehaviour {
 		this.Momentum = this.Rigidbody.linearVelocity.WithY(0).magnitude;
 	}
 
+	public ResetState() {
+		this.ResetLastFallSpeed();
+		this.Moveset.Base.EndDash();
+
+		this.Land();
+		this.SetVelocity(Vector3.zero);
+		this.Momentum = 0;
+	}
+
+	public TeleportTo(Target: CFrame) {
+		this.transform.rotation = Target.Rotation;
+		this.transform.position = Target.Position;
+	}
+
 	public DamageSelf(Damage: number) {
-		Network.Effect.DamageSelf.client.FireServer(Damage);
+		const Character = Game.localPlayer.character;
+		if (Core().Client.Objective.TimeTrials.IsActive()) {
+			if (Character && Character.GetHealth() - Damage > 0) {
+				this.Health -= Damage;
+			} else {
+				this.Input.KeyPressed("QuickRestart", true);
+			}
+		} else {
+			this.Health -= Damage;
+		}
+	}
+
+	@NonSerialized() public Health = 100;
+	@NonSerialized() private _LastHealth = 100;
+	@NonSerialized() public _LastHealthLowered = 0;
+	@NonSerialized() public _LastHealthChanged = 0;
+	private _HealthUpdated() {
+		if (this.Health <= 0) {
+			Network.Effect.Respawn.client.FireServer();
+		}
+	}
+
+	public HealTick(FixedDT: number) {
+		if (this._LastHealth !== this.Health) {
+			this._HealthUpdated();
+
+			if (this._LastHealth > this.Health) {
+				this._LastHealthLowered = os.clock();
+			}
+			this._LastHealthChanged = os.clock();
+			this._LastHealth = this.Health;
+		}
+
+		if (this.Health < 100 && os.clock() - this._LastHealthLowered >= 2.5) {
+			const HealRate = (os.clock() - this._LastHealthLowered - 2.5) * 2.5;
+			this.Health = math.clamp(this.Health + HealRate * FixedDT, 0, 100);
+		}
 	}
 
 	public ResetLastFallSpeed() {

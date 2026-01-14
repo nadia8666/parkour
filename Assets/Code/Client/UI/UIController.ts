@@ -4,6 +4,7 @@ import { Binding } from "@Easy/Core/Shared/Input/Binding";
 import { Mouse } from "@Easy/Core/Shared/UserInput";
 import { Bin } from "@Easy/Core/Shared/Util/Bin";
 import Core from "Code/Core/Core";
+import type ClientComponent from "../Controller/ClientComponent";
 import type DraggableSlotComponent from "./Drag/DraggableSlotComponent";
 
 export default class UIController extends AirshipSingleton {
@@ -17,6 +18,9 @@ export default class UIController extends AirshipSingleton {
 	public EquipmentMenu: GameObject;
 	public Inventory: GameObject;
 	public MomentumBar: RectTransform;
+	public MomentumCanvas: CanvasGroup;
+	public HealthBar: RectTransform;
+	public HealthCanvas: CanvasGroup;
 
 	public Connections = new Bin();
 
@@ -82,8 +86,15 @@ export default class UIController extends AirshipSingleton {
 		}
 	}
 
-	public UpdateMomentumBar(Momentum: number) {
-		this.MomentumBar.SetSizeWithCurrentAnchors(Axis.Horizontal, 1340 * Momentum);
+	private HealthAlpha = 1;
+	public UpdateUI(Controller: ClientComponent, DeltaTime: number) {
+		this.HealthAlpha = math.lerpClamped(this.HealthAlpha, math.clamp01(Controller.Health / 100), DeltaTime * 10);
+
+		this.MomentumBar.SetSizeWithCurrentAnchors(Axis.Horizontal, 1340 * math.clamp01(Controller.Momentum / 30));
+		this.HealthBar.SetSizeWithCurrentAnchors(Axis.Horizontal, 885 * this.HealthAlpha);
+
+		this.MomentumCanvas.alpha = math.lerpClamped(this.MomentumCanvas.alpha, Controller.Momentum <= 0 ? 0 : 1, DeltaTime * 5);
+		this.HealthCanvas.alpha = math.lerpClamped(this.HealthCanvas.alpha, os.clock() - Controller._LastHealthChanged >= 1.25 ? 0 : 1, DeltaTime * 5);
 	}
 
 	public WallrunLeftAmmoContainer: RectTransform;
@@ -132,7 +143,7 @@ export default class UIController extends AirshipSingleton {
 		this.UpdateAmmoElements(this.AmmoFillUIs.WallrunRight, Ammo.Wallrun);
 	}
 
-	public InputDisabled() {
-		return this.MenuOpen || this.ESCMenuOpen || Airship.Chat.IsOpen();
+	public InputDisabledFromMenu() {
+		return /*this.MenuOpen || */ this.ESCMenuOpen || Airship.Chat.IsOpen();
 	}
 }

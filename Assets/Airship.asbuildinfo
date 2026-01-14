@@ -77,6 +77,83 @@
 			"extends": [],
 			"singleton": false
 		},
+		"ClientController": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "Code\\Client\\ClientController.lua",
+			"extends": [],
+			"singleton": true
+		},
+		"_CoreSingleton": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "Code\\Core\\CoreSingleton.lua",
+			"extends": [],
+			"singleton": true
+		},
+		"AnimationController": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "Code\\Client\\Controller\\Animation\\AnimationController.lua",
+			"extends": [],
+			"singleton": true
+		},
+		"ViewmodelComponent": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "Code\\Client\\Controller\\Animation\\ViewmodelComponent.lua",
+			"extends": [],
+			"singleton": false
+		},
+		"ClientComponent": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "Code\\Client\\Controller\\ClientComponent.lua",
+			"extends": [],
+			"singleton": false
+		},
+		"UIController": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "Code\\Client\\UI\\UIController.lua",
+			"extends": [],
+			"singleton": true
+		},
+		"GearController": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "Code\\Client\\Controller\\Gear\\GearController.lua",
+			"extends": [],
+			"singleton": true
+		},
+		"SoundController": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "Code\\Client\\Controller\\SoundController.lua",
+			"extends": [],
+			"singleton": true
+		},
+		"DataController": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "Code\\Client\\Framework\\DataController.lua",
+			"extends": [],
+			"singleton": true
+		},
+		"DraggableSlotComponent": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "Code\\Client\\UI\\Drag\\DraggableSlotComponent.lua",
+			"extends": [],
+			"singleton": false
+		},
+		"DragController": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "Code\\Client\\UI\\Drag\\DragController.lua",
+			"extends": [],
+			"singleton": true
+		},
 		"ConfirmModal": {
 			"component": true,
 			"type": "AirshipBehaviour",
@@ -588,76 +665,6 @@
 			"extends": [],
 			"singleton": true
 		},
-		"_CoreSingleton": {
-			"component": true,
-			"type": "AirshipBehaviour",
-			"filePath": "Code\\Core\\CoreSingleton.lua",
-			"extends": [],
-			"singleton": true
-		},
-		"AnimationController": {
-			"component": true,
-			"type": "AirshipBehaviour",
-			"filePath": "Code\\Client\\Controller\\Animation\\AnimationController.lua",
-			"extends": [],
-			"singleton": true
-		},
-		"ClientController": {
-			"component": true,
-			"type": "AirshipBehaviour",
-			"filePath": "Code\\Client\\ClientController.lua",
-			"extends": [],
-			"singleton": true
-		},
-		"ViewmodelComponent": {
-			"component": true,
-			"type": "AirshipBehaviour",
-			"filePath": "Code\\Client\\Controller\\Animation\\ViewmodelComponent.lua",
-			"extends": [],
-			"singleton": false
-		},
-		"ClientComponent": {
-			"component": true,
-			"type": "AirshipBehaviour",
-			"filePath": "Code\\Client\\Controller\\ClientComponent.lua",
-			"extends": [],
-			"singleton": false
-		},
-		"GearController": {
-			"component": true,
-			"type": "AirshipBehaviour",
-			"filePath": "Code\\Client\\Controller\\Gear\\GearController.lua",
-			"extends": [],
-			"singleton": true
-		},
-		"DataController": {
-			"component": true,
-			"type": "AirshipBehaviour",
-			"filePath": "Code\\Client\\Framework\\DataController.lua",
-			"extends": [],
-			"singleton": true
-		},
-		"DraggableSlotComponent": {
-			"component": true,
-			"type": "AirshipBehaviour",
-			"filePath": "Code\\Client\\UI\\Drag\\DraggableSlotComponent.lua",
-			"extends": [],
-			"singleton": false
-		},
-		"DragController": {
-			"component": true,
-			"type": "AirshipBehaviour",
-			"filePath": "Code\\Client\\UI\\Drag\\DragController.lua",
-			"extends": [],
-			"singleton": true
-		},
-		"UIController": {
-			"component": true,
-			"type": "AirshipBehaviour",
-			"filePath": "Code\\Client\\UI\\UIController.lua",
-			"extends": [],
-			"singleton": true
-		},
 		"AirshipNetworkBehaviour": {
 			"component": false,
 			"type": "AirshipBehaviour",
@@ -1100,6 +1107,13 @@
 			"filePath": "Code\\Client\\Components\\Collision\\GenericTriggerComponent.lua",
 			"extends": [],
 			"singleton": false
+		},
+		"TimeTrialComponent": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "Code\\Client\\Controller\\Modules\\TimeTrials\\TimeTrialComponent.lua",
+			"extends": [],
+			"singleton": false
 		}
 	},
 	"extends": {
@@ -1126,6 +1140,20 @@
 			"component": true,
 			"type": "AirshipScriptableObject",
 			"filePath": "Code\\Shared\\Object\\GearObject.lua",
+			"extends": [],
+			"singleton": false
+		},
+		"TimeTrialObject": {
+			"component": true,
+			"type": "AirshipScriptableObject",
+			"filePath": "Code\\Shared\\Object\\TimeTrialObject.lua",
+			"extends": [],
+			"singleton": false
+		},
+		"SoundBankObject": {
+			"component": true,
+			"type": "AirshipScriptableObject",
+			"filePath": "Code\\Shared\\Object\\SoundBankObject.lua",
 			"extends": [],
 			"singleton": false
 		}
@@ -1235,6 +1263,116 @@
 			"name": "ProximityPrompt",
 			"id": "AirshipPackages/@Easy/Core/Shared/Input/ProximityPrompts/ProximityPrompt@ProximityPrompt",
 			"file": "AirshipPackages/@Easy/Core/Shared/Input/ProximityPrompts/ProximityPrompt.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "ClientController",
+			"id": "Code/Client/ClientController@ClientController",
+			"file": "Code/Client/ClientController.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "_CoreSingleton",
+			"id": "Code/Core/CoreSingleton@_CoreSingleton",
+			"file": "Code/Core/CoreSingleton.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "AnimationController",
+			"id": "Code/Client/Controller/Animation/AnimationController@AnimationController",
+			"file": "Code/Client/Controller/Animation/AnimationController.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "ViewmodelComponent",
+			"id": "Code/Client/Controller/Animation/ViewmodelComponent@ViewmodelComponent",
+			"file": "Code/Client/Controller/Animation/ViewmodelComponent.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "ClientComponent",
+			"id": "Code/Client/Controller/ClientComponent@ClientComponent",
+			"file": "Code/Client/Controller/ClientComponent.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "UIController",
+			"id": "Code/Client/UI/UIController@UIController",
+			"file": "Code/Client/UI/UIController.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "GearController",
+			"id": "Code/Client/Controller/Gear/GearController@GearController",
+			"file": "Code/Client/Controller/Gear/GearController.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "SoundController",
+			"id": "Code/Client/Controller/SoundController@SoundController",
+			"file": "Code/Client/Controller/SoundController.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "DataController",
+			"id": "Code/Client/Framework/DataController@DataController",
+			"file": "Code/Client/Framework/DataController.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "DraggableSlotComponent",
+			"id": "Code/Client/UI/Drag/DraggableSlotComponent@DraggableSlotComponent",
+			"file": "Code/Client/UI/Drag/DraggableSlotComponent.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "DragController",
+			"id": "Code/Client/UI/Drag/DragController@DragController",
+			"file": "Code/Client/UI/Drag/DragController.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"
@@ -1966,106 +2104,6 @@
 			"inherits": []
 		},
 		{
-			"name": "_CoreSingleton",
-			"id": "Code/Core/CoreSingleton@_CoreSingleton",
-			"file": "Code/Core/CoreSingleton.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "AnimationController",
-			"id": "Code/Client/Controller/Animation/AnimationController@AnimationController",
-			"file": "Code/Client/Controller/Animation/AnimationController.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "ClientController",
-			"id": "Code/Client/ClientController@ClientController",
-			"file": "Code/Client/ClientController.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "ViewmodelComponent",
-			"id": "Code/Client/Controller/Animation/ViewmodelComponent@ViewmodelComponent",
-			"file": "Code/Client/Controller/Animation/ViewmodelComponent.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "ClientComponent",
-			"id": "Code/Client/Controller/ClientComponent@ClientComponent",
-			"file": "Code/Client/Controller/ClientComponent.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "GearController",
-			"id": "Code/Client/Controller/Gear/GearController@GearController",
-			"file": "Code/Client/Controller/Gear/GearController.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "DataController",
-			"id": "Code/Client/Framework/DataController@DataController",
-			"file": "Code/Client/Framework/DataController.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "DraggableSlotComponent",
-			"id": "Code/Client/UI/Drag/DraggableSlotComponent@DraggableSlotComponent",
-			"file": "Code/Client/UI/Drag/DraggableSlotComponent.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "DragController",
-			"id": "Code/Client/UI/Drag/DragController@DragController",
-			"file": "Code/Client/UI/Drag/DragController.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "UIController",
-			"id": "Code/Client/UI/UIController@UIController",
-			"file": "Code/Client/UI/UIController.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
 			"name": "AirshipNetworkBehaviour",
 			"id": "AirshipPackages/@Easy/Core/Shared/Network/AirshipNetworkBehaviour@AirshipNetworkBehaviour",
 			"file": "AirshipPackages/@Easy/Core/Shared/Network/AirshipNetworkBehaviour.ts",
@@ -2706,31 +2744,67 @@
 				"default"
 			],
 			"inherits": []
+		},
+		{
+			"name": "TimeTrialObject",
+			"id": "Code/Shared/Object/TimeTrialObject@TimeTrialObject",
+			"file": "Code/Shared/Object/TimeTrialObject.ts",
+			"declarationType": "AirshipScriptableObject",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "TimeTrialComponent",
+			"id": "Code/Client/Controller/Modules/TimeTrials/TimeTrialComponent@TimeTrialComponent",
+			"file": "Code/Client/Controller/Modules/TimeTrials/TimeTrialComponent.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "SoundBankObject",
+			"id": "Code/Shared/Object/SoundBankObject@SoundBankObject",
+			"file": "Code/Shared/Object/SoundBankObject.ts",
+			"declarationType": "AirshipScriptableObject",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
 		}
 	],
 	"flamework": {
 		"version": 1,
 		"identifiers": {
-			"typescript:Code/Server/Data/DataService@DataService": "Server/Data/DataService@DataService",
-			"typescript:Code/Server/ServerService@ServerService": "Server/ServerService@ServerService",
+			"typescript:Code/Client/Controller/Modules/TimeTrials/TimeTrials@TimeTrials": "Client/Controller/Modules/TimeTrials/TimeTrials@TimeTrials",
+			"typescript:Code/Client/ClientController@ClientController": "Client/ClientController@ClientController",
 			"typescript:Code/Core/CoreSingleton@_CoreSingleton": "Core/CoreSingleton@_CoreSingleton",
 			"typescript:Code/Client/Controller/Animation/AnimationController@AnimationController": "Client/Controller/Animation/AnimationController@AnimationController",
-			"typescript:Code/Client/ClientController@ClientController": "Client/ClientController@ClientController",
 			"typescript:Code/Client/Controller/Animation/ViewmodelComponent@ViewmodelComponent": "Client/Controller/Animation/ViewmodelComponent@ViewmodelComponent",
 			"typescript:Code/Client/Controller/ClientComponent@ClientComponent": "Client/Controller/ClientComponent@ClientComponent",
-			"typescript:Code/Client/Controller/Moveset/MovesetBase@InputEntry": "Client/Controller/Moveset/MovesetBase@InputEntry",
+			"typescript:Code/Client/Controller/Input@InputEntry": "Client/Controller/Input@InputEntry",
+			"typescript:Code/Client/Controller/Input@Input": "Client/Controller/Input@Input",
 			"typescript:Code/Client/Controller/Moveset/MovesetBase@MovesetBase": "Client/Controller/Moveset/MovesetBase@MovesetBase",
+			"typescript:Code/Client/UI/UIController@UIController": "Client/UI/UIController@UIController",
+			"typescript:Code/Client/Controller/Camera@Camera": "Client/Controller/Camera@Camera",
 			"typescript:Code/Client/Controller/Gear/GearController@GearController": "Client/Controller/Gear/GearController@GearController",
+			"typescript:Code/Client/Controller/SoundController@SoundController": "Client/Controller/SoundController@SoundController",
 			"typescript:Code/Client/Framework/DataController@DataController": "Client/Framework/DataController@DataController",
 			"typescript:Code/Client/UI/Drag/DraggableSlotComponent@DraggableSlotComponent": "Client/UI/Drag/DraggableSlotComponent@DraggableSlotComponent",
 			"typescript:Code/Client/UI/Drag/DragController@DragController": "Client/UI/Drag/DragController@DragController",
-			"typescript:Code/Client/UI/UIController@UIController": "Client/UI/UIController@UIController",
-			"typescript:Code/Client/Controller/Camera@Camera": "Client/Controller/Camera@Camera",
+			"typescript:Code/Server/Data/DataService@DataService": "Server/Data/DataService@DataService",
+			"typescript:Code/Server/ServerService@ServerService": "Server/ServerService@ServerService",
 			"typescript:Code/Server/Modules/Spawner@CharacterSpawner": "Server/Modules/Spawner@CharacterSpawner",
 			"typescript:Code/Client/Framework/SettingsController@SettingsController": "Client/Framework/SettingsController@SettingsController",
 			"typescript:Code/Shared/Object/GearObject@GearObject": "Shared/Object/GearObject@GearObject",
 			"typescript:Code/Shared/GearRegistry@GearRegistrySingleton": "Shared/GearRegistry@GearRegistrySingleton",
-			"typescript:Code/Client/Components/Collision/GenericTriggerComponent@GenericTriggerComponent": "Client/Components/Collision/GenericTriggerComponent@GenericTriggerComponent"
+			"typescript:Code/Client/Components/Collision/GenericTriggerComponent@GenericTriggerComponent": "Client/Components/Collision/GenericTriggerComponent@GenericTriggerComponent",
+			"typescript:Code/Shared/Object/TimeTrialObject@TimeTrialObject": "Shared/Object/TimeTrialObject@TimeTrialObject",
+			"typescript:Code/Client/Controller/Modules/TimeTrials/TimeTrialComponent@TimeTrialComponent": "Client/Controller/Modules/TimeTrials/TimeTrialComponent@TimeTrialComponent",
+			"typescript:Code/Shared/Object/SoundBankObject@SoundBankObject": "Shared/Object/SoundBankObject@SoundBankObject"
 		}
 	}
 }

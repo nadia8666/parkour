@@ -11,7 +11,6 @@ function InitializeCache() {
 	HasCached = true;
 
 	const Link = Core().Client.Data.GetLink();
-	task.wait(2);
 
 	function GenerateCache() {
 		CacheMap.clear();
@@ -19,12 +18,13 @@ function InitializeCache() {
 			for (const [_, Value] of pairs(Gear)) {
 				if (Value !== "None") {
 					const Item = Core().Client.Gear.GetItem(Value) as ItemInfo<"Gear">;
+					if (!Item) continue;
 					CacheMap.push(Item.Key);
 				}
 			}
 		}
 
-		print(CacheMap);
+		warn(CacheMap);
 
 		RecacheSignal.Fire();
 	}
@@ -34,6 +34,8 @@ function InitializeCache() {
 			Link.GetChanged(`EquippedGear/${Slot}/${Index}`).Connect(() => GenerateCache());
 		}
 	}
+
+	GenerateCache();
 }
 if ($CLIENT) task.spawn(() => InitializeCache());
 
@@ -69,7 +71,7 @@ const Config = {
 	JumpRequiredSpeed: 5, // jump height under this speed is scaled from 0-spd to 0-1
 	JumpCoyoteTime: 0.25,
 
-	WallclimbMinSpeed: WithGear({ None: 2.25, SlipGlove: -10, GripGlove: 7 }), // upwards speed in wallclimb is max(spd, min)
+	WallclimbMinSpeed: WithGear({ None: 7, SlipGlove: -10, GripGlove: 9 }), // upwards speed in wallclimb is max(spd, min)
 	WallclimbThreshold: WithGear({ None: -15, SlipGlove: -65, GripGlove: -45 }), // maximum velocity before you cant wallclimb
 	WallclimbCoyoteTime: 0.25, // time before you are dropped off a wallclimb without a wall in front of you
 	WallclimbStepStrength: WithGear({ None: 115, GripGlove: 135 }), // strength for each push of the wallclimb
@@ -105,6 +107,8 @@ const Config = {
 	FallDamageMultiplier: 4.15, // damage per unit speed above threshold
 
 	MomentumSyncThreshold: 0.15,
+
+	CollisionLayer: LayerMask.GetMask("GameLayer0"),
 };
 
 export default Config;
