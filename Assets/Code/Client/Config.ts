@@ -3,18 +3,18 @@ import Core from "Code/Core/Core";
 import type { GearRegistryKey } from "Code/Shared/GearRegistry";
 import type { ItemInfo } from "Code/Shared/Types";
 
+export const ForceRefreshGearSignal = new Signal();
 const RecacheSignal = new Signal();
 const CacheMap: GearRegistryKey[] = [];
 let HasCached = false;
 function InitializeCache() {
 	if (HasCached) return;
 	HasCached = true;
-
 	const Link = Core().Client.Data.GetLink();
 
 	function GenerateCache() {
 		CacheMap.clear();
-		for (const [_, Gear] of pairs(Link.Data.EquippedGear)) {
+		for (const [_, Gear] of pairs(Core().Client.Objective.TimeTrials.TrialGear ?? Link.Data.EquippedGear)) {
 			for (const [_, Value] of pairs(Gear)) {
 				if (Value !== "None") {
 					const Item = Core().Client.Gear.GetItem(Value) as ItemInfo<"Gear">;
@@ -23,8 +23,6 @@ function InitializeCache() {
 				}
 			}
 		}
-
-		warn(CacheMap);
 
 		RecacheSignal.Fire();
 	}
@@ -36,6 +34,8 @@ function InitializeCache() {
 	}
 
 	GenerateCache();
+
+	ForceRefreshGearSignal.Connect(() => GenerateCache());
 }
 if ($CLIENT) task.spawn(() => InitializeCache());
 
@@ -71,8 +71,11 @@ const Config = {
 	JumpRequiredSpeed: 5, // jump height under this speed is scaled from 0-spd to 0-1
 	JumpCoyoteTime: 0.25,
 
+	ClutchEnabled: WithGear({ None: false, ClutchShoes: true }),
+	WallAction: WithGear({ None: "Wallclimb", JetBrace: "Wallboost" }),
+
 	WallclimbMinSpeed: WithGear({ None: 7, SlipGlove: -10, GripGlove: 9 }), // upwards speed in wallclimb is max(spd, min)
-	WallclimbThreshold: WithGear({ None: -15, SlipGlove: -65, GripGlove: -45 }), // maximum velocity before you cant wallclimb
+	WallclimbThreshold: WithGear({ None: -15, BaseGlove: -35, SlipGlove: -65, GripGlove: -45 }), // maximum velocity before you cant wallclimb
 	WallclimbCoyoteTime: 0.25, // time before you are dropped off a wallclimb without a wall in front of you
 	WallclimbStepStrength: WithGear({ None: 115, GripGlove: 135 }), // strength for each push of the wallclimb
 	WallclimbLength: WithGear({ None: 1, SlipGlove: 1.25, GripGlove: 1.45 }),
@@ -92,6 +95,11 @@ const Config = {
 
 	LongJumpForce: 6.5,
 	LongJumpHeightMultiplier: 0.45,
+	LongJumpGraceAirborne: 0.35, // in seconds
+	LongJumpGraceGrounded: 0.35, // in seconds
+
+	DropdownDistance: 1,
+	DropdownHeight: 2,
 
 	DashLengthGrounded: 1.5,
 	DashLengthAirborne: 1.5,

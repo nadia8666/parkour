@@ -748,6 +748,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8997996947095583982, guid: 4bfcf38072e582e42b941b472d5f3dcb, type: 3}
   m_PrefabInstance: {fileID: 6767161154545908016}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &2784936734884338267 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8885562498861785963, guid: 4bfcf38072e582e42b941b472d5f3dcb, type: 3}
+  m_PrefabInstance: {fileID: 6767161154545908016}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &2938946416571182491 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8440015110078338219, guid: 4bfcf38072e582e42b941b472d5f3dcb, type: 3}
@@ -1020,6 +1025,24 @@ MonoBehaviour:
       nullable: 0
       serializedValue: 0,1.192093E-06,2.562038,2.562038,0,0.05912652;1,1.000003,-2.426978,-2.426978,0.05082726,0
       serializedObject: {fileID: 0}
+      modified: 1
+    - name: Face
+      type: object
+      objectType: GameObject
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators: []
+      nullable: 0
+      serializedValue: 
+      serializedObject: {fileID: 2784936734884338267}
       modified: 1
     displayIcon: {fileID: 0}
     displayName: 

@@ -7,6 +7,7 @@ const MaxAmmo = {
 	Wallrun: 2,
 	Wallclimb: 1,
 	Jump: 1,
+	WallKick: 1,
 };
 
 export default class GearController extends AirshipSingleton {
@@ -45,6 +46,14 @@ export default class GearController extends AirshipSingleton {
 		if (Key === "None" ? false : Gear.Slot !== Slot) return;
 
 		const Data = Core().Client.Data.GetLink().Data;
+		if (Contents) {
+			for (const [Index, ItemID] of pairs(Data.EquippedGear[Slot])) {
+				if (ItemID === Contents.UID) {
+					Data.EquippedGear[Slot][Index - 1] = "None";
+				}
+			}
+		}
+
 		Data.EquippedGear[Slot][Index - 1] = Contents?.UID ?? "None";
 
 		return true;

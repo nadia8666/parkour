@@ -1,4 +1,5 @@
 import { WithGear } from "Code/Client/Config";
+import type ViewmodelComponent from "./ViewmodelComponent";
 
 export type ValidAnimation = keyof typeof Animations;
 export interface InferredAnimation {
@@ -60,12 +61,26 @@ export const Animations = {
 		EndAnimation: "VM_Fall",
 	},
 
+	VM_Roll: {
+		0: { Name: "VM_Roll" },
+		EndAnimation: "VM_Run",
+	},
+
 	VM_Run: {
 		0: { Name: "VM_Run" },
 	},
 
+	VM_Wallclutch: {
+		0: { Name: "VM_Wallclutch" },
+	},
+
 	VM_Wallclimb: {
 		0: { Name: WithGear({ None: "VM_Wallclimb", GripGlove: "VM_WallclimbGrip" }) },
+	},
+
+	VM_Dropdown: {
+		0: { Name: "VM_Dropdown" },
+		EndAnimation: "VM_Fall",
 	},
 
 	VM_LedgeGrab: {
@@ -138,6 +153,8 @@ export default class AnimationController extends AirshipSingleton {
 	public WeightLayers = {
 		0: { Target: 1, Current: 1 },
 	};
+
+	public Component: ViewmodelComponent;
 
 	public AnimList = Animations;
 }

@@ -6,7 +6,22 @@ export default class SoundController extends AirshipSingleton {
 	public SoundBanks: SoundBankObject[];
 	public SoundTemplate: AudioSource;
 
-	public Play(SoundName: string) {
+	@Client()
+	public Start() {
+		for (const [_, Bank] of pairs(this.SoundBanks)) {
+			for (const i of $range(1, Bank.BankSize)) {
+				task.spawn(() => {
+					const Clip = Asset.LoadAsset(`Assets/Resources/Sounds/Library/${Bank.Name}${i}.ogg`) as AudioClip;
+					const SoundObject = Instantiate(this.SoundTemplate);
+					SoundObject.clip = Clip;
+
+					Destroy(SoundObject, 10);
+				});
+			}
+		}
+	}
+
+	public Play(SoundName: string, Config: { Volume?: number } = {}) {
 		let Sound: SoundBankObject | undefined;
 		for (const [_, Bank] of pairs(this.SoundBanks)) {
 			if (Bank.Name === SoundName) {
@@ -20,6 +35,8 @@ export default class SoundController extends AirshipSingleton {
 			const SoundObject = Instantiate(this.SoundTemplate);
 			SoundObject.clip = SoundFile;
 			SoundObject.Play();
+
+			SoundObject.volume = Config.Volume ?? 1;
 
 			const Position = Core().Client.Actor?.transform.position;
 			if (Position) {

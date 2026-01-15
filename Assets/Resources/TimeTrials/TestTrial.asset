@@ -44,9 +44,9 @@ MonoBehaviour:
         - type: string
           serializedValue: '"Registry Info"'
       nullable: 0
-      serializedValue: 
+      serializedValue: TestTrial
       serializedObject: {fileID: 0}
-      modified: 0
+      modified: 1
     - name: DisplayName
       type: string
       objectType: 
@@ -62,9 +62,9 @@ MonoBehaviour:
         tags: []
       decorators: []
       nullable: 0
-      serializedValue: 
+      serializedValue: test trial of awesome
       serializedObject: {fileID: 0}
-      modified: 0
+      modified: 1
     - name: Bronze
       type: number
       objectType: 
@@ -80,9 +80,9 @@ MonoBehaviour:
         tags: []
       decorators: []
       nullable: 0
-      serializedValue: 
+      serializedValue: 45
       serializedObject: {fileID: 0}
-      modified: 0
+      modified: 1
     - name: Silver
       type: number
       objectType: 
@@ -98,9 +98,9 @@ MonoBehaviour:
         tags: []
       decorators: []
       nullable: 0
-      serializedValue: 
+      serializedValue: 28
       serializedObject: {fileID: 0}
-      modified: 0
+      modified: 1
     - name: Gold
       type: number
       objectType: 
@@ -116,9 +116,9 @@ MonoBehaviour:
         tags: []
       decorators: []
       nullable: 0
-      serializedValue: 
+      serializedValue: 21
       serializedObject: {fileID: 0}
-      modified: 0
+      modified: 1
     - name: Platinum
       type: number
       objectType: 
@@ -134,8 +134,8 @@ MonoBehaviour:
         tags: []
       decorators: []
       nullable: 0
-      serializedValue: 
+      serializedValue: 19.5
       serializedObject: {fileID: 0}
-      modified: 0
+      modified: 1
     displayIcon: {fileID: 0}
     displayName: 

@@ -4,6 +4,7 @@ import { Binding } from "@Easy/Core/Shared/Input/Binding";
 import { Mouse } from "@Easy/Core/Shared/UserInput";
 import { Bin } from "@Easy/Core/Shared/Util/Bin";
 import Core from "Code/Core/Core";
+import type TooltipComponent from "../Components/TooltipComponent";
 import type ClientComponent from "../Controller/ClientComponent";
 import type DraggableSlotComponent from "./Drag/DraggableSlotComponent";
 
@@ -17,15 +18,26 @@ export default class UIController extends AirshipSingleton {
 	@Header("References")
 	public EquipmentMenu: GameObject;
 	public Inventory: GameObject;
+	public Loading: GameObject;
+	public TooltipTransform: RectTransform;
+	public TooltipText: TMP_Text;
+	@Header("References/Momentum")
 	public MomentumBar: RectTransform;
 	public MomentumCanvas: CanvasGroup;
+	@Header("References/Health")
 	public HealthBar: RectTransform;
 	public HealthCanvas: CanvasGroup;
+	@Header("References/Time Trials")
+	public TT_Container: RectTransform;
+	public TT_Time: TMP_Text;
+	public TT_Medal: Image;
 
 	public Connections = new Bin();
 
 	@Client()
 	override Start() {
+		this.Loading.SetActive(true);
+
 		Airship.Menu.SetTabListEnabled(false);
 		Airship.Menu.onMenuToggled.Connect((Open) => (this.ESCMenuOpen = Open));
 
@@ -39,10 +51,12 @@ export default class UIController extends AirshipSingleton {
 
 		this.UpdateMenuState();
 
-		this.RefreshContents();
-		Core()
-			.Client.Data.GetLink()
-			.AnyChanged.Connect(() => this.RefreshContents());
+		task.spawn(() => {
+			this.RefreshContents();
+			Core()
+				.Client.Data.GetLink()
+				.AnyChanged.Connect(() => this.RefreshContents());
+		});
 	}
 
 	private Contents: GameObject[] = [];
@@ -66,6 +80,14 @@ export default class UIController extends AirshipSingleton {
 		}
 	}
 
+	public RaycastUI(): GameObject | undefined {
+		const System = EventSystem.current;
+		const EventData = new PointerEventData(System);
+		EventData.position = Mouse.position;
+
+		return System.RaycastAll(EventData)[0]?.gameObject;
+	}
+
 	public CloseCenterMenus() {
 		this.EquipmentMenu.SetActive(false);
 		this.Inventory.SetActive(false);
@@ -86,6 +108,7 @@ export default class UIController extends AirshipSingleton {
 		}
 	}
 
+	private LastTooltipObject: GameObject | undefined;
 	private HealthAlpha = 1;
 	public UpdateUI(Controller: ClientComponent, DeltaTime: number) {
 		this.HealthAlpha = math.lerpClamped(this.HealthAlpha, math.clamp01(Controller.Health / 100), DeltaTime * 10);
@@ -95,11 +118,44 @@ export default class UIController extends AirshipSingleton {
 
 		this.MomentumCanvas.alpha = math.lerpClamped(this.MomentumCanvas.alpha, Controller.Momentum <= 0 ? 0 : 1, DeltaTime * 5);
 		this.HealthCanvas.alpha = math.lerpClamped(this.HealthCanvas.alpha, Controller.Health < 99 ? 1 : os.clock() - Controller._LastHealthChanged >= 2.5 ? 0 : 1, DeltaTime * 5);
+
+		const HoverTarget = this.RaycastUI();
+
+		if (HoverTarget !== this.LastTooltipObject) {
+			const TooltipComponent = HoverTarget?.GetAirshipComponent<TooltipComponent>();
+
+			if (TooltipComponent) {
+				this.TooltipTransform.gameObject.SetActive(true);
+				this.TooltipText.text = TooltipComponent.GetText();
+			} else this.TooltipTransform.gameObject.SetActive(false);
+			this.LastTooltipObject = HoverTarget;
+		}
+
+		if (this.TooltipTransform.gameObject.activeSelf) {
+			const MousePos = Input.mousePosition.sub(new Vector3(-20, 0, 0));
+			this.TooltipTransform.position = MousePos;
+
+			const Width = Screen.width;
+			const Height = Screen.height;
+			const ClipsHeight = MousePos.y + this.TooltipTransform.rect.height >= Height;
+
+			const RemainingSize = Width - MousePos.x;
+			this.TooltipTransform.rect.width = RemainingSize;
+
+			this.TooltipTransform.pivot = new Vector2(0, ClipsHeight ? 1 : 0);
+
+			LayoutRebuilder.ForceRebuildLayoutImmediate(this.TooltipTransform);
+		}
 	}
 
+	@Header("References/Wallrun")
 	public WallrunLeftAmmoContainer: RectTransform;
 	public WallrunRightAmmoContainer: RectTransform;
+
+	@Header("References/Wallclimb")
 	public WallclimbAmmoContainer: RectTransform;
+
+	@Header("References/Ammo")
 	public AmmoTemplate: RectTransform;
 	private AmmoFillUIs = {
 		WallrunLeft: [] as Image[],

@@ -1,7 +1,9 @@
 import { Asset } from "@Easy/Core/Shared/Asset";
 import type ProximityPrompt from "@Easy/Core/Shared/Input/ProximityPrompts/ProximityPrompt";
+import { ForceRefreshGearSignal } from "Code/Client/Config";
 import Core from "Code/Core/Core";
 import type TimeTrialObject from "Code/Shared/Object/TimeTrialObject";
+import type { DataFormat } from "Code/Shared/Types";
 import CFrame from "@inkyaker/CFrame/Code";
 import type ClientComponent from "../../ClientComponent";
 import type TimeTrialComponent from "./TimeTrialComponent";
@@ -18,13 +20,25 @@ export class TimeTrials {
 	public CurrentTrial: TimeTrialComponent | undefined;
 	public TrialsList: VirtualizedTrial[] = [];
 	private PromptBase = Asset.LoadAsset("Assets/Resources/TimeTrials/TrialPrompt.prefab");
+	private LastTrialStart = math.huge;
+	private InIntro = false;
+	public TrialGear: DataFormat["EquippedGear"] | undefined;
 
 	constructor() {
 		for (const [_, Target] of pairs(GameObject.FindGameObjectsWithTag("TimeTrial"))) {
 			const Trial = Target.GetAirshipComponent<TimeTrialComponent>();
 			if (!Trial) continue;
 
-			this.RegisterTrial(Trial);
+			task.spawn(() => this.RegisterTrial(Trial));
+		}
+	}
+
+	public TrialStateUpdated() {
+		const Active = this.IsActive();
+		Core().Client.UI.TT_Container.gameObject.SetActive(Active);
+
+		for (const [_, Trial] of pairs(this.TrialsList)) {
+			Trial.Prompt.enabled = !Active;
 		}
 	}
 
@@ -60,38 +74,103 @@ export class TimeTrials {
 	}
 
 	public Start(Controller: ClientComponent, Trial: TimeTrialComponent, RunIntro?: boolean) {
+		if (this.IsActive()) this.Stop(Controller);
+
+		this.TrialGear = {
+			Grip: ["None"],
+			Core: ["None"],
+			Mod: ["None", "None"],
+			Augment: ["None", "None", "None"],
+		};
+		ForceRefreshGearSignal.Fire();
+
+		const Start = os.clock();
+		this.LastTrialStart = Start;
 		this.CurrentTrial = Trial;
+		this.TrialStateUpdated();
 
 		Controller.ResetState();
 		Controller.TeleportTo(CFrame.FromTransform(Trial.transform));
-		print("state reset and teleported");
+
+		this.InIntro = !!RunIntro;
 
 		if (RunIntro) {
 			Controller.Input.AddInputLock("TimeTrialStart", 5);
 			task.wait(3);
-			Controller.Input.KillLockByID("TimeTrialStart");
+			if (this.IsActive() && this.LastTrialStart === Start) {
+				Controller.Input.KillLockByID("TimeTrialStart");
 
-			Controller.ResetState();
-			Controller.TeleportTo(CFrame.FromTransform(Trial.transform));
-			print("doing it Again");
+				Controller.ResetState();
+				Controller.TeleportTo(CFrame.FromTransform(Trial.transform));
+				this.LastTrialStart = os.clock();
+
+				this.InIntro = false;
+			}
 		}
-
-		print("TRIAL STARTED");
 	}
 
 	public Stop(Controller: ClientComponent) {
+		this.TrialGear = undefined;
+		ForceRefreshGearSignal.Fire();
+
 		Controller.Input.KillLockByID("TimeTrialStart");
 		this.CurrentTrial = undefined;
+		this.InIntro = false;
+		this.LastTrialStart = math.huge;
+		this.TrialStateUpdated();
 	}
 
 	public Restart(Controller: ClientComponent) {
-		print("hello world", this.IsActive());
-		if (this.CurrentTrial) {
+		if (this.CurrentTrial && !this.InIntro) {
 			this.Start(Controller, this.CurrentTrial);
 		}
 	}
 
 	public IsActive() {
 		return !!this.CurrentTrial;
+	}
+
+	public StepTrials(Controller: ClientComponent) {
+		if (this.IsActive() && this.CurrentTrial) {
+			// Trial UI
+			const Trial = this.CurrentTrial;
+			const CurrentTime = os.clock() - this.LastTrialStart;
+			const Seconds = math.floor(CurrentTime);
+			const MS = math.floor((CurrentTime - Seconds) * 100);
+
+			const SecondsFill = string.rep("0", 3 - `${Seconds}`.size());
+			const MSFill = string.rep("0", 2 - `${MS}`.size());
+
+			Core().Client.UI.TT_Time.text = `${SecondsFill}${Seconds}.${MSFill}${MS}`;
+
+			const RankColor = Trial.TrialData.GetColorFromTime(CurrentTime);
+			if (RankColor) Core().Client.UI.TT_Medal.color = RankColor;
+
+			// Trial tick results
+			if (CurrentTime >= Trial.TrialData.Bronze) this.Restart(Controller);
+
+			if (this.InIntro) {
+				if (Controller.transform.position !== Trial.transform.position) {
+					Controller.ResetState();
+					Controller.TeleportTo(CFrame.FromTransform(Trial.transform));
+				}
+			} else {
+				const GoalDist = Controller.GetCFrame(true).Position.sub(Trial.EndPoint.position).magnitude;
+
+				if (GoalDist <= 3 && Controller.Health > 0 && ["Grounded", "Slide"].includes(Controller.State)) {
+					print(`COMPLETE TRIAL WITH TIME ${CurrentTime}s, TARGET RANK "${Trial.TrialData.GetRankDisplayFromTime(CurrentTime)}"`);
+					this.Stop(Controller);
+
+					const Records = Core().Client.Data.GetLink(true).Data.TrialRecords;
+					const ExistingRecord = Records[Trial.TrialData.ID];
+					let ToSet = false;
+					if (ExistingRecord) {
+						if (ExistingRecord > CurrentTime) ToSet = true;
+					} else ToSet = true;
+
+					if (ToSet) Records[Trial.TrialData.ID] = CurrentTime;
+				}
+			}
+		}
 	}
 }

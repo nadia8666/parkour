@@ -15,10 +15,11 @@ class InputEntry {
 }
 
 export const Actions = {
+	WallKick: new InputEntry(Key.Space, 5),
 	LedgeGrab: new InputEntry(Key.Space, 4),
 	Jump: new InputEntry(Key.Space, 3),
-	Wallrun: new InputEntry(Key.Space, 2),
-	Wallclimb: new InputEntry(Key.Space, 1),
+	WallAction: new InputEntry(Key.Space, 2),
+	Wallrun: new InputEntry(Key.Space, 1),
 
 	Dash: new InputEntry(Key.LeftShift, 2),
 	Slide: new InputEntry(Key.LeftShift, 1),
@@ -26,7 +27,11 @@ export const Actions = {
 	Respawn: new InputEntry(Key.R, 2),
 	QuickRestart: new InputEntry(Key.R, 1),
 
-	Interact: new InputEntry(Key.F, 1),
+	Interact: new InputEntry(Key.F, 2),
+	CancelTrial: new InputEntry(Key.F, 1),
+
+	Fly: new InputEntry(Key.Q, 1),
+	FlyBoost: new InputEntry(Key.LeftShift, -1),
 };
 
 const InverseMap = new Map<Key, (keyof typeof Actions)[]>();
@@ -126,8 +131,17 @@ export class Input {
 	private ActionPressed(Name: keyof typeof Actions) {
 		switch (Name) {
 			case "QuickRestart":
-				Core().Client.Objective.TimeTrials.Restart(this.Controller);
-				return;
+				if (Core().Client.Objective.TimeTrials.IsActive()) {
+					Core().Client.Objective.TimeTrials.Restart(this.Controller);
+					return;
+				}
+				break;
+			case "CancelTrial":
+				if (Core().Client.Objective.TimeTrials.IsActive()) {
+					Core().Client.Objective.TimeTrials.Stop(this.Controller);
+					return;
+				}
+				break;
 		}
 
 		this.Controller.Moveset.Base.ActionPressed(Name, this.Controller);

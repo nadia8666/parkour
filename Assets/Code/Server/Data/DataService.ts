@@ -1,6 +1,6 @@
 import { Airship, Platform } from "@Easy/Core/Shared/Airship";
 import type { Player } from "@Easy/Core/Shared/Player/Player";
-import { deepCopy as DeepCopy } from "@Easy/Core/Shared/Util/ObjectUtils";
+import { deepCopy as DeepCopy, deepCopy } from "@Easy/Core/Shared/Util/ObjectUtils";
 import { Network } from "Code/Shared/Network";
 import { type DataFormat, DataTemplate } from "Code/Shared/Types";
 import { DualLink } from "@inkyaker/DualLink/Code";
@@ -47,8 +47,23 @@ export default class DataService extends AirshipSingleton {
 
 		for (const [Index, Value] of pairs(DataTemplate)) {
 			if (ExistingData[Index] === undefined) {
-				ExistingData[Index] = Value as UnionToIntersection<typeof Value>
+				ExistingData[Index] = Value as UnionToIntersection<typeof Value> & number;
 			}
+		}
+
+		if (ExistingData.DataVersion !== DataTemplate.DataVersion) {
+			for (const Version of $range(0, DataTemplate.DataVersion)) {
+				switch (Version) {
+					case 0:
+						ExistingData.Inventory = deepCopy(DataTemplate.Inventory);
+						ExistingData.EquippedGear = deepCopy(DataTemplate.EquippedGear);
+						break;
+				}
+			}
+		}
+
+		if (ENV.Runtime === "DEV") {
+			ExistingData.Inventory = deepCopy(DataTemplate.Inventory);
 		}
 
 		this.DataMap[Key] = new DualLink(Key, ExistingData, {

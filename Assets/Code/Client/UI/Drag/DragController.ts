@@ -27,14 +27,6 @@ export default class DragController extends AirshipSingleton {
 		this.CurrentUI = UI.transform as RectTransform;
 	}
 
-	public RaycastUI(): GameObject | undefined {
-		const System = EventSystem.current;
-		const EventData = new PointerEventData(System);
-		EventData.position = Mouse.position;
-
-		return System.RaycastAll(EventData)[0]?.gameObject;
-	}
-
 	public EndDrag() {
 		const DragOrigin = this.CurrentDrag;
 
@@ -42,7 +34,7 @@ export default class DragController extends AirshipSingleton {
 		this.CurrentUI = undefined;
 		this.CurrentDrag = undefined;
 
-		const UITarget = this.RaycastUI();
+		const UITarget = Core().Client.UI.RaycastUI();
 		DragOrigin?.DraggedOnto(UITarget?.GetAirshipComponent<DraggableSlotComponent>());
 	}
 

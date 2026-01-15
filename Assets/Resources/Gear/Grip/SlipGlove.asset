@@ -90,22 +90,30 @@ MonoBehaviour:
         type: string
         objectType: 
         serializedItems:
-        - '-45 Max WC Activation Speed
+        - '<color=yellow>-17</color> WC Minimum Speed
 
-          -10 WC Minimum Speed
+          <color=green>+50</color>
+          Max WC Activation Speed
 
-          -Uncapped
-          WR Activation Speed
+          <color=green>INF</color> WR Max Speed
 
-          -18% Wallrun Gravity'
-        - '-45 Max WC Activation Speed
+          <color=green>INF</color>
+          Max WR Activation Speed
 
-          -10 WC Minimum Speed
+          <color=green>15%</color> Reduced WR
+          Gravity'
+        - '<color=yellow>-17</color> WC Minimum Speed
 
-          -Uncapped
-          WR Activation Speed
+          <color=green>+50</color>
+          Max WC Activation Speed
 
-          -18% Wallrun Gravity'
+          <color=green>INF</color> WR Max Speed
+
+          <color=green>INF</color>
+          Max WR Activation Speed
+
+          <color=green>15%</color> Reduced WR
+          Gravity'
         objectRefs:
         - {fileID: 0}
         - {fileID: 0}

@@ -72,7 +72,6 @@ GameObject:
   m_Component:
   - component: {fileID: 3157089028935568993}
   - component: {fileID: -1457076579973588932}
-  - component: {fileID: 6948834669718589445}
   m_Layer: 7
   m_Name: ParkourViewmodel
   m_TagString: Untagged
@@ -189,101 +188,6 @@ MonoBehaviour:
       serializedValue: 
       serializedObject: {fileID: 7607820505191896761}
       modified: 1
-    displayIcon: {fileID: 0}
-    displayName: 
---- !u!114 &6948834669718589445
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3157089028935568994}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fa4feffba88dce746a2607f0ec6233b4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  guid: 59b9bdfd-44d1-4050-9d31-22c0ef2fa347
-  script: {fileID: 4499291145760633883, guid: 7b207b78a5fa0d243882eb9b9cc0842c, type: 3}
-  scriptPath: Assets/Code/Client/Controller/Animation/AnimationController.lua
-  forceContext: 0
-  metadata:
-    name: AnimationController
-    singleton: 0
-    decorators: []
-    properties:
-    - name: Current
-      type: StringEnum
-      objectType: 
-      items:
-        type: 
-        objectType: 
-        serializedItems: []
-        objectRefs: []
-      refPath: ::global@6285427090f0543ec244239960d141c371ff4847
-      fileRef: 
-      jsDocs:
-        text: []
-        tags: []
-      decorators: []
-      nullable: 0
-      serializedValue: VM_Idle
-      serializedObject: {fileID: 0}
-      modified: 0
-    - name: Speed
-      type: number
-      objectType: 
-      items:
-        type: 
-        objectType: 
-        serializedItems: []
-        objectRefs: []
-      refPath: 
-      fileRef: 
-      jsDocs:
-        text: []
-        tags: []
-      decorators: []
-      nullable: 0
-      serializedValue: 1
-      serializedObject: {fileID: 0}
-      modified: 0
-    - name: ClientSpeed
-      type: Vector3
-      objectType: 
-      items:
-        type: 
-        objectType: 
-        serializedItems: []
-        objectRefs: []
-      refPath: 
-      fileRef: 
-      jsDocs:
-        text: []
-        tags: []
-      decorators: []
-      nullable: 0
-      serializedValue: '{"x":0.0,"y":0.0,"z":0.0}'
-      serializedObject: {fileID: 0}
-      modified: 0
-    - name: Last
-      type: StringEnum
-      objectType: 
-      items:
-        type: 
-        objectType: 
-        serializedItems: []
-        objectRefs: []
-      refPath: ::global@6285427090f0543ec244239960d141c371ff4847
-      fileRef: 
-      jsDocs:
-        text: []
-        tags: []
-      decorators: []
-      nullable: 0
-      serializedValue: VM_Run
-      serializedObject: {fileID: 0}
-      modified: 0
     displayIcon: {fileID: 0}
     displayName: 
 --- !u!1 &4684753164295457472
@@ -789,6 +693,10 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: 6d38c46f78aabf2448736f0fef9be76e, type: 2}
+    - target: {fileID: 5866666021909216657, guid: 32b6c86e4b9e5c040818bf1ea6fe61c2, type: 3}
+      propertyPath: m_CullingMode
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6141796999198570092, guid: 32b6c86e4b9e5c040818bf1ea6fe61c2, type: 3}
       propertyPath: m_Icon
       value: 

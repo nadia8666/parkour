@@ -1,5 +1,5 @@
 import { Airship } from "@Easy/Core/Shared/Airship";
-import AnimationController from "./Controller/Animation/AnimationController";
+import type AnimationController from "./Controller/Animation/AnimationController";
 import type ClientComponent from "./Controller/ClientComponent";
 import type GearController from "./Controller/Gear/GearController";
 import { TimeTrials } from "./Controller/Modules/TimeTrials/TimeTrials";
@@ -13,7 +13,7 @@ export default class ClientController extends AirshipSingleton {
 	public Data: DataController;
 	public Gear: GearController;
 	public UI: UIController;
-	public Animation: AnimationController = AnimationController.Get();
+	public Animation: AnimationController;
 	public Drag: DragController;
 	public Settings: SettingsController;
 	public Sound: SoundController;

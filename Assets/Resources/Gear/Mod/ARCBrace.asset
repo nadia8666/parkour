@@ -90,7 +90,13 @@ MonoBehaviour:
         type: string
         objectType: 
         serializedItems:
-        - +12 Vault Velocity
+        - '<color=green>+10</color> Forward Vault Speed
+
+          <color=green>+50%</color>
+          Forward Vault Vertical Conversion
+
+          <color=green>+12</color>
+          Upward Vault Speed'
         objectRefs:
         - {fileID: 0}
       refPath: 

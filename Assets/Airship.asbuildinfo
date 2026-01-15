@@ -1114,6 +1114,13 @@
 			"filePath": "Code\\Client\\Controller\\Modules\\TimeTrials\\TimeTrialComponent.lua",
 			"extends": [],
 			"singleton": false
+		},
+		"TooltipComponent": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "Code\\Client\\Components\\TooltipComponent.lua",
+			"extends": [],
+			"singleton": false
 		}
 	},
 	"extends": {
@@ -1290,16 +1297,6 @@
 			"inherits": []
 		},
 		{
-			"name": "AnimationController",
-			"id": "Code/Client/Controller/Animation/AnimationController@AnimationController",
-			"file": "Code/Client/Controller/Animation/AnimationController.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
 			"name": "ViewmodelComponent",
 			"id": "Code/Client/Controller/Animation/ViewmodelComponent@ViewmodelComponent",
 			"file": "Code/Client/Controller/Animation/ViewmodelComponent.ts",
@@ -1320,39 +1317,9 @@
 			"inherits": []
 		},
 		{
-			"name": "SoundController",
-			"id": "Code/Client/Controller/SoundController@SoundController",
-			"file": "Code/Client/Controller/SoundController.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
 			"name": "DataController",
 			"id": "Code/Client/Framework/DataController@DataController",
 			"file": "Code/Client/Framework/DataController.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "DraggableSlotComponent",
-			"id": "Code/Client/UI/Drag/DraggableSlotComponent@DraggableSlotComponent",
-			"file": "Code/Client/UI/Drag/DraggableSlotComponent.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "DragController",
-			"id": "Code/Client/UI/Drag/DragController@DragController",
-			"file": "Code/Client/UI/Drag/DragController.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"
@@ -2064,16 +2031,6 @@
 			"inherits": []
 		},
 		{
-			"name": "DataService",
-			"id": "Code/Server/Data/DataService@DataService",
-			"file": "Code/Server/Data/DataService.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
 			"name": "ServerService",
 			"id": "Code/Server/ServerService@ServerService",
 			"file": "Code/Server/ServerService.ts",
@@ -2706,16 +2663,6 @@
 			"inherits": []
 		},
 		{
-			"name": "GearRegistrySingleton",
-			"id": "Code/Shared/GearRegistry@GearRegistrySingleton",
-			"file": "Code/Shared/GearRegistry.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
 			"name": "GenericTriggerComponent",
 			"id": "Code/Client/Components/Collision/GenericTriggerComponent@GenericTriggerComponent",
 			"file": "Code/Client/Components/Collision/GenericTriggerComponent.ts",
@@ -2756,9 +2703,29 @@
 			"inherits": []
 		},
 		{
-			"name": "ClientComponent",
-			"id": "Code/Client/Controller/ClientComponent@ClientComponent",
-			"file": "Code/Client/Controller/ClientComponent.ts",
+			"name": "DragController",
+			"id": "Code/Client/UI/Drag/DragController@DragController",
+			"file": "Code/Client/UI/Drag/DragController.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "DraggableSlotComponent",
+			"id": "Code/Client/UI/Drag/DraggableSlotComponent@DraggableSlotComponent",
+			"file": "Code/Client/UI/Drag/DraggableSlotComponent.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "TooltipComponent",
+			"id": "Code/Client/Components/TooltipComponent@TooltipComponent",
+			"file": "Code/Client/Components/TooltipComponent.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"
@@ -2769,6 +2736,56 @@
 			"name": "UIController",
 			"id": "Code/Client/UI/UIController@UIController",
 			"file": "Code/Client/UI/UIController.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "DataService",
+			"id": "Code/Server/Data/DataService@DataService",
+			"file": "Code/Server/Data/DataService.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "GearRegistrySingleton",
+			"id": "Code/Shared/GearRegistry@GearRegistrySingleton",
+			"file": "Code/Shared/GearRegistry.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "AnimationController",
+			"id": "Code/Client/Controller/Animation/AnimationController@AnimationController",
+			"file": "Code/Client/Controller/Animation/AnimationController.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "SoundController",
+			"id": "Code/Client/Controller/SoundController@SoundController",
+			"file": "Code/Client/Controller/SoundController.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "ClientComponent",
+			"id": "Code/Client/Controller/ClientComponent@ClientComponent",
+			"file": "Code/Client/Controller/ClientComponent.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"
@@ -2804,7 +2821,11 @@
 			"typescript:Code/Client/Components/Collision/GenericTriggerComponent@GenericTriggerComponent": "Client/Components/Collision/GenericTriggerComponent@GenericTriggerComponent",
 			"typescript:Code/Shared/Object/TimeTrialObject@TimeTrialObject": "Shared/Object/TimeTrialObject@TimeTrialObject",
 			"typescript:Code/Client/Controller/Modules/TimeTrials/TimeTrialComponent@TimeTrialComponent": "Client/Controller/Modules/TimeTrials/TimeTrialComponent@TimeTrialComponent",
-			"typescript:Code/Shared/Object/SoundBankObject@SoundBankObject": "Shared/Object/SoundBankObject@SoundBankObject"
+			"typescript:Code/Shared/Object/SoundBankObject@SoundBankObject": "Shared/Object/SoundBankObject@SoundBankObject",
+			"typescript:Code/Client/Components/TooltipComponent@TooltipComponent": "Client/Components/TooltipComponent@TooltipComponent",
+			"typescript:Code/Client/Controller/Moveset/Base@MovesetBase": "Client/Controller/Moveset/Base@MovesetBase",
+			"typescript:Code/Client/Controller/Moveset/JetBrace@MovesetBase": "Client/Controller/Moveset/JetBrace@MovesetBase",
+			"typescript:Code/Client/Controller/Moveset/Generic@MovesetGeneric": "Client/Controller/Moveset/Generic@MovesetGeneric"
 		}
 	}
 }

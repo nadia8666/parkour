@@ -11,6 +11,8 @@ export default class GearRegistrySingleton extends AirshipSingleton {
 
 	@Header("Mod")
 	public ARCBrace: GearObject;
+	public JetBrace: GearObject;
+	public ClutchShoes: GearObject;
 
 	@Header("Augment")
 

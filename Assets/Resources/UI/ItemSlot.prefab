@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 4642067636298547629}
   - component: {fileID: 3748457728186221406}
   - component: {fileID: 7406705676554583611}
+  - component: {fileID: 961146998068553362}
   m_Layer: 5
   m_Name: ItemSlot
   m_TagString: Untagged
@@ -98,42 +99,6 @@ MonoBehaviour:
     singleton: 0
     decorators: []
     properties:
-    - name: Button
-      type: object
-      objectType: Button
-      items:
-        type: 
-        objectType: 
-        serializedItems: []
-        objectRefs: []
-      refPath: 
-      fileRef: 
-      jsDocs:
-        text: []
-        tags: []
-      decorators: []
-      nullable: 0
-      serializedValue: 
-      serializedObject: {fileID: 0}
-      modified: 1
-    - name: Callback
-      type: AirshipScriptableObject
-      objectType: CallbackBaseObject
-      items:
-        type: 
-        objectType: 
-        serializedItems: []
-        objectRefs: []
-      refPath: 
-      fileRef: Code/Shared/Object/Callbacks/CallbackBase.ts
-      jsDocs:
-        text: []
-        tags: []
-      decorators: []
-      nullable: 0
-      serializedValue: 
-      serializedObject: {fileID: 0}
-      modified: 0
     - name: Text
       type: object
       objectType: TMP_Text
@@ -168,6 +133,135 @@ MonoBehaviour:
       decorators: []
       nullable: 0
       serializedValue: 1
+      serializedObject: {fileID: 0}
+      modified: 0
+    - name: CallbackType
+      type: IntEnum
+      objectType: 
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: Code/Client/UI/Drag/DraggableSlotComponent@CallbackType
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators: []
+      nullable: 0
+      serializedValue: 1
+      serializedObject: {fileID: 0}
+      modified: 0
+    - name: LS_TargetSlot
+      type: StringEnum
+      objectType: 
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: Code/Shared/Types@GearSlots
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators:
+      - name: ShowIf
+        parameters:
+        - type: string
+          serializedValue: '"CallbackType"'
+        - type: number
+          serializedValue: 0
+      - name: Header
+        parameters:
+        - type: string
+          serializedValue: '"Loadout Slot Config"'
+      nullable: 0
+      serializedValue: Grip
+      serializedObject: {fileID: 0}
+      modified: 0
+    - name: LS_SlotID
+      type: number
+      objectType: 
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators:
+      - name: ShowIf
+        parameters:
+        - type: string
+          serializedValue: '"CallbackType"'
+        - type: number
+          serializedValue: 0
+      nullable: 0
+      serializedValue: 
+      serializedObject: {fileID: 0}
+      modified: 0
+    - name: Tooltip
+      type: AirshipBehaviour
+      objectType: TooltipComponent
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: Code/Client/Components/TooltipComponent.ts
+      jsDocs:
+        text: []
+        tags: []
+      decorators: []
+      nullable: 0
+      serializedValue: 
+      serializedObject: {fileID: 961146998068553362}
+      modified: 1
+    displayIcon: {fileID: 0}
+    displayName: 
+--- !u!114 &961146998068553362
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2949437546639149275}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa4feffba88dce746a2607f0ec6233b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  guid: 1739c957-ff17-4172-9651-fa4ab1a05a86
+  script: {fileID: -2821057540941615920, guid: 781c2b74a15fffe40adf098916b74ca2, type: 3}
+  scriptPath: Assets/Code/Client/Components/TooltipComponent.lua
+  forceContext: 0
+  metadata:
+    name: TooltipComponent
+    singleton: 0
+    decorators: []
+    properties:
+    - name: TooltipString
+      type: string
+      objectType: 
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators: []
+      nullable: 0
+      serializedValue: 
       serializedObject: {fileID: 0}
       modified: 0
     displayIcon: {fileID: 0}
@@ -273,8 +367,8 @@ MonoBehaviour:
   m_fontSizeMin: 1
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_HorizontalAlignment: 2
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0

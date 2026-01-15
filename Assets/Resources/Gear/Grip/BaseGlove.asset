@@ -90,7 +90,7 @@ MonoBehaviour:
         type: string
         objectType: 
         serializedItems:
-        - 
+        - <color=green>+25</color> Max WC Activation Speed
         objectRefs:
         - {fileID: 0}
       refPath: 
@@ -118,8 +118,7 @@ MonoBehaviour:
         tags: []
       decorators: []
       nullable: 0
-      serializedValue: Tight woven fibers allow for exceptional friction while falling,
-        you may be prone to increased risk of hand injury while wearing.
+      serializedValue: Traditional work gloves.
       serializedObject: {fileID: 0}
       modified: 1
     - name: WorldModel
