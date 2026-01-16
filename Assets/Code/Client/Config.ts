@@ -5,7 +5,7 @@ import type { ItemInfo } from "Code/Shared/Types";
 
 export const ForceRefreshGearSignal = new Signal();
 const RecacheSignal = new Signal();
-const CacheMap: GearRegistryKey[] = [];
+const CacheMap: { [Index in GearRegistryKey]?: number } = {};
 let HasCached = false;
 function InitializeCache() {
 	if (HasCached) return;
@@ -13,18 +13,24 @@ function InitializeCache() {
 	const Link = Core().Client.Data.GetLink();
 
 	function GenerateCache() {
-		CacheMap.clear();
+		for (const [Index] of pairs(CacheMap)) {
+			delete CacheMap[Index];
+		}
+
 		for (const [_, Gear] of pairs(Core().Client.Objective.TimeTrials.TrialGear ?? Link.Data.EquippedGear)) {
 			for (const [_, Value] of pairs(Gear)) {
 				if (Value !== "None") {
 					const Item = Core().Client.Gear.GetItem(Value) as ItemInfo<"Gear">;
 					if (!Item) continue;
-					CacheMap.push(Item.Key);
+					CacheMap[Item.Key] = Item.Level;
 				}
 			}
 		}
 
 		RecacheSignal.Fire();
+
+		const Actor = Core().Client.Actor;
+		if (Actor) Actor.Gear.ResetAmmo();
 	}
 
 	for (const [Slot, Gear] of pairs(Link.Data.EquippedGear)) {
@@ -39,19 +45,19 @@ function InitializeCache() {
 }
 if ($CLIENT) task.spawn(() => InitializeCache());
 
-export function WithGear<T>(ValueMap: { None: T } & { [K in GearRegistryKey]?: T }) {
+export function WithGear<T>(ValueMap: { None: T } & { [K in GearRegistryKey]?: T | T[] }) {
 	let CachedValue: T | undefined;
 	RecacheSignal.Connect(() => (CachedValue = undefined));
 
 	return (): T => {
 		if (CachedValue !== undefined) return CachedValue;
 
-		for (const [_, Gear] of pairs(CacheMap)) {
-			let Mapped: unknown;
+		for (const [GearID, Target] of pairs(ValueMap)) {
+			const Level = CacheMap[GearID];
 
-			if ((Mapped = ValueMap[Gear])) {
-				CachedValue = Mapped as T;
-				break;
+			if (Level) {
+				CachedValue = typeIs(Target, "table") ? (Target as T[])[Level - 1] : (Target as T);
+				if (CachedValue !== undefined) break;
 			}
 		}
 
@@ -70,9 +76,6 @@ const Config = {
 
 	JumpRequiredSpeed: 5, // jump height under this speed is scaled from 0-spd to 0-1
 	JumpCoyoteTime: 0.25,
-
-	ClutchEnabled: WithGear({ None: false, ClutchShoes: true }),
-	WallAction: WithGear({ None: "Wallclimb", JetBrace: "Wallboost" }),
 
 	WallclimbMinSpeed: WithGear({ None: 7, SlipGlove: -10, GripGlove: 9 }), // upwards speed in wallclimb is max(spd, min)
 	WallclimbThreshold: WithGear({ None: -15, BaseGlove: -35, SlipGlove: -65, GripGlove: -45 }), // maximum velocity before you cant wallclimb
@@ -93,8 +96,9 @@ const Config = {
 	LedgeGrabForwardY: WithGear({ None: 0.35, ARCBrace: 0.85 }), // how much forward velocity should be converted into y velocity on ledgegrab forward
 	LedgeGrabUpSpeed: WithGear({ None: 0, ARCBrace: 12 }),
 
-	LongJumpForce: 6.5,
-	LongJumpHeightMultiplier: 0.45,
+	LongJumpForce: 11.5,
+	LongJumpHeightMultiplier: 0.4,
+	LongJumpHeightMultiplierDropdown: 0.6,
 	LongJumpGraceAirborne: 0.35, // in seconds
 	LongJumpGraceGrounded: 0.35, // in seconds
 
@@ -115,6 +119,16 @@ const Config = {
 	FallDamageMultiplier: 4.15, // damage per unit speed above threshold
 
 	MomentumSyncThreshold: 0.15,
+
+	// GEAR
+	ClutchEnabled: WithGear({ None: false, ClutchShoes: true }),
+	WallAction: WithGear({ None: "Wallclimb", JetBrace: "Wallboost" }),
+	GrapplerEnabled: WithGear({ None: false, Grappler: true }),
+
+	GrapplerMaxYankTime: 0.5,
+	GrapplerYankForce: WithGear({ None: 0, Grappler: [19, 23, 30] }),
+	GrapplerMaxDistance: WithGear({ None: 0, Grappler: [32, 38, 46] }),
+	GrapplerAttachTime: WithGear({ None: 0, Grappler: [1, 0.85, 0.75] }),
 
 	CollisionLayer: LayerMask.GetMask("GameLayer0"),
 };

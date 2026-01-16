@@ -8,6 +8,7 @@ export default class GearRegistrySingleton extends AirshipSingleton {
 	public GripGlove: GearObject;
 
 	@Header("Core")
+	public Grappler: GearObject;
 
 	@Header("Mod")
 	public ARCBrace: GearObject;

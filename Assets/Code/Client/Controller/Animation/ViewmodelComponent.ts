@@ -8,6 +8,7 @@ export default class ViewmodelComponent extends AirshipBehaviour {
 	public Controller: Animator;
 	public EventListener: AnimationEventListener;
 	public HeadTransform: Transform;
+	public GrappleTransform: Transform;
 
 	public EventTriggered = new Signal<string>();
 

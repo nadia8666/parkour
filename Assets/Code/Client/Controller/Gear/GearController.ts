@@ -1,4 +1,5 @@
 import { deepCopy as DeepCopy } from "@Easy/Core/Shared/Util/ObjectUtils";
+import { WithGear } from "Code/Client/Config";
 import Core from "Code/Core/Core";
 import type { GearRegistryKey } from "Code/Shared/GearRegistry";
 import type { AnyItem, GearSlots, InventoryKey, ItemInfo } from "Code/Shared/Types";
@@ -8,29 +9,45 @@ const MaxAmmo = {
 	Wallclimb: 1,
 	Jump: 1,
 	WallKick: 1,
+
+	Grappler: WithGear({ None: 0, Grappler: [1, 2, 3] }),
+};
+
+type _MX = typeof MaxAmmo;
+type StripAmmo = {
+	[P in keyof _MX]: _MX[P] extends () => unknown ? ReturnType<_MX[P]> : _MX[P];
 };
 
 export default class GearController extends AirshipSingleton {
 	// Ammo
-	public Ammo = DeepCopy(MaxAmmo);
-	public MaxAmmo = DeepCopy(MaxAmmo);
+	public Ammo: StripAmmo;
+
+	@Client()
+	override Start() {
+		const Max = DeepCopy(MaxAmmo);
+		for (const [Index, Ammo] of pairs(Max)) {
+			(Max as unknown as StripAmmo)[Index] = typeIs(Ammo, "number") ? Ammo : Ammo();
+		}
+
+		this.Ammo = Max as unknown as StripAmmo;
+	}
 
 	public ResetAmmo(Skip?: (keyof typeof MaxAmmo)[]) {
-		for (const [Index, Ammo] of pairs(this.MaxAmmo)) {
+		for (const [Index, Ammo] of pairs(MaxAmmo)) {
 			if (Skip?.includes(Index)) continue;
-			this.Ammo[Index] = Ammo;
+			this.Ammo[Index] = typeIs(Ammo, "number") ? Ammo : Ammo();
 		}
 
 		this.RefreshUI();
 	}
 
 	public IsAmmoReset() {
-		return this.Ammo.Wallclimb === this.MaxAmmo.Wallclimb && this.Ammo.Wallrun === this.MaxAmmo.Wallrun && this.Ammo.Jump === this.MaxAmmo.Jump;
+		return this.Ammo.Wallclimb === MaxAmmo.Wallclimb && this.Ammo.Wallrun === MaxAmmo.Wallrun && this.Ammo.Jump === MaxAmmo.Jump;
 	}
 
 	// UI
 	public RefreshUI() {
-		Core().Client.UI.UpdateAmmoCount({ Wallrun: this.MaxAmmo.Wallrun, Wallclimb: this.MaxAmmo.Wallclimb });
+		Core().Client.UI.UpdateAmmoCount({ Wallrun: MaxAmmo.Wallrun, Wallclimb: MaxAmmo.Wallclimb });
 	}
 
 	public UpdateUI() {

@@ -61,6 +61,16 @@ export const Animations = {
 		EndAnimation: "VM_Fall",
 	},
 
+	VM_DamageLight: {
+		0: { Name: "VM_DamageLight" },
+		EndAnimation: "VM_Run",
+	},
+
+	VM_DamageHeavy: {
+		0: { Name: "VM_DamageHeavy" },
+		EndAnimation: "VM_Idle",
+	},
+
 	VM_Roll: {
 		0: { Name: "VM_Roll" },
 		EndAnimation: "VM_Run",

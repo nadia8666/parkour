@@ -3,6 +3,7 @@ import { Tween } from "@Easy/Core/Shared/Tween/Tween";
 import Config from "Code/Client/Config";
 import Core from "Code/Core/Core";
 import type ClientComponent from "../ClientComponent";
+import { Actions } from "../Input";
 import type { CastResults } from "./Base";
 
 export class MovesetGeneric {
@@ -33,7 +34,7 @@ export class MovesetGeneric {
 
 		Tween.Number(
 			TweenEasingFunction.InSine,
-			0.5,
+			0.1,
 			(Speed) => {
 				Controller.SetVelocity(new Vector3(0, Speed, 0));
 			},
@@ -41,9 +42,20 @@ export class MovesetGeneric {
 			-6,
 		);
 
+		const Start = os.clock();
 		task.wait(0.5);
+		while (os.clock() - Start < 1) {
+			if (!Actions.WallAction.Active) break;
+			else task.wait();
+		}
+
 		Controller.Moveset.Base.ResetDash();
 		Controller.Moveset.Base.StartDash(Controller);
+		Controller.SetVelocity(Vector3.zero);
 		Controller.State = "Airborne";
+
+		if (!Actions.WallAction.Active) {
+			Controller.Gear.Ammo.Wallclimb--;
+		}
 	}
 }

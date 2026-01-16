@@ -8,11 +8,12 @@ import Config from "../Config";
 import type AnimationController from "./Animation/AnimationController";
 import type { ValidAnimation } from "./Animation/AnimationController";
 import type ViewmodelComponent from "./Animation/ViewmodelComponent";
-import { Camera as CameraController } from "./Camera";
+import { ClientCamera as CameraController } from "./Camera";
 import type GearController from "./Gear/GearController";
 import { Actions, Input } from "./Input";
 import { MovesetBase } from "./Moveset/Base";
 import { MovesetGeneric } from "./Moveset/Generic";
+import { MovesetGrappler } from "./Moveset/Grappler";
 
 export type ValidStates = "Airborne" | "Grounded" | "Wallclutch" | "Wallclimb" | "Wallrun" | "LedgeGrab" | "Slide" | "Dropdown" | "Fly";
 
@@ -34,6 +35,7 @@ export default class ClientComponent extends AirshipBehaviour {
 	public AccelerationCurve: AnimationCurve;
 	public RunAnimationCurve: AnimationCurve;
 	public WallclimbProgressionCurve: AnimationCurve;
+	public FOVCurve: AnimationCurve;
 
 	@Header("Rendering")
 	public AccessoryBuilder: AccessoryBuilder;
@@ -51,6 +53,7 @@ export default class ClientComponent extends AirshipBehaviour {
 	@NonSerialized() public AirborneTime = 0;
 	@NonSerialized() public Momentum = 0;
 	@NonSerialized() public LastFallSpeed = 0;
+	@NonSerialized() public VelocityLocked = false;
 
 	// States
 	@NonSerialized() public State: ValidStates = "Airborne";
@@ -74,12 +77,15 @@ export default class ClientComponent extends AirshipBehaviour {
 	public Moveset = {
 		Base: new MovesetBase(),
 		Generic: new MovesetGeneric(),
+
+		Grappler: new MovesetGrappler(),
 	};
 	public Camera = new CameraController({
 		X: this.transform.rotation.eulerAngles.x,
 		Y: this.transform.rotation.eulerAngles.y,
 		Z: this.transform.rotation.eulerAngles.z,
 	});
+	public FOV = 85;
 	public Input = new Input(this);
 
 	// Main
@@ -115,6 +121,7 @@ export default class ClientComponent extends AirshipBehaviour {
 
 		this._LOADED = true;
 		Core().Client.UI.Loading.SetActive(false);
+		this.FOV = this.FOVCurve.Evaluate(0) * 100;
 	}
 
 	public ReloadShadows() {
@@ -141,7 +148,7 @@ export default class ClientComponent extends AirshipBehaviour {
 	}
 
 	public CameraRotationToCharacter() {
-		const YRotation = Camera.main.transform.rotation.eulerAngles.y;
+		const YRotation = this.Camera.TargetRotation.eulerAngles.y;
 		this.Rigidbody.rotation = Quaternion.FromToRotation(
 			Quaternion.Euler(0, this.Rigidbody.rotation.eulerAngles.y, 0).mul(Vector3.forward),
 			Quaternion.Euler(0, YRotation, 0).mul(Vector3.forward),
@@ -174,9 +181,12 @@ export default class ClientComponent extends AirshipBehaviour {
 				}
 
 				this.Rigidbody.AddForce(Config.Gravity, ForceMode.Acceleration);
-				this.Moveset.Base.AccelerateToInput(this, FixedDT);
 
-				if (!["VM_VaultStart", "VM_LedgeGrab", "VM_Roll"].includes(this.AnimationController.Current)) {
+				if (this.AnimationController.Current !== "VM_DamageHeavy") {
+					this.Moveset.Base.AccelerateToInput(this, FixedDT);
+				}
+
+				if (!["VM_VaultStart", "VM_LedgeGrab", "VM_Roll", "VM_DamageLight", "VM_DamageHeavy"].includes(this.AnimationController.Current)) {
 					this.AnimationController.Current = (this.Rigidbody.linearVelocity.magnitude > 0.03 && "VM_Run") || "VM_Idle";
 				}
 				this.AnimationController.Speed = this.AnimationController.Current === "VM_Run" ? this.RunAnimationCurve.Evaluate(this.Rigidbody.linearVelocity.magnitude) : 1;
@@ -244,12 +254,15 @@ export default class ClientComponent extends AirshipBehaviour {
 			Target = new CFrame(Target.Position, Target.Rotation.mul(Quaternion.Euler(-Target.Rotation.eulerAngles.x, 0, 0)));
 		}
 
-		this.Camera.Update(DeltaTime, Target);
+		this.FOV = math.lerpClamped(this.FOV, this.FOVCurve.Evaluate(math.clamp01(this.GetVelocity().magnitude / 30)) * 100, 5 * DeltaTime);
+		this.Camera.Update(DeltaTime, this, Target, this.FOV);
 
 		if (this.MatchCameraStates.includes(this.State)) this.CameraRotationToCharacter();
 
 		this.Animator.Animate(DeltaTime);
 		this.UpdateUI(DeltaTime);
+
+		this.Moveset.Grappler.DrawRope(this);
 	}
 
 	@Client()
@@ -279,6 +292,7 @@ export default class ClientComponent extends AirshipBehaviour {
 	}
 
 	public Land() {
+		this.VelocityLocked = false;
 		this.LastLanded = os.clock();
 		this.State = "Grounded";
 		this.AirborneTime = 0;
@@ -310,6 +324,8 @@ export default class ClientComponent extends AirshipBehaviour {
 		if (Damage > 0) {
 			Core().Client.Sound.Play(Damage <= 25 ? "strongland" : "landhard");
 
+			this.AnimationController.Current = `VM_Damage${Damage <= 25 ? "Light" : "Heavy"}`;
+
 			this.DamageSelf(Damage);
 		}
 
@@ -323,7 +339,8 @@ export default class ClientComponent extends AirshipBehaviour {
 		this._LastHealth = 100;
 
 		this.ResetLastFallSpeed();
-		this.Moveset.Base.EndDash();
+		this.Moveset.Base.ResetState();
+		this.Moveset.Grappler.ResetState();
 
 		this.Land();
 		this.SetVelocity(Vector3.zero);

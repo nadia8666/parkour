@@ -3,17 +3,22 @@ import { Mouse } from "@Easy/Core/Shared/UserInput";
 import Core from "Code/Core/Core";
 import CFrame from "@inkyaker/CFrame/Code";
 import { Settings } from "../Framework/SettingsController";
+import type ClientComponent from "./ClientComponent";
 
 const MouseSensitivity = new Vector2(1, 0.77).mul(math.rad(0.5));
 const PitchMax = 85;
 
-export class Camera {
+export function WrapAngle(Angle: number) {
+	return ((Angle + 540) % 360) - 180;
+}
+
+export class ClientCamera {
 	public Transform: Transform = GameObject.FindGameObjectWithTag("MainCamera").transform.parent;
 	public TargetRotation: Quaternion = Quaternion.identity;
 
 	constructor(public Rotation: { X: number; Y: number; Z: number }) {}
 
-	public Update(_DeltaTime: number, Source: CFrame) {
+	public Update(_DeltaTime: number, Controller: ClientComponent, Source: CFrame, FOV: number) {
 		const RenderPos = Source.Position;
 
 		if (!Core().Client.UI.InputDisabledFromMenu() && !Core().Client.UI.MenuOpen) {
@@ -36,10 +41,14 @@ export class Camera {
 
 		this.TargetRotation = Rotation;
 
-		const Euler = Settings.CameraRotation ? Source.Rotation.eulerAngles : Vector3.zero;
+		const Euler = Source.Rotation.eulerAngles;
 		const Current = Rotation.eulerAngles;
 
-		this.Transform.rotation = Quaternion.Euler(Euler.x + Current.x, Current.y, Euler.z + Current.z);
+		const RealYOffset = WrapAngle(Controller.Animator.gameObject.transform.eulerAngles.y) - WrapAngle(Euler.y);
+
+		this.Transform.rotation = Settings.CameraRotation ? Quaternion.Euler(Euler.x + Current.x, RealYOffset + Current.y, Euler.z + Current.z) : Rotation;
 		this.Transform.position = FinalCFrame.Position;
+
+		Camera.main.fieldOfView = FOV;
 	}
 }

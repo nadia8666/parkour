@@ -115,6 +115,9 @@ export class MovesetBase {
 			case "Fly":
 				if (ENV.Runtime === "DEV") Controller.State = Controller.State === "Fly" ? "Airborne" : "Fly";
 				break;
+			case "CoreUse":
+				if (Config.GrapplerEnabled()) Controller.Moveset.Grappler.StartGrapple(Controller);
+				break;
 		}
 	}
 
@@ -129,6 +132,8 @@ export class MovesetBase {
 
 	public StepMoveset(Controller: ClientComponent, FixedDT: number) {
 		if (this.DashCharge !== -1) this.StepDash(Controller, FixedDT);
+
+		if (Config.GrapplerEnabled()) Controller.Moveset.Grappler.StepGrapple(Controller, FixedDT);
 	}
 
 	//TODO: rewrite this function so it isnt evil and messy
@@ -171,10 +176,11 @@ export class MovesetBase {
 
 		// velocity angling
 		if (TargetVelocity.magnitude > 0.25) {
+			const RedirectForce = Controller.VelocityLocked ? 0.1 : 1;
 			const Speed = Controller.GetVelocity();
 			Controller.SetVelocity(
 				Speed.WithY(0)
-					.normalized.Slerp(TargetVelocity.WithY(0), math.clamp01(FixedDT * 2.5))
+					.normalized.Slerp(TargetVelocity.WithY(0), math.clamp01(FixedDT * 2.5 * RedirectForce))
 					.mul(Speed.WithY(0).magnitude)
 					.WithY(Speed.y),
 			);
@@ -241,6 +247,7 @@ export class MovesetBase {
 			return;
 		}
 
+		const FromDropdown = State === "Dropdown";
 		const InWallrun = State === "Wallrun";
 		let JumpType: "Wallrun" | "Default" | "Long" = InWallrun ? "Wallrun" : "Default";
 		if (Controller.Gear.Ammo.Jump <= 0 && !InWallrun) return;
@@ -301,7 +308,10 @@ export class MovesetBase {
 				const Magnitude = Controller.Momentum;
 
 				Controller.ResetLastFallSpeed();
-				Controller.Rigidbody.linearVelocity = Controller.Rigidbody.linearVelocity.normalized.WithY(Config.LongJumpHeightMultiplier).normalized.mul(Magnitude);
+				Controller.Rigidbody.linearVelocity = Controller.Rigidbody.linearVelocity.normalized
+					.WithY(FromDropdown ? Config.LongJumpHeightMultiplierDropdown : Config.LongJumpHeightMultiplier)
+					.normalized.mul(Magnitude);
+				Controller.VelocityLocked = true;
 
 				this.AnimationController.Current = "VM_LongJump";
 				break;
@@ -351,16 +361,18 @@ export class MovesetBase {
 	public StartWallAction(Controller: ClientComponent) {
 		if (Controller.Gear.Ammo.Wallclimb <= 0) return;
 
-		const Distance = Controller.Momentum / 6;
+		const Distance = math.max(Controller.Momentum / 6, 0.75);
 
 		const Root = Controller.GetCFrame();
 		const ForwardCast = Raycast(Root.Position, Root.Forward, Distance);
 		if (!ForwardCast.Hit) return;
 
 		const NormalDot = ForwardCast.Normal.mul(-1).Dot(Controller.GetCFrame().Forward);
-		if (NormalDot <= 0.8) return;
+		if (NormalDot <= 0.7) return;
 
 		if (Config.ClutchEnabled()) Controller.Moveset.Generic.StartWallclutch(Controller, ForwardCast);
+
+		if (!Actions.WallAction.Active) return;
 
 		switch (Config.WallAction()) {
 			case "Wallclimb":
@@ -766,13 +778,13 @@ export class MovesetBase {
 	public StartWallKick(Controller: ClientComponent) {
 		const Velocity = Controller.GetVelocity();
 		if (Controller.Gear.Ammo.WallKick < 1 || Velocity.y <= -30) return;
-		const CFrame = Controller.GetCFrame(true);
+		const CFrame = Controller.GetCFrame();
 
 		if (!this.DashActive()) return;
 
 		const BackCast = Raycast(CFrame.Position, CFrame.Back, 2);
 		if (BackCast.Hit) {
-			Controller.SetVelocity(Velocity.add(CFrame.Forward.mul(14.5)).WithY(math.max(Velocity.y, 16)));
+			Controller.SetVelocity(CFrame.Forward.mul(12.5).WithY(math.max(Velocity.y, 13)));
 			Controller.Gear.Ammo.WallKick--;
 
 			Controller.Input.KeyReleased("Jump", true);
@@ -780,5 +792,17 @@ export class MovesetBase {
 
 			Core().Client.Sound.Play("footstepfast"); // TEMP
 		}
+	}
+
+	public ResetState() {
+		this.EndDash()
+		this.ResetDash()
+
+		this.JumpTimer = 0
+		this.WallrunTimer = 0
+		this.WallclimbFailTimer = 0
+		this.WallclimbTimer = 0
+		this.WallclimbFailTimer = 0
+		this.LastJump = "R"
 	}
 }

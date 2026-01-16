@@ -1,0 +1,203 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 242626de727c4fe4ab54046da100263e, type: 3}
+  m_Name: Grappler
+  m_EditorClassIdentifier: 
+  _scriptPath: Assets/Code/Shared/Object/GearObject.lua
+  _script: {fileID: -5977465839212312865, guid: 6129222c0fc2a5c49bc05691c5fc4bdf, type: 3}
+  metadata:
+    name: GearObject
+    singleton: 0
+    decorators:
+    - name: CreateAssetMenu
+      parameters:
+      - type: string
+        serializedValue: '"Parkour/New Gear"'
+      - type: string
+        serializedValue: '"New Gear.asset"'
+    properties:
+    - name: Slot
+      type: StringEnum
+      objectType: 
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: Code/Shared/Types@GearSlots
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators:
+      - name: Header
+        parameters:
+        - type: string
+          serializedValue: '"Registry Info"'
+      nullable: 0
+      serializedValue: Core
+      serializedObject: {fileID: 0}
+      modified: 1
+    - name: Name
+      type: string
+      objectType: 
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators: []
+      nullable: 0
+      serializedValue: Magnetic Retraction Grappler
+      serializedObject: {fileID: 0}
+      modified: 1
+    - name: MaxLevel
+      type: IntEnum
+      objectType: 
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: ::global@081135eae9d69d1731c480218927771d166a9557
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators: []
+      nullable: 0
+      serializedValue: 3
+      serializedObject: {fileID: 0}
+      modified: 1
+    - name: Perks
+      type: Array
+      objectType: 
+      items:
+        type: string
+        objectType: 
+        serializedItems:
+        - '19 yank force
+
+          32 max distance
+
+          1s max attach time
+
+
+
+          press
+          e to yanks, release immediately after contact for the best launch'
+        - '23 yank force
+
+          38 max distance
+
+          0.85s max attach time
+
+
+          press
+          e to yanks, release immediately after contact for the best launch'
+        - '30 yank force
+
+          46 max distance
+
+          0.75s max attach time
+
+
+          (unimplemented)
+          hold e on marked points to quickly pull up to them'
+        objectRefs:
+        - {fileID: 0}
+        - {fileID: 0}
+        - {fileID: 0}
+      refPath: 
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators:
+      - name: Header
+        parameters:
+        - type: string
+          serializedValue: '"Inventory Info"'
+      - name: Multiline
+        parameters: []
+      nullable: 0
+      serializedValue: 
+      serializedObject: {fileID: 0}
+      modified: 1
+    - name: Description
+      type: string
+      objectType: 
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators:
+      - name: Multiline
+        parameters: []
+      nullable: 0
+      serializedValue: press e to yanks, release immediately after contact for the
+        best launch
+      serializedObject: {fileID: 0}
+      modified: 1
+    - name: WorldModel
+      type: object
+      objectType: GameObject
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators:
+      - name: Header
+        parameters:
+        - type: string
+          serializedValue: '"Visual"'
+      nullable: 0
+      serializedValue: 
+      serializedObject: {fileID: 0}
+      modified: 0
+    - name: EquipModel
+      type: object
+      objectType: GameObject
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators: []
+      nullable: 0
+      serializedValue: 
+      serializedObject: {fileID: 0}
+      modified: 0
+    displayIcon: {fileID: 0}
+    displayName: 

@@ -287,6 +287,28 @@ MonoBehaviour:
       serializedValue: 
       serializedObject: {fileID: 11400000, guid: 512a150cecbcb7d4cb7fabf742144956, type: 2}
       modified: 1
+    - name: Grappler
+      type: AirshipScriptableObject
+      objectType: GearObject
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: Code/Shared/Object/GearObject.ts
+      jsDocs:
+        text: []
+        tags: []
+      decorators:
+      - name: Header
+        parameters:
+        - type: string
+          serializedValue: '"Core"'
+      nullable: 0
+      serializedValue: 
+      serializedObject: {fileID: 11400000, guid: 933d880f474ad82488286c610d16ba4f, type: 2}
+      modified: 1
     displayIcon: {fileID: 0}
     displayName: 
 --- !u!114 &107228
@@ -4136,6 +4158,10 @@ MonoBehaviour:
         - 
         - 
         - 
+        - 
+        - 
+        - 
+        - 
         objectRefs:
         - {fileID: 11400000, guid: 4ec228a8465e97b4bbbf4b3c242b0127, type: 2}
         - {fileID: 11400000, guid: f393c3a4b7de2b94c9412e1c956a3b3b, type: 2}
@@ -4147,6 +4173,10 @@ MonoBehaviour:
         - {fileID: 11400000, guid: 33e0aac68d4dbbf46a9524bad32a7aad, type: 2}
         - {fileID: 11400000, guid: d3f1495cc68dfa64684b5e8154ad2725, type: 2}
         - {fileID: 11400000, guid: 5bbeb2393ddc1d14888bd14e94a38fd0, type: 2}
+        - {fileID: 11400000, guid: 404323f0a918ae24fbeb79d7d3db853d, type: 2}
+        - {fileID: 11400000, guid: 9c5ed3d47f79e1e40a3d21051df616e3, type: 2}
+        - {fileID: 11400000, guid: ea9af09303e655942b420fc593952d9c, type: 2}
+        - {fileID: 11400000, guid: 63a3cd5c92318c24996b6ba475eb92d5, type: 2}
       refPath: 
       fileRef: Code/Shared/Object/SoundBankObject.ts
       jsDocs:
@@ -4206,7 +4236,7 @@ MonoBehaviour:
         objectType: 
         serializedItems: []
         objectRefs: []
-      refPath: ::global@4c6a4091d74679eb1adff547ece4a11b32751e54
+      refPath: ::global@f4039796df8468b31144a239fa794e8744fba18a
       fileRef: 
       jsDocs:
         text: []
@@ -4260,7 +4290,7 @@ MonoBehaviour:
         objectType: 
         serializedItems: []
         objectRefs: []
-      refPath: ::global@4c6a4091d74679eb1adff547ece4a11b32751e54
+      refPath: ::global@f4039796df8468b31144a239fa794e8744fba18a
       fileRef: 
       jsDocs:
         text: []

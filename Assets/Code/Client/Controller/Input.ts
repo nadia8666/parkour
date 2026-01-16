@@ -15,9 +15,9 @@ class InputEntry {
 }
 
 export const Actions = {
-	WallKick: new InputEntry(Key.Space, 5),
-	LedgeGrab: new InputEntry(Key.Space, 4),
-	Jump: new InputEntry(Key.Space, 3),
+	LedgeGrab: new InputEntry(Key.Space, 5),
+	Jump: new InputEntry(Key.Space, 4),
+	WallKick: new InputEntry(Key.Space, 3),
 	WallAction: new InputEntry(Key.Space, 2),
 	Wallrun: new InputEntry(Key.Space, 1),
 
@@ -32,6 +32,8 @@ export const Actions = {
 
 	Fly: new InputEntry(Key.Q, 1),
 	FlyBoost: new InputEntry(Key.LeftShift, -1),
+
+	CoreUse: new InputEntry(Key.E, 1),
 };
 
 const InverseMap = new Map<Key, (keyof typeof Actions)[]>();
