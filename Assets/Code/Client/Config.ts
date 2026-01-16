@@ -78,23 +78,24 @@ const Config = {
 	JumpCoyoteTime: 0.25,
 
 	WallclimbMinSpeed: WithGear({ None: 7, SlipGlove: -10, GripGlove: 9 }), // upwards speed in wallclimb is max(spd, min)
-	WallclimbThreshold: WithGear({ None: -15, BaseGlove: -35, SlipGlove: -65, GripGlove: -45 }), // maximum velocity before you cant wallclimb
+	WallclimbThreshold: WithGear({ None: -30, BaseGlove: -45, SlipGlove: -75, GripGlove: -55 }), // maximum velocity before you cant wallclimb
 	WallclimbCoyoteTime: 0.25, // time before you are dropped off a wallclimb without a wall in front of you
 	WallclimbStepStrength: WithGear({ None: 115, GripGlove: 135 }), // strength for each push of the wallclimb
-	WallclimbLength: WithGear({ None: 1, SlipGlove: 1.25, GripGlove: 1.45 }),
+	WallclimbLength: WithGear({ None: 1, BaseGlove: 1.1, SlipGlove: 1.25, GripGlove: 1.45 }),
 
 	WallrunCoyoteTime: 0.1, // time before you are dropped off of a wallrun without a wall next to you
 	WallrunMinSpeed: 6, // forward wallrun speed is max(spd, min)
 	WallrunMomentumMaxSpeed: 16,
 	WallrunMaxSpeed: WithGear({ None: 18, SlipGlove: inf, GripGlove: 22.5 }), //forward wallrun speed on jump is min(spd, max)
-	WallrunGravity: WithGear({ None: 0.85, SlipGlove: 0.7 }), // multiplier for global gravity while wallrunning
-	WallrunThreshold: WithGear({ None: -35, SlipGlove: -inf, GripGlove: -40 }), // maximum y velocity before you cant wallrun
+	WallrunGravity: WithGear({ None: 0.7, SlipGlove: 0.525 }), // multiplier for global gravity while wallrunning
+	WallrunThreshold: WithGear({ None: -40, SlipGlove: -inf, GripGlove: -50 }), // maximum y velocity before you cant wallrun
 	WallrunJumpForce: new Vector2(0, 15),
 	WallrunLength: WithGear({ None: 2, SlipGlove: 3, GripGlove: 2.5 }),
+	WallrunJumpKeep: WithGear({ None: false, SlipGlove: true }),
 
-	LedgeGrabForwardSpeed: WithGear({ None: 2, ARCBrace: 12 }), // how much extra velocity should be added for forward ledgegrabs
+	LedgeGrabForwardSpeed: WithGear({ None: 2, ARCBrace: 10 }), // how much extra velocity should be added for forward ledgegrabs
 	LedgeGrabForwardY: WithGear({ None: 0.35, ARCBrace: 0.85 }), // how much forward velocity should be converted into y velocity on ledgegrab forward
-	LedgeGrabUpSpeed: WithGear({ None: 0, ARCBrace: 12 }),
+	LedgeGrabUpSpeed: WithGear({ None: 0, ARCBrace: 8 }),
 
 	LongJumpForce: 11.5,
 	LongJumpHeightMultiplier: 0.4,
@@ -126,9 +127,10 @@ const Config = {
 	GrapplerEnabled: WithGear({ None: false, Grappler: true }),
 
 	GrapplerMaxYankTime: 0.5,
-	GrapplerYankForce: WithGear({ None: 0, Grappler: [19, 23, 30] }),
+	GrapplerYankForce: WithGear({ None: 0, Grappler: [9, 11, 14] }),
 	GrapplerMaxDistance: WithGear({ None: 0, Grappler: [32, 38, 46] }),
 	GrapplerAttachTime: WithGear({ None: 0, Grappler: [1, 0.85, 0.75] }),
+	GrapplerMinAttachTime: 0.2,
 
 	CollisionLayer: LayerMask.GetMask("GameLayer0"),
 };

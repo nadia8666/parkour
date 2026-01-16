@@ -6,13 +6,13 @@ export const Settings = {
 	HoldWallclimb: true,
 	HoldWallrun: false,
 
-	CameraSensitivityMouse: 0,
+	CameraSensitivityMouse: 3,
 };
 
 export default class SettingsController extends AirshipSingleton {
 	@Client()
 	override Start() {
-		this.AddBool("CameraRotation", "Camera Rotation")
+		this.AddBool("CameraRotation", "Camera Rotation");
 
 		this.AddBool("HoldWallclimb", "Hold to Wallclimb");
 		this.AddBool("HoldWallrun", "Hold to Wallrun");

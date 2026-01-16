@@ -166,9 +166,14 @@ export class TimeTrials {
 					let ToSet = false;
 					if (ExistingRecord) {
 						if (ExistingRecord > CurrentTime) ToSet = true;
+						print(ExistingRecord, CurrentTime, ToSet);
 					} else ToSet = true;
 
-					if (ToSet) Records[Trial.TrialData.ID] = CurrentTime;
+					if (ToSet) {
+						Records[Trial.TrialData.ID] = CurrentTime;
+						Core().Client.Data.GetLink(true).RecalculateHash();
+						print(`Set ${Trial.TrialData.ID} record!`);
+					}
 				}
 			}
 		}

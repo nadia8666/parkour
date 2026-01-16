@@ -20,7 +20,7 @@ export class MovesetGrappler {
 		if (Controller.Gear.Ammo.Grappler < 1 || this.Active) return;
 		const Target = Controller.Camera.TargetRotation;
 		const Origin = Controller.GetCFrame().Position;
-		const GrappleCast = Raycast(Origin, Target.mul(Vector3.forward), 32);
+		const GrappleCast = Raycast(Origin, Target.mul(Vector3.forward), Config.GrapplerMaxDistance());
 		if (GrappleCast.Hit) {
 			this.ResetState();
 
@@ -30,7 +30,7 @@ export class MovesetGrappler {
 
 			this.Active = true;
 
-			this.HitDelay = GrappleCast.Pos.sub(Origin).magnitude / 32;
+			this.HitDelay = math.max(math.clamp01(GrappleCast.Pos.sub(Origin).magnitude / Config.GrapplerMaxDistance()) * Config.GrapplerAttachTime(), Config.GrapplerMinAttachTime);
 			this.MaxLength = this.HitDelay + Config.GrapplerMaxYankTime;
 			this.TargetPos = GrappleCast.Pos;
 

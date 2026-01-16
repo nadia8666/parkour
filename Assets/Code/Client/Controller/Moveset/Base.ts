@@ -318,11 +318,14 @@ export class MovesetBase {
 			}
 			case "Wallrun": {
 				const CurrentMagnitude = math.min(Controller.Momentum + Config.WallrunJumpForce.x, Config.WallrunMaxSpeed());
+				const CurrentYSpeed = Controller.GetVelocity().y;
 
 				const CameraRot = Quaternion.Euler(0, Controller.Camera.Rotation.Y, 0);
 				const CameraLook = CameraRot.mul(Vector3.forward).add(CameraRot.mul(Controller.Input.GetMoveVector())).normalized;
 				Controller.ResetLastFallSpeed();
-				Controller.Rigidbody.linearVelocity = CameraLook.WithY(0).normalized.mul(CurrentMagnitude).WithY(Config.WallrunJumpForce.y);
+				Controller.Rigidbody.linearVelocity = CameraLook.WithY(0)
+					.normalized.mul(CurrentMagnitude)
+					.WithY(Config.WallrunJumpKeep() ? Config.WallrunJumpForce.y + (CurrentYSpeed > 0 ? CurrentYSpeed : CurrentYSpeed / 4) : Config.WallrunJumpForce.y);
 
 				this.AnimationController.Current = this.WallrunTarget === Controller.WallrunL ? "VM_JumpRWallrun" : "VM_JumpLWallrun";
 
@@ -519,7 +522,12 @@ export class MovesetBase {
 		this.WallrunTimer -= FixedDT;
 
 		const CurrentVelocity = Controller.GetVelocity();
-		Controller.SetVelocity(Controller.GetCFrame().Forward.mul(CurrentVelocity.WithY(0).magnitude).add(Vector3.up.mul(CurrentVelocity.y)));
+		const Drag = CurrentVelocity.y > 0 ? CurrentVelocity.y * -0.025 : 0;
+		Controller.SetVelocity(
+			Controller.GetCFrame()
+				.Forward.mul(CurrentVelocity.WithY(0).magnitude)
+				.add(Vector3.up.mul(CurrentVelocity.y + Drag)),
+		);
 
 		const GravityAffector = 1 - this.WallrunTimer / Config.WallrunLength();
 		Controller.Rigidbody.AddForce(Config.Gravity.mul(GravityAffector * Config.WallrunGravity()), ForceMode.Acceleration);
@@ -777,7 +785,7 @@ export class MovesetBase {
 
 	public StartWallKick(Controller: ClientComponent) {
 		const Velocity = Controller.GetVelocity();
-		if (Controller.Gear.Ammo.WallKick < 1 || Velocity.y <= -30) return;
+		if (Controller.Gear.Ammo.WallKick < 1 || Velocity.y <= -45) return;
 		const CFrame = Controller.GetCFrame();
 
 		if (!this.DashActive()) return;
@@ -795,14 +803,14 @@ export class MovesetBase {
 	}
 
 	public ResetState() {
-		this.EndDash()
-		this.ResetDash()
+		this.EndDash();
+		this.ResetDash();
 
-		this.JumpTimer = 0
-		this.WallrunTimer = 0
-		this.WallclimbFailTimer = 0
-		this.WallclimbTimer = 0
-		this.WallclimbFailTimer = 0
-		this.LastJump = "R"
+		this.JumpTimer = 0;
+		this.WallrunTimer = 0;
+		this.WallclimbFailTimer = 0;
+		this.WallclimbTimer = 0;
+		this.WallclimbFailTimer = 0;
+		this.LastJump = "R";
 	}
 }
