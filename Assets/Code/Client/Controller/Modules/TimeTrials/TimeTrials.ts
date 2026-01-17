@@ -71,7 +71,7 @@ export class TimeTrials {
 		for (const [_, Trial] of pairs(this.TrialsList)) {
 			const CurrentTime = Records[Trial.Object.ID] ?? 0;
 
-			Trial.Prompt.SetObjectText(`${Trial.Object.DisplayName}\nPB: ${CurrentTime <= 0 ? "---.--" : this.FormatTime(CurrentTime)}s`);
+			Trial.Prompt.SetObjectText(`${Trial.Object.DisplayName}\nPB: ${CurrentTime <= 0 ? "---.--" : this.FormatTime(CurrentTime, 0)}s`);
 		}
 	}
 
@@ -156,7 +156,7 @@ export class TimeTrials {
 			const Trial = this.CurrentTrial;
 			const CurrentTime = os.clock() - this.LastTrialStart;
 
-			Core().Client.UI.TT_Time.text = this.FormatTime(CurrentTime, 0);
+			Core().Client.UI.TT_Time.text = this.FormatTime(CurrentTime);
 
 			const RankColor = Trial.TrialData.GetColorFromTime(CurrentTime);
 			if (RankColor) Core().Client.UI.TT_Medal.color = RankColor;

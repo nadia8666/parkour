@@ -254,7 +254,7 @@ export default class ClientComponent extends AirshipBehaviour {
 			Target = new CFrame(Target.Position, Target.Rotation.mul(Quaternion.Euler(-Target.Rotation.eulerAngles.x, 0, 0)));
 		}
 
-		this.FOV = math.lerpClamped(this.FOV, this.FOVCurve.Evaluate(math.clamp01(this.GetVelocity().magnitude / 30)) * 100, 5 * DeltaTime);
+		this.FOV = math.lerpClamped(this.FOV, this.FOVCurve.Evaluate(math.clamp01(this.GetVelocity().magnitude / 30)) * 100, 0.5 * DeltaTime);
 		this.Camera.Update(DeltaTime, this, Target, this.FOV);
 
 		if (this.MatchCameraStates.includes(this.State)) this.CameraRotationToCharacter();

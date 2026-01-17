@@ -4,6 +4,7 @@ import { Binding } from "@Easy/Core/Shared/Input/Binding";
 import { Mouse } from "@Easy/Core/Shared/UserInput";
 import { Bin } from "@Easy/Core/Shared/Util/Bin";
 import Core from "Code/Core/Core";
+import type { AnyItem } from "Code/Shared/Types";
 import type TooltipComponent from "../Components/TooltipComponent";
 import type ClientComponent from "../Controller/ClientComponent";
 import type DraggableSlotComponent from "./Drag/DraggableSlotComponent";
@@ -65,6 +66,8 @@ export default class UIController extends AirshipSingleton {
 			Destroy(Target);
 		});
 
+		const SortedList: { [Index: string]: [Transform, AnyItem][] } = {};
+
 		for (const [_Index, Value] of pairs(Core().Client.Data.GetLink().Data.Inventory)) {
 			if (Value.Type === "Gear") {
 				const GearSlot = Instantiate(Asset.LoadAsset("Assets/Resources/UI/ItemSlot.prefab"));
@@ -76,6 +79,29 @@ export default class UIController extends AirshipSingleton {
 				if (!Slot) continue;
 				Slot.SlotContents = Value;
 				Slot.UpdateFilled();
+
+				let Existing = SortedList[Value.Key];
+				if (!Existing) {
+					Existing = [];
+					SortedList[Value.Key] = Existing;
+				}
+
+				if (Value.Level) {
+					Existing[Value.Level - 1] = [GearSlot.transform, Value];
+				} else {
+					Existing.push([GearSlot.transform, Value]);
+					Existing.sort((a, b) => {
+						return a[1].ObtainedTime > b[1].ObtainedTime;
+					});
+				}
+			}
+		}
+
+		let Index = 0;
+		for (const [_, Items] of pairs(SortedList)) {
+			for (const [_, Item] of pairs(Items)) {
+				Item[0].SetSiblingIndex(Index);
+				Index++;
 			}
 		}
 	}

@@ -439,7 +439,7 @@ export class MovesetBase {
 			Controller.transform.position = Controller.transform.position.Lerp(Cast.Pos.add(CFrame.Back.mul(0.5)), math.clamp01(FixedDT * 5));
 		}
 
-		const Result = this.StartLedgeGrab(Controller, LedgeGrabType.LedgeGrab);
+		const Result = this.StartLedgeGrab(Controller, 0.1, LedgeGrabType.LedgeGrab);
 		return !Result;
 	}
 
@@ -546,12 +546,12 @@ export class MovesetBase {
 
 	// #region Ledge Grab
 	public LedgeGrabType: LedgeGrabType;
-	public StartLedgeGrab(Controller: ClientComponent, ForceType?: LedgeGrabType) {
+	public StartLedgeGrab(Controller: ClientComponent, ForceDistance?: number, ForceType?: LedgeGrabType) {
 		if (Controller.GetVelocity().y <= -65) return;
 
 		const Rotation = Controller.GetCFrame().Rotation;
 		const Position = Controller.LedgeGrabFail.transform.position;
-		const Speed = Controller.Momentum / 12.5;
+		const Speed = ForceDistance ?? Controller.Momentum / 12.5;
 
 		const Overlapping = Physics.CheckBox(Position.add(Rotation.mul(new Vector3(0, 1.75, 0.5 + Speed / 2))), new Vector3(0.125, 0.125, Speed), Rotation, Config.CollisionLayer);
 		if (Overlapping) return false;
@@ -564,7 +564,14 @@ export class MovesetBase {
 		let Origin = Root.mul(new CFrame(new Vector3(0, 1.75, GrabMargin / 2))).Position;
 
 		if (!Grounded) {
-			if (Raycast(Root.mul(new CFrame(new Vector3(0, 1.75, -GrabMargin / 2))).Position, new Vector3(0, -1, 0), 1.75, Color.green).Hit) {
+			if (
+				Raycast(
+					Root.mul(new CFrame(new Vector3(0, 1.75, ForceDistance ? -ForceDistance / 2 : -GrabMargin / 2))).Position,
+					new Vector3(0, -1, 0),
+					ForceDistance ?? 1.75,
+					Color.green,
+				).Hit
+			) {
 				return false;
 			}
 		} else if (!Raycast(Root.mul(new CFrame(new Vector3(0, 0.5, 0))).Position, Root.Forward, 1, Color.red).Hit) return false;
@@ -576,7 +583,6 @@ export class MovesetBase {
 			for (const Height of $range(0, 3)) {
 				const TargetOrigin = Origin.add(Vector3.up.mul(Height / 2));
 				const Cast = Raycast(TargetOrigin, Vector3.down, 0.5);
-				print(Cast.Hit, Height);
 				if (Cast.Hit) {
 					Success = true;
 					Origin = TargetOrigin;
