@@ -474,7 +474,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.5019608}
+  m_Color: {r: 0.5471698, g: 0.5471698, b: 0.5471698, a: 0.5019608}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -781,7 +781,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 35, y: 0}
+  m_AnchoredPosition: {x: 338.085, y: 0}
   m_SizeDelta: {x: 25.9, y: 25.9}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7631756769534622792
@@ -901,7 +901,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Key
+  m_text: 'my name is super aweomse the ultimate the aweomse the maxmimmus super
+    god 12\nhello world
+
+'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: f0ce55d58d63e4deab29e7ad50308632, type: 2}
   m_sharedMaterial: {fileID: 813049023685960433, guid: f0ce55d58d63e4deab29e7ad50308632, type: 2}
@@ -946,7 +949,7 @@ MonoBehaviour:
   m_charWidthMaxAdj: 0
   m_TextWrappingMode: 1
   m_wordWrappingRatios: 0.4
-  m_overflowMode: 1
+  m_overflowMode: 0
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1
@@ -1295,8 +1298,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 35, y: -5}
-  m_SizeDelta: {x: 46.47, y: 30}
+  m_AnchoredPosition: {x: 338.085, y: -5}
+  m_SizeDelta: {x: 656.17, y: 30}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &4835098883140878879
 MonoBehaviour:
@@ -1470,5 +1473,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cam: {fileID: 0}
   faceCamera: 1
-  targetScreenHeightScale: 0.18
+  targetScreenHeightScale: 0.3
   smoothTime: 0

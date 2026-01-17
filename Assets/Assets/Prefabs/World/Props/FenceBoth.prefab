@@ -9,6 +9,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: -9079823758057179346, guid: bb5affc66a279a54ea6f16949e06d8d7, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 57aab0ea2f6027d488f4ba9fcd15e463, type: 2}
+    - target: {fileID: -9079823758057179346, guid: bb5affc66a279a54ea6f16949e06d8d7, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
       value: 
       objectReference: {fileID: 2100000, guid: 5cb1bfa637664d24e8f219b99db01bd1, type: 2}

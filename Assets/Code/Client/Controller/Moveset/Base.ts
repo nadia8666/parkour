@@ -104,7 +104,7 @@ export class MovesetBase {
 					this.StartLedgeGrab(Controller);
 				}
 				break;
-			case "Dash":
+			case "Coil":
 				this.StartDash(Controller);
 				break;
 			case "Respawn":
@@ -123,7 +123,7 @@ export class MovesetBase {
 
 	public ActionDropped(Name: keyof typeof Actions, _Controller: ClientComponent) {
 		switch (Name) {
-			case "Dash":
+			case "Coil":
 				this.DashStart = os.clock();
 				this.EndDash();
 				break;
@@ -561,7 +561,7 @@ export class MovesetBase {
 		const GrabMargin = 2.25;
 		const Root = Controller.GetCFrame(true);
 		const Normal = Root.Forward;
-		const Origin = Root.mul(new CFrame(new Vector3(0, 1.75, GrabMargin / 2))).Position;
+		let Origin = Root.mul(new CFrame(new Vector3(0, 1.75, GrabMargin / 2))).Position;
 
 		if (!Grounded) {
 			if (Raycast(Root.mul(new CFrame(new Vector3(0, 1.75, -GrabMargin / 2))).Position, new Vector3(0, -1, 0), 1.75, Color.green).Hit) {
@@ -569,27 +569,43 @@ export class MovesetBase {
 			}
 		} else if (!Raycast(Root.mul(new CFrame(new Vector3(0, 0.5, 0))).Position, Root.Forward, 1, Color.red).Hit) return false;
 
+		// If grounded extend the ledge grab height for intersecting points
+		const IntialIntersection = Physics.OverlapSphere(Origin, 0.015, Config.CollisionLayer);
+		if (IntialIntersection.size() > 0 && Grounded) {
+			let Success = false;
+			for (const Height of $range(0, 3)) {
+				const TargetOrigin = Origin.add(Vector3.up.mul(Height / 2));
+				const Cast = Raycast(TargetOrigin, Vector3.down, 0.5);
+				print(Cast.Hit, Height);
+				if (Cast.Hit) {
+					Success = true;
+					Origin = TargetOrigin;
+					break;
+				}
+			}
+
+			if (!Success) return;
+		}
+
 		let DownCast: CastResults | undefined;
-		let FloorCast: CastResults | undefined;
+		let CancelCast: CastResults | undefined;
 
 		for (let i = 0; i < GrabMargin / 0.025; i++) {
 			const Offset = i * 0.025;
 			DownCast = Raycast(Origin.sub(Normal.mul(0.025 + Offset)), new Vector3(0, -1, 0), 1.75, Color.grey);
 			if (DownCast.Hit) {
-				FloorCast = Raycast(DownCast.Pos.add(Vector3.up.mul(0.5)).add(Normal.mul(Offset)), Normal.mul(-1), GrabMargin, Color.blue);
-				if (!FloorCast.Hit) break;
+				CancelCast = Raycast(DownCast.Pos.add(Vector3.up.mul(0.5)).add(Normal.mul(Offset)), Normal.mul(-1), GrabMargin, Color.blue);
+				if (!CancelCast.Hit) break;
 			}
 		}
 
-		if (!FloorCast || FloorCast.Hit || !DownCast || !DownCast.Hit) return false;
+		if (!CancelCast || CancelCast.Hit || !DownCast || !DownCast.Hit) return false;
 
 		const HeadHeight = Controller.GetCFrame(true).mul(new CFrame(new Vector3(0, 1.25, 0))).Position.y;
 		const ChestHeight = Controller.GetCFrame().Position.y;
 		const Height = DownCast.Pos.y;
 
 		const Type = ForceType ?? (Height > HeadHeight ? LedgeGrabType.LedgeGrab : Height > ChestHeight ? LedgeGrabType.VaultHigh : LedgeGrabType.VaultLow);
-
-		if (Grounded && Height >= HeadHeight) return false;
 
 		Controller.ResetLastFallSpeed();
 		task.spawn(() => this.StepLedgeGrab(Controller, DownCast.Pos, Type));

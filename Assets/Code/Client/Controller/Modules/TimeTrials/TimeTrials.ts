@@ -29,8 +29,10 @@ export class TimeTrials {
 			const Trial = Target.GetAirshipComponent<TimeTrialComponent>();
 			if (!Trial) continue;
 
-			task.spawn(() => this.RegisterTrial(Trial));
+			this.RegisterTrial(Trial);
 		}
+
+		task.spawn(() => this.RefreshTrialStates());
 	}
 
 	public TrialStateUpdated() {
@@ -58,11 +60,19 @@ export class TimeTrials {
 		PromptGameObject.transform.SetParent(Trial.gameObject.transform);
 		PromptGameObject.transform.localPosition = Vector3.up.mul(1.25);
 		PromptGameObject.transform.localRotation = Quaternion.identity;
-		Prompt.SetObjectText(NewTrial.Object.DisplayName);
 
 		Prompt.onActivated.Connect(() => this.TryStartTrial(Trial));
 
 		this.TrialsList.push(NewTrial);
+	}
+
+	public RefreshTrialStates() {
+		const Records = Core().Client.Data.GetLink().Data.TrialRecords;
+		for (const [_, Trial] of pairs(this.TrialsList)) {
+			const CurrentTime = Records[Trial.Object.ID] ?? 0;
+
+			Trial.Prompt.SetObjectText(`${Trial.Object.DisplayName}\nPB: ${CurrentTime <= 0 ? "---.--" : this.FormatTime(CurrentTime)}s`);
+		}
 	}
 
 	private TryStartTrial(Trial: TimeTrialComponent) {
@@ -130,18 +140,23 @@ export class TimeTrials {
 		return !!this.CurrentTrial;
 	}
 
+	public FormatTime(ElapsedSeconds: number, SecondsFillTarget: number = 3) {
+		const Seconds = math.floor(ElapsedSeconds);
+		const MS = math.floor((ElapsedSeconds - Seconds) * 100);
+
+		const SecondsFill = string.rep("0", SecondsFillTarget - `${Seconds}`.size());
+		const MSFill = string.rep("0", 2 - `${MS}`.size());
+
+		return `${SecondsFill}${Seconds}.${MSFill}${MS}`;
+	}
+
 	public StepTrials(Controller: ClientComponent) {
 		if (this.IsActive() && this.CurrentTrial) {
 			// Trial UI
 			const Trial = this.CurrentTrial;
 			const CurrentTime = os.clock() - this.LastTrialStart;
-			const Seconds = math.floor(CurrentTime);
-			const MS = math.floor((CurrentTime - Seconds) * 100);
 
-			const SecondsFill = string.rep("0", 3 - `${Seconds}`.size());
-			const MSFill = string.rep("0", 2 - `${MS}`.size());
-
-			Core().Client.UI.TT_Time.text = `${SecondsFill}${Seconds}.${MSFill}${MS}`;
+			Core().Client.UI.TT_Time.text = this.FormatTime(CurrentTime, 0);
 
 			const RankColor = Trial.TrialData.GetColorFromTime(CurrentTime);
 			if (RankColor) Core().Client.UI.TT_Medal.color = RankColor;
@@ -173,6 +188,7 @@ export class TimeTrials {
 						Records[Trial.TrialData.ID] = CurrentTime;
 						Core().Client.Data.GetLink(true).RecalculateHash();
 						print(`Set ${Trial.TrialData.ID} record!`);
+						this.RefreshTrialStates();
 					}
 				}
 			}

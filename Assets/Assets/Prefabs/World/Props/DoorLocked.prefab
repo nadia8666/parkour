@@ -9,12 +9,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1276664507196457268}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: DoorLocked
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &1276664507196457268
 Transform:
@@ -44,12 +44,12 @@ GameObject:
   - component: {fileID: 8024842718077244806}
   - component: {fileID: 8226793293284116672}
   - component: {fileID: 3325469035917636575}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &447614115727154617
 Transform:
@@ -97,7 +97,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 980129481f97a1c4ab83978c505f1bd0, type: 2}
+  - {fileID: 2100000, guid: 57aab0ea2f6027d488f4ba9fcd15e463, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

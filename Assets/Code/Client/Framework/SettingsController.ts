@@ -6,7 +6,7 @@ export const Settings = {
 	HoldWallclimb: true,
 	HoldWallrun: false,
 
-	CameraSensitivityMouse: 3,
+	CameraSensitivityMouse: 1,
 };
 
 export default class SettingsController extends AirshipSingleton {

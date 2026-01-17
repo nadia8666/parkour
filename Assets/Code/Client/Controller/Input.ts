@@ -21,7 +21,7 @@ export const Actions = {
 	WallAction: new InputEntry(Key.Space, 2),
 	Wallrun: new InputEntry(Key.Space, 1),
 
-	Dash: new InputEntry(Key.LeftShift, 2),
+	Coil: new InputEntry(Key.LeftShift, 2),
 	Slide: new InputEntry(Key.LeftShift, 1),
 
 	Respawn: new InputEntry(Key.R, 2),

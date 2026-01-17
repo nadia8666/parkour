@@ -118,7 +118,7 @@ MonoBehaviour:
         tags: []
       decorators: []
       nullable: 0
-      serializedValue: Traditional work gloves.
+      serializedValue: Traditional work gloves, rugged, but not immune to damage.
       serializedObject: {fileID: 0}
       modified: 1
     - name: WorldModel

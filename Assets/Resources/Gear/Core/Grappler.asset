@@ -90,34 +90,24 @@ MonoBehaviour:
         type: string
         objectType: 
         serializedItems:
-        - '19 yank force
+        - '<color=green>+9</color> Yank Force
 
-          32 max distance
+          <color=green>+32</color>
+          Attach Range
 
-          1s max attach time
+          <color=green>1.0s</color> Attach Time'
+        - '<color=green>+11</color> Yank Force
 
+          <color=green>+38</color>
+          Attach Range
 
+          <color=green>0.85s</color> Attach Time'
+        - '<color=green>+14</color> Yank Force
 
-          press
-          e to yanks, release immediately after contact for the best launch'
-        - '23 yank force
+          <color=green>+46</color>
+          Attach Range
 
-          38 max distance
-
-          0.85s max attach time
-
-
-          press
-          e to yanks, release immediately after contact for the best launch'
-        - '30 yank force
-
-          46 max distance
-
-          0.75s max attach time
-
-
-          (unimplemented)
-          hold e on marked points to quickly pull up to them'
+          <color=green>0.75s</color> Attach Time'
         objectRefs:
         - {fileID: 0}
         - {fileID: 0}
@@ -155,8 +145,9 @@ MonoBehaviour:
       - name: Multiline
         parameters: []
       nullable: 0
-      serializedValue: press e to yanks, release immediately after contact for the
-        best launch
+      serializedValue: A fragile piece of equipment built from scrap, magnets, and
+        cables. Hold [COREUSE] to deploy grapple hook, release immediately after
+        attaching for the best launch.
       serializedObject: {fileID: 0}
       modified: 1
     - name: WorldModel

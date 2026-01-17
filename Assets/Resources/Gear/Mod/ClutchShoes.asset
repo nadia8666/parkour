@@ -90,7 +90,9 @@ MonoBehaviour:
         type: string
         objectType: 
         serializedItems:
-        - shift + space while falling to clutch
+        - 'Wallclutch Action
+
+          <color=green>2.25x</color> Clutch Max Speed'
         objectRefs:
         - {fileID: 0}
       refPath: 
@@ -126,7 +128,9 @@ MonoBehaviour:
       - name: Multiline
         parameters: []
       nullable: 0
-      serializedValue: 'todo: write this description'
+      serializedValue: Sturdy spikes built to grab on a wall in an instant. Press
+        [WALLACTION] while holding [COIL] to hook onto a wall slow down, keep holding
+        [WALLACTION] to automatically transition into a vertical wall action.
       serializedObject: {fileID: 0}
       modified: 1
     - name: WorldModel
