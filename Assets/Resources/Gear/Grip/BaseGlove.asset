@@ -90,7 +90,10 @@ MonoBehaviour:
         type: string
         objectType: 
         serializedItems:
-        - <color=green>+25</color> Max WC Activation Speed
+        - '<color=green>+15</color> Max WC Activation Speed
+
+          <color=green>+0.1s</color>
+          WC Length'
         objectRefs:
         - {fileID: 0}
       refPath: 
@@ -118,7 +121,8 @@ MonoBehaviour:
         tags: []
       decorators: []
       nullable: 0
-      serializedValue: Traditional work gloves, rugged, but not immune to damage.
+      serializedValue: Traditional work gloves, rugged, but not immune to everyday
+        wear.
       serializedObject: {fileID: 0}
       modified: 1
     - name: WorldModel

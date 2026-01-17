@@ -95,8 +95,8 @@ MonoBehaviour:
           <color=green>+50%</color>
           Forward Vault Vertical Conversion
 
-          <color=green>+12</color>
-          Upward Vault Speed'
+          <color=green>+8</color> Upward
+          Vault Speed'
         objectRefs:
         - {fileID: 0}
       refPath: 

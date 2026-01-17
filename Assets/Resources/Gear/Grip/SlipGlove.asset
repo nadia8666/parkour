@@ -92,7 +92,7 @@ MonoBehaviour:
         serializedItems:
         - '<color=yellow>-17</color> WC Minimum Speed
 
-          <color=green>+50</color>
+          <color=green>+45</color>
           Max WC Activation Speed
 
           <color=green>INF</color> WR Max Speed
@@ -100,11 +100,13 @@ MonoBehaviour:
           <color=green>INF</color>
           Max WR Activation Speed
 
-          <color=green>15%</color> Reduced WR
-          Gravity'
+          <color=green>17.5%</color> Reduced WR
+          Gravity
+
+          <color=yellow>Maintains</color> WR Jump Force'
         - '<color=yellow>-17</color> WC Minimum Speed
 
-          <color=green>+50</color>
+          <color=green>+45</color>
           Max WC Activation Speed
 
           <color=green>INF</color> WR Max Speed
@@ -112,8 +114,10 @@ MonoBehaviour:
           <color=green>INF</color>
           Max WR Activation Speed
 
-          <color=green>15%</color> Reduced WR
-          Gravity'
+          <color=green>17.5%</color> Reduced WR
+          Gravity
+
+          <color=yellow>Maintains</color> WR Jump Force'
         objectRefs:
         - {fileID: 0}
         - {fileID: 0}

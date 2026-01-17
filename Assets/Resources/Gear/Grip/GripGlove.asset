@@ -90,25 +90,25 @@ MonoBehaviour:
         type: string
         objectType: 
         serializedItems:
-        - '<color=green>+30</color> Max WC Activation Speed
+        - '<color=green>+25</color> Max WC Activation Speed
 
           <color=green>+2</color>
           WC Minimum Speed
 
           <color=green>+4.5</color> WR Max Speed
 
-          <color=green>+5</color>
+          <color=green>+10</color>
           Max WR Activation Speed
 
           <color=green>+0.5s</color> WR Length'
-        - '<color=green>+30</color> Max WC Activation Speed
+        - '<color=green>+25</color> Max WC Activation Speed
 
           <color=green>+2</color>
           WC Minimum Speed
 
           <color=green>+4.5</color> WR Max Speed
 
-          <color=green>+5</color>
+          <color=green>+10</color>
           Max WR Activation Speed
 
           <color=green>+0.5s</color> WR Length'
