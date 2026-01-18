@@ -426,7 +426,7 @@ export class MovesetBase {
 
 		const Root = Controller.GetCFrame();
 		const ForwardCast = Raycast(Root.Position, Root.Forward, Distance);
-		if (!ForwardCast.Hit) return;
+		if (!ForwardCast.Hit || !math.approximately(ForwardCast.Normal.y, 0)) return;
 
 		const NormalDot = ForwardCast.Normal.mul(-1).Dot(Controller.GetCFrame().Forward);
 		if (NormalDot <= 0.7) return;
@@ -456,7 +456,7 @@ export class MovesetBase {
 			Controller.Input.KeyReleased("WallAction", true);
 		}
 
-		const TargetLook = Quaternion.LookRotation(ForwardCast.Normal.mul(-1), Vector3.up);
+		const TargetLook = Quaternion.LookRotation(ForwardCast.Normal.WithY(0).normalized.mul(-1), Vector3.up);
 		Controller.Rigidbody.rotation = TargetLook;
 
 		Controller.ResetLastFallSpeed();
@@ -543,7 +543,7 @@ export class MovesetBase {
 				Target = LDot >= RDot ? Controller.WallrunL : Controller.WallrunR;
 				const Normal = LDot >= RDot ? LeftNormal : RightNormal;
 
-				let Rotation = Quaternion.LookRotation(Normal.mul(-1), Vector3.up).mul(Quaternion.Euler(0, Normal === RightNormal ? -90 : 90, 0));
+				let Rotation = Quaternion.LookRotation(Normal.WithY(0).normalized.mul(-1), Vector3.up).mul(Quaternion.Euler(0, Normal === RightNormal ? -90 : 90, 0));
 				Controller.Rigidbody.rotation = Rotation;
 			}
 		} else if ((TouchingL && LeftHit) || (TouchingR && RightHit)) {
@@ -551,7 +551,7 @@ export class MovesetBase {
 
 			const Normal = (TouchingL ? LeftNormal : RightNormal) as Vector3;
 
-			let Rotation = Quaternion.LookRotation(Normal.mul(-1), Vector3.up).mul(Quaternion.Euler(0, Normal === RightNormal ? -90 : 90, 0));
+			let Rotation = Quaternion.LookRotation(Normal.WithY(0).normalized.mul(-1), Vector3.up).mul(Quaternion.Euler(0, Normal === RightNormal ? -90 : 90, 0));
 			Controller.Rigidbody.rotation = Rotation;
 		}
 
