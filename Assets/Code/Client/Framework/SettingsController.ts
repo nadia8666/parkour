@@ -1,4 +1,5 @@
 import { Airship } from "@Easy/Core/Shared/Airship";
+import { Game } from "@Easy/Core/Shared/Game";
 
 export const Settings = {
 	CameraRotation: true,
@@ -26,11 +27,15 @@ export default class SettingsController extends AirshipSingleton {
 
 	public AddBool(Key: ExtractKeys<typeof Settings, boolean>, DisplayName: string) {
 		Airship.Settings.AddToggle(DisplayName, Settings[Key]);
-		Airship.Settings.ObserveToggle(DisplayName, (Value) => (Settings[Key] = Value));
+		if (!Game.IsEditor()) {
+			Airship.Settings.ObserveToggle(DisplayName, (Value) => (Settings[Key] = Value));
+		}
 	}
 
 	public AddSlider(Key: ExtractKeys<typeof Settings, number>, DisplayName: string, MinMax: [number, number], Increment: number) {
 		Airship.Settings.AddSlider(DisplayName, Settings[Key], MinMax[0], MinMax[1], Increment);
-		Airship.Settings.ObserveSlider(DisplayName, (Value) => (Settings[Key] = Value));
+		if (!Game.IsEditor()) {
+			Airship.Settings.ObserveSlider(DisplayName, (Value) => (Settings[Key] = Value));
+		}
 	}
 }
