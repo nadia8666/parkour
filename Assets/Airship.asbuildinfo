@@ -1121,6 +1121,13 @@
 			"filePath": "Code\\Client\\Controller\\Modules\\TimeTrials\\TimeTrialComponent.lua",
 			"extends": [],
 			"singleton": false
+		},
+		"ZiplineComponent": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "Code\\Client\\Controller\\Modules\\Zipline\\ZiplineComponent.lua",
+			"extends": [],
+			"singleton": false
 		}
 	},
 	"extends": {
@@ -1941,9 +1948,29 @@
 			"inherits": []
 		},
 		{
+			"name": "ClientComponent",
+			"id": "Code/Client/Controller/ClientComponent@ClientComponent",
+			"file": "Code/Client/Controller/ClientComponent.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
 			"name": "ClientController",
 			"id": "Code/Client/ClientController@ClientController",
 			"file": "Code/Client/ClientController.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "UIController",
+			"id": "Code/Client/UI/UIController@UIController",
+			"file": "Code/Client/UI/UIController.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"
@@ -2763,30 +2790,20 @@
 			"inherits": []
 		},
 		{
+			"name": "ZiplineComponent",
+			"id": "Code/Client/Controller/Modules/Zipline/ZiplineComponent@ZiplineComponent",
+			"file": "Code/Client/Controller/Modules/Zipline/ZiplineComponent.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
 			"name": "SoundBankObject",
 			"id": "Code/Shared/Object/SoundBankObject@SoundBankObject",
 			"file": "Code/Shared/Object/SoundBankObject.ts",
 			"declarationType": "AirshipScriptableObject",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "ClientComponent",
-			"id": "Code/Client/Controller/ClientComponent@ClientComponent",
-			"file": "Code/Client/Controller/ClientComponent.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "UIController",
-			"id": "Code/Client/UI/UIController@UIController",
-			"file": "Code/Client/UI/UIController.ts",
-			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"
 			],
@@ -2818,12 +2835,14 @@
 			"typescript:Code/Client/UI/Drag/DragController@DragController": "Client/UI/Drag/DragController@DragController",
 			"typescript:Code/Server/Modules/Spawner@CharacterSpawner": "Server/Modules/Spawner@CharacterSpawner",
 			"typescript:Code/Client/Framework/SettingsController@SettingsController": "Client/Framework/SettingsController@SettingsController",
+			"typescript:Code/Client/Controller/Modules/Zipline/Ziplines@Ziplines": "Client/Controller/Modules/Zipline/Ziplines@Ziplines",
 			"typescript:Code/Shared/Object/GearObject@GearObject": "Shared/Object/GearObject@GearObject",
 			"typescript:Code/Shared/GearRegistry@GearRegistrySingleton": "Shared/GearRegistry@GearRegistrySingleton",
 			"typescript:Code/Client/Components/TooltipComponent@TooltipComponent": "Client/Components/TooltipComponent@TooltipComponent",
 			"typescript:Code/Client/Components/Collision/GenericTriggerComponent@GenericTriggerComponent": "Client/Components/Collision/GenericTriggerComponent@GenericTriggerComponent",
 			"typescript:Code/Shared/Object/TimeTrialObject@TimeTrialObject": "Shared/Object/TimeTrialObject@TimeTrialObject",
 			"typescript:Code/Client/Controller/Modules/TimeTrials/TimeTrialComponent@TimeTrialComponent": "Client/Controller/Modules/TimeTrials/TimeTrialComponent@TimeTrialComponent",
+			"typescript:Code/Client/Controller/Modules/Zipline/ZiplineComponent@ZiplineComponent": "Client/Controller/Modules/Zipline/ZiplineComponent@ZiplineComponent",
 			"typescript:Code/Shared/Object/SoundBankObject@SoundBankObject": "Shared/Object/SoundBankObject@SoundBankObject"
 		}
 	}

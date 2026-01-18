@@ -74,6 +74,8 @@ const Config = {
 	PlayerRadius: 0.5,
 	PlayerHeight: 1,
 
+	RunMaxSpeed: 15,
+
 	JumpRequiredSpeed: 5, // jump height under this speed is scaled from 0-spd to 0-1
 	JumpCoyoteTime: 0.25,
 
@@ -133,6 +135,7 @@ const Config = {
 	GrapplerMinAttachTime: 0.2,
 
 	CollisionLayer: LayerMask.GetMask("GameLayer0"),
+	ZiplineLayer: LayerMask.GetMask("GameLayer1"),
 };
 
 export default Config;

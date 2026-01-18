@@ -47,11 +47,11 @@ export default class GearController extends AirshipSingleton {
 
 	// UI
 	public RefreshUI() {
-		Core().Client.UI.UpdateAmmoCount({ Wallrun: MaxAmmo.Wallrun, Wallclimb: MaxAmmo.Wallclimb });
+		Core().Client.UI.UpdateAmmoCount({ Wallrun: MaxAmmo.Wallrun, Wallclimb: MaxAmmo.Wallclimb, WallKick: MaxAmmo.WallKick });
 	}
 
 	public UpdateUI() {
-		Core().Client.UI.UpdateAmmoFill({ Wallrun: this.Ammo.Wallrun, Wallclimb: this.Ammo.Wallclimb });
+		Core().Client.UI.UpdateAmmoFill({ Wallrun: this.Ammo.Wallrun, Wallclimb: this.Ammo.Wallclimb, WallKick: this.Ammo.WallKick });
 	}
 
 	// Gear functions

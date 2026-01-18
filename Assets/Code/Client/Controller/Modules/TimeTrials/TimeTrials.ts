@@ -8,13 +8,13 @@ import CFrame from "@inkyaker/CFrame/Code";
 import type ClientComponent from "../../ClientComponent";
 import type TimeTrialComponent from "./TimeTrialComponent";
 
-type VirtualizedTrial = {
+interface VirtualizedTrial {
 	Component: TimeTrialComponent;
 	Object: TimeTrialObject;
 	Prompt: ProximityPrompt;
 
 	WorldModels: GameObject[];
-};
+}
 
 export class TimeTrials {
 	public CurrentTrial: TimeTrialComponent | undefined;
@@ -61,7 +61,12 @@ export class TimeTrials {
 		PromptGameObject.transform.localPosition = Vector3.up.mul(1.25);
 		PromptGameObject.transform.localRotation = Quaternion.identity;
 
-		Prompt.onActivated.Connect(() => this.TryStartTrial(Trial));
+		Prompt.onActivated.Connect(() => {
+			const Controller = Core().Client.Actor;
+			if (!Controller || (Controller && os.clock() - Controller.LastPromptInteract <= 0.05)) return;
+			Controller.LastPromptInteract = os.clock();
+			this.TryStartTrial(Trial);
+		});
 
 		this.TrialsList.push(NewTrial);
 	}
@@ -123,7 +128,9 @@ export class TimeTrials {
 		this.TrialGear = undefined;
 		ForceRefreshGearSignal.Fire();
 
+		Controller.LastPromptInteract = os.clock();
 		Controller.Input.KillLockByID("TimeTrialStart");
+		
 		this.CurrentTrial = undefined;
 		this.InIntro = false;
 		this.LastTrialStart = math.huge;

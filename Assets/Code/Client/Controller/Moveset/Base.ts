@@ -145,7 +145,11 @@ export class MovesetBase {
 		const TargetVelocity = Controller.Rigidbody.transform.TransformDirection(LocalMoveVector);
 		const CurrentVelocity = Controller.Rigidbody.linearVelocity.WithY(0).magnitude;
 		const AccelerationForce =
-			Controller.AccelerationCurve.Evaluate(CurrentVelocity / 20) * 20 * (Grounded ? 1 : 1) * (Grounded && this.DashActive() ? 1.5 : 1) * (Sliding ? 0.35 : 1);
+			Controller.AccelerationCurve.Evaluate(CurrentVelocity / Config.RunMaxSpeed) *
+			Config.RunMaxSpeed *
+			(Grounded ? 1 : 1) *
+			(Grounded && this.DashActive() ? 1.5 : 1) *
+			(Sliding ? 0.35 : 1);
 		const GlobalMoveVector = TargetVelocity.magnitude > 0 ? TargetVelocity.normalized : Vector3.zero;
 
 		const MVFriction = LocalMoveVector.magnitude > 0 ? 1 : Grounded ? 1 : 0.1;
@@ -390,6 +394,7 @@ export class MovesetBase {
 	// #region Wallclimb
 	public WallclimbTimer = 0;
 	public WallclimbFailTimer = 0;
+	public WallclimbFar = false;
 	public StartWallclimb(Controller: ClientComponent, ForwardCast: CastResults) {
 		if (Controller.Rigidbody.linearVelocity.y < Config.WallclimbThreshold()) return;
 
@@ -405,6 +410,7 @@ export class MovesetBase {
 
 		Controller.Gear.Ammo.Wallclimb--;
 		Controller.State = "Wallclimb";
+		this.WallclimbFar = ForwardCast.Pos.WithY(0).sub(Controller.GetCFrame().Position.WithY(0)).magnitude > 0.75;
 		this.WallclimbTimer = Config.WallclimbLength();
 		this.WallclimbFailTimer = 0;
 	}
@@ -434,9 +440,14 @@ export class MovesetBase {
 		if (!Settings.HoldWallclimb && Actions.WallAction.Active) this.WallclimbTimer = 0;
 
 		const CFrame = Controller.GetCFrame(true);
-		const Cast = Raycast(CFrame.Position, CFrame.Forward, 3);
+		const Cast = Raycast(CFrame.Position, CFrame.Forward, this.WallclimbFar ? 8 : 3);
 		if (Cast.Hit) {
-			Controller.transform.position = Controller.transform.position.Lerp(Cast.Pos.add(CFrame.Back.mul(0.5)), math.clamp01(FixedDT * 5));
+			const FarForce = (1 - this.WallclimbTimer / Config.WallclimbLength()) * 4;
+			Controller.transform.position = Controller.transform.position.Lerp(
+				Cast.Pos.add(CFrame.Back.mul(0.5)),
+				this.WallclimbFar ? math.clamp01(FarForce) : math.clamp01(FixedDT * 5),
+			);
+			if (this.WallclimbFar && FarForce >= 1) this.WallclimbFar = false;
 		}
 
 		const Result = this.StartLedgeGrab(Controller, 0.1, LedgeGrabType.LedgeGrab);
@@ -552,23 +563,24 @@ export class MovesetBase {
 		const Rotation = Controller.GetCFrame().Rotation;
 		const Position = Controller.LedgeGrabFail.transform.position;
 		const Speed = ForceDistance ?? Controller.Momentum / 12.5;
+		const Grounded = Controller.State === "Grounded";
 
+		const YSpeed = Controller.GetVelocity().y;
+		const GrabHeight = Grounded ? 3 : 1.75 + (YSpeed > 0 ? math.clamp(YSpeed / 6, 0, 0.75) : math.clamp01(YSpeed / 20));
 		const Overlapping = Physics.CheckBox(Position.add(Rotation.mul(new Vector3(0, 1.75, 0.5 + Speed / 2))), new Vector3(0.125, 0.125, Speed), Rotation, Config.CollisionLayer);
 		if (Overlapping) return false;
-
-		const Grounded = Controller.State === "Grounded";
 
 		const GrabMargin = 2.25;
 		const Root = Controller.GetCFrame(true);
 		const Normal = Root.Forward;
-		let Origin = Root.mul(new CFrame(new Vector3(0, 1.75, GrabMargin / 2))).Position;
+		let Origin = Root.mul(new CFrame(new Vector3(0, GrabHeight, GrabMargin / 2))).Position;
 
 		if (!Grounded) {
 			if (
 				Raycast(
-					Root.mul(new CFrame(new Vector3(0, 1.75, ForceDistance ? -ForceDistance / 2 : -GrabMargin / 2))).Position,
+					Root.mul(new CFrame(new Vector3(0, GrabHeight, ForceDistance ? -ForceDistance / 2 : -GrabMargin / 2))).Position,
 					new Vector3(0, -1, 0),
-					ForceDistance ?? 1.75,
+					ForceDistance ?? GrabHeight,
 					Color.green,
 				).Hit
 			) {
@@ -598,7 +610,7 @@ export class MovesetBase {
 
 		for (let i = 0; i < GrabMargin / 0.025; i++) {
 			const Offset = i * 0.025;
-			DownCast = Raycast(Origin.sub(Normal.mul(0.025 + Offset)), new Vector3(0, -1, 0), 1.75, Color.grey);
+			DownCast = Raycast(Origin.sub(Normal.mul(0.025 + Offset)), new Vector3(0, -1, 0), GrabHeight, Color.grey);
 			if (DownCast.Hit) {
 				CancelCast = Raycast(DownCast.Pos.add(Vector3.up.mul(0.5)).add(Normal.mul(Offset)), Normal.mul(-1), GrabMargin, Color.blue);
 				if (!CancelCast.Hit) break;
@@ -643,7 +655,7 @@ export class MovesetBase {
 		let LastPosition = Controller.GetCFrame(true).Position;
 		const PositionTween = Tween.Vector3(
 			TweenEasingFunction.InOutSine,
-			IsKinematic ? 0.25 : 0.15,
+			IsKinematic ? 0.5 * math.clamp(LastPosition.sub(EndPosition).magnitude / 6 - 0.2, 0.5, 1) : 0.15,
 			(Position) => {
 				if (IsKinematic) {
 					Controller.Rigidbody.MovePosition(Position);

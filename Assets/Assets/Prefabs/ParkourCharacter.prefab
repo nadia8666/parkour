@@ -831,7 +831,7 @@ MonoBehaviour:
         - type: string
           serializedValue: '"Curves"'
       nullable: 0
-      serializedValue: -0.001368831,3.268293,12.66317,12.66317,0,0.3587822;0.1360769,3.084354,-14.78713,-14.78713,0.1209826,0.1580932;0.3111519,1.079461,-0.2550697,-0.2550697,0.2992639,0.07440235;1.001006,0.0182085,-2.924918,-2.924918,0.06143086,0
+      serializedValue: 0.0005919234,1.883497,12.66317,12.66317,0,0.3587822;0.1399831,2.309673,-14.78713,-14.78713,0.1209826,0.1580932;0.3170441,1.722953,-0.2550697,-0.2550697,0.2992639,0.07440235;1.001006,0.0182085,-8.261191,-8.261191,0.06682204,0
       serializedObject: {fileID: 0}
       modified: 1
     - name: Floor
@@ -1078,6 +1078,24 @@ MonoBehaviour:
       decorators: []
       nullable: 0
       serializedValue: 85
+      serializedObject: {fileID: 0}
+      modified: 0
+    - name: LastPromptInteract
+      type: number
+      objectType: 
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators: []
+      nullable: 0
+      serializedValue: 
       serializedObject: {fileID: 0}
       modified: 0
     displayIcon: {fileID: 0}

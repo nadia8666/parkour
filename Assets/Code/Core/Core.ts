@@ -37,7 +37,10 @@ task.spawn(() => {
 	while (!Core.Client.Objective.TimeTrials) {
 		task.wait();
 	}
-	
+	while (!Core.Client.World.Ziplines) {
+		task.wait();
+	}
+
 	while (!Core.Gear) {
 		task.wait();
 	}

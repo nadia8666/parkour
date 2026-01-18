@@ -139,11 +139,12 @@ export default class UIController extends AirshipSingleton {
 	public UpdateUI(Controller: ClientComponent, DeltaTime: number) {
 		this.HealthAlpha = math.lerpClamped(this.HealthAlpha, math.clamp01(Controller.Health / 100), DeltaTime * 10);
 
-		this.MomentumBar.SetSizeWithCurrentAnchors(Axis.Horizontal, 1340 * math.clamp01(Controller.Momentum / 30));
+		//this.MomentumBar.SetSizeWithCurrentAnchors(Axis.Horizontal, 1340 * math.clamp01(Controller.Momentum / 30));
 		this.HealthBar.SetSizeWithCurrentAnchors(Axis.Horizontal, 885 * this.HealthAlpha);
 
-		this.MomentumCanvas.alpha = math.lerpClamped(this.MomentumCanvas.alpha, Controller.Momentum <= 0 ? 0 : 1, DeltaTime * 5);
+		//this.MomentumCanvas.alpha = math.lerpClamped(this.MomentumCanvas.alpha, Controller.Momentum <= 0 ? 0 : 1, DeltaTime * 5);
 		this.HealthCanvas.alpha = math.lerpClamped(this.HealthCanvas.alpha, Controller.Health < 99 ? 1 : os.clock() - Controller._LastHealthChanged >= 2.5 ? 0 : 1, DeltaTime * 5);
+		this.WallKickCanvas.alpha = 1 - this.HealthCanvas.alpha
 
 		const HoverTarget = this.RaycastUI();
 
@@ -181,12 +182,17 @@ export default class UIController extends AirshipSingleton {
 	@Header("References/Wallclimb")
 	public WallclimbAmmoContainer: RectTransform;
 
+	@Header("References/WallKick")
+	public WallKickAmmoContainer: RectTransform;
+	public WallKickCanvas: CanvasGroup;
+
 	@Header("References/Ammo")
 	public AmmoTemplate: RectTransform;
 	private AmmoFillUIs = {
 		WallrunLeft: [] as Image[],
 		WallrunRight: [] as Image[],
 		Wallclimb: [] as Image[],
+		WallKick: [] as Image[],
 	};
 
 	private AddAmmoElements(Count: number, Container: RectTransform, Fills: Image[]) {
@@ -198,7 +204,7 @@ export default class UIController extends AirshipSingleton {
 		}
 	}
 
-	public UpdateAmmoCount(Ammo: { Wallrun: number; Wallclimb: number }) {
+	public UpdateAmmoCount(Ammo: { Wallrun: number; Wallclimb: number; WallKick: number }) {
 		for (const [_, List] of pairs(this.AmmoFillUIs)) {
 			List.forEach((Target) => {
 				Destroy(Target.gameObject);
@@ -207,6 +213,7 @@ export default class UIController extends AirshipSingleton {
 		}
 
 		this.AddAmmoElements(Ammo.Wallclimb, this.WallclimbAmmoContainer, this.AmmoFillUIs.Wallclimb);
+		this.AddAmmoElements(Ammo.WallKick, this.WallKickAmmoContainer, this.AmmoFillUIs.WallKick);
 		this.AddAmmoElements(Ammo.Wallrun, this.WallrunLeftAmmoContainer, this.AmmoFillUIs.WallrunLeft);
 		this.AddAmmoElements(Ammo.Wallrun, this.WallrunRightAmmoContainer, this.AmmoFillUIs.WallrunRight);
 
@@ -219,8 +226,9 @@ export default class UIController extends AirshipSingleton {
 		}
 	}
 
-	public UpdateAmmoFill(Ammo: { Wallrun: number; Wallclimb: number }) {
+	public UpdateAmmoFill(Ammo: { Wallrun: number; Wallclimb: number; WallKick: number }) {
 		this.UpdateAmmoElements(this.AmmoFillUIs.Wallclimb, Ammo.Wallclimb);
+		this.UpdateAmmoElements(this.AmmoFillUIs.WallKick, Ammo.WallKick);
 		this.UpdateAmmoElements(this.AmmoFillUIs.WallrunLeft, Ammo.Wallrun);
 		this.UpdateAmmoElements(this.AmmoFillUIs.WallrunRight, Ammo.Wallrun);
 	}

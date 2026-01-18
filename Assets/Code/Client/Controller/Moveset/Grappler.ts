@@ -88,7 +88,7 @@ export class MovesetGrappler {
 			const Look = this.TargetPos.sub(Origin).normalized;
 
 			Rope.transform.position = MidPoint;
-			Rope.transform.localScale = Rope.transform.localScale.WithY(Length);
+			Rope.transform.localScale = Rope.transform.localScale.WithY(Length / 2);
 			Rope.transform.rotation = Quaternion.LookRotation(Look).mul(Quaternion.Euler(90, 0, 0));
 		}
 	}

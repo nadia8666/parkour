@@ -87,6 +87,7 @@ export default class ClientComponent extends AirshipBehaviour {
 	});
 	public FOV = 85;
 	public Input = new Input(this);
+	public LastPromptInteract = os.clock();
 
 	// Main
 	private _LOADED = false;
@@ -255,7 +256,12 @@ export default class ClientComponent extends AirshipBehaviour {
 		}
 
 		this.FOV = math.lerpClamped(this.FOV, this.FOVCurve.Evaluate(math.clamp01(this.GetVelocity().magnitude / 30)) * 100, 0.5 * DeltaTime);
-		this.Camera.Update(DeltaTime, this, Target, this.FOV);
+		this.Camera.Update(
+			DeltaTime,
+			this,
+			this.AnimationController.Current === "VM_Run" ? new CFrame(Target.Position, Quaternion.Euler(0, Target.Rotation.eulerAngles.y, 0)) : Target,
+			this.FOV,
+		);
 
 		if (this.MatchCameraStates.includes(this.State)) this.CameraRotationToCharacter();
 

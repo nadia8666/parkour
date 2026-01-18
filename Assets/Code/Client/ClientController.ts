@@ -3,6 +3,7 @@ import type AnimationController from "./Controller/Animation/AnimationController
 import type ClientComponent from "./Controller/ClientComponent";
 import type GearController from "./Controller/Gear/GearController";
 import { TimeTrials } from "./Controller/Modules/TimeTrials/TimeTrials";
+import { Ziplines } from "./Controller/Modules/Zipline/Ziplines";
 import type SoundController from "./Controller/SoundController";
 import type DataController from "./Framework/DataController";
 import type SettingsController from "./Framework/SettingsController";
@@ -21,6 +22,10 @@ export default class ClientController extends AirshipSingleton {
 	@NonSerialized() public Actor: ClientComponent | undefined;
 	@NonSerialized() public Objective = {
 		TimeTrials: new TimeTrials(),
+	};
+
+	@NonSerialized() public World = {
+		Ziplines: new Ziplines(),
 	};
 
 	@Client()
