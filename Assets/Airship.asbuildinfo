@@ -1955,6 +1955,16 @@
 			"inherits": []
 		},
 		{
+			"name": "ClientComponent",
+			"id": "Code/Client/Controller/ClientComponent@ClientComponent",
+			"file": "Code/Client/Controller/ClientComponent.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
 			"name": "ClientController",
 			"id": "Code/Client/ClientController@ClientController",
 			"file": "Code/Client/ClientController.ts",
@@ -2810,16 +2820,6 @@
 			"name": "LadderComponent",
 			"id": "Code/Client/Controller/Modules/Ladder/LadderComponent@LadderComponent",
 			"file": "Code/Client/Controller/Modules/Ladder/LadderComponent.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "ClientComponent",
-			"id": "Code/Client/Controller/ClientComponent@ClientComponent",
-			"file": "Code/Client/Controller/ClientComponent.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"

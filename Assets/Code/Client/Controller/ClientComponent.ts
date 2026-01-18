@@ -5,6 +5,7 @@ import { Network } from "Code/Shared/Network";
 import CFrame from "@inkyaker/CFrame/Code";
 import type GenericTrigger from "../Components/Collision/GenericTriggerComponent";
 import Config from "../Config";
+import { Settings } from "../Framework/SettingsController";
 import type AnimationController from "./Animation/AnimationController";
 import type { ValidAnimation } from "./Animation/AnimationController";
 import type ViewmodelComponent from "./Animation/ViewmodelComponent";
@@ -122,7 +123,7 @@ export default class ClientComponent extends AirshipBehaviour {
 
 		this._LOADED = true;
 		Core().Client.UI.Loading.SetActive(false);
-		this.FOV = this.FOVCurve.Evaluate(0) * 100;
+		this.FOV = this.FOVCurve.Evaluate(0) * Settings.FOV;
 	}
 
 	public ReloadShadows() {
@@ -255,17 +256,11 @@ export default class ClientComponent extends AirshipBehaviour {
 			Target = new CFrame(Target.Position, Target.Rotation.mul(Quaternion.Euler(-Target.Rotation.eulerAngles.x, 0, 0)));
 		}
 
-		const NewTarget = this.AnimationController.Current === "VM_Run" ? new CFrame(Target.Position, Quaternion.Euler(0, Target.Rotation.eulerAngles.y, 0)) : Target
-		this.CameraTarget = new CFrame(NewTarget.Position, Quaternion.Slerp(this.CameraTarget.Rotation, NewTarget.Rotation, 5*DeltaTime))
+		const NewTarget = this.AnimationController.Current === "VM_Run" ? new CFrame(Target.Position, Quaternion.Euler(0, Target.Rotation.eulerAngles.y, 0)) : Target;
+		this.CameraTarget = new CFrame(NewTarget.Position, Quaternion.Slerp(this.CameraTarget.Rotation, NewTarget.Rotation, Settings.CameraRotationLerp * DeltaTime));
 
-		this.FOV = math.lerpClamped(this.FOV, this.FOVCurve.Evaluate(math.clamp01(this.GetVelocity().magnitude / 30)) * 100, 0.5 * DeltaTime);
-		this.Camera.Update(
-			DeltaTime,
-			this,
-			this.CameraTarget,
-			NewTarget,
-			this.FOV,
-		);
+		this.FOV = math.lerpClamped(this.FOV, this.FOVCurve.Evaluate(math.clamp01(this.GetVelocity().magnitude / 30)) * Settings.FOV, 2.5 * DeltaTime);
+		this.Camera.Update(DeltaTime, this, this.CameraTarget, NewTarget, this.FOV);
 
 		if (this.MatchCameraStates.includes(this.State)) this.CameraRotationToCharacter();
 
@@ -274,7 +269,7 @@ export default class ClientComponent extends AirshipBehaviour {
 
 		this.Moveset.Grappler.DrawRope(this);
 	}
-	private CameraTarget = CFrame.identity
+	private CameraTarget = CFrame.identity;
 
 	@Client()
 	override Update() {

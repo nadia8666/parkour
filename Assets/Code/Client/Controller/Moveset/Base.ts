@@ -4,7 +4,6 @@ import Config from "Code/Client/Config";
 import { Settings } from "Code/Client/Framework/SettingsController";
 import Core from "Code/Core/Core";
 import ENV from "Code/Server/ENV";
-import CFrame from "@inkyaker/CFrame/Code";
 import type GenericTrigger from "../../Components/Collision/GenericTriggerComponent";
 import type ClientComponent from "../ClientComponent";
 import { Actions } from "../Input";
@@ -26,8 +25,61 @@ function WrapCastResults(Input: LuaTuple<[hit: boolean, point: Vector3 | undefin
 }
 
 export function Raycast(Origin: Vector3, Direction: Vector3, Distance: number, TargetColor?: Color) {
-	Debug.DrawRay(Origin, Direction.normalized.mul(Distance), TargetColor ?? Color.white, 15);
+	if (ENV.DebugDrawing) Debug.DrawRay(Origin, Direction.normalized.mul(Distance), TargetColor ?? Color.white, 15);
 	return WrapCastResults(Physics.Raycast(Origin, Direction, Distance, Config.CollisionLayer));
+}
+
+export function DrawCubeAt(Origin: Vector3, Size: number, Orientation: Quaternion) {
+	const UFL = Origin.add(Orientation.mul(new Vector3(Size / 2, Size / 2, -Size / 2)));
+	const DFL = Origin.add(Orientation.mul(new Vector3(Size / 2, -Size / 2, -Size / 2)));
+	const UFR = Origin.add(Orientation.mul(new Vector3(-Size / 2, Size / 2, -Size / 2)));
+	const DFR = Origin.add(Orientation.mul(new Vector3(-Size / 2, -Size / 2, -Size / 2)));
+	const UBL = Origin.add(Orientation.mul(new Vector3(Size / 2, Size / 2, Size / 2)));
+	const DBL = Origin.add(Orientation.mul(new Vector3(Size / 2, -Size / 2, Size / 2)));
+	const UBR = Origin.add(Orientation.mul(new Vector3(-Size / 2, Size / 2, Size / 2)));
+	const DBR = Origin.add(Orientation.mul(new Vector3(-Size / 2, -Size / 2, Size / 2)));
+
+	// Top face
+	Debug.DrawLine(UFL, UFR, Color.black, 15);
+	Debug.DrawLine(UFR, UBR, Color.black, 15);
+	Debug.DrawLine(UBR, UBL, Color.black, 15);
+	Debug.DrawLine(UBL, UFL, Color.black, 15);
+
+	// Bottom face
+	Debug.DrawLine(DFL, DFR, Color.black, 15);
+	Debug.DrawLine(DFR, DBR, Color.black, 15);
+	Debug.DrawLine(DBR, DBL, Color.black, 15);
+	Debug.DrawLine(DBL, DFL, Color.black, 15);
+
+	// Four corner lines
+	Debug.DrawLine(UFL, DFL, Color.black, 15);
+	Debug.DrawLine(UFR, DFR, Color.black, 15);
+	Debug.DrawLine(UBR, DBR, Color.black, 15);
+	Debug.DrawLine(UBL, DBL, Color.black, 15);
+
+	return $tuple(UFL, DFL, UFR, DFR, UBL, DBL, UBR, DBR);
+}
+
+export function Cubecast(Origin: Vector3, Direction: Vector3, Distance: number, Size: number, Orientation: Quaternion) {
+	if (ENV.DebugDrawing) {
+		const FullDir = Direction.normalized.mul(Distance);
+		const [UFL, DFL, UFR, DFR, UBL, DBL, UBR, DBR] = DrawCubeAt(Origin, Size, Orientation);
+		DrawCubeAt(Origin.add(FullDir), Size, Orientation);
+
+		Debug.DrawRay(UFL, FullDir, Color.black, 15);
+		Debug.DrawRay(DFL, FullDir, Color.black, 15);
+		Debug.DrawRay(UFR, FullDir, Color.black, 15);
+		Debug.DrawRay(DFR, FullDir, Color.black, 15);
+
+		Debug.DrawRay(UBL, FullDir, Color.black, 15);
+		Debug.DrawRay(DBL, FullDir, Color.black, 15);
+		Debug.DrawRay(UBR, FullDir, Color.black, 15);
+		Debug.DrawRay(DBR, FullDir, Color.black, 15);
+
+		DrawCubeAt(Origin, Size, Orientation);
+	}
+
+	return WrapCastResults(Physics.BoxCast(Origin, Vector3.one.mul(Size / 2), Direction, Orientation, Distance, Config.CollisionLayer));
 }
 
 function SignVector(Vector: Vector3) {
@@ -452,7 +504,7 @@ export class MovesetBase {
 			if (this.WallclimbFar && FarForce >= 1) this.WallclimbFar = false;
 		}
 
-		const Result = this.StartLedgeGrab(Controller, 0.1, LedgeGrabType.LedgeGrab);
+		const Result = this.StartLedgeGrab(Controller, LedgeGrabType.LedgeGrab);
 		return !Result;
 	}
 
@@ -559,78 +611,59 @@ export class MovesetBase {
 
 	// #region Ledge Grab
 	public LedgeGrabType: LedgeGrabType;
-	public StartLedgeGrab(Controller: ClientComponent, ForceDistance?: number, ForceType?: LedgeGrabType) {
-		if (Controller.GetVelocity().y <= -65) return;
+	public StartLedgeGrab(Controller: ClientComponent, ForceType?: LedgeGrabType) {
+		if (Controller.GetVelocity().y <= -65) return false;
 
-		const Rotation = Controller.GetCFrame().Rotation;
-		const Position = Controller.LedgeGrabFail.transform.position;
-		const Speed = ForceDistance ?? Controller.Momentum / 12.5;
 		const Grounded = Controller.State === "Grounded";
 
+		let Origin = Controller.GetCFrame(true).add(new Vector3(0, 0.25, 0));
 		const YSpeed = Controller.GetVelocity().y;
-		const GrabHeight = Grounded ? 3 : 1.75 + (YSpeed > 0 ? math.clamp(YSpeed / 6, 0, 0.75) : math.clamp01(YSpeed / 20));
-		const Overlapping = Physics.CheckBox(Position.add(Rotation.mul(new Vector3(0, 1.75, 0.5 + Speed / 2))), new Vector3(0.125, 0.125, Speed), Rotation, Config.CollisionLayer);
-		if (Overlapping) return false;
-
-		const GrabMargin = 2.25;
-		const Root = Controller.GetCFrame(true);
-		const Normal = Root.Forward;
-		let Origin = Root.mul(new CFrame(new Vector3(0, GrabHeight, GrabMargin / 2))).Position;
+		let GrabHeight = Grounded ? 3 : 2.75 + (YSpeed > 0 ? math.clamp(YSpeed / 6, 0, 0.75) : math.clamp01(YSpeed / 20));
 
 		if (!Grounded) {
-			if (
-				Raycast(
-					Root.mul(new CFrame(new Vector3(0, GrabHeight, ForceDistance ? -ForceDistance / 2 : -GrabMargin / 2))).Position,
-					new Vector3(0, -1, 0),
-					ForceDistance ?? GrabHeight,
-					Color.green,
-				).Hit
-			) {
-				return false;
-			}
-		} else if (!Raycast(Root.mul(new CFrame(new Vector3(0, 0.5, 0))).Position, Root.Forward, 1, Color.red).Hit) return false;
+			Origin = Origin.sub(Vector3.down);
+			GrabHeight++;
+		}
 
-		// If grounded extend the ledge grab height for intersecting points
-		const IntialIntersection = Physics.OverlapSphere(Origin, 0.015, Config.CollisionLayer);
-		if (IntialIntersection.size() > 0 && Grounded) {
-			let Success = false;
-			for (const Height of $range(0, 3)) {
-				const TargetOrigin = Origin.add(Vector3.up.mul(Height / 2));
-				const Cast = Raycast(TargetOrigin, Vector3.down, 0.5);
-				if (Cast.Hit) {
-					Success = true;
-					Origin = TargetOrigin;
-					break;
+		const UpRay = Raycast(Origin.Position, Vector3.up, GrabHeight);
+		if (UpRay.Hit) GrabHeight = UpRay.Pos.sub(Origin.Position).magnitude;
+
+		for (const Height of $range(0, GrabHeight, 0.05)) {
+			let Position = Origin.Position.add(new Vector3(0, Height, 0));
+			const ForwardRay = Cubecast(Position, Origin.Forward, 2.25, 0.2, Origin.Rotation);
+			if (!ForwardRay.Hit) {
+				for (const Distance of $range(0, 2.25, 0.05)) {
+					let Position = Origin.Position.add(new Vector3(0, Height, 0)).add(Origin.Forward.mul(Distance));
+					const DownRay = Raycast(Position, Vector3.down, Height, Color.red);
+					if (DownRay.Hit) {
+						const CheckAgainst = (Height: number, Direction: Vector3) => {
+							return Raycast(DownRay.Pos.add(new Vector3(0, Height + 0.05, 0)).sub(Direction.mul(0.25)), Direction, 0.5, Color.blue).Hit;
+						};
+
+						let Success = true;
+						for (const Height of $range(0, 0, 0.25)) {
+							if (CheckAgainst(Height, Origin.Forward) || CheckAgainst(Height, Origin.Back)) {
+								Success = false;
+								break;
+							}
+						}
+
+						if (Success) {
+							const UnderKnees = DownRay.Pos.y <= Origin.Position.y + 0.65;
+							const UnderWaist = DownRay.Pos.y <= Origin.Position.y + 1.25;
+
+							task.spawn(() =>
+								this.StepLedgeGrab(Controller, DownRay.Pos, ForceType ?? (UnderKnees ? LedgeGrabType.VaultLow : UnderWaist ? LedgeGrabType.VaultHigh : LedgeGrabType.LedgeGrab)),
+							);
+
+							return true;
+						}
+					}
 				}
 			}
-
-			if (!Success) return;
 		}
 
-		let DownCast: CastResults | undefined;
-		let CancelCast: CastResults | undefined;
-
-		for (let i = 0; i < GrabMargin / 0.025; i++) {
-			const Offset = i * 0.025;
-			DownCast = Raycast(Origin.sub(Normal.mul(0.025 + Offset)), new Vector3(0, -1, 0), GrabHeight, Color.grey);
-			if (DownCast.Hit) {
-				CancelCast = Raycast(DownCast.Pos.add(Vector3.up.mul(0.5)).add(Normal.mul(Offset)), Normal.mul(-1), GrabMargin, Color.blue);
-				if (!CancelCast.Hit) break;
-			}
-		}
-
-		if (!CancelCast || CancelCast.Hit || !DownCast || !DownCast.Hit) return false;
-
-		const HeadHeight = Controller.GetCFrame(true).mul(new CFrame(new Vector3(0, 1.25, 0))).Position.y;
-		const ChestHeight = Controller.GetCFrame().Position.y;
-		const Height = DownCast.Pos.y;
-
-		const Type = ForceType ?? (Height > HeadHeight ? LedgeGrabType.LedgeGrab : Height > ChestHeight ? LedgeGrabType.VaultHigh : LedgeGrabType.VaultLow);
-
-		Controller.ResetLastFallSpeed();
-		task.spawn(() => this.StepLedgeGrab(Controller, DownCast.Pos, Type));
-
-		return true;
+		return false;
 	}
 
 	public StepLedgeGrab(Controller: ClientComponent, EndPosition: Vector3, Type: LedgeGrabType) {
@@ -639,7 +672,7 @@ export class MovesetBase {
 		this.LedgeGrabType = Type;
 
 		Controller.State = "LedgeGrab";
-
+		Controller.ResetLastFallSpeed();
 		this.ShrinkCollider(Controller);
 
 		const CurrentMagnitude = math.max(Controller.Momentum, Controller.Rigidbody.linearVelocity.magnitude);
