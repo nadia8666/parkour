@@ -647,22 +647,26 @@ export class MovesetBase {
 
 	// #region Ledge Grab
 	public LedgeGrabType: LedgeGrabType;
-	public StartLedgeGrab(Controller: ClientComponent, ForceType?: LedgeGrabType) {
+	public StartLedgeGrab(Controller: ClientComponent, FixedHeight?: number, ForceType?: LedgeGrabType) {
 		if (Controller.GetVelocity().y <= -65) return false;
 
 		const Grounded = Controller.State === "Grounded";
 
-		let Origin = Controller.GetCFrame(true).add(new Vector3(0, 0.25, 0));
+		let Origin = Controller.GetCFrame(true);
 		const YSpeed = Controller.GetVelocity().y;
-		let GrabHeight = Grounded ? 3 : 2.75 + (YSpeed > 0 ? math.clamp(YSpeed / 6, 0, 0.75) : math.clamp01(YSpeed / 20));
+		let GrabHeight = FixedHeight ?? (Grounded ? 3 : 2.75 + (YSpeed > 0 ? math.clamp(YSpeed / 6, 0, 0.75) : 0));
 
 		if (!Grounded) {
-			Origin = Origin.sub(Vector3.down);
-			GrabHeight++;
+			let RayLength = 0.85 * math.clamp(-YSpeed / 10, 1, 3);
+			let DownRay = Raycast(Origin.Position, Vector3.down, RayLength, Color.magenta);
+			if (DownRay.Hit) RayLength = DownRay.Pos.sub(Origin.Position).magnitude;
+			Origin = Origin.add(Vector3.down.mul(RayLength));
+			GrabHeight += RayLength;
 		}
 
-		const UpRay = Raycast(Origin.Position, Vector3.up, GrabHeight);
+		const UpRay = Raycast(Origin.Position, Vector3.up, GrabHeight, Color.yellow);
 		if (UpRay.Hit) GrabHeight = UpRay.Pos.sub(Origin.Position).magnitude;
+		else Origin = Origin.add(new Vector3(0, 0.25, 0));
 
 		for (const Height of $range(0, GrabHeight, 0.05)) {
 			let Position = Origin.Position.add(new Vector3(0, Height, 0));
@@ -711,7 +715,8 @@ export class MovesetBase {
 		Controller.ResetLastFallSpeed();
 		this.ShrinkCollider(Controller);
 
-		const CurrentMagnitude = math.max(Controller.Momentum, Controller.Rigidbody.linearVelocity.magnitude);
+		const VirtualSpeed = math.max(Controller.Momentum, Controller.Rigidbody.linearVelocity.magnitude);
+		const CurrentMagnitude = Controller.Input.GetMoveVector().magnitude > 0 ? VirtualSpeed : 0;
 		const Velocity = Controller.Rigidbody.linearVelocity;
 		if (IsKinematic) {
 			Controller.Rigidbody.isKinematic = true;
@@ -723,11 +728,31 @@ export class MovesetBase {
 
 		Core().Client.Sound.Play("grab");
 
-		let LastPosition = Controller.GetCFrame(true).Position;
+		const Origin = Controller.GetCFrame(true);
+		let LastPosition = Origin.Position;
+
+		if (IsKinematic) {
+			const EdgeGrabPosition = EndPosition.add(Origin.Back.mul(0.515)).add(Origin.Down.mul(1.67));
+			const UpTween = Tween.Vector3(
+				TweenEasingFunction.InOutSine,
+				0.07,
+				(Position) => {
+					if (!Controller) return;
+					Controller.Rigidbody.MovePosition(Position);
+				},
+				LastPosition,
+				EdgeGrabPosition,
+			);
+			UpTween.OnCompleted.Wait();
+			LastPosition = EdgeGrabPosition;
+		}
+
+		let ClimbSpeed = math.clamp(LastPosition.sub(EndPosition).magnitude / 6 - 0.2, 0.5, 1);
 		const PositionTween = Tween.Vector3(
-			TweenEasingFunction.InOutSine,
-			IsKinematic ? 0.5 * math.clamp(LastPosition.sub(EndPosition).magnitude / 6 - 0.2, 0.5, 1) : 0.15,
+			TweenEasingFunction.InSine,
+			IsKinematic ? 0.5 * ClimbSpeed : 0.15,
 			(Position) => {
+				if (!Controller) return;
 				if (IsKinematic) {
 					Controller.Rigidbody.MovePosition(Position);
 				} else {
@@ -741,7 +766,7 @@ export class MovesetBase {
 		);
 
 		PositionTween.OnCompleted.Wait();
-
+		if (!Controller) return;
 		if (IsKinematic) {
 			Controller.Rigidbody.isKinematic = false;
 			Controller.Rigidbody.linearVelocity = Velocity;
@@ -751,20 +776,20 @@ export class MovesetBase {
 		Controller.State = "Airborne";
 
 		Controller.Gear.ResetAmmo(["Jump"]);
+		const StickHeld = Controller.Input.GetMoveVector().magnitude > 0;
 		if (Type === LedgeGrabType.VaultHigh || Type === LedgeGrabType.VaultLow) {
-			const MoveVector = Controller.Input.GetMoveVector();
-
 			if (Actions.LedgeGrab.Active) {
-				if (MoveVector.magnitude <= 0) {
+				if (!StickHeld) {
 					// purely vertical speed
 					Controller.Rigidbody.linearVelocity = Controller.GetCFrame()
-						.Forward.mul(CurrentMagnitude)
+						.Forward.mul(VirtualSpeed)
 						.div(4)
-						.WithY(CurrentMagnitude + Config.LedgeGrabUpSpeed());
+						.WithY(VirtualSpeed + Config.LedgeGrabUpSpeed());
 				} else {
 					// horizontal launch
-					const TargetVelocity = CurrentMagnitude + Config.LedgeGrabForwardSpeed();
-					Controller.Rigidbody.linearVelocity = Controller.GetCFrame().Forward.WithY(Config.LedgeGrabForwardY()).normalized.mul(TargetVelocity);
+					Controller.Rigidbody.linearVelocity = Controller.GetCFrame()
+						.Forward.WithY(Config.LedgeGrabForwardY())
+						.normalized.mul(VirtualSpeed + Config.LedgeGrabForwardSpeed());
 				}
 
 				Controller.Animator.AnimationController.Current = "VM_VaultLaunch";
@@ -779,7 +804,7 @@ export class MovesetBase {
 		} else if (Type === LedgeGrabType.LedgeGrab) {
 			this.SyncMomentum(Controller, 1 / 60);
 
-			const TargetVelocity = math.min(Controller.Momentum, 15);
+			const TargetVelocity = StickHeld ? math.min(Controller.Momentum, 15) : 0;
 			Controller.Rigidbody.linearVelocity = Controller.GetCFrame().Forward.WithY(0).mul(TargetVelocity);
 			Controller.Land();
 		}
