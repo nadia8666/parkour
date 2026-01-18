@@ -124,8 +124,10 @@ export class MovesetBase {
 	public ActionDropped(Name: keyof typeof Actions, _Controller: ClientComponent) {
 		switch (Name) {
 			case "Coil":
-				this.DashStart = os.clock();
-				this.EndDash();
+				if (this.DashActive()) {
+					this.DashStart = os.clock();
+					this.EndDash();
+				}
 				break;
 		}
 	}
@@ -837,7 +839,6 @@ export class MovesetBase {
 	}
 
 	public ResetState() {
-		this.EndDash();
 		this.ResetDash();
 
 		this.JumpTimer = 0;

@@ -112,7 +112,7 @@ const Config = {
 	DashLengthAirborne: 1.5,
 	DashCooldown: 0.15,
 
-	SlideThreshold: 5, // required speed to activate slide
+	SlideThreshold: 2.5, // required speed to activate slide
 
 	ReferenceFPS: 40, // the original fps before it was bumped up to 120
 

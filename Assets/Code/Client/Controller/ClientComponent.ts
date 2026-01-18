@@ -335,8 +335,6 @@ export default class ClientComponent extends AirshipBehaviour {
 			this.DamageSelf(Damage);
 		}
 
-		this.Moveset.Base.EndDash();
-
 		this.Momentum = this.Rigidbody.linearVelocity.WithY(0).magnitude;
 	}
 
