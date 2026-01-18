@@ -1128,6 +1128,13 @@
 			"filePath": "Code\\Client\\Controller\\Modules\\Zipline\\ZiplineComponent.lua",
 			"extends": [],
 			"singleton": false
+		},
+		"LadderComponent": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "Code\\Client\\Controller\\Modules\\Ladder\\LadderComponent.lua",
+			"extends": [],
+			"singleton": false
 		}
 	},
 	"extends": {
@@ -2800,6 +2807,16 @@
 			"inherits": []
 		},
 		{
+			"name": "LadderComponent",
+			"id": "Code/Client/Controller/Modules/Ladder/LadderComponent@LadderComponent",
+			"file": "Code/Client/Controller/Modules/Ladder/LadderComponent.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
 			"name": "ClientComponent",
 			"id": "Code/Client/Controller/ClientComponent@ClientComponent",
 			"file": "Code/Client/Controller/ClientComponent.ts",
@@ -2843,7 +2860,8 @@
 			"typescript:Code/Shared/Object/TimeTrialObject@TimeTrialObject": "Shared/Object/TimeTrialObject@TimeTrialObject",
 			"typescript:Code/Client/Controller/Modules/TimeTrials/TimeTrialComponent@TimeTrialComponent": "Client/Controller/Modules/TimeTrials/TimeTrialComponent@TimeTrialComponent",
 			"typescript:Code/Client/Controller/Modules/Zipline/ZiplineComponent@ZiplineComponent": "Client/Controller/Modules/Zipline/ZiplineComponent@ZiplineComponent",
-			"typescript:Code/Shared/Object/SoundBankObject@SoundBankObject": "Shared/Object/SoundBankObject@SoundBankObject"
+			"typescript:Code/Shared/Object/SoundBankObject@SoundBankObject": "Shared/Object/SoundBankObject@SoundBankObject",
+			"typescript:Code/Client/Controller/Modules/Ladder/LadderComponent@LadderComponent": "Client/Controller/Modules/Ladder/LadderComponent@LadderComponent"
 		}
 	}
 }

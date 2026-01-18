@@ -18,7 +18,7 @@ export class ClientCamera {
 
 	constructor(public Rotation: { X: number; Y: number; Z: number }) {}
 
-	public Update(_DeltaTime: number, Controller: ClientComponent, Source: CFrame, FOV: number) {
+	public Update(_DeltaTime: number, Controller: ClientComponent, Source: CFrame, RawSource: CFrame, FOV: number) {
 		const RenderPos = Source.Position;
 
 		if (!Core().Client.UI.InputDisabledFromMenu() && !Core().Client.UI.MenuOpen) {
@@ -44,7 +44,7 @@ export class ClientCamera {
 		const Euler = Source.Rotation.eulerAngles;
 		const Current = Rotation.eulerAngles;
 
-		const RealYOffset = WrapAngle(Controller.Animator.gameObject.transform.eulerAngles.y) - WrapAngle(Euler.y);
+		const RealYOffset = WrapAngle(Controller.Animator.gameObject.transform.eulerAngles.y) - WrapAngle(RawSource.Rotation.eulerAngles.y);
 
 		this.Transform.rotation = Settings.CameraRotation ? Quaternion.Euler(Euler.x + Current.x, RealYOffset + Current.y, Euler.z + Current.z) : Rotation;
 		this.Transform.position = FinalCFrame.Position;

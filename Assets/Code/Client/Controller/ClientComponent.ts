@@ -255,11 +255,15 @@ export default class ClientComponent extends AirshipBehaviour {
 			Target = new CFrame(Target.Position, Target.Rotation.mul(Quaternion.Euler(-Target.Rotation.eulerAngles.x, 0, 0)));
 		}
 
+		const NewTarget = this.AnimationController.Current === "VM_Run" ? new CFrame(Target.Position, Quaternion.Euler(0, Target.Rotation.eulerAngles.y, 0)) : Target
+		this.CameraTarget = new CFrame(NewTarget.Position, Quaternion.Slerp(this.CameraTarget.Rotation, NewTarget.Rotation, 5*DeltaTime))
+
 		this.FOV = math.lerpClamped(this.FOV, this.FOVCurve.Evaluate(math.clamp01(this.GetVelocity().magnitude / 30)) * 100, 0.5 * DeltaTime);
 		this.Camera.Update(
 			DeltaTime,
 			this,
-			this.AnimationController.Current === "VM_Run" ? new CFrame(Target.Position, Quaternion.Euler(0, Target.Rotation.eulerAngles.y, 0)) : Target,
+			this.CameraTarget,
+			NewTarget,
 			this.FOV,
 		);
 
@@ -270,6 +274,7 @@ export default class ClientComponent extends AirshipBehaviour {
 
 		this.Moveset.Grappler.DrawRope(this);
 	}
+	private CameraTarget = CFrame.identity
 
 	@Client()
 	override Update() {
