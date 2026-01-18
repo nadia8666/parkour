@@ -87,13 +87,14 @@ const Config = {
 
 	WallrunCoyoteTime: 0.1, // time before you are dropped off of a wallrun without a wall next to you
 	WallrunMinSpeed: 6, // forward wallrun speed is max(spd, min)
-	WallrunMomentumMaxSpeed: 16,
+	WallrunMomentumMaxSpeed: 20,
 	WallrunMaxSpeed: WithGear({ None: 18, SlipGlove: inf, GripGlove: 22.5 }), //forward wallrun speed on jump is min(spd, max)
 	WallrunGravity: WithGear({ None: 0.7, SlipGlove: 0.525 }), // multiplier for global gravity while wallrunning
 	WallrunThreshold: WithGear({ None: -40, SlipGlove: -inf, GripGlove: -50 }), // maximum y velocity before you cant wallrun
 	WallrunJumpForce: new Vector2(0, 15),
 	WallrunLength: WithGear({ None: 2, SlipGlove: 3, GripGlove: 2.5 }),
 	WallrunJumpKeep: WithGear({ None: false, SlipGlove: true }),
+	WallrunAcceleration: 0.75 * 60,
 
 	LedgeGrabForwardSpeed: WithGear({ None: 2, ARCBrace: 10 }), // how much extra velocity should be added for forward ledgegrabs
 	LedgeGrabForwardY: WithGear({ None: 0.35, ARCBrace: 0.85 }), // how much forward velocity should be converted into y velocity on ledgegrab forward

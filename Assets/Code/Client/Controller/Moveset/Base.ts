@@ -922,11 +922,12 @@ export class MovesetBase {
 
 		const BackCast = Raycast(CFrame.Position, CFrame.Back, 2);
 		if (BackCast.Hit) {
-			Controller.SetVelocity(CFrame.Forward.mul(12.5).WithY(math.max(Velocity.y, 13)));
+			Controller.SetVelocity(CFrame.Forward.mul(12.5).WithY(math.max(Velocity.y, 16)));
 			Controller.Gear.Ammo.WallKick--;
 
 			Controller.Input.KeyReleased("Jump", true);
 			Controller.AnimationController.Current = "VM_JumpR"; // TEMP
+			this.JumpTimer = 1.25;
 
 			Core().Client.Sound.Play("footstepfast"); // TEMP
 		}
