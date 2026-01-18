@@ -504,7 +504,11 @@ export class MovesetBase {
 			if (this.WallclimbFar && FarForce >= 1) this.WallclimbFar = false;
 		}
 
-		const Result = this.StartLedgeGrab(Controller, LedgeGrabType.LedgeGrab);
+		const Result = this.StartLedgeGrab(
+			Controller,
+			2.75 * (math.clamp01(1 - math.abs(LocalSpeed.y / 5)) + math.abs(LocalSpeed.y / 20)) + (1 - this.WallclimbTimer / Config.WallclimbLength()),
+			LedgeGrabType.LedgeGrab,
+		);
 		return !Result;
 	}
 
@@ -518,8 +522,11 @@ export class MovesetBase {
 
 	// #region Wallrun
 	public WallrunFailTimer = 0;
+	public WallrunDirection = Vector3.forward;
+	public WallrunRotation = 0;
 	public WallrunTimer = 0;
 	public WallrunTarget: GenericTrigger;
+	public WallrunForceTarget = 0;
 	public StartWallrun(Controller: ClientComponent) {
 		if (Controller.Gear.Ammo.Wallrun <= 0) return;
 		const [TouchingL, TouchingR] = [Controller.WallrunL.Touching, Controller.WallrunR.Touching];
@@ -536,28 +543,28 @@ export class MovesetBase {
 
 		if ((LDot && LDot < 0.75) || (RDot && RDot < 0.75)) return;
 
-		const WallrunForce = math.max(Controller.GetVelocity().WithY(0).magnitude, math.min(Controller.Momentum * 0.85, Config.WallrunMomentumMaxSpeed));
+		const WallrunForce = math.max(math.max(Controller.GetVelocity().WithY(0).magnitude, math.min(Controller.Momentum, Config.WallrunMomentumMaxSpeed)), Config.WallrunMinSpeed);
+		this.WallrunForceTarget = WallrunForce;
 
 		if (TouchingL && TouchingR) {
 			if (LeftHit && RightHit) {
 				Target = LDot >= RDot ? Controller.WallrunL : Controller.WallrunR;
 				const Normal = LDot >= RDot ? LeftNormal : RightNormal;
-
-				let Rotation = Quaternion.LookRotation(Normal.WithY(0).normalized.mul(-1), Vector3.up).mul(Quaternion.Euler(0, Normal === RightNormal ? -90 : 90, 0));
-				Controller.Rigidbody.rotation = Rotation;
+				this.WallrunRotation = Normal === RightNormal ? -90 : 90;
+				this.WallrunDirection = Normal;
 			}
 		} else if ((TouchingL && LeftHit) || (TouchingR && RightHit)) {
 			Target = TouchingL ? Controller.WallrunL : Controller.WallrunR;
-
 			const Normal = (TouchingL ? LeftNormal : RightNormal) as Vector3;
-
-			let Rotation = Quaternion.LookRotation(Normal.WithY(0).normalized.mul(-1), Vector3.up).mul(Quaternion.Euler(0, Normal === RightNormal ? -90 : 90, 0));
-			Controller.Rigidbody.rotation = Rotation;
+			this.WallrunRotation = Normal === RightNormal ? -90 : 90;
+			this.WallrunDirection = Normal;
 		}
 
 		if (!Target) return;
 
-		Controller.Rigidbody.linearVelocity = Controller.transform.TransformDirection(new Vector3(0, Controller.GetVelocity().y, math.max(WallrunForce, Config.WallrunMinSpeed)));
+		const LocalVelocity = Controller.GetCFrame().VectorToObjectSpace(Controller.GetVelocity());
+		this.AlignWallrun(Controller, 1 / 60);
+		Controller.Rigidbody.linearVelocity = Controller.transform.TransformDirection(new Vector3(0, Controller.GetVelocity().y, LocalVelocity.z));
 
 		Controller.State = "Wallrun";
 		Controller.Gear.Ammo.Wallrun--;
@@ -581,17 +588,41 @@ export class MovesetBase {
 			Controller.State = "Airborne";
 			if (Controller.Floor.Touching) Controller.Land();
 
+			// extra boosted lg at the end
+			this.StartLedgeGrab(Controller);
+
 			return false;
 		}
 
 		this.WallrunTimer -= FixedDT;
 
-		const CurrentVelocity = Controller.GetVelocity();
-		const Drag = CurrentVelocity.y > 0 ? CurrentVelocity.y * -0.025 : 0;
+		const WallRay = Raycast(Controller.GetCFrame(true).Position, this.WallrunDirection.mul(-1), 1);
+		if (WallRay.Hit) {
+			this.WallrunDirection = WallRay.Normal;
+		}
+		this.AlignWallrun(Controller, FixedDT);
+
+		let TargetVector = Controller.Input.GetMoveVector();
+		if (TargetVector.magnitude <= 0) TargetVector = Vector3.forward;
+
+		const CurrentVelocity = Controller.GetCFrame().VectorToObjectSpace(Controller.GetVelocity());
+		let WallrunSpeed = CurrentVelocity.z;
+		if (TargetVector.z > 0) {
+			WallrunSpeed =
+				WallrunSpeed < this.WallrunForceTarget ? math.min(WallrunSpeed + FixedDT * Config.WallrunAcceleration * TargetVector.z, this.WallrunForceTarget) : WallrunSpeed;
+		} else if (TargetVector.z < 0) {
+			WallrunSpeed = math.max(WallrunSpeed - FixedDT * Config.WallrunAcceleration * -TargetVector.z, -this.WallrunForceTarget);
+		}
+
+		if (TargetVector.x !== 0) {
+			WallrunSpeed = WallrunSpeed - FixedDT * Config.WallrunAcceleration * math.abs(TargetVector.x) * math.sign(WallrunSpeed) * math.clamp01(math.abs(WallrunSpeed));
+		}
+
+		const VerticalDrag = CurrentVelocity.y > 0 ? CurrentVelocity.y * -0.025 : 0;
 		Controller.SetVelocity(
 			Controller.GetCFrame()
-				.Forward.mul(CurrentVelocity.WithY(0).magnitude)
-				.add(Vector3.up.mul(CurrentVelocity.y + Drag)),
+				.Forward.mul(WallrunSpeed)
+				.add(Vector3.up.mul(CurrentVelocity.y + VerticalDrag)),
 		);
 
 		const GravityAffector = 1 - this.WallrunTimer / Config.WallrunLength();
@@ -606,6 +637,11 @@ export class MovesetBase {
 		}
 
 		return true;
+	}
+
+	public AlignWallrun(Controller: ClientComponent, FixedDT: number) {
+		let Rotation = Quaternion.LookRotation(this.WallrunDirection.WithY(0).normalized.mul(-1), Vector3.up).mul(Quaternion.Euler(0, this.WallrunRotation, 0));
+		Controller.Rigidbody.rotation = Quaternion.Slerp(Controller.Rigidbody.rotation, Rotation, FixedDT * 5);
 	}
 	// #endregion
 
