@@ -1,24 +1,24 @@
 using System.Linq;
-using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(LadderBuilderComponent))]
-public class LadderBuilderComponent_Inspector : UnityEditor.Editor
+[CustomAirshipEditor("LadderComponent")]
+public class LadderComponentEditor : AirshipEditor
 {
     public override void OnInspectorGUI()
     {
         DrawDefaultInspector();
-
+        AirshipEditorGUI.HorizontalLine();
         if (GUILayout.Button("Rebuild Meshes"))
         {
-            LadderBuilderComponent Builder = (LadderBuilderComponent)target;
-            var Reference = Builder.ReferenceModel;
-            var Container = Builder.Container;
-            var RootTransform = Builder.transform;
+            var Reference = serializedObject.FindAirshipProperty("ReferenceModel").objectReferenceValue as GameObject;
+            var Container = serializedObject.FindAirshipProperty("Container").objectReferenceValue as Transform;
+            var RootTransform = target as AirshipComponent;
+
+            if (!Reference || !Container || !RootTransform) return;
 
             Container.Cast<Transform>().ToList().ForEach(Child => DestroyImmediate(Child.gameObject));
 
-            var TargetSize = Mathf.CeilToInt(RootTransform.lossyScale.y);
+            var TargetSize = Mathf.CeilToInt(RootTransform.transform.lossyScale.y);
             var Scale = 1.0f / TargetSize;
             for (int Index = 0; Index < TargetSize; Index++)
             {
