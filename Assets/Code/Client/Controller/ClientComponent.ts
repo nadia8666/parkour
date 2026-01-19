@@ -199,6 +199,7 @@ export default class ClientComponent extends AirshipBehaviour {
 				break;
 			case "Slide":
 				this.Moveset.Base.StepSlide(this, FixedDT);
+				this.Moveset.World.StartObjects(this);
 
 				break;
 			case "Dropdown":
@@ -231,9 +232,13 @@ export default class ClientComponent extends AirshipBehaviour {
 					this.AnimationController.Current = "VM_Wallclimb";
 				}
 
+				this.Moveset.World.StartObjects(this);
+
 				break;
 			case "Wallrun":
 				if (this.Moveset.Base.StepWallrun(this, FixedDT)) this.AnimationController.Current = `VM_Wallrun${this.Moveset.Base.WallrunTarget === this.WallrunL ? "L" : "R"}`;
+
+				this.Moveset.World.StartObjects(this);
 
 				break;
 			case "Fly": {
@@ -241,6 +246,8 @@ export default class ClientComponent extends AirshipBehaviour {
 				this.SetVelocity(this.Camera.TargetRotation.mul(Stick.add(new Vector3(0, Actions.Jump.Active ? 1 : 0, 0).normalized)).mul(Actions.FlyBoost.Active ? 100 : 35));
 				this.AnimationController.Current = "VM_Fall";
 				this.AirborneTime = 100;
+
+				this.Moveset.World.StartObjects(this);
 
 				break;
 			}

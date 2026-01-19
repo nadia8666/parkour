@@ -727,6 +727,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5234374422240836336, guid: 32b6c86e4b9e5c040818bf1ea6fe61c2, type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5234374422240836336, guid: 32b6c86e4b9e5c040818bf1ea6fe61c2, type: 3}
       propertyPath: m_SkinnedMotionVectors
       value: 1
       objectReference: {fileID: 0}

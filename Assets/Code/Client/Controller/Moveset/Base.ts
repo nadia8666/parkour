@@ -127,7 +127,7 @@ export class MovesetBase {
 				break;
 			}
 			case "FootstepLadder":
-				Core().Client.Sound.Play("footstepladder");
+				Core().Client.Sound.Play("footstepladder", { Volume: 0.15 });
 				break;
 		}
 	}
@@ -367,6 +367,8 @@ export class MovesetBase {
 					const TargetRotation = Quaternion.LookRotation(Controller.Camera.TargetRotation.mul(Vector3.forward).WithY(0).normalized);
 					Controller.Rigidbody.rotation = TargetRotation;
 					Controller.SetVelocity(Controller.GetVelocity().add(TargetRotation.mul(Vector3.forward).mul(8)));
+
+					Core().Client.Sound.Play("laddergrab");
 				}
 
 				this.AnimationController.Current = `VM_Jump${Dir}`;
