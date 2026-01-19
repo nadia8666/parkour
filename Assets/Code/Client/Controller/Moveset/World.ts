@@ -19,7 +19,7 @@ export class MovesetWorld {
 			Controller.State = "LadderClimb";
 			const [Center, Size] = Core().Client.World.Ladders.GetLadderInfo(Ladder);
 			let LocalOffset = Center.PointToObjectSpace(Controller.GetCFrame(true).Position);
-			LocalOffset = LocalOffset.WithY(math.clamp(LocalOffset.y, -Size.y / 2, Size.y / 2));
+			LocalOffset = LocalOffset.WithY(math.clamp(LocalOffset.y, -Size.y / 2, Size.y / 2 - 1.75));
 
 			this.LadderOffset = LocalOffset;
 			Tween.Vector3(
@@ -60,28 +60,34 @@ export class MovesetWorld {
 		Controller.transform.position = Center.PointToWorldSpace(this.LadderOffset.WithY(math.clamp(Height, -Size.y / 2, Size.y / 2)));
 
 		const Grounded = Controller.Floor.Touching;
-		if (Height < -Size.y / 2 + 0.25 || (Grounded && os.clock() - this.LastLadder >= 0.5)) {
+		if (Height < -Size.y / 2 - 0.65 || (Grounded && os.clock() - this.LastLadder >= 1.25 && Direction < 0)) {
 			if (Grounded) Controller.Land();
 			else Controller.State = "Airborne";
 
 			this.ResetLadder(Controller);
-		} else if (Height > Size.y / 2) {
+		} else if (Height > Size.y / 2 - 1.75 && Direction > 0) {
+			this.ResetLadder(Controller);
 			Controller.State = "LedgeGrab";
 			task.spawn(() =>
 				Controller.Moveset.Base.StepLedgeGrab(
 					Controller,
 					Center.PointToWorldSpace(
 						this.LadderOffset.WithY(Size.y / 2)
-							.add(new Vector3(0, 0.1, 0))
+							//.add(new Vector3(0, 0.1, 0))
 							.add(Center.Forward.WithY(0).normalized.mul(0.25)),
 					),
 					LedgeGrabType.LedgeGrab,
 				),
 			);
+
+			return;
+		} else if (Height > Size.y + 0.25) {
+			this.ResetLadder(Controller);
+			Controller.State = "Airborne";
 		}
 
 		Controller.AnimationController.Current = "VM_LadderClimb";
-		Controller.AnimationController.Speed = Controller.GetVelocity().magnitude;
+		Controller.AnimationController.Speed = Controller.GetCFrame().VectorToObjectSpace(Controller.GetVelocity()).y;
 	}
 
 	public ResetLadder(Controller: ClientComponent) {
