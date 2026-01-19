@@ -80,7 +80,7 @@ const Config = {
 	JumpCoyoteTime: 0.25,
 
 	WallclimbMinSpeed: WithGear({ None: 7, SlipGlove: -10, GripGlove: 9 }), // upwards speed in wallclimb is max(spd, min)
-	WallclimbThreshold: WithGear({ None: -30, BaseGlove: -45, SlipGlove: -75, GripGlove: -55 }), // maximum velocity before you cant wallclimb
+	WallclimbThreshold: WithGear({ None: -25, BaseGlove: -45, SlipGlove: -75, GripGlove: -55 }), // maximum velocity before you cant wallclimb
 	WallclimbCoyoteTime: 0.25, // time before you are dropped off a wallclimb without a wall in front of you
 	WallclimbStepStrength: WithGear({ None: 115, GripGlove: 135 }), // strength for each push of the wallclimb
 	WallclimbLength: WithGear({ None: 1, BaseGlove: 1.1, SlipGlove: 1.25, GripGlove: 1.45 }),
@@ -90,11 +90,11 @@ const Config = {
 	WallrunMomentumMaxSpeed: 20,
 	WallrunMaxSpeed: WithGear({ None: 18, SlipGlove: inf, GripGlove: 22.5 }), //forward wallrun speed on jump is min(spd, max)
 	WallrunGravity: WithGear({ None: 0.7, SlipGlove: 0.525 }), // multiplier for global gravity while wallrunning
-	WallrunThreshold: WithGear({ None: -40, SlipGlove: -inf, GripGlove: -50 }), // maximum y velocity before you cant wallrun
+	WallrunThreshold: WithGear({ None: -30, SlipGlove: -inf, GripGlove: -40 }), // maximum y velocity before you cant wallrun
 	WallrunJumpForce: new Vector2(0, 15),
 	WallrunLength: WithGear({ None: 2, SlipGlove: 3, GripGlove: 2.5 }),
 	WallrunJumpKeep: WithGear({ None: false, SlipGlove: true }),
-	WallrunAcceleration: 0.75 * 60,
+	WallrunAcceleration: 0.45 * 60,
 
 	LedgeGrabForwardSpeed: WithGear({ None: 2, ARCBrace: 10 }), // how much extra velocity should be added for forward ledgegrabs
 	LedgeGrabForwardY: WithGear({ None: 0.35, ARCBrace: 0.85 }), // how much forward velocity should be converted into y velocity on ledgegrab forward
