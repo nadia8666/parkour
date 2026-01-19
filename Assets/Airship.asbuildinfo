@@ -1935,9 +1935,29 @@
 			"inherits": []
 		},
 		{
+			"name": "AnimationController",
+			"id": "Code/Client/Controller/Animation/AnimationController@AnimationController",
+			"file": "Code/Client/Controller/Animation/AnimationController.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
 			"name": "ViewmodelComponent",
 			"id": "Code/Client/Controller/Animation/ViewmodelComponent@ViewmodelComponent",
 			"file": "Code/Client/Controller/Animation/ViewmodelComponent.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "ClientComponent",
+			"id": "Code/Client/Controller/ClientComponent@ClientComponent",
+			"file": "Code/Client/Controller/ClientComponent.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"
@@ -2805,26 +2825,6 @@
 				"default"
 			],
 			"inherits": []
-		},
-		{
-			"name": "AnimationController",
-			"id": "Code/Client/Controller/Animation/AnimationController@AnimationController",
-			"file": "Code/Client/Controller/Animation/AnimationController.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "ClientComponent",
-			"id": "Code/Client/Controller/ClientComponent@ClientComponent",
-			"file": "Code/Client/Controller/ClientComponent.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
 		}
 	],
 	"flamework": {
@@ -2842,8 +2842,8 @@
 			"typescript:Code/Client/Controller/Moveset/Base@MovesetBase": "Client/Controller/Moveset/Base@MovesetBase",
 			"typescript:Code/Client/Controller/Moveset/Generic@MovesetGeneric": "Client/Controller/Moveset/Generic@MovesetGeneric",
 			"typescript:Code/Client/Controller/Moveset/Grappler@MovesetGrappler": "Client/Controller/Moveset/Grappler@MovesetGrappler",
-			"typescript:Code/Client/Controller/Modules/Ladder/Ladders@Ladders": "Client/Controller/Modules/Ladder/Ladders@Ladders",
 			"typescript:Code/Client/Controller/Moveset/World@MovesetWorld": "Client/Controller/Moveset/World@MovesetWorld",
+			"typescript:Code/Client/Controller/Modules/Ladder/Ladders@Ladders": "Client/Controller/Modules/Ladder/Ladders@Ladders",
 			"typescript:Code/Client/ClientController@ClientController": "Client/ClientController@ClientController",
 			"typescript:Code/Client/Controller/Modules/TimeTrials/TimeTrials@TimeTrials": "Client/Controller/Modules/TimeTrials/TimeTrials@TimeTrials",
 			"typescript:Code/Client/UI/UIController@UIController": "Client/UI/UIController@UIController",
