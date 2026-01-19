@@ -1,4 +1,5 @@
 using System.Linq;
+using UnityEditor;
 using UnityEngine;
 
 [CustomAirshipEditor("LadderComponent")]
@@ -8,13 +9,16 @@ public class LadderComponentEditor : AirshipEditor
     {
         DrawDefaultInspector();
         AirshipEditorGUI.HorizontalLine();
+
+        var Reference = serializedObject.FindAirshipProperty("ReferenceModel").objectReferenceValue as GameObject;
+        var Container = serializedObject.FindAirshipProperty("Container").objectReferenceValue as Transform;
+        var RootTransform = target as AirshipComponent;
+
+        var Inactive = !Reference || !Container || !RootTransform;
+        EditorGUI.BeginDisabledGroup(Inactive);
+
         if (GUILayout.Button("Rebuild Meshes"))
         {
-            var Reference = serializedObject.FindAirshipProperty("ReferenceModel").objectReferenceValue as GameObject;
-            var Container = serializedObject.FindAirshipProperty("Container").objectReferenceValue as Transform;
-            var RootTransform = target as AirshipComponent;
-
-            if (!Reference || !Container || !RootTransform) return;
 
             Container.Cast<Transform>().ToList().ForEach(Child => DestroyImmediate(Child.gameObject));
 
@@ -29,5 +33,6 @@ public class LadderComponentEditor : AirshipEditor
                 Child.transform.localScale = new Vector3(1, Scale, 1);
             }
         }
+        EditorGUI.EndDisabledGroup();
     }
 }
