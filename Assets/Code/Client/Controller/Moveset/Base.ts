@@ -575,7 +575,7 @@ export class MovesetBase {
 
 		const LocalVelocity = Controller.GetCFrame().VectorToObjectSpace(Controller.GetVelocity());
 		this.AlignWallrun(Controller, 1 / 60);
-		Controller.Rigidbody.linearVelocity = Controller.transform.TransformDirection(new Vector3(0, Controller.GetVelocity().y, LocalVelocity.z));
+		Controller.Rigidbody.linearVelocity = Controller.transform.TransformDirection(new Vector3(0, Controller.GetVelocity().y * 0.75, LocalVelocity.z));
 
 		Controller.State = "Wallrun";
 		Controller.Gear.Ammo.Wallrun--;
@@ -681,7 +681,7 @@ export class MovesetBase {
 
 		for (const Height of $range(0, GrabHeight, 0.05)) {
 			let Position = Origin.Position.add(new Vector3(0, Height, 0));
-			const ForwardRay = Cubecast(Position, Origin.Forward, 2.25, 0.2, Origin.Rotation);
+			const ForwardRay = Cubecast(Position, Origin.Forward, 1, 0.2, Origin.Rotation);
 			if (!ForwardRay.Hit) {
 				for (const Distance of $range(0, 2.25, 0.05)) {
 					let Position = Origin.Position.add(new Vector3(0, Height, 0)).add(Origin.Forward.mul(Distance));
@@ -795,7 +795,7 @@ export class MovesetBase {
 					Controller.Rigidbody.linearVelocity = Controller.GetCFrame()
 						.Forward.mul(VirtualSpeed)
 						.div(4)
-						.WithY(VirtualSpeed + Config.LedgeGrabUpSpeed());
+						.WithY(VirtualSpeed * 0.875 + Config.LedgeGrabUpSpeed());
 				} else {
 					// horizontal launch
 					Controller.Rigidbody.linearVelocity = Controller.GetCFrame()
