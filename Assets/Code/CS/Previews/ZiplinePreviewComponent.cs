@@ -1,12 +1,12 @@
 using UnityEngine;
 using UnityEditor;
 
+#if UNITY_EDITOR
 public class ZiplinePreviewComponent : MonoBehaviour
 {
     public Transform Point1;
     public Transform Point2;
 
-#if UNITY_EDITOR
     public bool DrawInvalid()
     {
         if (!Point1 || !Point2)
@@ -32,5 +32,5 @@ public class ZiplinePreviewComponent : MonoBehaviour
         Gizmos.color = Selected && Selected.transform.GetComponentInChildren<ZiplinePreviewComponent>() == this ? Color.blue : Color.red;
         Gizmos.DrawLine(Point1.position, Point2.position);
     }
-#endif
 }
+#endif
