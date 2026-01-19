@@ -842,6 +842,13 @@
 			"extends": [],
 			"singleton": false
 		},
+		"SettingsController": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "Code\\Client\\Framework\\SettingsController.lua",
+			"extends": [],
+			"singleton": true
+		},
 		"DynamicJoystick": {
 			"component": true,
 			"type": "AirshipBehaviour",
@@ -870,12 +877,19 @@
 			"extends": [],
 			"singleton": false
 		},
-		"SettingsController": {
+		"GearRegistrySingleton": {
 			"component": true,
 			"type": "AirshipBehaviour",
-			"filePath": "Code\\Client\\Framework\\SettingsController.lua",
+			"filePath": "Code\\Shared\\GearRegistry.lua",
 			"extends": [],
 			"singleton": true
+		},
+		"TooltipComponent": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "Code\\Client\\Components\\TooltipComponent.lua",
+			"extends": [],
+			"singleton": false
 		},
 		"MobileCameraMovement": {
 			"component": true,
@@ -1094,24 +1108,17 @@
 			"extends": [],
 			"singleton": false
 		},
-		"GearRegistrySingleton": {
-			"component": true,
-			"type": "AirshipBehaviour",
-			"filePath": "Code\\Shared\\GearRegistry.lua",
-			"extends": [],
-			"singleton": true
-		},
-		"TooltipComponent": {
-			"component": true,
-			"type": "AirshipBehaviour",
-			"filePath": "Code\\Client\\Components\\TooltipComponent.lua",
-			"extends": [],
-			"singleton": false
-		},
 		"GenericTriggerComponent": {
 			"component": true,
 			"type": "AirshipBehaviour",
 			"filePath": "Code\\Client\\Components\\Collision\\GenericTriggerComponent.lua",
+			"extends": [],
+			"singleton": false
+		},
+		"LadderComponent": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "Code\\Client\\Controller\\Modules\\Ladder\\LadderComponent.lua",
 			"extends": [],
 			"singleton": false
 		},
@@ -1126,13 +1133,6 @@
 			"component": true,
 			"type": "AirshipBehaviour",
 			"filePath": "Code\\Client\\Controller\\Modules\\Zipline\\ZiplineComponent.lua",
-			"extends": [],
-			"singleton": false
-		},
-		"LadderComponent": {
-			"component": true,
-			"type": "AirshipBehaviour",
-			"filePath": "Code\\Client\\Controller\\Modules\\Ladder\\LadderComponent.lua",
 			"extends": [],
 			"singleton": false
 		}
@@ -1935,16 +1935,6 @@
 			"inherits": []
 		},
 		{
-			"name": "AnimationController",
-			"id": "Code/Client/Controller/Animation/AnimationController@AnimationController",
-			"file": "Code/Client/Controller/Animation/AnimationController.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
 			"name": "ViewmodelComponent",
 			"id": "Code/Client/Controller/Animation/ViewmodelComponent@ViewmodelComponent",
 			"file": "Code/Client/Controller/Animation/ViewmodelComponent.ts",
@@ -2367,6 +2357,16 @@
 			"inherits": []
 		},
 		{
+			"name": "SettingsController",
+			"id": "Code/Client/Framework/SettingsController@SettingsController",
+			"file": "Code/Client/Framework/SettingsController.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
 			"name": "DynamicJoystick",
 			"id": "AirshipPackages/@Easy/Core/Shared/Input/Mobile/DynamicJoystick@DynamicJoystick",
 			"file": "AirshipPackages/@Easy/Core/Shared/Input/Mobile/DynamicJoystick.ts",
@@ -2400,6 +2400,36 @@
 			"name": "PartyHudMember",
 			"id": "AirshipPackages/@Easy/Core/Shared/UI/PartyHud/PartyHudMember@PartyHudMember",
 			"file": "AirshipPackages/@Easy/Core/Shared/UI/PartyHud/PartyHudMember.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "GearObject",
+			"id": "Code/Shared/Object/GearObject@GearObject",
+			"file": "Code/Shared/Object/GearObject.ts",
+			"declarationType": "AirshipScriptableObject",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "GearRegistrySingleton",
+			"id": "Code/Shared/GearRegistry@GearRegistrySingleton",
+			"file": "Code/Shared/GearRegistry.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "TooltipComponent",
+			"id": "Code/Client/Components/TooltipComponent@TooltipComponent",
+			"file": "Code/Client/Components/TooltipComponent.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"
@@ -2717,39 +2747,19 @@
 			"inherits": []
 		},
 		{
-			"name": "GearObject",
-			"id": "Code/Shared/Object/GearObject@GearObject",
-			"file": "Code/Shared/Object/GearObject.ts",
-			"declarationType": "AirshipScriptableObject",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "GearRegistrySingleton",
-			"id": "Code/Shared/GearRegistry@GearRegistrySingleton",
-			"file": "Code/Shared/GearRegistry.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "TooltipComponent",
-			"id": "Code/Client/Components/TooltipComponent@TooltipComponent",
-			"file": "Code/Client/Components/TooltipComponent.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
 			"name": "GenericTriggerComponent",
 			"id": "Code/Client/Components/Collision/GenericTriggerComponent@GenericTriggerComponent",
 			"file": "Code/Client/Components/Collision/GenericTriggerComponent.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "LadderComponent",
+			"id": "Code/Client/Controller/Modules/Ladder/LadderComponent@LadderComponent",
+			"file": "Code/Client/Controller/Modules/Ladder/LadderComponent.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"
@@ -2797,19 +2807,9 @@
 			"inherits": []
 		},
 		{
-			"name": "LadderComponent",
-			"id": "Code/Client/Controller/Modules/Ladder/LadderComponent@LadderComponent",
-			"file": "Code/Client/Controller/Modules/Ladder/LadderComponent.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "SettingsController",
-			"id": "Code/Client/Framework/SettingsController@SettingsController",
-			"file": "Code/Client/Framework/SettingsController.ts",
+			"name": "AnimationController",
+			"id": "Code/Client/Controller/Animation/AnimationController@AnimationController",
+			"file": "Code/Client/Controller/Animation/AnimationController.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"
@@ -2842,26 +2842,28 @@
 			"typescript:Code/Client/Controller/Moveset/Base@MovesetBase": "Client/Controller/Moveset/Base@MovesetBase",
 			"typescript:Code/Client/Controller/Moveset/Generic@MovesetGeneric": "Client/Controller/Moveset/Generic@MovesetGeneric",
 			"typescript:Code/Client/Controller/Moveset/Grappler@MovesetGrappler": "Client/Controller/Moveset/Grappler@MovesetGrappler",
-			"typescript:Code/Client/Controller/Modules/TimeTrials/TimeTrials@TimeTrials": "Client/Controller/Modules/TimeTrials/TimeTrials@TimeTrials",
+			"typescript:Code/Client/Controller/Modules/Ladder/Ladders@Ladders": "Client/Controller/Modules/Ladder/Ladders@Ladders",
+			"typescript:Code/Client/Controller/Moveset/World@MovesetWorld": "Client/Controller/Moveset/World@MovesetWorld",
 			"typescript:Code/Client/ClientController@ClientController": "Client/ClientController@ClientController",
+			"typescript:Code/Client/Controller/Modules/TimeTrials/TimeTrials@TimeTrials": "Client/Controller/Modules/TimeTrials/TimeTrials@TimeTrials",
 			"typescript:Code/Client/UI/UIController@UIController": "Client/UI/UIController@UIController",
 			"typescript:Code/Client/Controller/Gear/GearController@GearController": "Client/Controller/Gear/GearController@GearController",
 			"typescript:Code/Client/Controller/SoundController@SoundController": "Client/Controller/SoundController@SoundController",
 			"typescript:Code/Client/Framework/DataController@DataController": "Client/Framework/DataController@DataController",
 			"typescript:Code/Client/UI/Drag/DraggableSlotComponent@DraggableSlotComponent": "Client/UI/Drag/DraggableSlotComponent@DraggableSlotComponent",
 			"typescript:Code/Client/UI/Drag/DragController@DragController": "Client/UI/Drag/DragController@DragController",
-			"typescript:Code/Server/Modules/Spawner@CharacterSpawner": "Server/Modules/Spawner@CharacterSpawner",
 			"typescript:Code/Client/Framework/SettingsController@SettingsController": "Client/Framework/SettingsController@SettingsController",
-			"typescript:Code/Client/Controller/Modules/Zipline/Ziplines@Ziplines": "Client/Controller/Modules/Zipline/Ziplines@Ziplines",
+			"typescript:Code/Server/Modules/Spawner@CharacterSpawner": "Server/Modules/Spawner@CharacterSpawner",
 			"typescript:Code/Shared/Object/GearObject@GearObject": "Shared/Object/GearObject@GearObject",
 			"typescript:Code/Shared/GearRegistry@GearRegistrySingleton": "Shared/GearRegistry@GearRegistrySingleton",
 			"typescript:Code/Client/Components/TooltipComponent@TooltipComponent": "Client/Components/TooltipComponent@TooltipComponent",
+			"typescript:Code/Client/Controller/Modules/Zipline/Ziplines@Ziplines": "Client/Controller/Modules/Zipline/Ziplines@Ziplines",
 			"typescript:Code/Client/Components/Collision/GenericTriggerComponent@GenericTriggerComponent": "Client/Components/Collision/GenericTriggerComponent@GenericTriggerComponent",
+			"typescript:Code/Client/Controller/Modules/Ladder/LadderComponent@LadderComponent": "Client/Controller/Modules/Ladder/LadderComponent@LadderComponent",
 			"typescript:Code/Shared/Object/TimeTrialObject@TimeTrialObject": "Shared/Object/TimeTrialObject@TimeTrialObject",
 			"typescript:Code/Client/Controller/Modules/TimeTrials/TimeTrialComponent@TimeTrialComponent": "Client/Controller/Modules/TimeTrials/TimeTrialComponent@TimeTrialComponent",
 			"typescript:Code/Client/Controller/Modules/Zipline/ZiplineComponent@ZiplineComponent": "Client/Controller/Modules/Zipline/ZiplineComponent@ZiplineComponent",
-			"typescript:Code/Shared/Object/SoundBankObject@SoundBankObject": "Shared/Object/SoundBankObject@SoundBankObject",
-			"typescript:Code/Client/Controller/Modules/Ladder/LadderComponent@LadderComponent": "Client/Controller/Modules/Ladder/LadderComponent@LadderComponent"
+			"typescript:Code/Shared/Object/SoundBankObject@SoundBankObject": "Shared/Object/SoundBankObject@SoundBankObject"
 		}
 	}
 }

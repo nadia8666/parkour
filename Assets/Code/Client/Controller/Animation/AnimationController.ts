@@ -60,6 +60,10 @@ export const Animations = {
 		0: { Name: "VM_Coil" },
 		EndAnimation: "VM_Fall",
 	},
+	
+	VM_LadderClimb: {
+		0: { Name: "VM_LadderClimb" },
+	},
 
 	VM_DamageLight: {
 		0: { Name: "VM_DamageLight" },

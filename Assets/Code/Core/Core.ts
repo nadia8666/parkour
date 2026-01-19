@@ -40,6 +40,9 @@ task.spawn(() => {
 	while (!Core.Client.World.Ziplines) {
 		task.wait();
 	}
+	while (!Core.Client.World.Ladders) {
+		task.wait();
+	}
 
 	while (!Core.Gear) {
 		task.wait();
