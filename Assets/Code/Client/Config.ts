@@ -137,6 +137,7 @@ const Config = {
 
 	CollisionLayer: LayerMask.GetMask("GameLayer0"),
 	ZiplineLayer: LayerMask.GetMask("GameLayer1"),
+	LadderLayer: LayerMask.GetMask("GameLayer2"),
 };
 
 export default Config;

@@ -2,6 +2,7 @@ import { Airship } from "@Easy/Core/Shared/Airship";
 import type AnimationController from "./Controller/Animation/AnimationController";
 import type ClientComponent from "./Controller/ClientComponent";
 import type GearController from "./Controller/Gear/GearController";
+import { Ladders } from "./Controller/Modules/Ladder/Ladders";
 import { TimeTrials } from "./Controller/Modules/TimeTrials/TimeTrials";
 import { Ziplines } from "./Controller/Modules/Zipline/Ziplines";
 import type SoundController from "./Controller/SoundController";
@@ -26,6 +27,7 @@ export default class ClientController extends AirshipSingleton {
 
 	@NonSerialized() public World = {
 		Ziplines: new Ziplines(),
+		Ladders: new Ladders(),
 	};
 
 	@Client()

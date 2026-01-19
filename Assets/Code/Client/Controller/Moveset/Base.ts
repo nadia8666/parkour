@@ -126,6 +126,9 @@ export class MovesetBase {
 
 				break;
 			}
+			case "FootstepLadder":
+				Core().Client.Sound.Play("footstepladder");
+				break;
 		}
 	}
 
@@ -136,7 +139,7 @@ export class MovesetBase {
 				break;
 			}
 			case "Jump": {
-				if (["Grounded", "Wallrun", "Airborne", "Slide", "Dropdown"].includes(Controller.State)) {
+				if (["Grounded", "Wallrun", "Airborne", "Slide", "Dropdown", "LadderClimb"].includes(Controller.State)) {
 					this.StartJump(Controller);
 				}
 				break;
@@ -305,6 +308,7 @@ export class MovesetBase {
 			return;
 		}
 
+		const FromLadder = State === "LadderClimb";
 		const FromDropdown = State === "Dropdown";
 		const InWallrun = State === "Wallrun";
 		let JumpType: "Wallrun" | "Default" | "Long" = InWallrun ? "Wallrun" : "Default";
@@ -357,6 +361,13 @@ export class MovesetBase {
 
 				const Dir = this.LastJump === "R" ? "L" : "R";
 				this.LastJump = Dir;
+
+				if (FromLadder) {
+					Controller.Moveset.World.ResetLadder(Controller);
+					const TargetRotation = Quaternion.LookRotation(Controller.Camera.TargetRotation.mul(Vector3.forward).WithY(0).normalized);
+					Controller.Rigidbody.rotation = TargetRotation;
+					Controller.SetVelocity(Controller.GetVelocity().add(TargetRotation.mul(Vector3.forward).mul(8)));
+				}
 
 				this.AnimationController.Current = `VM_Jump${Dir}`;
 				break;

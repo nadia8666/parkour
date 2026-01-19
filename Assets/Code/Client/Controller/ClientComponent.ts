@@ -15,8 +15,9 @@ import { Actions, Input } from "./Input";
 import { MovesetBase } from "./Moveset/Base";
 import { MovesetGeneric } from "./Moveset/Generic";
 import { MovesetGrappler } from "./Moveset/Grappler";
+import { MovesetWorld } from "./Moveset/World";
 
-export type ValidStates = "Airborne" | "Grounded" | "Wallclutch" | "Wallclimb" | "Wallrun" | "LedgeGrab" | "Slide" | "Dropdown" | "Fly";
+export type ValidStates = "Airborne" | "Grounded" | "Wallclutch" | "Wallclimb" | "Wallrun" | "LedgeGrab" | "Slide" | "Dropdown" | "Fly" | "LadderClimb" | "Zipline";
 
 @AirshipComponentMenu("Client/Controller/Physics Controller")
 export default class ClientComponent extends AirshipBehaviour {
@@ -78,6 +79,7 @@ export default class ClientComponent extends AirshipBehaviour {
 	public Moveset = {
 		Base: new MovesetBase(),
 		Generic: new MovesetGeneric(),
+		World: new MovesetWorld(),
 
 		Grappler: new MovesetGrappler(),
 	};
@@ -193,6 +195,7 @@ export default class ClientComponent extends AirshipBehaviour {
 				}
 				this.AnimationController.Speed = this.AnimationController.Current === "VM_Run" ? this.RunAnimationCurve.Evaluate(this.Rigidbody.linearVelocity.magnitude) : 1;
 
+				this.Moveset.World.StartObjects(this);
 				break;
 			case "Slide":
 				this.Moveset.Base.StepSlide(this, FixedDT);
@@ -221,6 +224,7 @@ export default class ClientComponent extends AirshipBehaviour {
 					this.AnimationController.Current = "VM_Fall";
 				}
 
+				this.Moveset.World.StartObjects(this);
 				break;
 			case "Wallclimb":
 				if (this.Moveset.Base.StepWallclimb(this, FixedDT)) {
@@ -237,6 +241,11 @@ export default class ClientComponent extends AirshipBehaviour {
 				this.SetVelocity(this.Camera.TargetRotation.mul(Stick.add(new Vector3(0, Actions.Jump.Active ? 1 : 0, 0).normalized)).mul(Actions.FlyBoost.Active ? 100 : 35));
 				this.AnimationController.Current = "VM_Fall";
 				this.AirborneTime = 100;
+
+				break;
+			}
+			case "LadderClimb": {
+				this.Moveset.World.StepLadder(this, FixedDT);
 
 				break;
 			}
