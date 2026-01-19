@@ -58,6 +58,8 @@ export default class UIController extends AirshipSingleton {
 				.Client.Data.GetLink()
 				.AnyChanged.Connect(() => this.RefreshContents());
 		});
+
+		this.Main.SetActive(true);
 	}
 
 	private Contents: GameObject[] = [];
@@ -144,7 +146,7 @@ export default class UIController extends AirshipSingleton {
 
 		//this.MomentumCanvas.alpha = math.lerpClamped(this.MomentumCanvas.alpha, Controller.Momentum <= 0 ? 0 : 1, DeltaTime * 5);
 		this.HealthCanvas.alpha = math.lerpClamped(this.HealthCanvas.alpha, Controller.Health < 99 ? 1 : os.clock() - Controller._LastHealthChanged >= 2.5 ? 0 : 1, DeltaTime * 5);
-		this.WallKickCanvas.alpha = 1 - this.HealthCanvas.alpha
+		this.WallKickCanvas.alpha = 1 - this.HealthCanvas.alpha;
 
 		const HoverTarget = this.RaycastUI();
 
