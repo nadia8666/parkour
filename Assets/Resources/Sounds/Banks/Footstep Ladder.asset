@@ -44,7 +44,7 @@ MonoBehaviour:
         - type: string
           serializedValue: '"Registry Info"'
       nullable: 0
-      serializedValue: strongland
+      serializedValue: footstepladder
       serializedObject: {fileID: 0}
       modified: 1
     - name: BankSize
@@ -62,7 +62,7 @@ MonoBehaviour:
         tags: []
       decorators: []
       nullable: 0
-      serializedValue: 12
+      serializedValue: 10
       serializedObject: {fileID: 0}
       modified: 1
     displayIcon: {fileID: 0}

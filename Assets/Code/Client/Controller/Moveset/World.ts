@@ -3,6 +3,7 @@ import { Tween } from "@Easy/Core/Shared/Tween/Tween";
 import Core from "Code/Core/Core";
 import type ClientComponent from "../ClientComponent";
 import type { VirtualizedLadder } from "../Modules/Ladder/Ladders";
+import { LedgeGrabType } from "./Base";
 
 export class MovesetWorld {
 	public LastLadder = os.clock();
@@ -59,11 +60,24 @@ export class MovesetWorld {
 		Controller.transform.position = Center.PointToWorldSpace(this.LadderOffset.WithY(math.clamp(Height, -Size.y / 2, Size.y / 2)));
 
 		const Grounded = Controller.Floor.Touching;
-		if (Height < -Size.y + 0.25 || (Grounded && os.clock() - this.LastLadder >= 0.5)) {
+		if (Height < -Size.y / 2 + 0.25 || (Grounded && os.clock() - this.LastLadder >= 0.5)) {
 			if (Grounded) Controller.Land();
 			else Controller.State = "Airborne";
 
 			this.ResetLadder(Controller);
+		} else if (Height > Size.y / 2) {
+			Controller.State = "LedgeGrab";
+			task.spawn(() =>
+				Controller.Moveset.Base.StepLedgeGrab(
+					Controller,
+					Center.PointToWorldSpace(
+						this.LadderOffset.WithY(Size.y / 2)
+							.add(new Vector3(0, 0.1, 0))
+							.add(Center.Forward.WithY(0).normalized.mul(0.25)),
+					),
+					LedgeGrabType.LedgeGrab,
+				),
+			);
 		}
 
 		Controller.AnimationController.Current = "VM_LadderClimb";
