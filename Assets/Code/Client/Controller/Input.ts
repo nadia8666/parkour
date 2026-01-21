@@ -62,7 +62,6 @@ Airship.Input.DisableCoreActions([
 	CoreAction.Left,
 	CoreAction.Back,
 	CoreAction.Right,
-	CoreAction.Jump,
 	CoreAction.Sprint,
 	CoreAction.Crouch,
 	CoreAction.PrimaryAction,
