@@ -1,4 +1,5 @@
 import { Airship } from "@Easy/Core/Shared/Airship";
+import { CoreAction } from "@Easy/Core/Shared/Input/AirshipCoreAction";
 import { Binding } from "@Easy/Core/Shared/Input/Binding";
 import { Keyboard } from "@Easy/Core/Shared/UserInput";
 import { Bin } from "@Easy/Core/Shared/Util/Bin";
@@ -11,29 +12,31 @@ class InputEntry {
 	constructor(
 		public readonly Key: Key,
 		public readonly Priority: number,
+		public readonly Category?: string,
+		public readonly Hidden?: boolean,
 	) {}
 }
 
 export const Actions = {
-	LedgeGrab: new InputEntry(Key.Space, 5),
-	Jump: new InputEntry(Key.Space, 4),
-	WallKick: new InputEntry(Key.Space, 3),
-	WallAction: new InputEntry(Key.Space, 2),
-	Wallrun: new InputEntry(Key.Space, 1),
+	LedgeGrab: new InputEntry(Key.Space, 5, "AP - Movement"),
+	Jump: new InputEntry(Key.Space, 4, "AP - Movement"),
+	WallKick: new InputEntry(Key.Space, 3, "AP - Movement"),
+	WallAction: new InputEntry(Key.Space, 2, "AP - Movement"),
+	Wallrun: new InputEntry(Key.Space, 1, "AP - Movement"),
 
-	Coil: new InputEntry(Key.LeftShift, 2),
-	Slide: new InputEntry(Key.LeftShift, 1),
+	Coil: new InputEntry(Key.LeftShift, 2, "AP - Movement"),
+	Slide: new InputEntry(Key.LeftShift, 1, "AP - Movement"),
 
-	Respawn: new InputEntry(Key.R, 2),
-	QuickRestart: new InputEntry(Key.R, 1),
+	Respawn: new InputEntry(Key.R, 2, "AP - Generic"),
+	QuickRestart: new InputEntry(Key.R, 1, "AP - Time Trials"),
 
-	Interact: new InputEntry(Key.F, 2),
-	CancelTrial: new InputEntry(Key.F, 1),
+	Interact: new InputEntry(Key.F, 2, "AP - Generic"),
+	CancelTrial: new InputEntry(Key.F, 1, "AP - Time Trials"),
 
-	Fly: new InputEntry(Key.Q, 1),
-	FlyBoost: new InputEntry(Key.LeftShift, -1),
+	Fly: new InputEntry(Key.Q, 1, "AP - DEBUG"),
+	FlyBoost: new InputEntry(Key.LeftShift, -1, "AP - DEBUG"),
 
-	CoreUse: new InputEntry(Key.E, 1),
+	CoreUse: new InputEntry(Key.E, 1, "AP - Gear"),
 };
 
 const InverseMap = new Map<Key, (keyof typeof Actions)[]>();
@@ -51,8 +54,22 @@ for (const [Name, Entry] of pairs(Actions)) {
 		InverseMap.set(Entry.Key, [Name]);
 	}
 
-	Airship.Input.CreateAction(Name, Binding.Key(Entry.Key));
+	Airship.Input.CreateAction(Name, Binding.Key(Entry.Key), { category: Entry.Category, hidden: Entry.Hidden });
 }
+
+Airship.Input.DisableCoreActions([
+	CoreAction.Forward,
+	CoreAction.Left,
+	CoreAction.Back,
+	CoreAction.Right,
+	CoreAction.Jump,
+	CoreAction.Sprint,
+	CoreAction.Crouch,
+	CoreAction.PrimaryAction,
+	CoreAction.SecondaryAction,
+	CoreAction.Interact,
+	CoreAction.Emote,
+]);
 
 export class Input {
 	private readonly KeyMap = new Map<Key, Array<keyof typeof Actions>>();
