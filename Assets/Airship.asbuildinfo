@@ -1935,16 +1935,6 @@
 			"inherits": []
 		},
 		{
-			"name": "AnimationController",
-			"id": "Code/Client/Controller/Animation/AnimationController@AnimationController",
-			"file": "Code/Client/Controller/Animation/AnimationController.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
 			"name": "ViewmodelComponent",
 			"id": "Code/Client/Controller/Animation/ViewmodelComponent@ViewmodelComponent",
 			"file": "Code/Client/Controller/Animation/ViewmodelComponent.ts",
@@ -2821,6 +2811,16 @@
 			"id": "Code/Shared/Object/SoundBankObject@SoundBankObject",
 			"file": "Code/Shared/Object/SoundBankObject.ts",
 			"declarationType": "AirshipScriptableObject",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "AnimationController",
+			"id": "Code/Client/Controller/Animation/AnimationController@AnimationController",
+			"file": "Code/Client/Controller/Animation/AnimationController.ts",
+			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"
 			],
