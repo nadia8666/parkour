@@ -60,9 +60,23 @@ export const Animations = {
 		0: { Name: "VM_Coil" },
 		EndAnimation: "VM_Fall",
 	},
-	
+
 	VM_LadderClimb: {
 		0: { Name: "VM_LadderClimb" },
+	},
+
+	VM_LadderSlide: {
+		0: { Name: "VM_LadderSlide" },
+	},
+
+	VM_LadderJumpR: {
+		0: { Name: "VM_LadderJumpR" },
+		EndAnimation: "VM_LadderClimb",
+	},
+
+	VM_LadderJumpL: {
+		0: { Name: "VM_LadderJumpL" },
+		EndAnimation: "VM_LadderClimb",
 	},
 
 	VM_DamageLight: {

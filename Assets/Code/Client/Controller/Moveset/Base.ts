@@ -311,8 +311,8 @@ export class MovesetBase {
 		const FromLadder = State === "LadderClimb";
 		const FromDropdown = State === "Dropdown";
 		const InWallrun = State === "Wallrun";
-		let JumpType: "Wallrun" | "Default" | "Long" = InWallrun ? "Wallrun" : "Default";
-		if (Controller.Gear.Ammo.Jump <= 0 && !InWallrun) return;
+		let JumpType: "Wallrun" | "Default" | "Long" | "Ladder" = InWallrun ? "Wallrun" : FromLadder ? "Ladder" : "Default";
+		if ((Controller.Gear.Ammo.Jump <= 0 && !InWallrun) || (FromLadder && os.clock() - Controller.Moveset.World.LastLadderJump <= 0.15)) return;
 
 		if (["Airborne", "Dropdown"].includes(State)) {
 			// easier jumps
@@ -361,17 +361,40 @@ export class MovesetBase {
 
 				const Dir = this.LastJump === "R" ? "L" : "R";
 				this.LastJump = Dir;
+				this.AnimationController.Current = `VM_Jump${Dir}`;
+				break;
+			}
+			case "Ladder": {
+				// biome-ignore lint/style/noNonNullAssertion: known
+				const LadderDot = Controller.Moveset.World.CurrentLadder!.Object.transform.forward.WithY(0).normalized.Dot(
+					Controller.Camera.TargetRotation.mul(Vector3.forward).WithY(0).normalized,
+				);
+				const Dir = this.LastJump === "R" ? "L" : "R";
+				this.LastJump = Dir;
 
-				if (FromLadder) {
+				Controller.Moveset.World.LastLadderJump = os.clock();
+				Core().Client.Sound.Play("laddergrab");
+
+				if (LadderDot > 0.6) {
+					Controller.AnimationController.Current = `VM_LadderJump${Dir}`;
+					Controller.SetVelocity(new Vector3(0, 12, 0));
+
+					return;
+				} else {
 					Controller.Moveset.World.ResetLadder(Controller);
+
 					const TargetRotation = Quaternion.LookRotation(Controller.Camera.TargetRotation.mul(Vector3.forward).WithY(0).normalized);
 					Controller.Rigidbody.rotation = TargetRotation;
-					Controller.SetVelocity(Controller.GetVelocity().add(TargetRotation.mul(Vector3.forward).mul(8)));
 
-					Core().Client.Sound.Play("laddergrab");
+					const JumpHeight = math.clamp(Controller.Momentum / Config.JumpRequiredSpeed, 0.5, 1);
+					Controller.SetVelocity(
+						TargetRotation.mul(Vector3.forward)
+							.mul(8)
+							.WithY(9.5 * JumpHeight),
+					);
+					this.AnimationController.Current = `VM_Jump${Dir}`;
 				}
 
-				this.AnimationController.Current = `VM_Jump${Dir}`;
 				break;
 			}
 			case "Long": {
@@ -407,7 +430,6 @@ export class MovesetBase {
 		}
 
 		this.SyncMomentum(Controller, 1);
-
 		Controller.State = "Airborne";
 
 		this.JumpTimer = 0.75;

@@ -2,6 +2,7 @@ import { TweenEasingFunction } from "@Easy/Core/Shared/Tween/EasingFunctions";
 import { Tween } from "@Easy/Core/Shared/Tween/Tween";
 import Core from "Code/Core/Core";
 import type ClientComponent from "../ClientComponent";
+import { Actions } from "../Input";
 import type { VirtualizedLadder } from "../Modules/Ladder/Ladders";
 import { LedgeGrabType } from "./Base";
 
@@ -9,6 +10,7 @@ export class MovesetWorld {
 	public LastLadder = os.clock();
 	public CurrentLadder: VirtualizedLadder | undefined;
 	public LadderOffset = Vector3.zero;
+	public LastLadderJump = os.clock();
 
 	public StartLadder(Controller: ClientComponent) {
 		if (os.clock() - this.LastLadder <= 0.35) return;
@@ -54,18 +56,27 @@ export class MovesetWorld {
 		const Direction = Controller.Input.GetMoveVector().z;
 		const [Center, Size] = Core().Client.World.Ladders.GetLadderInfo(this.CurrentLadder);
 
-		Controller.SetVelocity(Controller.GetVelocity().MoveTowards(new Vector3(0, Direction * 6, 0), FixedDT * 15));
+		let TargetVelocity = new Vector3(0, Direction * 6, 0);
+		let Sliding = false;
+
+		if (Actions.Slide.Active && ["VM_LadderClimb", "VM_LadderSlide"].includes(Controller.AnimationController.Current)) {
+			Sliding = true;
+			TargetVelocity = Vector3.down.mul(13.5);
+		}
+
+		Controller.SetVelocity(Controller.GetVelocity().MoveTowards(Controller.GetCFrame().VectorToWorldSpace(TargetVelocity), FixedDT * 15));
 
 		let Height = Center.PointToObjectSpace(Controller.GetCFrame(true).Position).y;
 		Controller.transform.position = Center.PointToWorldSpace(this.LadderOffset.WithY(math.clamp(Height, -Size.y / 2, Size.y / 2)));
 
+		const LocalSpeed = Controller.GetCFrame().VectorToObjectSpace(Controller.GetVelocity()).y;
 		const Grounded = Controller.Floor.Touching;
-		if (Height < -Size.y / 2 - 0.65 || (Grounded && os.clock() - this.LastLadder >= 1.25 && Direction < 0)) {
+		if (Height < -Size.y / 2 - 0.65 || (Grounded && os.clock() - this.LastLadder >= 1.25 && LocalSpeed < 0)) {
 			if (Grounded) Controller.Land();
 			else Controller.State = "Airborne";
 
 			this.ResetLadder(Controller);
-		} else if (Height > Size.y / 2 - 1.75 && Direction > 0) {
+		} else if (Height > Size.y / 2 - 1.75 && LocalSpeed > 0) {
 			this.ResetLadder(Controller);
 			Controller.State = "LedgeGrab";
 			task.spawn(() =>
@@ -86,8 +97,13 @@ export class MovesetWorld {
 			Controller.State = "Airborne";
 		}
 
-		Controller.AnimationController.Current = "VM_LadderClimb";
-		Controller.AnimationController.Speed = Controller.GetCFrame().VectorToObjectSpace(Controller.GetVelocity()).y;
+		if (!Controller.AnimationController.Current.find("VM_LadderJump")[0]) {
+			if (Sliding && Controller.AnimationController.Current !== "VM_LadderSlide") {
+				Controller.SetVelocity(new Vector3(0, -6, 0));
+			}
+			Controller.AnimationController.Current = Sliding ? "VM_LadderSlide" : "VM_LadderClimb";
+			Controller.AnimationController.Speed = LocalSpeed;
+		}
 	}
 
 	public ResetLadder(Controller: ClientComponent) {
