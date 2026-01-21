@@ -33,8 +33,8 @@ export const Actions = {
 	Interact: new InputEntry(Key.F, 2, "AP - Generic"),
 	CancelTrial: new InputEntry(Key.F, 1, "AP - Time Trials"),
 
-	Fly: new InputEntry(Key.Q, 1, "AP - DEBUG"),
-	FlyBoost: new InputEntry(Key.LeftShift, -1, "AP - DEBUG"),
+	Fly: new InputEntry(Key.Q, 1, "AP - Debug"),
+	FlyBoost: new InputEntry(Key.LeftShift, -1, "AP - Debug"),
 
 	CoreUse: new InputEntry(Key.E, 1, "AP - Gear"),
 };
@@ -69,6 +69,8 @@ Airship.Input.DisableCoreActions([
 	CoreAction.SecondaryAction,
 	CoreAction.Interact,
 	CoreAction.Emote,
+	CoreAction.Inventory,
+	CoreAction.InventoryQuickMoveModifierKey,
 ]);
 
 export class Input {

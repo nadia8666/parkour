@@ -6,7 +6,7 @@ const ENV: { Runtime: "DEV" | "PROD"; DebugDrawing: boolean } = {
 	DebugDrawing: false,
 };
 
-Airship.Input.CreateAction("Debug", Binding.Key(Key.P), { category: "DEBUG" });
+Airship.Input.CreateAction("Debug", Binding.Key(Key.P), { category: "AP - Debug" });
 Airship.Input.OnDown("Debug").Connect(() => (ENV.DebugDrawing = !ENV.DebugDrawing));
 
 export default ENV;
