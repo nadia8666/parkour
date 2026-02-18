@@ -35,6 +35,13 @@
 			"extends": [],
 			"singleton": false
 		},
+		"AirshipInventoryTile": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\Inventory\\AirshipInventoryTile.lua",
+			"extends": [],
+			"singleton": false
+		},
 		"PartyCard": {
 			"component": true,
 			"type": "AirshipBehaviour",
@@ -870,6 +877,13 @@
 			"extends": [],
 			"singleton": false
 		},
+		"RuntimeOutfitLoader": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\Character\\Accessory\\RuntimeOutfitLoader.lua",
+			"extends": [],
+			"singleton": false
+		},
 		"PartyHudMember": {
 			"component": true,
 			"type": "AirshipBehaviour",
@@ -1028,13 +1042,6 @@
 			"component": true,
 			"type": "AirshipBehaviour",
 			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\Viewmodel\\AirshipCharacterViewmodel.lua",
-			"extends": [],
-			"singleton": false
-		},
-		"AirshipInventoryTile": {
-			"component": true,
-			"type": "AirshipBehaviour",
-			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\Inventory\\AirshipInventoryTile.lua",
 			"extends": [],
 			"singleton": false
 		},
@@ -1224,6 +1231,16 @@
 			"name": "Character",
 			"id": "AirshipPackages/@Easy/Core/Shared/Character/Character@Character",
 			"file": "AirshipPackages/@Easy/Core/Shared/Character/Character.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "AirshipInventoryTile",
+			"id": "AirshipPackages/@Easy/Core/Shared/Inventory/AirshipInventoryTile@AirshipInventoryTile",
+			"file": "AirshipPackages/@Easy/Core/Shared/Inventory/AirshipInventoryTile.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"
@@ -2417,6 +2434,16 @@
 			"inherits": []
 		},
 		{
+			"name": "RuntimeOutfitLoader",
+			"id": "AirshipPackages/@Easy/Core/Shared/Character/Accessory/RuntimeOutfitLoader@RuntimeOutfitLoader",
+			"file": "AirshipPackages/@Easy/Core/Shared/Character/Accessory/RuntimeOutfitLoader.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
 			"name": "PartyHudMember",
 			"id": "AirshipPackages/@Easy/Core/Shared/UI/PartyHud/PartyHudMember@PartyHudMember",
 			"file": "AirshipPackages/@Easy/Core/Shared/UI/PartyHud/PartyHudMember.ts",
@@ -2650,16 +2677,6 @@
 			"name": "AirshipCharacterViewmodel",
 			"id": "AirshipPackages/@Easy/Core/Shared/Viewmodel/AirshipCharacterViewmodel@AirshipCharacterViewmodel",
 			"file": "AirshipPackages/@Easy/Core/Shared/Viewmodel/AirshipCharacterViewmodel.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "AirshipInventoryTile",
-			"id": "AirshipPackages/@Easy/Core/Shared/Inventory/AirshipInventoryTile@AirshipInventoryTile",
-			"file": "AirshipPackages/@Easy/Core/Shared/Inventory/AirshipInventoryTile.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"
