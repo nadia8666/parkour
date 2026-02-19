@@ -5,6 +5,7 @@ import { Network } from "Code/Shared/Network";
 import CFrame from "@inkyaker/CFrame/Code";
 import type DataService from "./Data/DataService";
 import CharacterSpawner from "./Modules/Spawner";
+import Config from "Code/Client/Config";
 
 export default class ServerService extends AirshipSingleton {
 	public Spawner = new CharacterSpawner();
@@ -16,7 +17,7 @@ export default class ServerService extends AirshipSingleton {
 		const ExistingCharacter = this.CharacterMap.get(Player);
 		if (ExistingCharacter) ExistingCharacter.Despawn();
 
-		this.CharacterMap.set(Player, this.Spawner.SpawnCharacter(Player, new CFrame(new Vector3(0, 50, 0))));
+		this.CharacterMap.set(Player, this.Spawner.SpawnCharacter(Player, new CFrame(Config.SpawnPos)));
 	}
 
 	@Server()

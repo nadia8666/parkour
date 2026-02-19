@@ -76,7 +76,7 @@ BoxCollider:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 131072
+    m_Bits: 1
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -171,7 +171,7 @@ BoxCollider:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 131072
+    m_Bits: 1
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -266,7 +266,7 @@ BoxCollider:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 131072
+    m_Bits: 1
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -361,7 +361,7 @@ BoxCollider:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 131072
+    m_Bits: 1
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -455,10 +455,10 @@ CapsuleCollider:
   m_Material: {fileID: 13400000, guid: 5f4917e8d1df2b741be93a8cc5df6951, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 131072
+    m_Bits: 1
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 4294713343
+    m_Bits: 0
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
@@ -547,7 +547,7 @@ BoxCollider:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 131072
+    m_Bits: 1
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -645,11 +645,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5519949438957097557, guid: 4bfcf38072e582e42b941b472d5f3dcb, type: 3}
       propertyPath: m_ExcludeLayers.m_Bits
-      value: 4294713343
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5519949438957097557, guid: 4bfcf38072e582e42b941b472d5f3dcb, type: 3}
       propertyPath: m_IncludeLayers.m_Bits
-      value: 131072
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8440015110078338219, guid: 4bfcf38072e582e42b941b472d5f3dcb, type: 3}
       propertyPath: _assetId
@@ -727,9 +727,19 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 6647136626085009081}
   m_SourcePrefab: {fileID: 100100000, guid: 4bfcf38072e582e42b941b472d5f3dcb, type: 3}
+--- !u!137 &1109497932334028605 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 5948255973361266189, guid: 4bfcf38072e582e42b941b472d5f3dcb, type: 3}
+  m_PrefabInstance: {fileID: 6767161154545908016}
+  m_PrefabAsset: {fileID: 0}
 --- !u!54 &1257355264846228325 stripped
 Rigidbody:
   m_CorrespondingSourceObject: {fileID: 5519949438957097557, guid: 4bfcf38072e582e42b941b472d5f3dcb, type: 3}
+  m_PrefabInstance: {fileID: 6767161154545908016}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &1636905428292169705 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 5430987001208018649, guid: 4bfcf38072e582e42b941b472d5f3dcb, type: 3}
   m_PrefabInstance: {fileID: 6767161154545908016}
   m_PrefabAsset: {fileID: 0}
 --- !u!114 &1735489984542057203 stripped
@@ -1098,6 +1108,38 @@ MonoBehaviour:
       serializedValue: 
       serializedObject: {fileID: 0}
       modified: 0
+    - name: SkinnedMeshes
+      type: Array
+      objectType: 
+      items:
+        type: object
+        objectType: SkinnedMeshRenderer
+        serializedItems:
+        - 
+        - 
+        - 
+        - 
+        - 
+        - 
+        - 
+        objectRefs:
+        - {fileID: 1636905428292169705}
+        - {fileID: 6864715652637485962}
+        - {fileID: 4822570741934896372}
+        - {fileID: 5792396438580408109}
+        - {fileID: 7091610660602531086}
+        - {fileID: 7251770163193797313}
+        - {fileID: 1109497932334028605}
+      refPath: 
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators: []
+      nullable: 0
+      serializedValue: 
+      serializedObject: {fileID: 0}
+      modified: 1
     displayIcon: {fileID: 0}
     displayName: 
 --- !u!114 &6647136626085009081
@@ -1134,3 +1176,28 @@ MonoBehaviour:
   positionSensitivity: 0.01
   rotationSensitivity: 0.01
   scaleSensitivity: 0.01
+--- !u!137 &4822570741934896372 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 2235192509741354436, guid: 4bfcf38072e582e42b941b472d5f3dcb, type: 3}
+  m_PrefabInstance: {fileID: 6767161154545908016}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &5792396438580408109 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 975997887153788445, guid: 4bfcf38072e582e42b941b472d5f3dcb, type: 3}
+  m_PrefabInstance: {fileID: 6767161154545908016}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &6864715652637485962 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 192977161433551546, guid: 4bfcf38072e582e42b941b472d5f3dcb, type: 3}
+  m_PrefabInstance: {fileID: 6767161154545908016}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &7091610660602531086 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 4576712090945958974, guid: 4bfcf38072e582e42b941b472d5f3dcb, type: 3}
+  m_PrefabInstance: {fileID: 6767161154545908016}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &7251770163193797313 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 4128322830858626033, guid: 4bfcf38072e582e42b941b472d5f3dcb, type: 3}
+  m_PrefabInstance: {fileID: 6767161154545908016}
+  m_PrefabAsset: {fileID: 0}

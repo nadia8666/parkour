@@ -42,6 +42,7 @@ export default class ClientComponent extends AirshipBehaviour {
 	@Header("Rendering")
 	public AccessoryBuilder: AccessoryBuilder;
 	public Face: GameObject;
+	public SkinnedMeshes: SkinnedMeshRenderer[];
 
 	// Misc
 	public Bin = new Bin();
@@ -132,10 +133,12 @@ export default class ClientComponent extends AirshipBehaviour {
 		const MainRenderer = this.AccessoryBuilder.GetCombinedSkinnedMesh();
 		const AccessoryRenderers = this.AccessoryBuilder.GetAllAccessoryRenderers();
 
-		MainRenderer.shadowCastingMode = ShadowCastingMode.ShadowsOnly;
+		if (MainRenderer) MainRenderer.shadowCastingMode = ShadowCastingMode.ShadowsOnly;
 		for (const [_, Renderer] of pairs(AccessoryRenderers)) {
-			Renderer.shadowCastingMode = ShadowCastingMode.ShadowsOnly;
+			if (Renderer) Renderer.shadowCastingMode = ShadowCastingMode.ShadowsOnly;
 		}
+
+		this.SkinnedMeshes.forEach((Mesh) => (Mesh.shadowCastingMode = ShadowCastingMode.ShadowsOnly));
 
 		this.Face.SetActive(false);
 	}
@@ -173,8 +176,6 @@ export default class ClientComponent extends AirshipBehaviour {
 		this.Moveset.Base.StepMoveset(this, FixedDT);
 
 		if (this.MatchCameraStates.includes(this.State)) this.CameraRotationToCharacter();
-
-		if (this.GetCFrame().Position.y <= 0) this.DamageSelf(999);
 
 		switch (this.State) {
 			case "Grounded":
@@ -297,6 +298,8 @@ export default class ClientComponent extends AirshipBehaviour {
 	override FixedUpdate(FixedDT: number) {
 		if (!this._LOADED) return;
 		this.Step(FixedDT);
+
+		Core().Client.WorldController.UpdateChunks(this);
 	}
 
 	public UpdateViewmodel() {
