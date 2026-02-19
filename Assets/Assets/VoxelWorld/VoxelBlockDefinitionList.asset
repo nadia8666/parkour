@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b6bb3c020ba07904f93cf9126147e068, type: 3}
+  m_Name: VoxelBlockDefinitionList
+  m_EditorClassIdentifier: 
+  scope: '@Inkyaker/parkour'
+  blockDefinitions:
+  - {fileID: 11400000, guid: 6e7d691da8ad4104eaa88eb56f93b3d3, type: 2}
+  - {fileID: 11400000, guid: 2766b792f016a4846aaab96f3dc955ce, type: 2}
+  - {fileID: 11400000, guid: 48baa55ee228c34489574e550ddf14f4, type: 2}
+  - {fileID: 11400000, guid: 1297dd73cf0465248968a5c45f0b85ea, type: 2}
+  - {fileID: 11400000, guid: a0ec2791e0903564da79d83c3ed9f8be, type: 2}
+  - {fileID: 11400000, guid: 8d77dc65b06843c409ceb6988bf5396b, type: 2}
+  - {fileID: 11400000, guid: dea286ce3a61b9d4fad2b8a0c3b2c9de, type: 2}
+  - {fileID: 11400000, guid: 913cb6686a1af734d9645d270b99894f, type: 2}
+  - {fileID: 11400000, guid: d0cc7233357f0474190d409f57bbc551, type: 2}
+  - {fileID: 11400000, guid: 69e106526d75c254aa0afed93759cc1b, type: 2}

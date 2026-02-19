@@ -8,6 +8,7 @@ import { Ziplines } from "./Controller/Modules/Zipline/Ziplines";
 import type SoundController from "./Controller/SoundController";
 import type DataController from "./Framework/DataController";
 import type SettingsController from "./Framework/SettingsController";
+import type WorldController from "./Framework/WorldController";
 import type DragController from "./UI/Drag/DragController";
 import type UIController from "./UI/UIController";
 
@@ -29,6 +30,8 @@ export default class ClientController extends AirshipSingleton {
 		Ziplines: new Ziplines(),
 		Ladders: new Ladders(),
 	};
+
+	public WorldController: WorldController;
 
 	@Client()
 	public Start() {

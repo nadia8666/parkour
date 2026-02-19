@@ -56,6 +56,13 @@
 			"extends": [],
 			"singleton": false
 		},
+		"MainMenuPageComponent": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\MainMenu\\Components\\MainMenuPageComponent.lua",
+			"extends": [],
+			"singleton": false
+		},
 		"FriendsPage": {
 			"component": true,
 			"type": "AirshipBehaviour",
@@ -63,20 +70,6 @@
 			"extends": [
 				"MainMenuPageComponent"
 			],
-			"singleton": false
-		},
-		"HomePageGameComponent": {
-			"component": true,
-			"type": "AirshipBehaviour",
-			"filePath": "AirshipPackages\\@Easy\\Core\\Client\\Components\\HomePage\\Sort\\HomePageGameComponent.lua",
-			"extends": [],
-			"singleton": false
-		},
-		"SortComponent": {
-			"component": true,
-			"type": "AirshipBehaviour",
-			"filePath": "AirshipPackages\\@Easy\\Core\\Client\\Components\\HomePage\\Sort\\SortComponent.lua",
-			"extends": [],
 			"singleton": false
 		},
 		"HomePageComponent": {
@@ -88,43 +81,6 @@
 			],
 			"singleton": false
 		},
-		"MyGamesSortComponent": {
-			"component": true,
-			"type": "AirshipBehaviour",
-			"filePath": "AirshipPackages\\@Easy\\Core\\Client\\Components\\HomePage\\MyGames\\MyGamesSortComponent.lua",
-			"extends": [],
-			"singleton": false
-		},
-		"GameImageButton": {
-			"component": true,
-			"type": "AirshipBehaviour",
-			"filePath": "AirshipPackages\\@Easy\\Core\\Client\\Components\\HomePage\\Sort\\GameImageButton.lua",
-			"extends": [],
-			"singleton": false
-		},
-		"DevelopMenuPage": {
-			"component": true,
-			"type": "AirshipBehaviour",
-			"filePath": "AirshipPackages\\@Easy\\Core\\Client\\ProtectedControllers\\Develop\\DevelopMenuPage.lua",
-			"extends": [
-				"MainMenuPageComponent"
-			],
-			"singleton": false
-		},
-		"SearchFocused": {
-			"component": true,
-			"type": "AirshipBehaviour",
-			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\MainMenu\\Components\\Search\\SearchFocused.lua",
-			"extends": [],
-			"singleton": false
-		},
-		"SettingsPage": {
-			"component": true,
-			"type": "AirshipBehaviour",
-			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\MainMenu\\Components\\Settings\\SettingsPage.lua",
-			"extends": [],
-			"singleton": false
-		},
 		"GameGeneralPage": {
 			"component": true,
 			"type": "AirshipBehaviour",
@@ -132,27 +88,6 @@
 			"extends": [
 				"MainMenuPageComponent"
 			],
-			"singleton": false
-		},
-		"ProfileOptionsButton": {
-			"component": true,
-			"type": "AirshipBehaviour",
-			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\MainMenu\\Components\\ProfileOptionsButton.lua",
-			"extends": [],
-			"singleton": false
-		},
-		"NavbarSettingsButton": {
-			"component": true,
-			"type": "AirshipBehaviour",
-			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\MainMenu\\Components\\Navbar\\NavbarSettingsButton.lua",
-			"extends": [],
-			"singleton": false
-		},
-		"AirshipButton": {
-			"component": true,
-			"type": "AirshipBehaviour",
-			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\MainMenu\\Components\\AirshipButton.lua",
-			"extends": [],
 			"singleton": false
 		},
 		"AvatarMenuComponent": {
@@ -185,33 +120,47 @@
 			"extends": [],
 			"singleton": false
 		},
-		"AirshipMobileButton": {
+		"DevelopMenuPage": {
 			"component": true,
 			"type": "AirshipBehaviour",
-			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\Input\\Mobile\\AirshipMobileButton.lua",
+			"filePath": "AirshipPackages\\@Easy\\Core\\Client\\ProtectedControllers\\Develop\\DevelopMenuPage.lua",
 			"extends": [
-				"AirshipButton"
+				"MainMenuPageComponent"
 			],
 			"singleton": false
 		},
-		"MobileControlsCanvas": {
+		"MenuFeaturedEvent": {
 			"component": true,
 			"type": "AirshipBehaviour",
-			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\Input\\Mobile\\MobileControlsCanvas.lua",
+			"filePath": "AirshipPackages\\@Easy\\Core\\Client\\Components\\HomePage\\FeaturedEvent\\MenuFeaturedEvent.lua",
 			"extends": [],
 			"singleton": false
 		},
-		"SendFriendRequestModal": {
+		"HomePageGameComponent": {
 			"component": true,
 			"type": "AirshipBehaviour",
-			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\MainMenu\\Components\\SendFriendRequest\\SendFriendRequestModal.lua",
+			"filePath": "AirshipPackages\\@Easy\\Core\\Client\\Components\\HomePage\\Sort\\HomePageGameComponent.lua",
 			"extends": [],
 			"singleton": false
 		},
-		"FriendCard": {
+		"SortComponent": {
 			"component": true,
 			"type": "AirshipBehaviour",
-			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\MainMenu\\Components\\Friends\\FriendCard.lua",
+			"filePath": "AirshipPackages\\@Easy\\Core\\Client\\Components\\HomePage\\Sort\\SortComponent.lua",
+			"extends": [],
+			"singleton": false
+		},
+		"MyGamesSortComponent": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "AirshipPackages\\@Easy\\Core\\Client\\Components\\HomePage\\MyGames\\MyGamesSortComponent.lua",
+			"extends": [],
+			"singleton": false
+		},
+		"GameImageButton": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "AirshipPackages\\@Easy\\Core\\Client\\Components\\HomePage\\Sort\\GameImageButton.lua",
 			"extends": [],
 			"singleton": false
 		},
@@ -219,6 +168,27 @@
 			"component": true,
 			"type": "AirshipBehaviour",
 			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\MainMenu\\Components\\DirectMessagesWindow.lua",
+			"extends": [],
+			"singleton": false
+		},
+		"MobileChatToggleButton": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\MainMenu\\Components\\MobileChatToggleButton.lua",
+			"extends": [],
+			"singleton": false
+		},
+		"MobileEmoteButton": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\MainMenu\\Components\\MobileEmoteButton.lua",
+			"extends": [],
+			"singleton": false
+		},
+		"FriendCard": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\MainMenu\\Components\\Friends\\FriendCard.lua",
 			"extends": [],
 			"singleton": false
 		},
@@ -264,13 +234,6 @@
 			"extends": [],
 			"singleton": false
 		},
-		"MenuFeaturedEvent": {
-			"component": true,
-			"type": "AirshipBehaviour",
-			"filePath": "AirshipPackages\\@Easy\\Core\\Client\\Components\\HomePage\\FeaturedEvent\\MenuFeaturedEvent.lua",
-			"extends": [],
-			"singleton": false
-		},
 		"SettingsSidebar": {
 			"component": true,
 			"type": "AirshipBehaviour",
@@ -282,6 +245,27 @@
 			"component": true,
 			"type": "AirshipBehaviour",
 			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\MainMenu\\Components\\Settings\\SettingsTabButton.lua",
+			"extends": [],
+			"singleton": false
+		},
+		"SettingsPage": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\MainMenu\\Components\\Settings\\SettingsPage.lua",
+			"extends": [],
+			"singleton": false
+		},
+		"ProfileOptionsButton": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\MainMenu\\Components\\ProfileOptionsButton.lua",
+			"extends": [],
+			"singleton": false
+		},
+		"NavbarSettingsButton": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\MainMenu\\Components\\Navbar\\NavbarSettingsButton.lua",
 			"extends": [],
 			"singleton": false
 		},
@@ -306,6 +290,13 @@
 			"extends": [],
 			"singleton": false
 		},
+		"SendFriendRequestModal": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\MainMenu\\Components\\SendFriendRequest\\SendFriendRequestModal.lua",
+			"extends": [],
+			"singleton": false
+		},
 		"Navbar": {
 			"component": true,
 			"type": "AirshipBehaviour",
@@ -325,15 +316,6 @@
 			"type": "AirshipBehaviour",
 			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\MainMenu\\Singletons\\PushNotification\\ProtectedPushNotificationManager.lua",
 			"extends": [],
-			"singleton": false
-		},
-		"GameSearchResult": {
-			"component": true,
-			"type": "AirshipBehaviour",
-			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\MainMenu\\Components\\Search\\GameSearchResult.lua",
-			"extends": [
-				"SearchResult"
-			],
 			"singleton": false
 		},
 		"GearUnlockManager": {
@@ -406,73 +388,19 @@
 			"extends": [],
 			"singleton": false
 		},
-		"MobileChatToggleButton": {
+		"GameSearchResult": {
 			"component": true,
 			"type": "AirshipBehaviour",
-			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\MainMenu\\Components\\MobileChatToggleButton.lua",
-			"extends": [],
+			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\MainMenu\\Components\\Search\\GameSearchResult.lua",
+			"extends": [
+				"SearchResult"
+			],
 			"singleton": false
 		},
-		"MobileEmoteButton": {
+		"SearchFocused": {
 			"component": true,
 			"type": "AirshipBehaviour",
-			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\MainMenu\\Components\\MobileEmoteButton.lua",
-			"extends": [],
-			"singleton": false
-		},
-		"PartyModalMember": {
-			"component": true,
-			"type": "AirshipBehaviour",
-			"filePath": "AirshipPackages\\@Easy\\Core\\Client\\ProtectedControllers\\Airship\\Party\\PartyModalMember.lua",
-			"extends": [],
-			"singleton": false
-		},
-		"PartyModalPlayer": {
-			"component": true,
-			"type": "AirshipBehaviour",
-			"filePath": "AirshipPackages\\@Easy\\Core\\Client\\ProtectedControllers\\Airship\\Party\\PartyModalPlayer.lua",
-			"extends": [],
-			"singleton": false
-		},
-		"MainMenuContent": {
-			"component": true,
-			"type": "AirshipBehaviour",
-			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\MainMenu\\Components\\MainMenuContent.lua",
-			"extends": [],
-			"singleton": false
-		},
-		"AvatarViewComponent": {
-			"component": true,
-			"type": "AirshipBehaviour",
-			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\Avatar\\AvatarViewComponent.lua",
-			"extends": [],
-			"singleton": false
-		},
-		"Searchbar": {
-			"component": true,
-			"type": "AirshipBehaviour",
-			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\MainMenu\\Components\\Searchbar.lua",
-			"extends": [],
-			"singleton": false
-		},
-		"AirshipOverlayManager": {
-			"component": true,
-			"type": "AirshipBehaviour",
-			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\MainMenu\\Components\\Overlay\\AirshipOverlayManager.lua",
-			"extends": [],
-			"singleton": false
-		},
-		"DeleteAccountButton": {
-			"component": true,
-			"type": "AirshipBehaviour",
-			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\MainMenu\\Components\\Settings\\DeleteAccountButton.lua",
-			"extends": [],
-			"singleton": false
-		},
-		"MainMenuPageComponent": {
-			"component": true,
-			"type": "AirshipBehaviour",
-			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\MainMenu\\Components\\MainMenuPageComponent.lua",
+			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\MainMenu\\Components\\Search\\SearchFocused.lua",
 			"extends": [],
 			"singleton": false
 		},
@@ -497,6 +425,13 @@
 			"extends": [],
 			"singleton": false
 		},
+		"AirshipOverlayManager": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\MainMenu\\Components\\Overlay\\AirshipOverlayManager.lua",
+			"extends": [],
+			"singleton": false
+		},
 		"SettingsKeybind": {
 			"component": true,
 			"type": "AirshipBehaviour",
@@ -508,6 +443,50 @@
 			"component": true,
 			"type": "AirshipBehaviour",
 			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\MainMenu\\Components\\Settings\\SettingsKeybindPage.lua",
+			"extends": [],
+			"singleton": false
+		},
+		"AirshipButton": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\MainMenu\\Components\\AirshipButton.lua",
+			"extends": [],
+			"singleton": false
+		},
+		"AirshipMobileButton": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\Input\\Mobile\\AirshipMobileButton.lua",
+			"extends": [
+				"AirshipButton"
+			],
+			"singleton": false
+		},
+		"MobileControlsCanvas": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\Input\\Mobile\\MobileControlsCanvas.lua",
+			"extends": [],
+			"singleton": false
+		},
+		"PartyModalMember": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "AirshipPackages\\@Easy\\Core\\Client\\ProtectedControllers\\Airship\\Party\\PartyModalMember.lua",
+			"extends": [],
+			"singleton": false
+		},
+		"PartyModalPlayer": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "AirshipPackages\\@Easy\\Core\\Client\\ProtectedControllers\\Airship\\Party\\PartyModalPlayer.lua",
+			"extends": [],
+			"singleton": false
+		},
+		"MainMenuContent": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\MainMenu\\Components\\MainMenuContent.lua",
 			"extends": [],
 			"singleton": false
 		},
@@ -564,6 +543,13 @@
 			"component": true,
 			"type": "AirshipBehaviour",
 			"filePath": "Code\\Client\\ClientController.lua",
+			"extends": [],
+			"singleton": true
+		},
+		"WorldController": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "Code\\Client\\Framework\\WorldController.lua",
 			"extends": [],
 			"singleton": true
 		},
@@ -634,6 +620,27 @@
 			"component": true,
 			"type": "AirshipBehaviour",
 			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\MainMenu\\Components\\Modal\\ConfirmModal.lua",
+			"extends": [],
+			"singleton": false
+		},
+		"AvatarViewComponent": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\Avatar\\AvatarViewComponent.lua",
+			"extends": [],
+			"singleton": false
+		},
+		"Searchbar": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\MainMenu\\Components\\Searchbar.lua",
+			"extends": [],
+			"singleton": false
+		},
+		"DeleteAccountButton": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\MainMenu\\Components\\Settings\\DeleteAccountButton.lua",
 			"extends": [],
 			"singleton": false
 		},
@@ -933,6 +940,13 @@
 			"extends": [],
 			"singleton": false
 		},
+		"TransferFailedToast": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "AirshipPackages\\@Easy\\Core\\Client\\ProtectedControllers\\Transfer\\TransferFailedToast.lua",
+			"extends": [],
+			"singleton": false
+		},
 		"TransferToast": {
 			"component": true,
 			"type": "AirshipBehaviour",
@@ -1148,15 +1162,15 @@
 		"MainMenuPageComponent": [
 			"FriendsPage",
 			"HomePageComponent",
-			"DevelopMenuPage",
 			"GameGeneralPage",
-			"AvatarMenuComponent"
-		],
-		"AirshipButton": [
-			"AirshipMobileButton"
+			"AvatarMenuComponent",
+			"DevelopMenuPage"
 		],
 		"SearchResult": [
 			"GameSearchResult"
+		],
+		"AirshipButton": [
+			"AirshipMobileButton"
 		],
 		"InternalRadialUI": [
 			"InternalEmoteRadialUI"
@@ -1268,6 +1282,16 @@
 			"inherits": []
 		},
 		{
+			"name": "MainMenuPageComponent",
+			"id": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/MainMenuPageComponent@MainMenuPageComponent",
+			"file": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/MainMenuPageComponent.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
 			"name": "FriendsPage",
 			"id": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Friends/FriendsPage@FriendsPage",
 			"file": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Friends/FriendsPage.ts",
@@ -1278,26 +1302,6 @@
 			"inherits": [
 				"AirshipPackages/@Easy/Core/Shared/MainMenu/Components/MainMenuPageComponent@MainMenuPageComponent"
 			]
-		},
-		{
-			"name": "HomePageGameComponent",
-			"id": "AirshipPackages/@Easy/Core/Client/Components/HomePage/Sort/HomePageGameComponent@HomePageGameComponent",
-			"file": "AirshipPackages/@Easy/Core/Client/Components/HomePage/Sort/HomePageGameComponent.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "SortComponent",
-			"id": "AirshipPackages/@Easy/Core/Client/Components/HomePage/Sort/SortComponent@SortComponent",
-			"file": "AirshipPackages/@Easy/Core/Client/Components/HomePage/Sort/SortComponent.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
 		},
 		{
 			"name": "HomePageComponent",
@@ -1312,58 +1316,6 @@
 			]
 		},
 		{
-			"name": "MyGamesSortComponent",
-			"id": "AirshipPackages/@Easy/Core/Client/Components/HomePage/MyGames/MyGamesSortComponent@MyGamesSortComponent",
-			"file": "AirshipPackages/@Easy/Core/Client/Components/HomePage/MyGames/MyGamesSortComponent.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "GameImageButton",
-			"id": "AirshipPackages/@Easy/Core/Client/Components/HomePage/Sort/GameImageButton@GameImageButton",
-			"file": "AirshipPackages/@Easy/Core/Client/Components/HomePage/Sort/GameImageButton.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "DevelopMenuPage",
-			"id": "AirshipPackages/@Easy/Core/Client/ProtectedControllers/Develop/DevelopMenuPage@DevelopMenuPage",
-			"file": "AirshipPackages/@Easy/Core/Client/ProtectedControllers/Develop/DevelopMenuPage.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": [
-				"AirshipPackages/@Easy/Core/Shared/MainMenu/Components/MainMenuPageComponent@MainMenuPageComponent"
-			]
-		},
-		{
-			"name": "SearchFocused",
-			"id": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Search/SearchFocused@SearchFocused",
-			"file": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Search/SearchFocused.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "SettingsPage",
-			"id": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Settings/SettingsPage@SettingsPage",
-			"file": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Settings/SettingsPage.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
 			"name": "GameGeneralPage",
 			"id": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Settings/General/GameGeneralPage@GameGeneralPage",
 			"file": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Settings/General/GameGeneralPage.ts",
@@ -1374,36 +1326,6 @@
 			"inherits": [
 				"AirshipPackages/@Easy/Core/Shared/MainMenu/Components/MainMenuPageComponent@MainMenuPageComponent"
 			]
-		},
-		{
-			"name": "ProfileOptionsButton",
-			"id": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/ProfileOptionsButton@ProfileOptionsButton",
-			"file": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/ProfileOptionsButton.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "NavbarSettingsButton",
-			"id": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Navbar/NavbarSettingsButton@NavbarSettingsButton",
-			"file": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Navbar/NavbarSettingsButton.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "AirshipButton",
-			"id": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/AirshipButton@AirshipButton",
-			"file": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/AirshipButton.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
 		},
 		{
 			"name": "AvatarMenuComponent",
@@ -1448,21 +1370,21 @@
 			"inherits": []
 		},
 		{
-			"name": "AirshipMobileButton",
-			"id": "AirshipPackages/@Easy/Core/Shared/Input/Mobile/AirshipMobileButton@AirshipMobileButton",
-			"file": "AirshipPackages/@Easy/Core/Shared/Input/Mobile/AirshipMobileButton.ts",
+			"name": "DevelopMenuPage",
+			"id": "AirshipPackages/@Easy/Core/Client/ProtectedControllers/Develop/DevelopMenuPage@DevelopMenuPage",
+			"file": "AirshipPackages/@Easy/Core/Client/ProtectedControllers/Develop/DevelopMenuPage.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"
 			],
 			"inherits": [
-				"AirshipPackages/@Easy/Core/Shared/MainMenu/Components/AirshipButton@AirshipButton"
+				"AirshipPackages/@Easy/Core/Shared/MainMenu/Components/MainMenuPageComponent@MainMenuPageComponent"
 			]
 		},
 		{
-			"name": "MobileControlsCanvas",
-			"id": "AirshipPackages/@Easy/Core/Shared/Input/Mobile/MobileControlsCanvas@MobileControlsCanvas",
-			"file": "AirshipPackages/@Easy/Core/Shared/Input/Mobile/MobileControlsCanvas.ts",
+			"name": "MenuFeaturedEvent",
+			"id": "AirshipPackages/@Easy/Core/Client/Components/HomePage/FeaturedEvent/MenuFeaturedEvent@MenuFeaturedEvent",
+			"file": "AirshipPackages/@Easy/Core/Client/Components/HomePage/FeaturedEvent/MenuFeaturedEvent.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"
@@ -1470,9 +1392,9 @@
 			"inherits": []
 		},
 		{
-			"name": "SendFriendRequestModal",
-			"id": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/SendFriendRequest/SendFriendRequestModal@SendFriendRequestModal",
-			"file": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/SendFriendRequest/SendFriendRequestModal.ts",
+			"name": "HomePageGameComponent",
+			"id": "AirshipPackages/@Easy/Core/Client/Components/HomePage/Sort/HomePageGameComponent@HomePageGameComponent",
+			"file": "AirshipPackages/@Easy/Core/Client/Components/HomePage/Sort/HomePageGameComponent.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"
@@ -1480,9 +1402,29 @@
 			"inherits": []
 		},
 		{
-			"name": "FriendCard",
-			"id": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Friends/FriendCard@FriendCard",
-			"file": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Friends/FriendCard.ts",
+			"name": "SortComponent",
+			"id": "AirshipPackages/@Easy/Core/Client/Components/HomePage/Sort/SortComponent@SortComponent",
+			"file": "AirshipPackages/@Easy/Core/Client/Components/HomePage/Sort/SortComponent.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "MyGamesSortComponent",
+			"id": "AirshipPackages/@Easy/Core/Client/Components/HomePage/MyGames/MyGamesSortComponent@MyGamesSortComponent",
+			"file": "AirshipPackages/@Easy/Core/Client/Components/HomePage/MyGames/MyGamesSortComponent.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "GameImageButton",
+			"id": "AirshipPackages/@Easy/Core/Client/Components/HomePage/Sort/GameImageButton@GameImageButton",
+			"file": "AirshipPackages/@Easy/Core/Client/Components/HomePage/Sort/GameImageButton.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"
@@ -1493,6 +1435,36 @@
 			"name": "DirectMessagesWindow",
 			"id": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/DirectMessagesWindow@DirectMessagesWindow",
 			"file": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/DirectMessagesWindow.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "MobileChatToggleButton",
+			"id": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/MobileChatToggleButton@MobileChatToggleButton",
+			"file": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/MobileChatToggleButton.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "MobileEmoteButton",
+			"id": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/MobileEmoteButton@MobileEmoteButton",
+			"file": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/MobileEmoteButton.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "FriendCard",
+			"id": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Friends/FriendCard@FriendCard",
+			"file": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Friends/FriendCard.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"
@@ -1560,16 +1532,6 @@
 			"inherits": []
 		},
 		{
-			"name": "MenuFeaturedEvent",
-			"id": "AirshipPackages/@Easy/Core/Client/Components/HomePage/FeaturedEvent/MenuFeaturedEvent@MenuFeaturedEvent",
-			"file": "AirshipPackages/@Easy/Core/Client/Components/HomePage/FeaturedEvent/MenuFeaturedEvent.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
 			"name": "SettingsSidebar",
 			"id": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Settings/SettingsSidebar@SettingsSidebar",
 			"file": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Settings/SettingsSidebar.ts",
@@ -1583,6 +1545,36 @@
 			"name": "SettingsTabButton",
 			"id": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Settings/SettingsTabButton@SettingsTabButton",
 			"file": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Settings/SettingsTabButton.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "SettingsPage",
+			"id": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Settings/SettingsPage@SettingsPage",
+			"file": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Settings/SettingsPage.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "ProfileOptionsButton",
+			"id": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/ProfileOptionsButton@ProfileOptionsButton",
+			"file": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/ProfileOptionsButton.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "NavbarSettingsButton",
+			"id": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Navbar/NavbarSettingsButton@NavbarSettingsButton",
+			"file": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Navbar/NavbarSettingsButton.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"
@@ -1620,6 +1612,16 @@
 			"inherits": []
 		},
 		{
+			"name": "SendFriendRequestModal",
+			"id": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/SendFriendRequest/SendFriendRequestModal@SendFriendRequestModal",
+			"file": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/SendFriendRequest/SendFriendRequestModal.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
 			"name": "Navbar",
 			"id": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Navbar/Navbar@Navbar",
 			"file": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Navbar/Navbar.ts",
@@ -1648,18 +1650,6 @@
 				"default"
 			],
 			"inherits": []
-		},
-		{
-			"name": "GameSearchResult",
-			"id": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Search/GameSearchResult@GameSearchResult",
-			"file": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Search/GameSearchResult.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": [
-				"AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Search/SearchResult@SearchResult"
-			]
 		},
 		{
 			"name": "GearUnlockManager",
@@ -1762,99 +1752,21 @@
 			"inherits": []
 		},
 		{
-			"name": "MobileChatToggleButton",
-			"id": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/MobileChatToggleButton@MobileChatToggleButton",
-			"file": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/MobileChatToggleButton.ts",
+			"name": "GameSearchResult",
+			"id": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Search/GameSearchResult@GameSearchResult",
+			"file": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Search/GameSearchResult.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"
 			],
-			"inherits": []
+			"inherits": [
+				"AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Search/SearchResult@SearchResult"
+			]
 		},
 		{
-			"name": "MobileEmoteButton",
-			"id": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/MobileEmoteButton@MobileEmoteButton",
-			"file": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/MobileEmoteButton.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "PartyModalMember",
-			"id": "AirshipPackages/@Easy/Core/Client/ProtectedControllers/Airship/Party/PartyModalMember@PartyModalMember",
-			"file": "AirshipPackages/@Easy/Core/Client/ProtectedControllers/Airship/Party/PartyModalMember.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "PartyModalPlayer",
-			"id": "AirshipPackages/@Easy/Core/Client/ProtectedControllers/Airship/Party/PartyModalPlayer@PartyModalPlayer",
-			"file": "AirshipPackages/@Easy/Core/Client/ProtectedControllers/Airship/Party/PartyModalPlayer.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "MainMenuContent",
-			"id": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/MainMenuContent@MainMenuContent",
-			"file": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/MainMenuContent.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "AvatarViewComponent",
-			"id": "AirshipPackages/@Easy/Core/Shared/Avatar/AvatarViewComponent@AvatarViewComponent",
-			"file": "AirshipPackages/@Easy/Core/Shared/Avatar/AvatarViewComponent.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "Searchbar",
-			"id": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Searchbar@Searchbar",
-			"file": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Searchbar.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "AirshipOverlayManager",
-			"id": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Overlay/AirshipOverlayManager@AirshipOverlayManager",
-			"file": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Overlay/AirshipOverlayManager.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "DeleteAccountButton",
-			"id": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Settings/DeleteAccountButton@DeleteAccountButton",
-			"file": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Settings/DeleteAccountButton.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "MainMenuPageComponent",
-			"id": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/MainMenuPageComponent@MainMenuPageComponent",
-			"file": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/MainMenuPageComponent.ts",
+			"name": "SearchFocused",
+			"id": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Search/SearchFocused@SearchFocused",
+			"file": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Search/SearchFocused.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"
@@ -1892,6 +1804,16 @@
 			"inherits": []
 		},
 		{
+			"name": "AirshipOverlayManager",
+			"id": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Overlay/AirshipOverlayManager@AirshipOverlayManager",
+			"file": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Overlay/AirshipOverlayManager.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
 			"name": "SettingsKeybind",
 			"id": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Settings/SettingsKeybind@SettingsKeybind",
 			"file": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Settings/SettingsKeybind.ts",
@@ -1905,6 +1827,68 @@
 			"name": "SettingsKeybindPage",
 			"id": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Settings/SettingsKeybindPage@SettingsKeybindPage",
 			"file": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Settings/SettingsKeybindPage.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "AirshipButton",
+			"id": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/AirshipButton@AirshipButton",
+			"file": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/AirshipButton.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "AirshipMobileButton",
+			"id": "AirshipPackages/@Easy/Core/Shared/Input/Mobile/AirshipMobileButton@AirshipMobileButton",
+			"file": "AirshipPackages/@Easy/Core/Shared/Input/Mobile/AirshipMobileButton.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": [
+				"AirshipPackages/@Easy/Core/Shared/MainMenu/Components/AirshipButton@AirshipButton"
+			]
+		},
+		{
+			"name": "MobileControlsCanvas",
+			"id": "AirshipPackages/@Easy/Core/Shared/Input/Mobile/MobileControlsCanvas@MobileControlsCanvas",
+			"file": "AirshipPackages/@Easy/Core/Shared/Input/Mobile/MobileControlsCanvas.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "PartyModalMember",
+			"id": "AirshipPackages/@Easy/Core/Client/ProtectedControllers/Airship/Party/PartyModalMember@PartyModalMember",
+			"file": "AirshipPackages/@Easy/Core/Client/ProtectedControllers/Airship/Party/PartyModalMember.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "PartyModalPlayer",
+			"id": "AirshipPackages/@Easy/Core/Client/ProtectedControllers/Airship/Party/PartyModalPlayer@PartyModalPlayer",
+			"file": "AirshipPackages/@Easy/Core/Client/ProtectedControllers/Airship/Party/PartyModalPlayer.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "MainMenuContent",
+			"id": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/MainMenuContent@MainMenuContent",
+			"file": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/MainMenuContent.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"
@@ -1985,6 +1969,16 @@
 			"name": "ClientController",
 			"id": "Code/Client/ClientController@ClientController",
 			"file": "Code/Client/ClientController.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "WorldController",
+			"id": "Code/Client/Framework/WorldController@WorldController",
+			"file": "Code/Client/Framework/WorldController.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"
@@ -2085,6 +2079,36 @@
 			"name": "ConfirmModal",
 			"id": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Modal/ConfirmModal@ConfirmModal",
 			"file": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Modal/ConfirmModal.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "AvatarViewComponent",
+			"id": "AirshipPackages/@Easy/Core/Shared/Avatar/AvatarViewComponent@AvatarViewComponent",
+			"file": "AirshipPackages/@Easy/Core/Shared/Avatar/AvatarViewComponent.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "Searchbar",
+			"id": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Searchbar@Searchbar",
+			"file": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Searchbar.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "DeleteAccountButton",
+			"id": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Settings/DeleteAccountButton@DeleteAccountButton",
+			"file": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Settings/DeleteAccountButton.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"
@@ -2524,6 +2548,16 @@
 			"inherits": []
 		},
 		{
+			"name": "TransferFailedToast",
+			"id": "AirshipPackages/@Easy/Core/Client/ProtectedControllers/Transfer/TransferFailedToast@TransferFailedToast",
+			"file": "AirshipPackages/@Easy/Core/Client/ProtectedControllers/Transfer/TransferFailedToast.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
 			"name": "TransferToast",
 			"id": "AirshipPackages/@Easy/Core/Client/ProtectedControllers/Transfer/TransferToast@TransferToast",
 			"file": "AirshipPackages/@Easy/Core/Client/ProtectedControllers/Transfer/TransferToast.ts",
@@ -2863,6 +2897,8 @@
 			"typescript:Code/Client/Controller/Modules/Ladder/Ladders@Ladders": "Client/Controller/Modules/Ladder/Ladders@Ladders",
 			"typescript:Code/Client/ClientController@ClientController": "Client/ClientController@ClientController",
 			"typescript:Code/Client/Controller/Modules/TimeTrials/TimeTrials@TimeTrials": "Client/Controller/Modules/TimeTrials/TimeTrials@TimeTrials",
+			"typescript:Code/Client/Framework/WorldController@ChunkManager": "Client/Framework/WorldController@ChunkManager",
+			"typescript:Code/Client/Framework/WorldController@WorldController": "Client/Framework/WorldController@WorldController",
 			"typescript:Code/Client/UI/UIController@UIController": "Client/UI/UIController@UIController",
 			"typescript:Code/Client/Controller/Gear/GearController@GearController": "Client/Controller/Gear/GearController@GearController",
 			"typescript:Code/Client/Controller/SoundController@SoundController": "Client/Controller/SoundController@SoundController",
@@ -2880,7 +2916,8 @@
 			"typescript:Code/Shared/Object/TimeTrialObject@TimeTrialObject": "Shared/Object/TimeTrialObject@TimeTrialObject",
 			"typescript:Code/Client/Controller/Modules/TimeTrials/TimeTrialComponent@TimeTrialComponent": "Client/Controller/Modules/TimeTrials/TimeTrialComponent@TimeTrialComponent",
 			"typescript:Code/Client/Controller/Modules/Zipline/ZiplineComponent@ZiplineComponent": "Client/Controller/Modules/Zipline/ZiplineComponent@ZiplineComponent",
-			"typescript:Code/Shared/Object/SoundBankObject@SoundBankObject": "Shared/Object/SoundBankObject@SoundBankObject"
+			"typescript:Code/Shared/Object/SoundBankObject@SoundBankObject": "Shared/Object/SoundBankObject@SoundBankObject",
+			"typescript:Code/Shared/Utility/Noise@NoiseHandler": "Shared/Utility/Noise@NoiseHandler"
 		}
 	}
 }

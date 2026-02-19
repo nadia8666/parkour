@@ -12,15 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55587e6da00a44bf9f7d5798297ebf2b, type: 3}
   m_Name: GameConfig
   m_EditorClassIdentifier: 
-  gameId: 61551d0f-b5d2-44e4-a6b8-1e56a0261fd7
+  gameId: 14a9092f-282b-490f-8cf5-e0cd98e180c4
   startingScene: {fileID: 102900000, guid: e9baa4b514ca7466592cd454e7e23b0a, type: 3}
   gameScenes:
   - {fileID: 102900000, guid: e9baa4b514ca7466592cd454e7e23b0a, type: 3}
   packages:
   - id: '@Easy/Core'
-    assetVersion: 411
-    codeVersion: 1061
-    publishVersionNumber: 795
+    assetVersion: 412
+    codeVersion: 1063
+    publishVersionNumber: 797
     game: 0
     localSource: 0
     disabled: 0

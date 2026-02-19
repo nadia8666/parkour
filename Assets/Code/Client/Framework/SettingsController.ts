@@ -10,6 +10,8 @@ export const Settings = {
 	CameraSensitivityMouse: 1,
 	FOV: 100,
 	CameraRotationLerp: 15,
+
+	RenderDistance: Game.IsEditor() ? 4 : 16,
 };
 
 export default class SettingsController extends AirshipSingleton {
@@ -23,6 +25,8 @@ export default class SettingsController extends AirshipSingleton {
 		this.AddSlider("CameraSensitivityMouse", "Mouse Camera Sens.", [0, 3], 0.01);
 		this.AddSlider("CameraRotationLerp", "Camera Rotation Force", [1, 30], 0.5);
 		this.AddSlider("FOV", "Field of View", [60, 120], 0.5);
+
+		this.AddSlider("RenderDistance", "Render Distance", [2, 256], 1);
 	}
 
 	public AddBool(Key: ExtractKeys<typeof Settings, boolean>, DisplayName: string) {

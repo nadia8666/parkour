@@ -37,10 +37,16 @@ task.spawn(() => {
 	while (!Core.Client.Objective.TimeTrials) {
 		task.wait();
 	}
+	while (!Core.Client.World) {
+		task.wait();
+	}
 	while (!Core.Client.World.Ziplines) {
 		task.wait();
 	}
 	while (!Core.Client.World.Ladders) {
+		task.wait();
+	}
+	while (!Core.Client.WorldController) {
 		task.wait();
 	}
 

@@ -135,9 +135,15 @@ const Config = {
 	GrapplerAttachTime: WithGear({ None: 0, Grappler: [1, 0.85, 0.75] }),
 	GrapplerMinAttachTime: 0.2,
 
-	CollisionLayer: LayerMask.GetMask("GameLayer0"),
+	CollisionLayer: LayerMask.GetMask("Default"),
 	ZiplineLayer: LayerMask.GetMask("GameLayer1"),
 	LadderLayer: LayerMask.GetMask("GameLayer2"),
+
+	// WORLD GEN
+	MountainHeight: 256,
+	WaterLevel: 0,
+	Seed: math.random(1, 9000000),
+	SpawnPos: new Vector3(0, 50, 0),
 };
 
 export default Config;
