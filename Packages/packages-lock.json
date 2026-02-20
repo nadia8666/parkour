@@ -390,7 +390,7 @@
       "url": "https://packages.unity.com"
     },
     "gg.easy.airship": {
-      "version": "0.1.2218",
+      "version": "0.1.2220",
       "depth": 0,
       "source": "registry",
       "dependencies": {

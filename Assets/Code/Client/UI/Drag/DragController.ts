@@ -16,7 +16,7 @@ export default class DragController extends AirshipSingleton {
 
 		const MainUI = Core().Client.UI.Main;
 		const UI = Instantiate(this.DragTemplate);
-		UI.transform.SetParent(MainUI.transform);
+		UI.transform.SetParent(MainUI.transform, false);
 
 		(UI.transform as RectTransform).localScale = (Slot.transform as RectTransform).lossyScale.div((MainUI.transform as RectTransform).lossyScale);
 
@@ -42,7 +42,7 @@ export default class DragController extends AirshipSingleton {
 		if (this.CurrentDrag) {
 			if (Mouse.isLeftDown) {
 				const Pos = Mouse.position;
-				this.CurrentUI!.position = new Vector3(Pos.x, Pos.y, 0);
+				this.CurrentUI!.localPosition = Core().Client.UI.GetMouseLocalPosition(this.CurrentUI!.parent as RectTransform, new Vector3(Pos.x, Pos.y, 0)).WithZ(-50);
 			} else {
 				this.EndDrag();
 			}

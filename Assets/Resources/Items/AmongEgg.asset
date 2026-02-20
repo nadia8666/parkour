@@ -1,0 +1,151 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 242626de727c4fe4ab54046da100263e, type: 3}
+  m_Name: AmongEgg
+  m_EditorClassIdentifier: 
+  _scriptPath: Assets/Code/Shared/Object/ItemObject.lua
+  _script: {fileID: 8584805562991613271, guid: de804bd322c6ecf45b6590824c16802a, type: 3}
+  metadata:
+    name: ItemObject
+    singleton: 0
+    decorators:
+    - name: CreateAssetMenu
+      parameters:
+      - type: string
+        serializedValue: '"Parkour/Item/New"'
+      - type: string
+        serializedValue: '"New Item.asset"'
+    properties:
+    - name: Name
+      type: string
+      objectType: 
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators:
+      - name: Header
+        parameters:
+        - type: string
+          serializedValue: '"Item Info"'
+      nullable: 0
+      serializedValue: 
+      serializedObject: {fileID: 0}
+      modified: 0
+    - name: DisplayName
+      type: string
+      objectType: 
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators: []
+      nullable: 0
+      serializedValue: 
+      serializedObject: {fileID: 0}
+      modified: 0
+    - name: Rarity
+      type: IntEnum
+      objectType: 
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: Code/Shared/Object/ItemObject@ItemRarity
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators: []
+      nullable: 0
+      serializedValue: 0
+      serializedObject: {fileID: 0}
+      modified: 0
+    - name: ModelType
+      type: IntEnum
+      objectType: 
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: Code/Shared/Object/ItemObject@IMAGE_GENERATED
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators: []
+      nullable: 0
+      serializedValue: 0
+      serializedObject: {fileID: 0}
+      modified: 0
+    - name: ItemTexture
+      type: object
+      objectType: Texture
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators:
+      - name: Header
+        parameters:
+        - type: string
+          serializedValue: '"Renderer"'
+      nullable: 0
+      serializedValue: 
+      serializedObject: {fileID: 2800000, guid: bb8655d916c5b21468de3366f3723d5f, type: 3}
+      modified: 0
+    - name: ItemThickness
+      type: number
+      objectType: 
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators:
+      - name: ShowIf
+        parameters:
+        - type: string
+          serializedValue: '"ModelType"'
+        - type: number
+          serializedValue: 0
+      nullable: 0
+      serializedValue: 0.025
+      serializedObject: {fileID: 0}
+      modified: 1
+    displayIcon: {fileID: 0}
+    displayName: 

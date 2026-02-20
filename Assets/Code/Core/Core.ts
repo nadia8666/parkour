@@ -49,11 +49,9 @@ task.spawn(() => {
 	while (!Core.Client.WorldController) {
 		task.wait();
 	}
-
 	while (!Core.Gear) {
 		task.wait();
 	}
-
 	while (!Core.Server) {
 		task.wait();
 	}

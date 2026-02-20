@@ -12,7 +12,7 @@ function World() {
 	return Core().Client.WorldController;
 }
 
-enum BIOMES {
+export enum BiomeTypes {
 	OCEAN,
 	PLAINS,
 	DESERT,
@@ -61,19 +61,19 @@ class ChunkManager {
 		return DistSq <= RangeChunks * 16;
 	}
 
-	public GetBiomeBlock(BiomeID: BIOMES, Depth: number, WorldY: number): number {
-		if ([BIOMES.DESERT, BIOMES.OCEAN].includes(BiomeID)) {
+	public GetBiomeBlock(BiomeID: BiomeTypes, Depth: number, WorldY: number): number {
+		if ([BiomeTypes.DESERT, BiomeTypes.OCEAN].includes(BiomeID)) {
 			if (Depth < 5) return this.GetBlock("Sand");
 			if (Depth < 12) return this.GetBlock("Sandstone");
 			return this.GetBlock("Stone");
 		}
 
-		if (BiomeID === BIOMES.MOUNTAIN) {
+		if (BiomeID === BiomeTypes.MOUNTAIN) {
 			if (WorldY > 115) return this.GetBlock("Snow");
 			return this.GetBlock("Stone");
 		}
 
-		if (Depth === 0) return this.GetBlock(BiomeID === BIOMES.SNOW ? "Snow" : "Grass");
+		if (Depth === 0) return this.GetBlock(BiomeID === BiomeTypes.SNOW ? "Snow" : "Grass");
 		if (Depth < 4) return this.GetBlock("Dirt");
 
 		return this.GetBlock("Stone");
@@ -101,7 +101,7 @@ class ChunkManager {
 		if (this.LoadedChunks.has(ChunkKey)) return;
 		this.LoadedChunks.add(ChunkKey);
 
-		task.deferDetached(() => {
+		task.defer(() => {
 			const Origin = this.FromKey(ChunkKey);
 			const Positions: Vector3[] = [];
 			const Blocks: number[] = [];
@@ -131,11 +131,11 @@ class ChunkManager {
 
 					const Temp = Noise.Get2DValue(WorldX * 0.00015, WorldZ * 0.00015);
 
-					let BiomeID = BIOMES.PLAINS;
-					if (SurfaceY < Config.WaterLevel - 1) BiomeID = BIOMES.OCEAN;
-					else if (ContinentalVal > 0.55) BiomeID = BIOMES.MOUNTAIN;
-					else if (Temp > 0.35) BiomeID = BIOMES.DESERT;
-					else if (Temp < -0.35) BiomeID = BIOMES.SNOW;
+					let BiomeID = BiomeTypes.PLAINS;
+					if (SurfaceY < Config.WaterLevel - 1) BiomeID = BiomeTypes.OCEAN;
+					else if (ContinentalVal > 0.55) BiomeID = BiomeTypes.MOUNTAIN;
+					else if (Temp > 0.35) BiomeID = BiomeTypes.DESERT;
+					else if (Temp < -0.35) BiomeID = BiomeTypes.SNOW;
 
 					for (let y = 0; y < 16; y++) {
 						const WorldY = Origin.y + y;
@@ -145,7 +145,7 @@ class ChunkManager {
 							if (WorldY <= Config.WaterLevel) Target = this.GetBlock("Water");
 						} else {
 							const Depth = SurfaceY - WorldY;
-							const CaveAlpha = math.clamp((WorldY - -2000) / (60 - -2000), 0, 1);
+							const CaveAlpha = math.clamp((WorldY - -20000) / (60 - -20000), 0, 1);
 							let CaveThreshold = math.lerp(0.35, 0.8, CaveAlpha);
 
 							if (Depth < 15) CaveThreshold += 0.3;
@@ -208,7 +208,7 @@ class ChunkManager {
 
 		const RenderDist = Settings.RenderDistance;
 
-		task.deferDetached(() => {
+		task.defer(() => {
 			if (nX) this.CheckAndLoad(CenterKey.sub(new Vector3(1, 0, 0)), PlayerPos, RenderDist, undefined, undefined);
 			if (pX) this.CheckAndLoad(CenterKey.add(new Vector3(1, 0, 0)), PlayerPos, RenderDist, undefined, undefined);
 			task.wait();
@@ -254,7 +254,7 @@ export default class WorldController extends AirshipSingleton {
 			new Vector3(Settings.RenderDistance, 1, Settings.RenderDistance),
 		);
 
-		task.deferDetached(() => {
+		task.defer(() => {
 			let BatchCounter = 0;
 			for (const [_, Key] of pairs(Keys)) {
 				if (this.ChunkManager.SurfaceLoadedChunks.has(Key.WithY(0))) continue;
@@ -305,7 +305,7 @@ export default class WorldController extends AirshipSingleton {
 			}
 		});
 
-		task.deferDetached(() => {
+		task.defer(() => {
 			for (let x = -1; x <= 1; x++) {
 				for (let y = -1; y <= 1; y++) {
 					for (let z = -1; z <= 1; z++) {
@@ -323,7 +323,7 @@ export default class WorldController extends AirshipSingleton {
 	override Start() {
 		math.randomseed(Config.Seed);
 
-		task.deferDetached(() => {
+		task.defer(() => {
 			for (const ChunkX of $range(-4, 4)) {
 				for (const ChunkZ of $range(-4, 4)) {
 					const Origin = new Vector3(ChunkX, 0, ChunkZ).mul(16);
