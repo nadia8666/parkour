@@ -19,8 +19,8 @@ MonoBehaviour:
   packages:
   - id: '@Easy/Core'
     assetVersion: 412
-    codeVersion: 1063
-    publishVersionNumber: 797
+    codeVersion: 1064
+    publishVersionNumber: 798
     game: 0
     localSource: 0
     disabled: 0
@@ -68,10 +68,10 @@ MonoBehaviour:
   - AvatarEditor
   - LocalStencilMask
   - StencilMask
-  - 
-  - 
-  - 
-  - 
+  - AirshipReserved0
+  - AirshipReserved1
+  - AirshipReserved2
+  - AirshipReserved3
   - GameLayer0
   - GameLayer1
   - GameLayer2

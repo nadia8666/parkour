@@ -15,6 +15,7 @@ export default class UIController extends AirshipSingleton {
 
 	@Header("Main")
 	public Main: GameObject;
+	public UICamera: Camera;
 
 	@Header("References")
 	public EquipmentMenu: GameObject;
@@ -74,8 +75,9 @@ export default class UIController extends AirshipSingleton {
 			if (Value.Type === "Gear") {
 				const GearSlot = Instantiate(Asset.LoadAsset("Assets/Resources/UI/ItemSlot.prefab"));
 				this.Contents.push(GearSlot);
-				GearSlot.transform.SetParent(this.Inventory.transform);
+				GearSlot.transform.SetParent(this.Inventory.transform, false);
 				(GearSlot.transform as RectTransform).localScale = Vector3.one;
+				GearSlot.transform.localPosition = Vector3.zero;
 
 				const Slot = GearSlot.GetAirshipComponent<DraggableSlotComponent>();
 				if (!Slot) continue;
@@ -140,11 +142,8 @@ export default class UIController extends AirshipSingleton {
 	private HealthAlpha = 1;
 	public UpdateUI(Controller: ClientComponent, DeltaTime: number) {
 		this.HealthAlpha = math.lerpClamped(this.HealthAlpha, math.clamp01(Controller.Health / 100), DeltaTime * 10);
-
-		//this.MomentumBar.SetSizeWithCurrentAnchors(Axis.Horizontal, 1340 * math.clamp01(Controller.Momentum / 30));
 		this.HealthBar.SetSizeWithCurrentAnchors(Axis.Horizontal, 885 * this.HealthAlpha);
 
-		//this.MomentumCanvas.alpha = math.lerpClamped(this.MomentumCanvas.alpha, Controller.Momentum <= 0 ? 0 : 1, DeltaTime * 5);
 		this.HealthCanvas.alpha = math.lerpClamped(this.HealthCanvas.alpha, Controller.Health < 99 ? 1 : os.clock() - Controller._LastHealthChanged >= 2.5 ? 0 : 1, DeltaTime * 5);
 		this.WallKickCanvas.alpha = 1 - this.HealthCanvas.alpha;
 
@@ -161,8 +160,10 @@ export default class UIController extends AirshipSingleton {
 		}
 
 		if (this.TooltipTransform.gameObject.activeSelf) {
-			const MousePos = Input.mousePosition.sub(new Vector3(-20, 0, 0));
-			this.TooltipTransform.position = MousePos;
+			const MousePos = Input.mousePosition;
+			this.TooltipTransform.localPosition = this.GetMouseLocalPosition(this.TooltipTransform.parent as RectTransform, MousePos)
+				.WithZ(-99)
+				.add(new Vector3(20, 0, 0));
 
 			const Width = Screen.width;
 			const Height = Screen.height;
@@ -200,7 +201,7 @@ export default class UIController extends AirshipSingleton {
 	private AddAmmoElements(Count: number, Container: RectTransform, Fills: Image[]) {
 		for (const _ of $range(1, Count)) {
 			const UI = Instantiate(this.AmmoTemplate);
-			UI.SetParent(Container);
+			UI.SetParent(Container, false);
 			UI.localRotation = Quaternion.identity;
 			Fills.push(UI.gameObject.GetComponent<Image>() as Image);
 		}
@@ -237,5 +238,15 @@ export default class UIController extends AirshipSingleton {
 
 	public InputDisabledFromMenu() {
 		return /*this.MenuOpen || */ this.ESCMenuOpen || Airship.Chat.IsOpen();
+	}
+
+	public GetMouseLocalPosition(ParentRect: RectTransform, ScreenPos: Vector2 | Vector3) {
+		const [success, localPos] = RectTransformUtility.ScreenPointToLocalPointInRectangle(
+			ParentRect,
+			typeIs(ScreenPos, "Vector2") ? ScreenPos : new Vector2(ScreenPos.x, ScreenPos.y),
+			this.UICamera,
+		);
+
+		return success ? new Vector3(localPos.x, localPos.y, 0) : Vector3.zero;
 	}
 }
