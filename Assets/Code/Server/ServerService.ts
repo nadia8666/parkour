@@ -25,14 +25,14 @@ export default class ServerService extends AirshipSingleton {
 	@Server()
 	override Start() {
 		Airship.Players.ObservePlayers((Player) => {
-			while (!this.World.SpawningReady) task.wait();
+			while (!this.World.WorldReady) task.wait();
 			this.SafeSpawnCharacter(Player);
 
 			return () => this.CharacterMap.delete(Player);
 		});
 
 		Network.Effect.Respawn.server.OnClientEvent((Player) => {
-			while (!this.World.SpawningReady) task.wait();
+			while (!this.World.WorldReady) task.wait();
 			this.SafeSpawnCharacter(Player);
 		});
 	}

@@ -1,3 +1,4 @@
+import type { Player } from "@Easy/Core/Shared/Player/Player";
 import ENV from "Code/Server/ENV";
 import type { GearRegistryKey } from "./GearRegistry";
 import GearRegistrySingleton from "./GearRegistry";
@@ -92,3 +93,8 @@ export namespace ItemEnums {
 export namespace Client {
 	export type ValidStates = "Airborne" | "Grounded" | "Wallclutch" | "Wallclimb" | "Wallrun" | "LedgeGrab" | "Slide" | "Dropdown" | "Fly" | "LadderClimb" | "Zipline";
 }
+
+export type PlayerInfoGetter = () => {
+	Player: Player;
+	Position: Vector3;
+};

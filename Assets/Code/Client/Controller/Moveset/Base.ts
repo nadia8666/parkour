@@ -706,7 +706,6 @@ export class MovesetBase {
 		for (const Height of $range(0, GrabHeight, 0.05)) {
 			let Position = Origin.Position.add(new Vector3(0, Height, 0));
 			const ForwardRay = Cubecast(Position, Origin.Forward, 1.5, 0.2, Origin.Rotation);
-			print(ForwardRay.Hit)
 			if (!ForwardRay.Hit) {
 				for (const Distance of $range(0, 1.5, 0.05)) {
 					let Position = Origin.Position.add(new Vector3(0, Height, 0)).add(Origin.Forward.mul(Distance - 0.05));
