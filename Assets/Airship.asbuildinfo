@@ -497,10 +497,17 @@
 			"extends": [],
 			"singleton": false
 		},
-		"DataService": {
+		"SettingsController": {
 			"component": true,
 			"type": "AirshipBehaviour",
-			"filePath": "Code\\Server\\Data\\DataService.lua",
+			"filePath": "Code\\Client\\Framework\\SettingsController.lua",
+			"extends": [],
+			"singleton": true
+		},
+		"WorldService": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "Code\\Server\\WorldService.lua",
 			"extends": [],
 			"singleton": true
 		},
@@ -515,13 +522,6 @@
 			"component": true,
 			"type": "AirshipBehaviour",
 			"filePath": "Code\\Core\\CoreSingleton.lua",
-			"extends": [],
-			"singleton": true
-		},
-		"WorldService": {
-			"component": true,
-			"type": "AirshipBehaviour",
-			"filePath": "Code\\Server\\WorldService.lua",
 			"extends": [],
 			"singleton": true
 		},
@@ -592,6 +592,13 @@
 			"component": true,
 			"type": "AirshipBehaviour",
 			"filePath": "Code\\Client\\UI\\Drag\\DragController.lua",
+			"extends": [],
+			"singleton": true
+		},
+		"DataService": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "Code\\Server\\Data\\DataService.lua",
 			"extends": [],
 			"singleton": true
 		},
@@ -856,12 +863,19 @@
 			"extends": [],
 			"singleton": false
 		},
-		"SettingsController": {
+		"GearRegistrySingleton": {
 			"component": true,
 			"type": "AirshipBehaviour",
-			"filePath": "Code\\Client\\Framework\\SettingsController.lua",
+			"filePath": "Code\\Shared\\GearRegistry.lua",
 			"extends": [],
 			"singleton": true
+		},
+		"TooltipComponent": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "Code\\Client\\Components\\TooltipComponent.lua",
+			"extends": [],
+			"singleton": false
 		},
 		"DynamicJoystick": {
 			"component": true,
@@ -895,20 +909,6 @@
 			"component": true,
 			"type": "AirshipBehaviour",
 			"filePath": "AirshipPackages\\@Easy\\Core\\Shared\\UI\\PartyHud\\PartyHudMember.lua",
-			"extends": [],
-			"singleton": false
-		},
-		"GearRegistrySingleton": {
-			"component": true,
-			"type": "AirshipBehaviour",
-			"filePath": "Code\\Shared\\GearRegistry.lua",
-			"extends": [],
-			"singleton": true
-		},
-		"TooltipComponent": {
-			"component": true,
-			"type": "AirshipBehaviour",
-			"filePath": "Code\\Client\\Components\\TooltipComponent.lua",
 			"extends": [],
 			"singleton": false
 		},
@@ -1920,9 +1920,19 @@
 			"inherits": []
 		},
 		{
-			"name": "DataService",
-			"id": "Code/Server/Data/DataService@DataService",
-			"file": "Code/Server/Data/DataService.ts",
+			"name": "SettingsController",
+			"id": "Code/Client/Framework/SettingsController@SettingsController",
+			"file": "Code/Client/Framework/SettingsController.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "ServerService",
+			"id": "Code/Server/ServerService@ServerService",
+			"file": "Code/Server/ServerService.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"
@@ -1953,6 +1963,16 @@
 			"name": "ViewmodelComponent",
 			"id": "Code/Client/Controller/Animation/ViewmodelComponent@ViewmodelComponent",
 			"file": "Code/Client/Controller/Animation/ViewmodelComponent.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "ClientComponent",
+			"id": "Code/Client/Controller/ClientComponent@ClientComponent",
+			"file": "Code/Client/Controller/ClientComponent.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"
@@ -2023,6 +2043,16 @@
 			"name": "DragController",
 			"id": "Code/Client/UI/Drag/DragController@DragController",
 			"file": "Code/Client/UI/Drag/DragController.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "DataService",
+			"id": "Code/Server/Data/DataService@DataService",
+			"file": "Code/Server/Data/DataService.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"
@@ -2402,6 +2432,46 @@
 			"inherits": []
 		},
 		{
+			"name": "GearObject",
+			"id": "Code/Shared/Object/GearObject@GearObject",
+			"file": "Code/Shared/Object/GearObject.ts",
+			"declarationType": "AirshipScriptableObject",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "GearRegistrySingleton",
+			"id": "Code/Shared/GearRegistry@GearRegistrySingleton",
+			"file": "Code/Shared/GearRegistry.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "TooltipComponent",
+			"id": "Code/Client/Components/TooltipComponent@TooltipComponent",
+			"file": "Code/Client/Components/TooltipComponent.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "ItemObject",
+			"id": "Code/Shared/Object/ItemObject@ItemObject",
+			"file": "Code/Shared/Object/ItemObject.ts",
+			"declarationType": "AirshipScriptableObject",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
 			"name": "DynamicJoystick",
 			"id": "AirshipPackages/@Easy/Core/Shared/Input/Mobile/DynamicJoystick@DynamicJoystick",
 			"file": "AirshipPackages/@Easy/Core/Shared/Input/Mobile/DynamicJoystick.ts",
@@ -2446,46 +2516,6 @@
 			"id": "AirshipPackages/@Easy/Core/Shared/UI/PartyHud/PartyHudMember@PartyHudMember",
 			"file": "AirshipPackages/@Easy/Core/Shared/UI/PartyHud/PartyHudMember.ts",
 			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "GearObject",
-			"id": "Code/Shared/Object/GearObject@GearObject",
-			"file": "Code/Shared/Object/GearObject.ts",
-			"declarationType": "AirshipScriptableObject",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "GearRegistrySingleton",
-			"id": "Code/Shared/GearRegistry@GearRegistrySingleton",
-			"file": "Code/Shared/GearRegistry.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "TooltipComponent",
-			"id": "Code/Client/Components/TooltipComponent@TooltipComponent",
-			"file": "Code/Client/Components/TooltipComponent.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "ItemObject",
-			"id": "Code/Shared/Object/ItemObject@ItemObject",
-			"file": "Code/Shared/Object/ItemObject.ts",
-			"declarationType": "AirshipScriptableObject",
 			"modifiers": [
 				"default"
 			],
@@ -2872,36 +2902,6 @@
 			"inherits": []
 		},
 		{
-			"name": "ServerService",
-			"id": "Code/Server/ServerService@ServerService",
-			"file": "Code/Server/ServerService.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "SettingsController",
-			"id": "Code/Client/Framework/SettingsController@SettingsController",
-			"file": "Code/Client/Framework/SettingsController.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "ClientComponent",
-			"id": "Code/Client/Controller/ClientComponent@ClientComponent",
-			"file": "Code/Client/Controller/ClientComponent.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
 			"name": "WorldService",
 			"id": "Code/Server/WorldService@WorldService",
 			"file": "Code/Server/WorldService.ts",
@@ -2915,12 +2915,12 @@
 	"flamework": {
 		"version": 1,
 		"identifiers": {
-			"typescript:Code/Server/Data/DataService@DataService": "Server/Data/DataService@DataService",
-			"typescript:Code/Server/ServerService@ServerService": "Server/ServerService@ServerService",
-			"typescript:Code/Core/CoreSingleton@_CoreSingleton": "Core/CoreSingleton@_CoreSingleton",
-			"typescript:Code/Server/Modules/Spawner@CharacterSpawner": "Server/Modules/Spawner@CharacterSpawner",
+			"typescript:Code/Client/Framework/SettingsController@SettingsController": "Client/Framework/SettingsController@SettingsController",
+			"typescript:Code/Server/SettingsService@_SettingsService": "Server/SettingsService@_SettingsService",
 			"typescript:Code/Server/WorldService@ChunkManager": "Server/WorldService@ChunkManager",
 			"typescript:Code/Server/WorldService@WorldService": "Server/WorldService@WorldService",
+			"typescript:Code/Server/ServerService@ServerService": "Server/ServerService@ServerService",
+			"typescript:Code/Core/CoreSingleton@_CoreSingleton": "Core/CoreSingleton@_CoreSingleton",
 			"typescript:Code/Client/Controller/Animation/AnimationController@AnimationController": "Client/Controller/Animation/AnimationController@AnimationController",
 			"typescript:Code/Client/Controller/Animation/ViewmodelComponent@ViewmodelComponent": "Client/Controller/Animation/ViewmodelComponent@ViewmodelComponent",
 			"typescript:Code/Client/Controller/ClientComponent@ClientComponent": "Client/Controller/ClientComponent@ClientComponent",
@@ -2940,12 +2940,12 @@
 			"typescript:Code/Client/Framework/DataController@DataController": "Client/Framework/DataController@DataController",
 			"typescript:Code/Client/UI/Drag/DraggableSlotComponent@DraggableSlotComponent": "Client/UI/Drag/DraggableSlotComponent@DraggableSlotComponent",
 			"typescript:Code/Client/UI/Drag/DragController@DragController": "Client/UI/Drag/DragController@DragController",
-			"typescript:Code/Client/Framework/SettingsController@SettingsController": "Client/Framework/SettingsController@SettingsController",
-			"typescript:Code/Server/SettingsService@_SettingsService": "Server/SettingsService@_SettingsService",
+			"typescript:Code/Server/Data/DataService@DataService": "Server/Data/DataService@DataService",
 			"typescript:Code/Shared/Object/GearObject@GearObject": "Shared/Object/GearObject@GearObject",
 			"typescript:Code/Shared/GearRegistry@GearRegistrySingleton": "Shared/GearRegistry@GearRegistrySingleton",
 			"typescript:Code/Client/Components/TooltipComponent@TooltipComponent": "Client/Components/TooltipComponent@TooltipComponent",
 			"typescript:Code/Shared/Object/ItemObject@ItemObject": "Shared/Object/ItemObject@ItemObject",
+			"typescript:Code/Server/Modules/Spawner@CharacterSpawner": "Server/Modules/Spawner@CharacterSpawner",
 			"typescript:Code/Client/Controller/Modules/Zipline/Ziplines@Ziplines": "Client/Controller/Modules/Zipline/Ziplines@Ziplines",
 			"typescript:Code/Shared/Utility/Noise@NoiseHandler": "Shared/Utility/Noise@NoiseHandler",
 			"typescript:Code/Client/Components/Collision/GenericTriggerComponent@GenericTriggerComponent": "Client/Components/Collision/GenericTriggerComponent@GenericTriggerComponent",

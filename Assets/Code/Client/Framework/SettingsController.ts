@@ -4,7 +4,7 @@ import { Network } from "Code/Shared/Network";
 
 export const Settings = {
 	CameraRotation: true,
-	
+
 	StepUpEnabled: false,
 
 	HoldWallclimb: true,
@@ -49,6 +49,8 @@ export default class SettingsController extends AirshipSingleton {
 					if (LastUpdated === Tick) Network.Data.UpdateSetting.client.FireServer(Key, Value);
 				});
 			});
+
+			Network.Data.UpdateSetting.client.FireServer(Key, Settings[Key]);
 		}
 	}
 
@@ -66,6 +68,8 @@ export default class SettingsController extends AirshipSingleton {
 					if (LastUpdated === Tick) Network.Data.UpdateSetting.client.FireServer(Key, Value);
 				});
 			});
+
+			Network.Data.UpdateSetting.client.FireServer(Key, Settings[Key]);
 		}
 	}
 }

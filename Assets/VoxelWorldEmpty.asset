@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   chunks: []
   blockIdToScopeName: []
-  chunksCompressed: 28b52ffd2006310000020000000000
+  chunksCompressed: 
   chunksCompressedV2: 1

@@ -5,9 +5,8 @@
 import { Airship } from "@Easy/Core/Shared/Airship";
 import { MathUtil } from "@Easy/Core/Shared/Util/MathUtil";
 import Config from "Code/Client/Config";
-import { Settings } from "Code/Client/Framework/SettingsController";
 import Core from "Code/Core/Core";
-import { World } from "Code/Shared/Types";
+import { type PlayerInfoGetter, World } from "Code/Shared/Types";
 import { NoiseHandler } from "Code/Shared/Utility/Noise";
 import { SettingsService } from "./SettingsService";
 
@@ -53,10 +52,9 @@ class ChunkManager {
 		return Positions;
 	}
 
-	public IsChunkInRange(ChunkKey: Vector3, PlayerPosition: Vector3 | undefined, RangeChunks: number): boolean {
-		if (!PlayerPosition) return false;
+	public IsChunkInRange(ChunkKey: Vector3, PlayerPosition: Vector3, RangeChunks: number): boolean {
 		const ChunkCenter = this.FromKey(ChunkKey).add(new Vector3(8, 8, 8));
-		const DistSq = ChunkCenter.sub(PlayerPosition).magnitude;
+		const DistSq = ChunkCenter.sub(PlayerPosition).sqrMagnitude;
 		return DistSq <= RangeChunks * 16;
 	}
 
@@ -89,14 +87,15 @@ class ChunkManager {
 		return math.floor(BaseHeight + Detail * Amplitude);
 	}
 
-	public EnqueueTask(ChunkKey: Vector3, PlayerPos: Vector3 | undefined, Action: () => void) {
+	public EnqueueTask(ChunkKey: Vector3, LinkedPlayer: PlayerInfoGetter | undefined, Action: () => void) {
+		const PlayerPos = LinkedPlayer ? LinkedPlayer().Position : undefined;
 		const ChunkCenter = this.FromKey(ChunkKey).add(new Vector3(8, 8, 8));
 		const DistSq = PlayerPos ? ChunkCenter.sub(PlayerPos).sqrMagnitude : 0;
-		
+
 		this.TaskQueue.push({ Key: ChunkKey, DistSq, Action });
-		this.TaskQueue.sort((a, b) => a.DistSq > b.DistSq);
+		//this.TaskQueue.sort((a, b) => a.DistSq > b.DistSq);
 	}
-	
+
 	// TODO: at some point in time change this to cancel chunks that no players are near (better supports fast movements)
 	public ProcessQueue(Limit: number) {
 		for (let i = 0; i < Limit; i++) {
@@ -106,7 +105,7 @@ class ChunkManager {
 		}
 	}
 
-	public GenerateChunk(ChunkKey: Vector3, SurfaceMap: number[] | undefined, ContinentalMap: number[] | undefined, Priority: boolean = false, PlayerPos?: Vector3) {
+	public GenerateChunk(ChunkKey: Vector3, SurfaceMap: number[] | undefined, ContinentalMap: number[] | undefined, Priority: boolean = false, LinkedPlayer?: PlayerInfoGetter) {
 		if (this.LoadedChunks.has(ChunkKey)) return Promise.resolve<boolean>(false);
 		this.LoadedChunks.add(ChunkKey);
 
@@ -178,6 +177,7 @@ class ChunkManager {
 									let OreType = 0;
 									const OreNoise = Noise.Get3DFBM(WorldX, WorldY, WorldZ, 1, 0.15, 2, 0.6, 2) / 2 + 0.5;
 
+									// TODO: random variation of heights between a range
 									if (OreNoise > 0.8) {
 										if (WorldY > 40) OreType = this.GetBlock("CoalOre");
 										else if (WorldY > -10) OreType = this.GetBlock("IronOre");
@@ -213,7 +213,7 @@ class ChunkManager {
 				instance().World.WriteVoxelGroupAt(Positions, Blocks, Priority);
 			}
 
-			this.TryPropagate(ChunkKey, PlayerPos, LoadNegX, LoadPosX, LoadNegY, LoadPosY, LoadNegZ, LoadPosZ, SurfaceMap, ContinentalMap);
+			this.TryPropagate(ChunkKey, LinkedPlayer, LoadNegX, LoadPosX, LoadNegY, LoadPosY, LoadNegZ, LoadPosZ, SurfaceMap, ContinentalMap);
 
 			Generated = true;
 		};
@@ -221,7 +221,7 @@ class ChunkManager {
 		if (Priority) {
 			task.spawn(Action);
 		} else {
-			this.EnqueueTask(ChunkKey, PlayerPos, Action);
+			this.EnqueueTask(ChunkKey, LinkedPlayer, Action);
 		}
 
 		return Result;
@@ -231,7 +231,7 @@ class ChunkManager {
 
 	private TryPropagate(
 		CenterKey: Vector3,
-		PlayerPos: Vector3 | undefined,
+		LinkedPlayer: PlayerInfoGetter | undefined,
 		nX: boolean,
 		pX: boolean,
 		nY: boolean,
@@ -241,17 +241,19 @@ class ChunkManager {
 		SurfaceMap: number[],
 		ContinentalMap: number[],
 	) {
-		const RenderDist = Settings.RenderDistance;
+		if (!LinkedPlayer) return;
 
-		if (nX) this.CheckAndLoad(CenterKey.sub(new Vector3(1, 0, 0)), PlayerPos, RenderDist, undefined, undefined);
-		if (pX) this.CheckAndLoad(CenterKey.add(new Vector3(1, 0, 0)), PlayerPos, RenderDist, undefined, undefined);
-		if (nY) this.CheckAndLoad(CenterKey.sub(new Vector3(0, 1, 0)), PlayerPos, RenderDist, SurfaceMap, ContinentalMap);
-		if (pY) this.CheckAndLoad(CenterKey.add(new Vector3(0, 1, 0)), PlayerPos, RenderDist, SurfaceMap, ContinentalMap);
-		if (nZ) this.CheckAndLoad(CenterKey.sub(new Vector3(0, 0, 1)), PlayerPos, RenderDist, undefined, undefined);
-		if (pZ) this.CheckAndLoad(CenterKey.add(new Vector3(0, 0, 1)), PlayerPos, RenderDist, undefined, undefined);
+		const [Pos, Render] = [LinkedPlayer().Position, SettingsService.Settings.GetSetting("RenderDistance", LinkedPlayer().Player)];
+
+		if (nX) this.CheckAndLoad(CenterKey.sub(new Vector3(1, 0, 0)), Pos, Render, undefined, undefined);
+		if (pX) this.CheckAndLoad(CenterKey.add(new Vector3(1, 0, 0)), Pos, Render, undefined, undefined);
+		if (nY) this.CheckAndLoad(CenterKey.sub(new Vector3(0, 1, 0)), Pos, Render, SurfaceMap, ContinentalMap);
+		if (pY) this.CheckAndLoad(CenterKey.add(new Vector3(0, 1, 0)), Pos, Render, SurfaceMap, ContinentalMap);
+		if (nZ) this.CheckAndLoad(CenterKey.sub(new Vector3(0, 0, 1)), Pos, Render, undefined, undefined);
+		if (pZ) this.CheckAndLoad(CenterKey.add(new Vector3(0, 0, 1)), Pos, Render, undefined, undefined);
 	}
 
-	private CheckAndLoad(Key: Vector3, PlayerPos: Vector3 | undefined, Dist: number, SurfaceMap: number[] | undefined, ContinentalMap: number[] | undefined) {
+	private CheckAndLoad(Key: Vector3, PlayerPos: Vector3, Dist: number, SurfaceMap: number[] | undefined, ContinentalMap: number[] | undefined) {
 		if (!this.LoadedChunks.has(Key) && this.IsChunkInRange(Key, PlayerPos, Dist)) {
 			this.GenerateChunk(Key, SurfaceMap, ContinentalMap, false);
 		}
@@ -269,36 +271,43 @@ class ChunkManager {
 export default class WorldService extends AirshipSingleton {
 	public World: VoxelWorld;
 	public readonly ChunkManager = new ChunkManager();
-	public Noise = new NoiseHandler(Config.Seed);
+	public Noise: NoiseHandler;
 	public LastUpdate = 0;
-	public SpawningReady = false;
+	public WorldReady = false;
 
+	@Server()
 	public FixedUpdate() {
+		if (!this.WorldReady) return;
+
 		this.ChunkManager.ProcessQueue(2);
 
 		if (os.clock() - this.LastUpdate <= 0.25) return;
 		this.LastUpdate = os.clock();
 
 		Airship.Players.GetPlayers().forEach((Player) => {
-			const Character = Core().Server.CharacterMap.get(Player);
-			if (Character) {
-				const Position = Character.transform.position;
-				const CurrentChunk = this.ChunkManager.ToKey(MathUtil.FloorVec(Position));
-				const RenderDistance = SettingsService.Settings.GetSetting("RenderDistance", Player);
+			task.spawn(() => {
+				const Character = Core().Server.CharacterMap.get(Player);
+				if (Character) {
+					const Position = Character.transform.position;
+					const LinkedPlayer: PlayerInfoGetter = () => {
+						return {
+							Player: Player,
+							Position: Position,
+						};
+					};
+					const RenderDistance = SettingsService.Settings.GetSetting("RenderDistance", Player);
 
-				const Chunks = new Set<Vector3>();
-				const Keys = this.ChunkManager.ExpandCubePerAxis(
-					this.ChunkManager.ToKey(MathUtil.FloorVec(Position)).sub(new Vector3(RenderDistance / 2, 0, RenderDistance / 2)),
-					new Vector3(RenderDistance, 1, RenderDistance),
-				);
+					const Chunks = new Set<Vector3>();
+					const Keys = this.ChunkManager.ExpandCubePerAxis(
+						this.ChunkManager.ToKey(MathUtil.FloorVec(Position)).sub(new Vector3(RenderDistance / 2, 0, RenderDistance / 2)),
+						new Vector3(RenderDistance, 1, RenderDistance),
+					);
 
-				for (const [_, Key] of pairs(Keys)) {
-					if (this.ChunkManager.SurfaceLoadedChunks.has(Key.WithY(0))) continue;
-					this.ChunkManager.SurfaceLoadedChunks.add(Key.WithY(0));
+					for (const [_, Key] of pairs(Keys)) {
+						if (this.ChunkManager.SurfaceLoadedChunks.has(Key.WithY(0))) continue;
+						this.ChunkManager.SurfaceLoadedChunks.add(Key.WithY(0));
 
-					const Origin = Key.mul(16);
-
-					this.ChunkManager.EnqueueTask(Key, Position, () => {
+						const Origin = Key.mul(16);
 						const ContinentalBuffer = this.Noise.Get2DFBMBatch(Origin.x, Origin.z, 16, 16, new Array(256), 1, 0.0004, 3, 0.5, 2);
 						const DetailBuffer = this.Noise.Get2DFBMBatch(Origin.x, Origin.z, 16, 16, new Array(256), 2, 0.01, 4, 0.5, 2);
 
@@ -315,13 +324,13 @@ export default class WorldService extends AirshipSingleton {
 								const TopChunk = this.ChunkManager.ToKey(new Vector3(WorldX, SurfaceY, WorldZ));
 
 								if (!Chunks.has(TopChunk)) {
-									this.ChunkManager.GenerateChunk(TopChunk, DetailBuffer, ContinentalBuffer);
+									this.ChunkManager.GenerateChunk(TopChunk, DetailBuffer, ContinentalBuffer, false, LinkedPlayer);
 								}
 								Chunks.add(TopChunk);
 
 								const BottomChunk = TopChunk.sub(Vector3.up);
 								if (!Chunks.has(BottomChunk)) {
-									this.ChunkManager.GenerateChunk(BottomChunk, DetailBuffer, ContinentalBuffer);
+									this.ChunkManager.GenerateChunk(BottomChunk, DetailBuffer, ContinentalBuffer, false, LinkedPlayer);
 								}
 								Chunks.add(BottomChunk);
 
@@ -332,25 +341,20 @@ export default class WorldService extends AirshipSingleton {
 								}
 							}
 						}
-					});
-				}
-
-				for (let x = -1; x <= 1; x++) {
-					for (let y = -1; y <= 1; y++) {
-						for (let z = -1; z <= 1; z++) {
-							const SeedKey = CurrentChunk.add(new Vector3(x, y, z));
-							this.ChunkManager.GenerateChunk(SeedKey, undefined, undefined, false);
-						}
 					}
 				}
-			}
+			});
 		});
 	}
 
 	public OnChunkLoadEnd() {}
 
+	@Server()
 	override Start() {
+		Config.Seed = math.random(1, 2 ** 30);
+		print(`world seed: ${Config.Seed}`);
 		math.randomseed(Config.Seed);
+		this.Noise = new NoiseHandler(Config.Seed);
 
 		let [ChunksWritten, MaxChunks] = [0, 0];
 		for (const ChunkX of $range(-4, 4)) {
@@ -395,6 +399,6 @@ export default class WorldService extends AirshipSingleton {
 		const Surface = this.ChunkManager.GetTerrainHeight(Cont, Det);
 		Config.SpawnPos = new Vector3(0, Surface + 4, 0);
 
-		this.SpawningReady = true;
+		this.WorldReady = true;
 	}
 }

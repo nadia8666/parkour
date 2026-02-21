@@ -142,7 +142,7 @@ const Config = {
 	// WORLD GEN
 	MountainHeight: 256,
 	WaterLevel: 0,
-	Seed: math.random(1, 9000000),
+	Seed: 0,
 	SpawnPos: new Vector3(0, 50, 0),
 };
 

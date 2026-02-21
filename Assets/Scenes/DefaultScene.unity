@@ -4838,7 +4838,7 @@ MonoBehaviour:
       serializedValue: 0
       serializedObject: {fileID: 0}
       modified: 0
-    - name: SpawningReady
+    - name: WorldReady
       type: boolean
       objectType: 
       items:
