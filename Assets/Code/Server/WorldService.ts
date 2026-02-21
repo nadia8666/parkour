@@ -92,14 +92,15 @@ class ChunkManager {
 	public EnqueueTask(ChunkKey: Vector3, PlayerPos: Vector3 | undefined, Action: () => void) {
 		const ChunkCenter = this.FromKey(ChunkKey).add(new Vector3(8, 8, 8));
 		const DistSq = PlayerPos ? ChunkCenter.sub(PlayerPos).sqrMagnitude : 0;
-
+		
 		this.TaskQueue.push({ Key: ChunkKey, DistSq, Action });
-		this.TaskQueue.sort((a, b) => a.DistSq < b.DistSq);
+		this.TaskQueue.sort((a, b) => a.DistSq > b.DistSq);
 	}
-
+	
+	// TODO: at some point in time change this to cancel chunks that no players are near (better supports fast movements)
 	public ProcessQueue(Limit: number) {
 		for (let i = 0; i < Limit; i++) {
-			const Task = this.TaskQueue.shift();
+			const Task = this.TaskQueue.pop();
 			if (Task) Task.Action();
 			else break;
 		}
