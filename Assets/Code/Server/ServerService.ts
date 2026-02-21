@@ -1,16 +1,18 @@
 import { Airship } from "@Easy/Core/Shared/Airship";
 import type Character from "@Easy/Core/Shared/Character/Character";
 import type { Player } from "@Easy/Core/Shared/Player/Player";
+import Config from "Code/Client/Config";
 import { Network } from "Code/Shared/Network";
 import CFrame from "@inkyaker/CFrame/Code";
 import type DataService from "./Data/DataService";
 import CharacterSpawner from "./Modules/Spawner";
-import Config from "Code/Client/Config";
+import type WorldService from "./WorldService";
 
 export default class ServerService extends AirshipSingleton {
 	public Spawner = new CharacterSpawner();
 	public CharacterMap = new Map<Player, Character>();
 	public DataService: DataService;
+	public World: WorldService;
 
 	@Server()
 	public SafeSpawnCharacter(Player: Player) {
@@ -23,13 +25,15 @@ export default class ServerService extends AirshipSingleton {
 	@Server()
 	override Start() {
 		Airship.Players.ObservePlayers((Player) => {
+			while (!this.World.SpawningReady) task.wait();
 			this.SafeSpawnCharacter(Player);
 
 			return () => this.CharacterMap.delete(Player);
 		});
-		
+
 		Network.Effect.Respawn.server.OnClientEvent((Player) => {
-			this.SafeSpawnCharacter(Player)
+			while (!this.World.SpawningReady) task.wait();
+			this.SafeSpawnCharacter(Player);
 		});
 	}
 }

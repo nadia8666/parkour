@@ -46,13 +46,13 @@ task.spawn(() => {
 	while (!Core.Client.World.Ladders) {
 		task.wait();
 	}
-	while (!Core.Client.WorldController) {
-		task.wait();
-	}
 	while (!Core.Gear) {
 		task.wait();
 	}
 	while (!Core.Server) {
+		task.wait();
+	}
+	while (!Core.Server.World) {
 		task.wait();
 	}
 	while (!Core.Server.DataService) {
@@ -64,10 +64,14 @@ task.spawn(() => {
 
 export = () => {
 	while (!CoreLoaded) {
-		while (FramesPassed <= 10) {
-			FramesPassed++;
-			task.wait();
+		FramesPassed++
+		if (FramesPassed % 500 === 0) {
+			task.wait()
 		}
+		//while (FramesPassed <= 10) {
+		//	FramesPassed++;
+		//	task.wait();
+		//}
 	}
 	return Core;
 };

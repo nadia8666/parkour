@@ -1,17 +1,4 @@
-export namespace ItemEnums {
-	export enum ItemRarity {
-		COMMON,
-		UNCOMMON,
-		RARE,
-		EPIC,
-		LEGENDARY,
-		ADMINISTRATOR,
-	}
-
-	export enum ItemModelType {
-		IMAGE_GENERATED,
-	}
-}
+import { ItemEnums } from "../Types";
 
 @CreateAssetMenu("Parkour/Item/New", "New Item.asset")
 export default class ItemObject extends AirshipScriptableObject {

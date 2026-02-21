@@ -72,7 +72,7 @@ const inf = 9000;
 const Config = {
 	Gravity: new Vector3(0, -35, 0),
 	PlayerRadius: 0.5,
-	PlayerHeight: 1,
+	PlayerHeight: 2,
 
 	RunMaxSpeed: 15,
 
