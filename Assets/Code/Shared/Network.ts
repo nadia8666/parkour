@@ -1,10 +1,12 @@
 import { NetworkFunction } from "@Easy/Core/Shared/Network/NetworkFunction";
 import { NetworkSignal } from "@Easy/Core/Shared/Network/NetworkSignal";
-import type { DataFormat } from "./Types";
+import type { Settings } from "Code/Client/Framework/SettingsController";
+import type { DataFormat, ValueOf } from "./Types";
 
 export const Network = {
 	Data: {
 		GetInitialData: new NetworkFunction<void, DataFormat>("Network/Data/GetInitialData"),
+		UpdateSetting: new NetworkSignal<[keyof Settings, ValueOf<Settings>]>("Network/Data/UpdateSetting"),
 	},
 
 	Effect: {

@@ -39,19 +39,19 @@ export function DrawCubeAt(Origin: Vector3, Size: number, Orientation: Quaternio
 	const UBR = Origin.add(Orientation.mul(new Vector3(-Size / 2, Size / 2, Size / 2)));
 	const DBR = Origin.add(Orientation.mul(new Vector3(-Size / 2, -Size / 2, Size / 2)));
 
-	// Top face
+	// top face
 	Debug.DrawLine(UFL, UFR, Color.black, 15);
 	Debug.DrawLine(UFR, UBR, Color.black, 15);
 	Debug.DrawLine(UBR, UBL, Color.black, 15);
 	Debug.DrawLine(UBL, UFL, Color.black, 15);
 
-	// Bottom face
+	// bottom face
 	Debug.DrawLine(DFL, DFR, Color.black, 15);
 	Debug.DrawLine(DFR, DBR, Color.black, 15);
 	Debug.DrawLine(DBR, DBL, Color.black, 15);
 	Debug.DrawLine(DBL, DFL, Color.black, 15);
 
-	// Four corner lines
+	// four corner lines
 	Debug.DrawLine(UFL, DFL, Color.black, 15);
 	Debug.DrawLine(UFR, DFR, Color.black, 15);
 	Debug.DrawLine(UBR, DBR, Color.black, 15);
@@ -705,19 +705,20 @@ export class MovesetBase {
 
 		for (const Height of $range(0, GrabHeight, 0.05)) {
 			let Position = Origin.Position.add(new Vector3(0, Height, 0));
-			const ForwardRay = Cubecast(Position, Origin.Forward, 1, 0.2, Origin.Rotation);
+			const ForwardRay = Cubecast(Position, Origin.Forward, 1.5, 0.2, Origin.Rotation);
+			print(ForwardRay.Hit)
 			if (!ForwardRay.Hit) {
-				for (const Distance of $range(0, 2.25, 0.05)) {
-					let Position = Origin.Position.add(new Vector3(0, Height, 0)).add(Origin.Forward.mul(Distance));
+				for (const Distance of $range(0, 1.5, 0.05)) {
+					let Position = Origin.Position.add(new Vector3(0, Height, 0)).add(Origin.Forward.mul(Distance - 0.05));
 					const DownRay = Raycast(Position, Vector3.down, Height, Color.red);
-					if (DownRay.Hit) {
-						const CheckAgainst = (Height: number, Direction: Vector3) => {
-							return Raycast(DownRay.Pos.add(new Vector3(0, Height + 0.05, 0)).sub(Direction.mul(0.25)), Direction, 0.5, Color.blue).Hit;
+					if (DownRay.Hit && DownRay.Normal.y >= 0.9) {
+						const CheckAgainst = (HeightOffset: number, Direction: Vector3) => {
+							return Raycast(DownRay.Pos.add(new Vector3(0, HeightOffset + 0.05, 0)).sub(Direction.mul(0.25)), Direction, 0.5, Color.blue).Hit;
 						};
 
 						let Success = true;
-						for (const Height of $range(0, 0, 0.25)) {
-							if (CheckAgainst(Height, Origin.Forward) || CheckAgainst(Height, Origin.Back)) {
+						for (const PHeight of $range(0, Height, 0.25)) {
+							if (CheckAgainst(PHeight, Origin.Forward) || CheckAgainst(PHeight, Origin.Back)) {
 								Success = false;
 								break;
 							}
@@ -726,6 +727,8 @@ export class MovesetBase {
 						if (Success) {
 							const UnderKnees = DownRay.Pos.y <= Origin.Position.y + 0.65;
 							const UnderWaist = DownRay.Pos.y <= Origin.Position.y + 1.25;
+
+							Debug.DrawRay(DownRay.Pos, Vector3.down, Color.cyan, 100);
 
 							task.spawn(() =>
 								this.StepLedgeGrab(Controller, DownRay.Pos, ForceType ?? (UnderKnees ? LedgeGrabType.VaultLow : UnderWaist ? LedgeGrabType.VaultHigh : LedgeGrabType.LedgeGrab)),
@@ -767,7 +770,11 @@ export class MovesetBase {
 		let LastPosition = Origin.Position;
 
 		if (IsKinematic) {
-			const EdgeGrabPosition = EndPosition.add(Origin.Back.mul(0.515)).add(Origin.Down.mul(1.67));
+			let Offset = Origin.Down.mul(1.67)
+			const Cast = Raycast(EndPosition.add(Origin.Back.mul(0.515)), Offset.normalized, Offset.magnitude)
+			if (Cast.Hit) Offset = Cast.Pos.sub(EndPosition.add(Origin.Back.mul(0.515)))
+
+			const EdgeGrabPosition = EndPosition.add(Origin.Back.mul(0.515)).add(Offset);
 			const UpTween = Tween.Vector3(
 				TweenEasingFunction.InOutSine,
 				0.07,
@@ -793,7 +800,12 @@ export class MovesetBase {
 				} else {
 					const PositionOffset = Position.sub(LastPosition);
 					LastPosition = Position;
-					Controller.Rigidbody.MovePosition(Controller.Rigidbody.position.add(PositionOffset));
+
+					const Cast = Raycast(Controller.Rigidbody.position, PositionOffset.normalized, PositionOffset.magnitude);
+
+					if (Cast.Hit) {
+						Controller.Rigidbody.MovePosition(Controller.Rigidbody.position.add(PositionOffset.normalized.mul(Cast.Pos.sub(Controller.Rigidbody.position).magnitude)));
+					} else Controller.Rigidbody.MovePosition(Controller.Rigidbody.position.add(PositionOffset));
 				}
 			},
 			LastPosition,
@@ -852,7 +864,7 @@ export class MovesetBase {
 		Controller.BodyCollider.height = 0;
 	}
 	public ResetCollider(Controller: ClientComponent) {
-		Controller.BodyCollider.center = new Vector3(0, 0.5, 0);
+		Controller.BodyCollider.center = new Vector3(0, 1, 0);
 		Controller.BodyCollider.radius = Config.PlayerRadius;
 		Controller.BodyCollider.height = Config.PlayerHeight;
 	}
@@ -965,6 +977,39 @@ export class MovesetBase {
 			this.JumpTimer = 1.25;
 
 			Core().Client.Sound.Play("footstepfast"); // TEMP
+		}
+	}
+
+	public TryStepUp(Controller: ClientComponent) {
+		if (!Settings.StepUpEnabled) return;
+
+		const MoveDir = Controller.transform.TransformDirection(Controller.Input.GetMoveVector());
+		if (MoveDir.magnitude <= 0) return;
+
+		const ForwardSpeed = math.max(2.5, Controller.Rigidbody.linearVelocity.WithY(0).magnitude / 120);
+
+		const ForwardCast = Raycast(Controller.transform.position.add(new Vector3(0, 0.1, 0)), MoveDir.normalized, ForwardSpeed);
+		if (ForwardCast.Hit) {
+			const MoveForwardDist = ForwardCast.Pos.sub(Controller.transform.position.add(new Vector3(0, 0.1, 0))).magnitude + 0.1;
+			const GroundCast = Raycast(Controller.transform.position.add(new Vector3(0, 1.1, 0)).add(MoveDir.normalized.mul(MoveForwardDist)), Vector3.down, 1.1);
+			if (GroundCast.Hit) {
+				const Height = math.abs(GroundCast.Pos.y - Controller.transform.position.y);
+				let LastPos = Controller.transform.position;
+				Tween.Vector3(
+					TweenEasingFunction.OutSine,
+					0,
+					(Current) => {
+						const Diff = Current.sub(LastPos).WithY(0).add(Vector3.up.mul(Height));
+						LastPos = Current;
+
+						const UpCast = Raycast(Controller.transform.position, Diff.normalized, Diff.magnitude);
+						if (UpCast.Hit) Controller.Rigidbody.MovePosition(Controller.transform.position.add(Diff.normalized.mul(UpCast.Pos.sub(Controller.transform.position).magnitude)));
+						else Controller.Rigidbody.MovePosition(Controller.transform.position.add(Diff));
+					},
+					Controller.transform.position,
+					GroundCast.Pos,
+				);
+			}
 		}
 	}
 

@@ -3,8 +3,8 @@ import type { GearRegistryKey } from "./GearRegistry";
 import GearRegistrySingleton from "./GearRegistry";
 import GearObject from "./Object/GearObject";
 
-//type ValueOf<T> = T[keyof T];
-//type IntersectionToUnion<T> = T extends unknown ? keyof T : never;
+export type ValueOf<T> = T[keyof T];
+//export type IntersectionToUnion<T> = T extends unknown ? keyof T : never;
 
 export type ItemTypes = "Gear" | "Consumable" | "Resource" | "Key";
 export type GearSlots = "Grip" | "Core" | "Mod" | "Augment";
@@ -62,4 +62,33 @@ if (ENV.Runtime === "DEV") {
 			}
 		}
 	})();
+}
+
+export namespace World {
+	export enum BiomeTypes {
+		OCEAN,
+		PLAINS,
+		DESERT,
+		MOUNTAIN,
+		SNOW,
+	}
+}
+
+export namespace ItemEnums {
+	export enum ItemRarity {
+		COMMON,
+		UNCOMMON,
+		RARE,
+		EPIC,
+		LEGENDARY,
+		ADMINISTRATOR,
+	}
+
+	export enum ItemModelType {
+		IMAGE_GENERATED,
+	}
+}
+
+export namespace Client {
+	export type ValidStates = "Airborne" | "Grounded" | "Wallclutch" | "Wallclimb" | "Wallrun" | "LedgeGrab" | "Slide" | "Dropdown" | "Fly" | "LadderClimb" | "Zipline";
 }

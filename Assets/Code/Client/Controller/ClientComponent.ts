@@ -2,6 +2,7 @@ import { Game } from "@Easy/Core/Shared/Game";
 import { Bin } from "@Easy/Core/Shared/Util/Bin";
 import Core from "Code/Core/Core";
 import { Network } from "Code/Shared/Network";
+import { Client } from "Code/Shared/Types";
 import CFrame from "@inkyaker/CFrame/Code";
 import type GenericTrigger from "../Components/Collision/GenericTriggerComponent";
 import Config from "../Config";
@@ -16,8 +17,6 @@ import { MovesetBase } from "./Moveset/Base";
 import { MovesetGeneric } from "./Moveset/Generic";
 import { MovesetGrappler } from "./Moveset/Grappler";
 import { MovesetWorld } from "./Moveset/World";
-
-export type ValidStates = "Airborne" | "Grounded" | "Wallclutch" | "Wallclimb" | "Wallrun" | "LedgeGrab" | "Slide" | "Dropdown" | "Fly" | "LadderClimb" | "Zipline";
 
 @AirshipComponentMenu("Client/Controller/Physics Controller")
 export default class ClientComponent extends AirshipBehaviour {
@@ -59,8 +58,8 @@ export default class ClientComponent extends AirshipBehaviour {
 	@NonSerialized() public VelocityLocked = false;
 
 	// States
-	@NonSerialized() public State: ValidStates = "Airborne";
-	public MatchCameraStates: ValidStates[] = ["Airborne", "Grounded", "Fly"];
+	@NonSerialized() public State: Client.ValidStates = "Airborne";
+	public MatchCameraStates: Client.ValidStates[] = ["Airborne", "Grounded", "Fly"];
 	public FallIgnoreAnimations: ValidAnimation[] = [
 		"VM_JumpL",
 		"VM_JumpR",
@@ -186,6 +185,7 @@ export default class ClientComponent extends AirshipBehaviour {
 				}
 
 				this.Rigidbody.AddForce(Config.Gravity, ForceMode.Acceleration);
+				this.Moveset.Base.TryStepUp(this);
 
 				if (this.AnimationController.Current !== "VM_DamageHeavy") {
 					this.Moveset.Base.AccelerateToInput(this, FixedDT);
@@ -217,6 +217,8 @@ export default class ClientComponent extends AirshipBehaviour {
 				if (this.Rigidbody.linearVelocity.y < 0) this.LastFallSpeed = math.max(this.LastFallSpeed, -this.Rigidbody.linearVelocity.y);
 
 				this.Moveset.Base.AccelerateToInput(this, FixedDT);
+
+				this.Moveset.Base.TryStepUp(this);
 
 				if (this.Floor.Touching && this.Rigidbody.linearVelocity.y <= 3.25) {
 					this.Land();
@@ -298,8 +300,6 @@ export default class ClientComponent extends AirshipBehaviour {
 	override FixedUpdate(FixedDT: number) {
 		if (!this._LOADED) return;
 		this.Step(FixedDT);
-
-		Core().Client.WorldController.UpdateChunks(this);
 	}
 
 	public UpdateViewmodel() {
