@@ -595,6 +595,13 @@
 			"extends": [],
 			"singleton": true
 		},
+		"WorldController": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "Code\\Client\\Framework\\WorldController.lua",
+			"extends": [],
+			"singleton": true
+		},
 		"DataService": {
 			"component": true,
 			"type": "AirshipBehaviour",
@@ -1156,13 +1163,6 @@
 			"filePath": "Code\\Client\\Controller\\Modules\\Zipline\\ZiplineComponent.lua",
 			"extends": [],
 			"singleton": false
-		},
-		"WorldController": {
-			"component": true,
-			"type": "AirshipBehaviour",
-			"filePath": "Code\\Client\\Framework\\WorldController.lua",
-			"extends": [],
-			"singleton": true
 		}
 	},
 	"extends": {
@@ -1923,6 +1923,16 @@
 			"name": "SettingsController",
 			"id": "Code/Client/Framework/SettingsController@SettingsController",
 			"file": "Code/Client/Framework/SettingsController.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "WorldService",
+			"id": "Code/Server/WorldService@WorldService",
+			"file": "Code/Server/WorldService.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"
@@ -2900,16 +2910,6 @@
 				"default"
 			],
 			"inherits": []
-		},
-		{
-			"name": "WorldService",
-			"id": "Code/Server/WorldService@WorldService",
-			"file": "Code/Server/WorldService.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
 		}
 	],
 	"flamework": {
@@ -2940,6 +2940,7 @@
 			"typescript:Code/Client/Framework/DataController@DataController": "Client/Framework/DataController@DataController",
 			"typescript:Code/Client/UI/Drag/DraggableSlotComponent@DraggableSlotComponent": "Client/UI/Drag/DraggableSlotComponent@DraggableSlotComponent",
 			"typescript:Code/Client/UI/Drag/DragController@DragController": "Client/UI/Drag/DragController@DragController",
+			"typescript:Code/Client/Framework/WorldController@WorldController": "Client/Framework/WorldController@WorldController",
 			"typescript:Code/Server/Data/DataService@DataService": "Server/Data/DataService@DataService",
 			"typescript:Code/Shared/Object/GearObject@GearObject": "Shared/Object/GearObject@GearObject",
 			"typescript:Code/Shared/GearRegistry@GearRegistrySingleton": "Shared/GearRegistry@GearRegistrySingleton",
@@ -2953,8 +2954,7 @@
 			"typescript:Code/Shared/Object/TimeTrialObject@TimeTrialObject": "Shared/Object/TimeTrialObject@TimeTrialObject",
 			"typescript:Code/Client/Controller/Modules/TimeTrials/TimeTrialComponent@TimeTrialComponent": "Client/Controller/Modules/TimeTrials/TimeTrialComponent@TimeTrialComponent",
 			"typescript:Code/Client/Controller/Modules/Zipline/ZiplineComponent@ZiplineComponent": "Client/Controller/Modules/Zipline/ZiplineComponent@ZiplineComponent",
-			"typescript:Code/Shared/Object/SoundBankObject@SoundBankObject": "Shared/Object/SoundBankObject@SoundBankObject",
-			"typescript:Code/Client/Framework/WorldController@WorldController": "Client/Framework/WorldController@WorldController"
+			"typescript:Code/Shared/Object/SoundBankObject@SoundBankObject": "Shared/Object/SoundBankObject@SoundBankObject"
 		}
 	}
 }
