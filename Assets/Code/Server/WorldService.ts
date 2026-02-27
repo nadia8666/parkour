@@ -115,7 +115,7 @@ class ChunkManager {
 
 			resolve(true);
 		});
-
+		
 		const Action = () => {
 			const Origin = this.FromKey(ChunkKey);
 			const Positions: Vector3[] = [];
