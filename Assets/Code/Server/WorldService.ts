@@ -5,6 +5,7 @@
 import { Airship } from "@Easy/Core/Shared/Airship";
 import { MathUtil } from "@Easy/Core/Shared/Util/MathUtil";
 import Config from "Code/Client/Config";
+import { Settings } from "Code/Client/Framework/SettingsController";
 import Core from "Code/Core/Core";
 import { type PlayerInfoGetter, World } from "Code/Shared/Types";
 import { NoiseHandler } from "Code/Shared/Utility/Noise";
@@ -115,7 +116,7 @@ class ChunkManager {
 
 			resolve(true);
 		});
-		
+
 		const Action = () => {
 			const Origin = this.FromKey(ChunkKey);
 			const Positions: Vector3[] = [];
@@ -132,6 +133,8 @@ class ChunkManager {
 				LoadPosY = false;
 			let LoadNegZ = false,
 				LoadPosZ = false;
+
+			let ForcePropagate = false;
 
 			let IterationCount = 0;
 
@@ -200,6 +203,12 @@ class ChunkManager {
 							Blocks.push(Target);
 						}
 
+						// for large bodies of water
+						if (y === 15 && Target === this.GetBlock("Water")) {
+							LoadPosY = true;
+							ForcePropagate = true;
+						}
+
 						IterationCount++;
 						if (IterationCount >= 64) {
 							IterationCount = 0;
@@ -213,7 +222,7 @@ class ChunkManager {
 				instance().World.WriteVoxelGroupAt(Positions, Blocks, Priority);
 			}
 
-			this.TryPropagate(ChunkKey, LinkedPlayer, LoadNegX, LoadPosX, LoadNegY, LoadPosY, LoadNegZ, LoadPosZ, SurfaceMap, ContinentalMap);
+			this.TryPropagate(ChunkKey, LinkedPlayer, LoadNegX, LoadPosX, LoadNegY, LoadPosY, LoadNegZ, LoadPosZ, SurfaceMap, ContinentalMap, ForcePropagate);
 
 			Generated = true;
 		};
@@ -240,21 +249,24 @@ class ChunkManager {
 		pZ: boolean,
 		SurfaceMap: number[],
 		ContinentalMap: number[],
+		ForcePropagate: boolean = false,
 	) {
-		if (!LinkedPlayer) return;
+		if (!LinkedPlayer && !ForcePropagate) return;
 
-		const [Pos, Render] = [LinkedPlayer().Position, SettingsService.Settings.GetSetting("RenderDistance", LinkedPlayer().Player)];
+		const [Pos, Render] = ForcePropagate
+			? [Vector3.zero, Settings.RenderDistance]
+			: [LinkedPlayer!().Position, SettingsService.Settings.GetSetting("RenderDistance", LinkedPlayer!().Player)];
 
 		if (nX) this.CheckAndLoad(CenterKey.sub(new Vector3(1, 0, 0)), Pos, Render, undefined, undefined);
 		if (pX) this.CheckAndLoad(CenterKey.add(new Vector3(1, 0, 0)), Pos, Render, undefined, undefined);
 		if (nY) this.CheckAndLoad(CenterKey.sub(new Vector3(0, 1, 0)), Pos, Render, SurfaceMap, ContinentalMap);
-		if (pY) this.CheckAndLoad(CenterKey.add(new Vector3(0, 1, 0)), Pos, Render, SurfaceMap, ContinentalMap);
+		if (pY) this.CheckAndLoad(CenterKey.add(new Vector3(0, 1, 0)), Pos, Render, SurfaceMap, ContinentalMap, ForcePropagate);
 		if (nZ) this.CheckAndLoad(CenterKey.sub(new Vector3(0, 0, 1)), Pos, Render, undefined, undefined);
 		if (pZ) this.CheckAndLoad(CenterKey.add(new Vector3(0, 0, 1)), Pos, Render, undefined, undefined);
 	}
 
-	private CheckAndLoad(Key: Vector3, PlayerPos: Vector3, Dist: number, SurfaceMap: number[] | undefined, ContinentalMap: number[] | undefined) {
-		if (!this.LoadedChunks.has(Key) && this.IsChunkInRange(Key, PlayerPos, Dist)) {
+	private CheckAndLoad(Key: Vector3, PlayerPos: Vector3, Dist: number, SurfaceMap: number[] | undefined, ContinentalMap: number[] | undefined, ForcePropagate: boolean = false) {
+		if (!this.LoadedChunks.has(Key) && (this.IsChunkInRange(Key, PlayerPos, Dist) || ForcePropagate)) {
 			this.GenerateChunk(Key, SurfaceMap, ContinentalMap, false);
 		}
 	}
