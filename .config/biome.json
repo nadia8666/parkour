@@ -3,7 +3,8 @@
 		"rules": {
 			"style": {
 				"useConst": "off",
-				"useArrayLiterals": "off"
+				"useArrayLiterals": "off",
+				"noNonNullAssertion": "off"
 			},
 			"suspicious": {
 				"noAssignInExpressions": "off",

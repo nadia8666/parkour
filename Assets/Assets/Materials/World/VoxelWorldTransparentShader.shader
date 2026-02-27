@@ -1,4 +1,4 @@
-Shader "Unlit/VoxelWorldShader"
+Shader "Unlit/VoxelWorldTransparentShader"
 {
     Properties
     {
@@ -9,8 +9,8 @@ Shader "Unlit/VoxelWorldShader"
         Tags 
         { 
             "RenderPipeline" = "UniversalPipeline"
-            "RenderType" = "Opaque" 
-            "Queue" = "Geometry" 
+            "RenderType" = "Transparent" 
+            "Queue" = "Transparent" 
         }
 
         Pass
@@ -84,7 +84,7 @@ Shader "Unlit/VoxelWorldShader"
                 float light = SAMPLE_TEXTURE3D(_Lightmap, sampler_Lightmap, float3(uvw.x, floor(adjustedPos.y)/_GridSize.y, uvw.z)).r;
                 //half ao = SampleAmbientOcclusion(GetNormalizedScreenSpaceUV(input.positionCS));
 
-                return float4(triplanar.rgb * light, 1);
+                return float4(triplanar.rgb * light, triplanar.a);
             }
             ENDHLSL
         }

@@ -18,7 +18,7 @@ MonoBehaviour:
   meshMaterial: {fileID: 0}
   halfBlock: 0
   topTexture:
-    material: {fileID: 2100000, guid: 81caf0b4f4d2ac74e847cad8de1aa792, type: 2}
+    material: {fileID: 2100000, guid: 19eea971ade850b4f91673cf77739818, type: 2}
     diffuse: {fileID: 0}
     normal: {fileID: 0}
     smooth: {fileID: 0}

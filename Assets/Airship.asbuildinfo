@@ -1940,16 +1940,6 @@
 			"inherits": []
 		},
 		{
-			"name": "WorldService",
-			"id": "Code/Server/WorldService@WorldService",
-			"file": "Code/Server/WorldService.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
 			"name": "ServerService",
 			"id": "Code/Server/ServerService@ServerService",
 			"file": "Code/Server/ServerService.ts",
@@ -2906,6 +2896,16 @@
 			"id": "Code/Shared/Object/SoundBankObject@SoundBankObject",
 			"file": "Code/Shared/Object/SoundBankObject.ts",
 			"declarationType": "AirshipScriptableObject",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "WorldService",
+			"id": "Code/Server/WorldService@WorldService",
+			"file": "Code/Server/WorldService.ts",
+			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"
 			],
