@@ -9,6 +9,12 @@ export const Network = {
 		UpdateSetting: new NetworkSignal<[keyof Settings, ValueOf<Settings>]>("Network/Data/UpdateSetting"),
 	},
 
+	VoxelWorld: {
+		GetInitialChunks: new NetworkSignal<void>("Network/VoxelWorld/GetInitialChunks"),
+		WriteGroup: new NetworkSignal<[Vector3[], readonly number[]]>("Network/VoxelWorld/WriteGroup"),
+		WriteVoxel: new NetworkSignal<[Vector3, number]>("Network/VoxelWorld/WriteVoxel"),
+	},
+
 	Effect: {
 		Respawn: new NetworkSignal<void>("Network/Effect/Respawn"),
 	},

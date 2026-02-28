@@ -5,8 +5,6 @@ using System.Collections.Generic;
 
 public class ItemMeshBaker : UnityEditor.Editor
 {
-    private const float PPU = 100f;
-
     [MenuItem("Parkour/Bake Generated Item Meshes")]
     public static void Bake()
     {
@@ -20,7 +18,7 @@ public class ItemMeshBaker : UnityEditor.Editor
         {
             string path = AssetDatabase.GUIDToAssetPath(guids[i]);
             AirshipScriptableObject so = AssetDatabase.LoadAssetAtPath<AirshipScriptableObject>(path);
-            
+
             EditorUtility.DisplayProgressBar("Baking Meshes", $"Processing {so.name}...", (float)i / count);
 
             AirshipSerializedObject serObj = new AirshipSerializedObject(so);
@@ -45,7 +43,7 @@ public class ItemMeshBaker : UnityEditor.Editor
                 }
             }
         }
-        
+
         EditorUtility.ClearProgressBar();
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
@@ -75,6 +73,10 @@ public class ItemMeshBaker : UnityEditor.Editor
         List<Vector3> normals = new List<Vector3>();
         List<int> tris = new List<int>();
 
+        float maxDim = Mathf.Max(w, h);
+
+        Vector3 GetPos(float x, float y, float z) => new Vector3((x - w / 2f) / maxDim, (y - h / 2f) / maxDim, z);
+
         int GetOrAddVert(Vector3 pos, Vector3 normal)
         {
             Vector3 keyPos = new Vector3(
@@ -90,7 +92,23 @@ public class ItemMeshBaker : UnityEditor.Editor
             vertMap[key] = index;
             verts.Add(pos);
             normals.Add(normal);
-            uvs.Add(new Vector2((pos.x * PPU + w / 2f) / w, (pos.y * PPU + h / 2f) / h));
+
+            float px = pos.x * maxDim + w / 2f;
+            float py = pos.y * maxDim + h / 2f;
+            Vector2 uv = new Vector2(px / w, py / h);
+
+            if (Mathf.Abs(normal.z) < 0.5f)
+            {
+                float zT = Mathf.InverseLerp(-thickness / 2f, thickness / 2f, pos.z);
+
+                if (normal.x > 0.5f) uv.x = (px - 1f + zT) / w;
+                else if (normal.x < -0.5f) uv.x = (px + 1f - zT) / w;
+
+                if (normal.y > 0.5f) uv.y = (py - 1f + zT) / h;
+                else if (normal.y < -0.5f) uv.y = (py + 1f - zT) / h;
+            }
+
+            uvs.Add(uv);
             return index;
         }
 
@@ -113,8 +131,6 @@ public class ItemMeshBaker : UnityEditor.Editor
             AddTri(v1, v2, v3);
             AddTri(v1, v3, v4);
         }
-
-        Vector3 GetPos(float x, float y, float z) => new Vector3((x - w / 2f) / PPU, (y - h / 2f) / PPU, z);
 
         List<Rect> rects = new List<Rect>();
         bool[,] visited = new bool[w, h];

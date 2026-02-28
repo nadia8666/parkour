@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 242626de727c4fe4ab54046da100263e, type: 3}
-  m_Name: AmongEgg
+  m_Name: SmallRock
   m_EditorClassIdentifier: 
   _scriptPath: Assets/Code/Shared/Object/ItemObject.lua
   _script: {fileID: 8584805562991613271, guid: de804bd322c6ecf45b6590824c16802a, type: 3}
@@ -44,7 +44,7 @@ MonoBehaviour:
         - type: string
           serializedValue: '"Item Info"'
       nullable: 0
-      serializedValue: AmongEgg
+      serializedValue: SmallRock
       serializedObject: {fileID: 0}
       modified: 1
     - name: DisplayName
@@ -62,7 +62,7 @@ MonoBehaviour:
         tags: []
       decorators: []
       nullable: 0
-      serializedValue: Among Egg
+      serializedValue: Small Rock
       serializedObject: {fileID: 0}
       modified: 1
     - name: Rarity
@@ -121,8 +121,8 @@ MonoBehaviour:
           serializedValue: '"Renderer"'
       nullable: 0
       serializedValue: 
-      serializedObject: {fileID: 2800000, guid: bb8655d916c5b21468de3366f3723d5f, type: 3}
-      modified: 0
+      serializedObject: {fileID: 2800000, guid: 6fa372a23cf585342baff0253ba3bfb4, type: 3}
+      modified: 1
     - name: ItemThickness
       type: number
       objectType: 

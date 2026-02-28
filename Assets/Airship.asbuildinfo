@@ -1930,9 +1930,9 @@
 			"inherits": []
 		},
 		{
-			"name": "SettingsController",
-			"id": "Code/Client/Framework/SettingsController@SettingsController",
-			"file": "Code/Client/Framework/SettingsController.ts",
+			"name": "WorldService",
+			"id": "Code/Server/WorldService@WorldService",
+			"file": "Code/Server/WorldService.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"
@@ -2902,9 +2902,9 @@
 			"inherits": []
 		},
 		{
-			"name": "WorldService",
-			"id": "Code/Server/WorldService@WorldService",
-			"file": "Code/Server/WorldService.ts",
+			"name": "SettingsController",
+			"id": "Code/Client/Framework/SettingsController@SettingsController",
+			"file": "Code/Client/Framework/SettingsController.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"

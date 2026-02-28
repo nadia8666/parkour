@@ -79,7 +79,7 @@ Shader "Unlit/VoxelWorldTransparentShader"
                 float4 colZ = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, uvZ);
                 float4 triplanar = colX * blend.x + colY * blend.y + colZ * blend.z;
 
-                float3 adjustedPos = input.positionWS + (normal * 0.5);
+                float3 adjustedPos = input.positionWS + (normal * 0.1);
                 float3 uvw = (adjustedPos - _GridCenter.xyz + (_GridSize.xyz/2)) / _GridSize.xyz;
                 float light = SAMPLE_TEXTURE3D(_Lightmap, sampler_Lightmap, float3(uvw.x, floor(adjustedPos.y)/_GridSize.y, uvw.z)).r;
                 //half ao = SampleAmbientOcclusion(GetNormalizedScreenSpaceUV(input.positionCS));

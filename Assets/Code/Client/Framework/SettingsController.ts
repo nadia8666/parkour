@@ -14,7 +14,7 @@ export const Settings = {
 	FOV: 100,
 	CameraRotationLerp: 15,
 
-	RenderDistance: Game.IsEditor() ? 4 : 16,
+	RenderDistance: Game.IsEditor() ? 2 : 16,
 };
 export type Settings = typeof Settings;
 

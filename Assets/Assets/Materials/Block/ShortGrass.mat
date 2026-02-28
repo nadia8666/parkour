@@ -20,9 +20,9 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: GoldOre
-  m_Shader: {fileID: 4800000, guid: 61fe55996ace3fe4b8a95e252ac5ad81, type: 3}
-  m_Parent: {fileID: 2100000, guid: dcfc49c84e98c034bada8cddf63eadfe, type: 2}
+  m_Name: ShortGrass
+  m_Shader: {fileID: 4800000, guid: 2f809dd1fd6b45943b8b85f451dee7b8, type: 3}
+  m_Parent: {fileID: 2100000, guid: 7e472a261e3df86428c6a2fd2809e1a0, type: 2}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
   m_InvalidKeywords:
@@ -31,15 +31,14 @@ Material:
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: 2000
-  stringTagMap:
-    RenderType: Opaque
+  stringTagMap: {}
   disabledShaderPasses: []
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
     - _BaseMap:
-        m_Texture: {fileID: 2800000, guid: 6b28f1ee7a63d7e40ada854b8289d6db, type: 3}
+        m_Texture: {fileID: 2800000, guid: 4558b75894f16624795645d0b7dfa992, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Texture2DArrayAsset_4e965386d40f47d09f780b59f145f3dc_Out_0_Texture2DArray:
