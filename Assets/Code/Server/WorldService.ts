@@ -3,10 +3,11 @@
 //--!optimize 2
 
 import { Airship } from "@Easy/Core/Shared/Airship";
-import { MathUtil } from "@Easy/Core/Shared/Util/MathUtil";
+import { Game } from "@Easy/Core/Shared/Game";
 import Config from "Code/Client/Config";
 import { Settings } from "Code/Client/Framework/SettingsController";
 import Core from "Code/Core/Core";
+import { Network } from "Code/Shared/Network";
 import { type PlayerInfoGetter, World } from "Code/Shared/Types";
 import { NoiseHandler } from "Code/Shared/Utility/Noise";
 import { SettingsService } from "./SettingsService";
@@ -43,7 +44,7 @@ class ChunkManager {
 
 	public ExpandCube(Origin: Vector3, Size: number) {
 		const Positions: Vector3[] = [];
-		for (const x of $range(0, Size - 1)) for (const y of $range(0, Size - 1)) for (const z of $range(0, Size - 1)) Positions.push(Origin.add(new Vector3(x, y, z)));
+		for (const x of $range(0, Size)) for (const y of $range(0, Size)) for (const z of $range(0, Size)) Positions.push(Origin.add(new Vector3(x, y, z)));
 		return Positions;
 	}
 
@@ -54,9 +55,7 @@ class ChunkManager {
 	}
 
 	public IsChunkInRange(ChunkKey: Vector3, PlayerPosition: Vector3, RangeChunks: number): boolean {
-		const ChunkCenter = this.FromKey(ChunkKey).add(new Vector3(8, 8, 8));
-		const DistSq = ChunkCenter.sub(PlayerPosition).sqrMagnitude;
-		return DistSq <= RangeChunks * 16;
+		return ChunkKey.sub(this.ToKey(PlayerPosition)).magnitude <= RangeChunks;
 	}
 
 	public GetBiomeBlock(BiomeID: World.BiomeTypes, Depth: number, WorldY: number): number {
@@ -94,10 +93,8 @@ class ChunkManager {
 		const DistSq = PlayerPos ? ChunkCenter.sub(PlayerPos).sqrMagnitude : 0;
 
 		this.TaskQueue.push({ Key: ChunkKey, DistSq, Action });
-		//this.TaskQueue.sort((a, b) => a.DistSq > b.DistSq);
 	}
 
-	// TODO: at some point in time change this to cancel chunks that no players are near (better supports fast movements)
 	public ProcessQueue(Limit: number) {
 		for (let i = 0; i < Limit; i++) {
 			const Task = this.TaskQueue.pop();
@@ -199,8 +196,17 @@ class ChunkManager {
 							if (z === 0) LoadNegZ = true;
 							if (z === 15) LoadPosZ = true;
 						} else {
-							Positions.push(new Vector3(WorldX, WorldY, WorldZ));
+							const Position = new Vector3(WorldX, WorldY, WorldZ);
+							Positions.push(Position);
 							Blocks.push(Target);
+
+							const TargetPos = Position.add(Vector3.up);
+							if (Target === this.GetBlock("Grass") && math.random() <= 0.25 && instance().World.GetVoxelAt(TargetPos) === 0) {
+								if (!Positions.includes(TargetPos)) {
+									Positions.push(TargetPos);
+									Blocks.push(this.GetBlock("ShortGrass"));
+								}
+							}
 						}
 
 						// for large bodies of water
@@ -220,6 +226,9 @@ class ChunkManager {
 
 			if (Positions.size() > 0) {
 				instance().World.WriteVoxelGroupAt(Positions, Blocks, Priority);
+				if (!Game.IsHosting()) {
+					Network.VoxelWorld.WriteGroup.server.FireAllClients(Positions, Blocks);
+				}
 			}
 
 			this.TryPropagate(ChunkKey, LinkedPlayer, LoadNegX, LoadPosX, LoadNegY, LoadPosY, LoadNegZ, LoadPosZ, SurfaceMap, ContinentalMap, ForcePropagate);
@@ -251,11 +260,9 @@ class ChunkManager {
 		ContinentalMap: number[],
 		ForcePropagate: boolean = false,
 	) {
-		if (!LinkedPlayer && !ForcePropagate) return;
-
-		const [Pos, Render] = ForcePropagate
-			? [Vector3.zero, Settings.RenderDistance]
-			: [LinkedPlayer!().Position, SettingsService.Settings.GetSetting("RenderDistance", LinkedPlayer!().Player)];
+		const [Pos, Render] = LinkedPlayer
+			? [LinkedPlayer().Position, SettingsService.Settings.GetSetting("RenderDistance", LinkedPlayer().Player)]
+			: [Vector3.zero, Settings.RenderDistance];
 
 		if (nX) this.CheckAndLoad(CenterKey.sub(new Vector3(1, 0, 0)), Pos, Render, undefined, undefined);
 		if (pX) this.CheckAndLoad(CenterKey.add(new Vector3(1, 0, 0)), Pos, Render, undefined, undefined);
@@ -310,46 +317,51 @@ export default class WorldService extends AirshipSingleton {
 					const RenderDistance = SettingsService.Settings.GetSetting("RenderDistance", Player);
 
 					const Chunks = new Set<Vector3>();
-					const Keys = this.ChunkManager.ExpandCubePerAxis(
-						this.ChunkManager.ToKey(MathUtil.FloorVec(Position)).sub(new Vector3(RenderDistance / 2, 0, RenderDistance / 2)),
-						new Vector3(RenderDistance, 1, RenderDistance),
-					);
+					const Keys = this.ChunkManager.ExpandCube(this.ChunkManager.ToKey(Position).sub(Vector3.one.mul(RenderDistance / 2)), RenderDistance);
+
+					//print(Keys, Keys.size());
 
 					for (const [_, Key] of pairs(Keys)) {
-						if (this.ChunkManager.SurfaceLoadedChunks.has(Key.WithY(0))) continue;
-						this.ChunkManager.SurfaceLoadedChunks.add(Key.WithY(0));
-
 						const Origin = Key.mul(16);
 						const ContinentalBuffer = this.Noise.Get2DFBMBatch(Origin.x, Origin.z, 16, 16, new Array(256), 1, 0.0004, 3, 0.5, 2);
 						const DetailBuffer = this.Noise.Get2DFBMBatch(Origin.x, Origin.z, 16, 16, new Array(256), 2, 0.01, 4, 0.5, 2);
+						if (!Chunks.has(Key)) {
+							this.ChunkManager.GenerateChunk(Key, DetailBuffer, ContinentalBuffer, false, LinkedPlayer);
+							Chunks.add(Key);
+						}
 
-						let IterationCount = 0;
-						for (const x of $range(0, this.ChunkManager.ChunkSize - 1)) {
-							for (const z of $range(0, this.ChunkManager.ChunkSize - 1)) {
-								const WorldX = Origin.x + x;
-								const WorldZ = Origin.z + z;
+						if (!this.ChunkManager.SurfaceLoadedChunks.has(Key.WithY(0))) {
+							// Load surface chunk
+							this.ChunkManager.SurfaceLoadedChunks.add(Key.WithY(0));
 
-								const Continental = ContinentalBuffer[z * 16 + x];
-								const Detail = DetailBuffer[z * 16 + x];
-								const SurfaceY = this.ChunkManager.GetTerrainHeight(Continental, Detail);
+							let IterationCount = 0;
+							for (const x of $range(0, this.ChunkManager.ChunkSize - 1)) {
+								for (const z of $range(0, this.ChunkManager.ChunkSize - 1)) {
+									const WorldX = Origin.x + x;
+									const WorldZ = Origin.z + z;
 
-								const TopChunk = this.ChunkManager.ToKey(new Vector3(WorldX, SurfaceY, WorldZ));
+									const Continental = ContinentalBuffer[z * 16 + x];
+									const Detail = DetailBuffer[z * 16 + x];
+									const SurfaceY = this.ChunkManager.GetTerrainHeight(Continental, Detail);
 
-								if (!Chunks.has(TopChunk)) {
-									this.ChunkManager.GenerateChunk(TopChunk, DetailBuffer, ContinentalBuffer, false, LinkedPlayer);
-								}
-								Chunks.add(TopChunk);
+									const TopChunk = this.ChunkManager.ToKey(new Vector3(WorldX, SurfaceY, WorldZ));
+									const BottomChunk = TopChunk.sub(Vector3.up);
 
-								const BottomChunk = TopChunk.sub(Vector3.up);
-								if (!Chunks.has(BottomChunk)) {
-									this.ChunkManager.GenerateChunk(BottomChunk, DetailBuffer, ContinentalBuffer, false, LinkedPlayer);
-								}
-								Chunks.add(BottomChunk);
+									if (!Chunks.has(TopChunk)) {
+										this.ChunkManager.GenerateChunk(TopChunk, DetailBuffer, ContinentalBuffer, false, LinkedPlayer);
+										Chunks.add(TopChunk);
+									}
 
-								IterationCount++;
-								if (IterationCount >= 16) {
-									IterationCount = 0;
-									task.wait();
+									if (!Chunks.has(BottomChunk)) {
+										this.ChunkManager.GenerateChunk(BottomChunk, DetailBuffer, ContinentalBuffer, false, LinkedPlayer);
+										Chunks.add(BottomChunk);
+									}
+
+									IterationCount++;
+									if (IterationCount >= 16) {
+										IterationCount = 0;
+										task.wait();
+									}
 								}
 							}
 						}
@@ -363,6 +375,18 @@ export default class WorldService extends AirshipSingleton {
 
 	@Server()
 	override Start() {
+		Network.VoxelWorld.GetInitialChunks.server.OnClientEvent((Player) => {
+			if (Game.IsHosting()) return; // shared
+			while (!this.WorldReady) task.wait();
+
+			for (const [Chunk] of pairs(this.ChunkManager.LoadedChunks)) {
+				task.spawn(() => {
+					const PositionArray = this.ChunkManager.ExpandCube(this.ChunkManager.FromKey(Chunk), 15);
+					Network.VoxelWorld.WriteGroup.server.FireClient(Player, PositionArray, this.World.BulkReadVoxels(PositionArray));
+				});
+			}
+		});
+
 		Config.Seed = math.random(1, 2 ** 30);
 		print(`world seed: ${Config.Seed}`);
 		math.randomseed(Config.Seed);

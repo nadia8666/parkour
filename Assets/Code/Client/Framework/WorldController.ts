@@ -2,24 +2,27 @@
 //--!optimize 2
 
 import Core from "Code/Core/Core";
+import { Network } from "Code/Shared/Network";
 import { Settings } from "./SettingsController";
 
 export default class WorldController extends AirshipSingleton {
 	public World: VoxelWorld;
-	public LightingTexture: Texture3D;
+	@NonSerialized() public LightingTexture: Texture3D;
 	@NonSerialized() public ActorPosition = Vector3.zero;
 	private ChunkSize = 16;
-	public Resolution = this.ChunkSize * Settings.RenderDistance;
+	@NonSerialized() public Resolution = this.ChunkSize * Settings.RenderDistance;
 
 	private IsDirty = true;
 	private LastChunkPos = Vector3.zero;
 
 	@Client()
 	public Start() {
+		Network.VoxelWorld.WriteGroup.client.OnServerEvent((PosArr, Blocks) => this.World.WriteVoxelGroupAt(PosArr, Blocks, false));
+
 		this.LightingTexture = new Texture3D(this.Resolution, this.Resolution, this.Resolution, TextureFormat.R8, false, true);
 		const Pixels: Color[] = [];
 		for (const _ of $range(0, this.Resolution ** 3)) {
-			Pixels.push(new Color(math.random(0, 255) / 255, 0, 0, 1));
+			Pixels.push(new Color(1, 0, 0, 1));
 		}
 		this.LightingTexture.SetPixels(Pixels);
 		this.LightingTexture.filterMode = FilterMode.Point;
@@ -30,6 +33,8 @@ export default class WorldController extends AirshipSingleton {
 		this.World.VoxelChunkUpdated.Connect((_Chunk) => {
 			this.IsDirty = true;
 		});
+
+		Network.VoxelWorld.GetInitialChunks.client.FireServer();
 	}
 
 	@Client()
