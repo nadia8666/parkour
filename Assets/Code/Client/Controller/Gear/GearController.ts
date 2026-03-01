@@ -104,6 +104,6 @@ export default class GearController extends AirshipSingleton {
 	public GetItem(ID: InventoryKey) {
 		if (ID === "None") return;
 
-		return Core().Client.Data.GetLink().Data.Inventory[ID];
+		return Core().Client.Data.GetLink().Data.Inventories.Player.Content[ID];
 	}
 }

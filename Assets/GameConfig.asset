@@ -19,8 +19,8 @@ MonoBehaviour:
   packages:
   - id: '@Easy/Core'
     assetVersion: 417
-    codeVersion: 1083
-    publishVersionNumber: 816
+    codeVersion: 1084
+    publishVersionNumber: 817
     game: 0
     localSource: 0
     disabled: 0

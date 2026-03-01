@@ -9,13 +9,12 @@ export enum CallbackType {
 	Inventory,
 }
 
-const AllSlots: DraggableSlotComponent[] = [];
+const AllSlots = new Set<DraggableSlotComponent>();
 
 export default class DraggableSlotComponent extends AirshipBehaviour {
 	private Connections = new Bin();
 
 	@Header("References")
-	public Text: TMP_Text;
 
 	@Header("Config")
 	@SerializeField()
@@ -28,7 +27,7 @@ export default class DraggableSlotComponent extends AirshipBehaviour {
 	public LS_TargetSlot: GearSlots;
 	@ShowIf("CallbackType", CallbackType.Loadout)
 	public LS_SlotID: number;
-	public Tooltip: TooltipComponent;
+	public Tooltip: TooltipComponent | undefined;
 
 	// InventorySlot
 
@@ -44,7 +43,7 @@ export default class DraggableSlotComponent extends AirshipBehaviour {
 		);
 
 		if (this.CallbackType === CallbackType.Loadout) {
-			AllSlots.push(this);
+			AllSlots.add(this);
 			this.LS_FetchSlotContents();
 		} else {
 			this.UpdateFilled();
@@ -55,8 +54,7 @@ export default class DraggableSlotComponent extends AirshipBehaviour {
 	override OnDisable() {
 		this.Connections.Clean();
 
-		const Index = AllSlots.indexOf(this);
-		if (Index !== -1) AllSlots.unorderedRemove(Index);
+		AllSlots.delete(this);
 	}
 
 	public IsDraggable() {
@@ -68,12 +66,7 @@ export default class DraggableSlotComponent extends AirshipBehaviour {
 	}
 
 	public UpdateFilled() {
-		if (this.SlotContents) {
-			this.Text.text = Core().Client.Gear.GetName(this.SlotContents);
-		} else {
-			this.Text.text = "";
-		}
-
+		if (!this.Tooltip) return;
 		const IsGear = this.SlotContents?.Type === "Gear";
 		if (this.SlotContents) {
 			if (IsGear) {
@@ -100,7 +93,6 @@ export default class DraggableSlotComponent extends AirshipBehaviour {
 			const TargetIsLoadout = Target.CallbackType === CallbackType.Loadout;
 
 			if (TargetIsLoadout) {
-				// biome-ignore lint/style/noNonNullAssertion: cannot drag unfilled slots
 				if (Core().Client.Gear.TryEquipGear(Target.LS_TargetSlot, Target.LS_SlotID, this.SlotContents!)) Target.LS_ReloadAllSlots();
 			}
 		} else {
@@ -112,7 +104,7 @@ export default class DraggableSlotComponent extends AirshipBehaviour {
 	}
 
 	public LS_ReloadAllSlots() {
-		for (const [_, Slot] of pairs(AllSlots)) {
+		for (const [Slot] of pairs(AllSlots)) {
 			Slot.LS_FetchSlotContents();
 		}
 	}
