@@ -18,7 +18,6 @@ export default class UIController extends AirshipSingleton {
 	public UICamera: Camera;
 
 	@Header("References")
-	public EquipmentMenu: GameObject;
 	public Inventory: GameObject;
 	public Loading: GameObject;
 	public TooltipTransform: RectTransform;
@@ -71,7 +70,7 @@ export default class UIController extends AirshipSingleton {
 
 		const SortedList: { [Index: string]: [Transform, AnyItem][] } = {};
 
-		for (const [_Index, Value] of pairs(Core().Client.Data.GetLink().Data.Inventory)) {
+		for (const [_Index, Value] of pairs(Core().Client.Data.GetLink().Data.Inventories.Player.Content)) {
 			if (Value.Type === "Gear") {
 				const GearSlot = Instantiate(Asset.LoadAsset("Assets/Resources/UI/ItemSlot.prefab"));
 				this.Contents.push(GearSlot);
@@ -119,7 +118,6 @@ export default class UIController extends AirshipSingleton {
 	}
 
 	public CloseCenterMenus() {
-		this.EquipmentMenu.SetActive(false);
 		this.Inventory.SetActive(false);
 	}
 
@@ -128,7 +126,6 @@ export default class UIController extends AirshipSingleton {
 			Mouse.WarpCursorPosition(new Vector2(Camera.main.pixelWidth, Camera.main.pixelHeight).div(2));
 
 			// TEMP
-			this.EquipmentMenu.SetActive(true);
 			this.Inventory.SetActive(true);
 
 			this.Connections.Add(Mouse.AddUnlocker());
@@ -151,7 +148,7 @@ export default class UIController extends AirshipSingleton {
 
 		if (HoverTarget !== this.LastTooltipObject) {
 			this.LastTooltipObject = HoverTarget;
-			
+
 			const Target = TooltipComponent.Get(HoverTarget);
 
 			if (Target) {

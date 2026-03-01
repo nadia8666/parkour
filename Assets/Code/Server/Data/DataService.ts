@@ -55,7 +55,7 @@ export default class DataService extends AirshipSingleton {
 			for (const Version of $range(0, DataTemplate.DataVersion)) {
 				switch (Version) {
 					case 0:
-						ExistingData.Inventory = deepCopy(DataTemplate.Inventory);
+						ExistingData.Inventories = deepCopy(DataTemplate.Inventories);
 						ExistingData.EquippedGear = deepCopy(DataTemplate.EquippedGear);
 						break;
 				}
@@ -63,7 +63,7 @@ export default class DataService extends AirshipSingleton {
 		}
 
 		if (ENV.Runtime === "DEV") {
-			ExistingData.Inventory = deepCopy(DataTemplate.Inventory);
+			ExistingData.Inventories = deepCopy(DataTemplate.Inventories);
 		}
 
 		this.DataMap[Key] = new DualLink(Key, ExistingData, {
@@ -99,7 +99,6 @@ export default class DataService extends AirshipSingleton {
 			task.wait();
 		}
 
-		// biome-ignore lint/style/noNonNullAssertion: it exists
 		return this.GetPlayerData(Key)!;
 	}
 

@@ -15,9 +15,15 @@ export interface ItemInfo<Type extends ItemTypes> {
 	Level: Type extends "Gear" ? number : undefined;
 	ObtainedTime: number;
 	UID: string;
+	Temporary?: boolean;
 }
 
 export type AnyItem = ItemInfo<ItemTypes>;
+
+export interface Inventory {
+	Size: number;
+	Content: { [Index: string]: ItemInfo<ItemTypes> };
+}
 
 export interface DataFormat {
 	EquippedGear: {
@@ -26,12 +32,12 @@ export interface DataFormat {
 		Mod: [InventoryKey, InventoryKey];
 		Augment: [InventoryKey, InventoryKey, InventoryKey];
 	};
-	Inventory: { [Index: string]: ItemInfo<ItemTypes> };
+	Inventories: { [Index: string]: Inventory };
 	TrialRecords: { [Index: string]: number | undefined };
 	DataVersion: number;
 }
 
-export type InventoryKey = keyof DataFormat["Inventory"];
+export type InventoryKey = keyof DataFormat["Inventories"];
 
 export const DataTemplate: DataFormat = {
 	EquippedGear: {
@@ -40,7 +46,16 @@ export const DataTemplate: DataFormat = {
 		Mod: ["None", "None"],
 		Augment: ["None", "None", "None"],
 	},
-	Inventory: {},
+	Inventories: {
+		Player: {
+			Size: 10,
+			Content: {},
+		},
+		Hotbar: {
+			Size: 10,
+			Content: {},
+		},
+	},
 	TrialRecords: {},
 	DataVersion: 1,
 };
@@ -48,16 +63,22 @@ export const DataTemplate: DataFormat = {
 if (ENV.Runtime === "DEV") {
 	// intentionally NOT using core as this module is preloaded core
 	(() => {
+		DataTemplate.Inventories.Debug = {
+			Size: 10,
+			Content: {},
+		};
+
 		for (const [GearID, Gear] of pairs(GearRegistrySingleton.Get())) {
 			if (Gear instanceof GearObject) {
 				for (const Level of $range(1, Gear.MaxLevel)) {
 					const ID = `Debug${GearID}${Level}`;
-					DataTemplate.Inventory[ID] = {
+					DataTemplate.Inventories.Debug.Content[ID] = {
 						Type: "Gear",
 						Key: GearID,
 						Level: Level,
 						ObtainedTime: 0,
 						UID: ID,
+						Temporary: true,
 					};
 				}
 			}
