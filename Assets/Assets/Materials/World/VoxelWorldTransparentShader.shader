@@ -18,7 +18,7 @@ Shader "Unlit/VoxelWorldTransparentShader"
             Name "ForwardLit"
             Tags { "LightMode" = "UniversalForward" }
 
-            ZWrite On
+            ZWrite Off
             ZTest LEqual
             Cull Back
             Blend SrcAlpha OneMinusSrcAlpha
