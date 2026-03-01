@@ -22,7 +22,7 @@ export default class DragController extends AirshipSingleton {
 
 		const NewSlot = UI.GetAirshipComponent<DraggableSlotComponent>()!;
 		NewSlot.SlotContents = Slot.SlotContents;
-		NewSlot.UpdateFilled();
+		NewSlot.UpdateContents();
 
 		this.CurrentUI = UI.transform as RectTransform;
 	}
@@ -42,7 +42,9 @@ export default class DragController extends AirshipSingleton {
 		if (this.CurrentDrag) {
 			if (Mouse.isLeftDown) {
 				const Pos = Mouse.position;
-				this.CurrentUI!.localPosition = Core().Client.UI.GetMouseLocalPosition(this.CurrentUI!.parent as RectTransform, new Vector3(Pos.x, Pos.y, 0)).WithZ(-50);
+				this.CurrentUI!.localPosition = Core()
+					.Client.UI.GetMouseLocalPosition(this.CurrentUI!.parent as RectTransform, new Vector3(Pos.x, Pos.y, 0))
+					.WithZ(-50);
 			} else {
 				this.EndDrag();
 			}

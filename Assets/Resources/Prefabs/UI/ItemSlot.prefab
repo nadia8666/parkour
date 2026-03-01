@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 5897814645519397629}
   - component: {fileID: 8496376345205227413}
   - component: {fileID: 3874579303399803206}
+  - component: {fileID: 2731064001715974787}
   m_Layer: 5
   m_Name: ItemSlot
   m_TagString: Untagged
@@ -212,6 +213,47 @@ MonoBehaviour:
         objectRefs: []
       refPath: 
       fileRef: Code/Client/Components/TooltipComponent.ts
+      jsDocs:
+        text: []
+        tags: []
+      decorators: []
+      nullable: 0
+      serializedValue: 
+      serializedObject: {fileID: 2731064001715974787}
+      modified: 1
+    displayIcon: {fileID: 0}
+    displayName: 
+--- !u!114 &2731064001715974787
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7502504890089645172}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa4feffba88dce746a2607f0ec6233b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  guid: e61fd806-8599-477b-8f19-0939f9c39476
+  script: {fileID: -2821057540941615920, guid: 781c2b74a15fffe40adf098916b74ca2, type: 3}
+  scriptPath: Assets/Code/Client/Components/TooltipComponent.lua
+  forceContext: 0
+  metadata:
+    name: TooltipComponent
+    singleton: 0
+    decorators: []
+    properties:
+    - name: TooltipString
+      type: string
+      objectType: 
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: 
       jsDocs:
         text: []
         tags: []

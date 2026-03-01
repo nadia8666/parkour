@@ -1,7 +1,7 @@
 import { Signal } from "@Easy/Core/Shared/Util/Signal";
 import Core from "Code/Core/Core";
 import type { GearRegistryKey } from "Code/Shared/GearRegistry";
-import type { ItemInfo } from "Code/Shared/Types";
+import type { ItemInfo, ItemTypes } from "Code/Shared/Types";
 
 export const ForceRefreshGearSignal = new Signal();
 const RecacheSignal = new Signal();
@@ -20,7 +20,7 @@ function InitializeCache() {
 		for (const [_, Gear] of pairs(Core().Client.Objective.TimeTrials.TrialGear ?? Link.Data.EquippedGear)) {
 			for (const [_, Value] of pairs(Gear)) {
 				if (Value !== "None") {
-					const Item = Core().Client.Gear.GetItem(Value) as ItemInfo<"Gear">;
+					const Item = Core().Client.Gear.GetItem(Value)[0] as ItemInfo<ItemTypes.Gear>;
 					if (!Item) continue;
 					CacheMap[Item.Key] = Item.Level;
 				}

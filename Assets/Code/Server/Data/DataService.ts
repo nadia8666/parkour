@@ -1,8 +1,10 @@
 import { Airship, Platform } from "@Easy/Core/Shared/Airship";
 import type { Player } from "@Easy/Core/Shared/Player/Player";
 import { deepCopy as DeepCopy, deepCopy } from "@Easy/Core/Shared/Util/ObjectUtils";
+import GearRegistrySingleton from "Code/Shared/GearRegistry";
 import { Network } from "Code/Shared/Network";
-import { type DataFormat, DataTemplate } from "Code/Shared/Types";
+import GearObject from "Code/Shared/Object/GearObject";
+import { type DataFormat, DataTemplate, ItemTypes } from "Code/Shared/Types";
 import { DualLink } from "@inkyaker/DualLink/Code";
 import ENV from "../ENV";
 
@@ -107,6 +109,36 @@ export default class DataService extends AirshipSingleton {
 		Network.Data.GetInitialData.server.SetCallback((Player) => {
 			return this.WaitForPlayerData(this.Key(Player)) as DataFormat;
 		});
+
+		if (ENV.Runtime === "DEV") {
+			// intentionally NOT using core as this module is preloaded core
+			(() => {
+				let Elements = 0;
+				DataTemplate.Inventories.Debug = {
+					Size: 10,
+					Content: {},
+				};
+
+				for (const [GearID, Gear] of pairs(GearRegistrySingleton.Get())) {
+					if (Gear instanceof GearObject) {
+						for (const Level of $range(1, Gear.MaxLevel)) {
+							const ID = `Debug${GearID}${Level}`;
+							Elements++;
+							DataTemplate.Inventories.Debug.Content[Elements] = {
+								Type: ItemTypes.Gear,
+								Key: GearID,
+								Level: Level,
+								Amount: 1,
+								ObtainedTime: 0,
+								UID: ID,
+								Temporary: true,
+							};
+						}
+					}
+				}
+				DataTemplate.Inventories.Debug.Size = Elements;
+			})();
+		}
 
 		Airship.Players.ObservePlayers((Player) => {
 			const Key = this.Key(Player);

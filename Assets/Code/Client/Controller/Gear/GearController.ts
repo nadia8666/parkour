@@ -2,7 +2,7 @@ import { deepCopy as DeepCopy } from "@Easy/Core/Shared/Util/ObjectUtils";
 import { WithGear } from "Code/Client/Config";
 import Core from "Code/Core/Core";
 import type { GearRegistryKey } from "Code/Shared/GearRegistry";
-import type { AnyItem, GearSlots, InventoryKey, ItemInfo } from "Code/Shared/Types";
+import { type AnyItem, type GearSlots, type InventoryKey, type ItemInfo, ItemTypes } from "Code/Shared/Types";
 
 const MaxAmmo = {
 	Wallrun: 2,
@@ -56,9 +56,9 @@ export default class GearController extends AirshipSingleton {
 
 	// Gear functions
 	public TryEquipGear(Slot: GearSlots, Index: number, Contents?: AnyItem) {
-		if (Contents && Contents.Type !== "Gear") return;
+		if (Contents && Contents.Type !== ItemTypes.Gear) return;
 
-		const Key = Contents ? (Contents as ItemInfo<"Gear">).Key : "None";
+		const Key = Contents ? (Contents as ItemInfo<ItemTypes.Gear>).Key : "None";
 		const Gear = Core().Gear[Key];
 		if (Key === "None" ? false : Gear.Slot !== Slot) return;
 
@@ -81,7 +81,7 @@ export default class GearController extends AirshipSingleton {
 		const Slot = Core().Client.Data.GetLink().Data.EquippedGear[Gear.Slot];
 
 		for (const [_, ID] of pairs(Slot)) {
-			const Item = this.GetItem(ID) as ItemInfo<"Gear">;
+			const Item = this.GetItem(ID)[0] as ItemInfo<ItemTypes.Gear>;
 			if (!Item) continue;
 			if (Item.Key === GearName && Item.Level >= Level) {
 				return true;
@@ -93,8 +93,8 @@ export default class GearController extends AirshipSingleton {
 
 	// Utillity
 	public GetName(Item: AnyItem) {
-		if (Item.Type === "Gear") {
-			return Core().Gear[(Item as ItemInfo<"Gear">).Key].Name;
+		if (Item.Type === ItemTypes.Gear) {
+			return Core().Gear[(Item as ItemInfo<ItemTypes.Gear>).Key].Name;
 		} else {
 			// TEMP
 			return Item.Key;
@@ -102,8 +102,20 @@ export default class GearController extends AirshipSingleton {
 	}
 
 	public GetItem(ID: InventoryKey) {
-		if (ID === "None") return;
+		if (ID === "None") return $tuple(undefined, undefined);
 
-		return Core().Client.Data.GetLink().Data.Inventories.Player.Content[ID];
+		let [Inventory, Item]: [string | undefined, ItemInfo<ItemTypes> | undefined] = [undefined, undefined];
+
+		for (const [Inv, Data] of pairs(Core().Client.Data.GetLink().Data.Inventories)) {
+			for (const [_, Value] of pairs(Data.Content)) {
+				if (Value.UID === ID) {
+					Inventory = Inv as string;
+					Item = Value;
+					break;
+				}
+			}
+		}
+
+		return $tuple(Item, Inventory);
 	}
 }

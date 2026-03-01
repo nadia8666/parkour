@@ -419,11 +419,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1211522989}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &38957957 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7502504890089645172, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
-  m_PrefabInstance: {fileID: 273455146}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &117776273
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -509,8 +504,7 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1310245901}
+  m_Children: []
   m_Father: {fileID: 1158958235}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -583,7 +577,7 @@ PrefabInstance:
     - target: {fileID: 3874579303399803206, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
       propertyPath: metadata.properties.Array.data[4].serializedObject
       value: 
-      objectReference: {fileID: 135500395}
+      objectReference: {fileID: 135500394}
     - target: {fileID: 5269592383721820451, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -659,62 +653,24 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 7502504890089645172, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 135500395}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
 --- !u!224 &135500393 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 5269592383721820451, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
   m_PrefabInstance: {fileID: 135500392}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &135500394 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7502504890089645172, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
+--- !u!114 &135500394 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2731064001715974787, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
   m_PrefabInstance: {fileID: 135500392}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &135500395
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 135500394}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fa4feffba88dce746a2607f0ec6233b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  guid: 41437b9f-d6c0-42df-b633-c27127d5ba12
-  script: {fileID: -2821057540941615920, guid: 781c2b74a15fffe40adf098916b74ca2, type: 3}
-  scriptPath: Assets/Code/Client/Components/TooltipComponent.lua
-  forceContext: 0
-  metadata:
-    name: TooltipComponent
-    singleton: 0
-    decorators: []
-    properties:
-    - name: TooltipString
-      type: string
-      objectType: 
-      items:
-        type: 
-        objectType: 
-        serializedItems: []
-        objectRefs: []
-      refPath: 
-      fileRef: 
-      jsDocs:
-        text: []
-        tags: []
-      decorators: []
-      nullable: 0
-      serializedValue: 
-      serializedObject: {fileID: 0}
-      modified: 0
-    displayIcon: {fileID: 0}
-    displayName: 
 --- !u!1 &233085357
 GameObject:
   m_ObjectHideFlags: 0
@@ -808,7 +764,7 @@ PrefabInstance:
     - target: {fileID: 3874579303399803206, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
       propertyPath: metadata.properties.Array.data[4].serializedObject
       value: 
-      objectReference: {fileID: 273455152}
+      objectReference: {fileID: 273455148}
     - target: {fileID: 5269592383721820451, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -884,57 +840,24 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 7502504890089645172, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 273455152}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
 --- !u!224 &273455147 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 5269592383721820451, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
   m_PrefabInstance: {fileID: 273455146}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &273455152
+--- !u!114 &273455148 stripped
 MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 2731064001715974787, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
+  m_PrefabInstance: {fileID: 273455146}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 38957957}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fa4feffba88dce746a2607f0ec6233b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  guid: 59fd2dd2-2ff5-4cb6-ab61-315cfd39aad9
-  script: {fileID: -2821057540941615920, guid: 781c2b74a15fffe40adf098916b74ca2, type: 3}
-  scriptPath: Assets/Code/Client/Components/TooltipComponent.lua
-  forceContext: 0
-  metadata:
-    name: TooltipComponent
-    singleton: 0
-    decorators: []
-    properties:
-    - name: TooltipString
-      type: string
-      objectType: 
-      items:
-        type: 
-        objectType: 
-        serializedItems: []
-        objectRefs: []
-      refPath: 
-      fileRef: 
-      jsDocs:
-        text: []
-        tags: []
-      decorators: []
-      nullable: 0
-      serializedValue: 
-      serializedObject: {fileID: 0}
-      modified: 0
-    displayIcon: {fileID: 0}
-    displayName: 
 --- !u!1 &281187487
 GameObject:
   m_ObjectHideFlags: 0
@@ -1073,7 +996,7 @@ PrefabInstance:
     - target: {fileID: 3874579303399803206, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
       propertyPath: metadata.properties.Array.data[4].serializedObject
       value: 
-      objectReference: {fileID: 359317691}
+      objectReference: {fileID: 359317690}
     - target: {fileID: 5269592383721820451, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -1153,62 +1076,24 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 7502504890089645172, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 359317691}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
 --- !u!224 &359317689 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 5269592383721820451, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
   m_PrefabInstance: {fileID: 359317688}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &359317690 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7502504890089645172, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
+--- !u!114 &359317690 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2731064001715974787, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
   m_PrefabInstance: {fileID: 359317688}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &359317691
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 359317690}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fa4feffba88dce746a2607f0ec6233b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  guid: e38da4c1-6509-4567-b1fc-dc3cc72b4a63
-  script: {fileID: -2821057540941615920, guid: 781c2b74a15fffe40adf098916b74ca2, type: 3}
-  scriptPath: Assets/Code/Client/Components/TooltipComponent.lua
-  forceContext: 0
-  metadata:
-    name: TooltipComponent
-    singleton: 0
-    decorators: []
-    properties:
-    - name: TooltipString
-      type: string
-      objectType: 
-      items:
-        type: 
-        objectType: 
-        serializedItems: []
-        objectRefs: []
-      refPath: 
-      fileRef: 
-      jsDocs:
-        text: []
-        tags: []
-      decorators: []
-      nullable: 0
-      serializedValue: 
-      serializedObject: {fileID: 0}
-      modified: 0
-    displayIcon: {fileID: 0}
-    displayName: 
 --- !u!1 &372983716
 GameObject:
   m_ObjectHideFlags: 0
@@ -1391,7 +1276,7 @@ PrefabInstance:
     - target: {fileID: 3874579303399803206, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
       propertyPath: metadata.properties.Array.data[4].serializedObject
       value: 
-      objectReference: {fileID: 556215311}
+      objectReference: {fileID: 556215310}
     - target: {fileID: 5269592383721820451, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -1467,62 +1352,24 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 7502504890089645172, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 556215311}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
 --- !u!224 &556215309 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 5269592383721820451, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
   m_PrefabInstance: {fileID: 556215308}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &556215310 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7502504890089645172, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
+--- !u!114 &556215310 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2731064001715974787, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
   m_PrefabInstance: {fileID: 556215308}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &556215311
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 556215310}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fa4feffba88dce746a2607f0ec6233b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  guid: d374287b-33f0-4e8e-b2e7-8c497948dbdc
-  script: {fileID: -2821057540941615920, guid: 781c2b74a15fffe40adf098916b74ca2, type: 3}
-  scriptPath: Assets/Code/Client/Components/TooltipComponent.lua
-  forceContext: 0
-  metadata:
-    name: TooltipComponent
-    singleton: 0
-    decorators: []
-    properties:
-    - name: TooltipString
-      type: string
-      objectType: 
-      items:
-        type: 
-        objectType: 
-        serializedItems: []
-        objectRefs: []
-      refPath: 
-      fileRef: 
-      jsDocs:
-        text: []
-        tags: []
-      decorators: []
-      nullable: 0
-      serializedValue: 
-      serializedObject: {fileID: 0}
-      modified: 0
-    displayIcon: {fileID: 0}
-    displayName: 
 --- !u!1 &641960190
 GameObject:
   m_ObjectHideFlags: 0
@@ -2185,6 +2032,46 @@ MonoBehaviour:
       nullable: 0
       serializedValue: 
       serializedObject: {fileID: 898971900}
+      modified: 1
+    - name: HotbarSlot
+      type: object
+      objectType: GameObject
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators: []
+      nullable: 0
+      serializedValue: 
+      serializedObject: {fileID: 7502504890089645172, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
+      modified: 0
+    - name: HotbarRef
+      type: object
+      objectType: RectTransform
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators:
+      - name: Header
+        parameters:
+        - type: string
+          serializedValue: '"References/Hotbar"'
+      nullable: 0
+      serializedValue: 
+      serializedObject: {fileID: 134115520}
       modified: 1
     displayIcon: {fileID: 0}
     displayName: 
@@ -3387,7 +3274,7 @@ PrefabInstance:
     - target: {fileID: 3874579303399803206, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
       propertyPath: metadata.properties.Array.data[4].serializedObject
       value: 
-      objectReference: {fileID: 1059528158}
+      objectReference: {fileID: 1059528157}
     - target: {fileID: 5269592383721820451, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -3463,62 +3350,24 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 7502504890089645172, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1059528158}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
 --- !u!224 &1059528156 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 5269592383721820451, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
   m_PrefabInstance: {fileID: 1059528155}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1059528157 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7502504890089645172, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
+--- !u!114 &1059528157 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2731064001715974787, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
   m_PrefabInstance: {fileID: 1059528155}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1059528158
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1059528157}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fa4feffba88dce746a2607f0ec6233b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  guid: 12c1aa8f-2bb3-40ab-a984-b43f5e65999e
-  script: {fileID: -2821057540941615920, guid: 781c2b74a15fffe40adf098916b74ca2, type: 3}
-  scriptPath: Assets/Code/Client/Components/TooltipComponent.lua
-  forceContext: 0
-  metadata:
-    name: TooltipComponent
-    singleton: 0
-    decorators: []
-    properties:
-    - name: TooltipString
-      type: string
-      objectType: 
-      items:
-        type: 
-        objectType: 
-        serializedItems: []
-        objectRefs: []
-      refPath: 
-      fileRef: 
-      jsDocs:
-        text: []
-        tags: []
-      decorators: []
-      nullable: 0
-      serializedValue: 
-      serializedObject: {fileID: 0}
-      modified: 0
-    displayIcon: {fileID: 0}
-    displayName: 
 --- !u!1001 &1069967829
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4332,11 +4181,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 281187488}
   m_LocalEulerAnglesHint: {x: 32.456, y: -381.112, z: -737.058}
---- !u!224 &1310245901 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 5269592383721820451, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
-  m_PrefabInstance: {fileID: 3408867821358789406}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1311038258
 GameObject:
   m_ObjectHideFlags: 0
@@ -4523,10 +4367,6 @@ PrefabInstance:
       propertyPath: metadata.properties.Array.data[3].serializedValue
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 3874579303399803206, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
-      propertyPath: metadata.properties.Array.data[4].serializedObject
-      value: 
-      objectReference: {fileID: 1503622480}
     - target: {fileID: 5269592383721820451, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -4577,7 +4417,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5269592383721820451, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 84.1
+      value: 84.099976
       objectReference: {fileID: 0}
     - target: {fileID: 5269592383721820451, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -4602,10 +4442,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 7502504890089645172, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1503622480}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
 --- !u!224 &1407251868 stripped
 RectTransform:
@@ -4677,52 +4514,6 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
---- !u!1 &1503622475 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7502504890089645172, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
-  m_PrefabInstance: {fileID: 1407251867}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1503622480
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1503622475}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fa4feffba88dce746a2607f0ec6233b4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  guid: e61fd806-8599-477b-8f19-0939f9c39476
-  script: {fileID: -2821057540941615920, guid: 781c2b74a15fffe40adf098916b74ca2, type: 3}
-  scriptPath: Assets/Code/Client/Components/TooltipComponent.lua
-  forceContext: 0
-  metadata:
-    name: TooltipComponent
-    singleton: 0
-    decorators: []
-    properties:
-    - name: TooltipString
-      type: string
-      objectType: 
-      items:
-        type: 
-        objectType: 
-        serializedItems: []
-        objectRefs: []
-      refPath: 
-      fileRef: 
-      jsDocs:
-        text: []
-        tags: []
-      decorators: []
-      nullable: 0
-      serializedValue: 
-      serializedObject: {fileID: 0}
-      modified: 0
-    displayIcon: {fileID: 0}
-    displayName: 
 --- !u!1 &1516629301
 GameObject:
   m_ObjectHideFlags: 0
@@ -4861,7 +4652,7 @@ PrefabInstance:
     - target: {fileID: 3874579303399803206, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
       propertyPath: metadata.properties.Array.data[4].serializedObject
       value: 
-      objectReference: {fileID: 1549626335}
+      objectReference: {fileID: 1549626334}
     - target: {fileID: 5269592383721820451, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -4937,62 +4728,24 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 7502504890089645172, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1549626335}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
 --- !u!224 &1549626333 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 5269592383721820451, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
   m_PrefabInstance: {fileID: 1549626332}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1549626334 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7502504890089645172, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
+--- !u!114 &1549626334 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2731064001715974787, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
   m_PrefabInstance: {fileID: 1549626332}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1549626335
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1549626334}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fa4feffba88dce746a2607f0ec6233b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  guid: 321b76c0-8ec8-450e-972f-69c206b9f6ba
-  script: {fileID: -2821057540941615920, guid: 781c2b74a15fffe40adf098916b74ca2, type: 3}
-  scriptPath: Assets/Code/Client/Components/TooltipComponent.lua
-  forceContext: 0
-  metadata:
-    name: TooltipComponent
-    singleton: 0
-    decorators: []
-    properties:
-    - name: TooltipString
-      type: string
-      objectType: 
-      items:
-        type: 
-        objectType: 
-        serializedItems: []
-        objectRefs: []
-      refPath: 
-      fileRef: 
-      jsDocs:
-        text: []
-        tags: []
-      decorators: []
-      nullable: 0
-      serializedValue: 
-      serializedObject: {fileID: 0}
-      modified: 0
-    displayIcon: {fileID: 0}
-    displayName: 
 --- !u!1 &1586408052
 GameObject:
   m_ObjectHideFlags: 0
@@ -5894,67 +5647,6 @@ Transform:
   - {fileID: 2082487074}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1001 &3408867821358789406
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 134115520}
-    m_Modifications:
-    - target: {fileID: 5269592383721820451, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5269592383721820451, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5269592383721820451, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
-      propertyPath: m_AnchorMin.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5269592383721820451, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5269592383721820451, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5269592383721820451, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5269592383721820451, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5269592383721820451, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5269592383721820451, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5269592383721820451, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5269592383721820451, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7502504890089645172, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
-      propertyPath: m_Name
-      value: ItemSlot
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 43c561d4ee5be7a4d93d4949282c959e, type: 3}
 --- !u!4 &3474853242011246171
 Transform:
   m_ObjectHideFlags: 0
