@@ -2010,6 +2010,16 @@
 			"inherits": []
 		},
 		{
+			"name": "GearController",
+			"id": "Code/Client/Controller/Gear/GearController@GearController",
+			"file": "Code/Client/Controller/Gear/GearController.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
 			"name": "SoundController",
 			"id": "Code/Client/Controller/SoundController@SoundController",
 			"file": "Code/Client/Controller/SoundController.ts",
@@ -2043,6 +2053,16 @@
 			"name": "WorldController",
 			"id": "Code/Client/Framework/WorldController@WorldController",
 			"file": "Code/Client/Framework/WorldController.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "DataService",
+			"id": "Code/Server/Data/DataService@DataService",
+			"file": "Code/Server/Data/DataService.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"
@@ -2445,6 +2465,16 @@
 			"name": "GearRegistrySingleton",
 			"id": "Code/Shared/GearRegistry@GearRegistrySingleton",
 			"file": "Code/Shared/GearRegistry.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "TooltipComponent",
+			"id": "Code/Client/Components/TooltipComponent@TooltipComponent",
+			"file": "Code/Client/Components/TooltipComponent.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"
@@ -2862,26 +2892,6 @@
 			"inherits": []
 		},
 		{
-			"name": "TooltipComponent",
-			"id": "Code/Client/Components/TooltipComponent@TooltipComponent",
-			"file": "Code/Client/Components/TooltipComponent.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "DraggableSlotComponent",
-			"id": "Code/Client/UI/Drag/DraggableSlotComponent@DraggableSlotComponent",
-			"file": "Code/Client/UI/Drag/DraggableSlotComponent.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
 			"name": "UIController",
 			"id": "Code/Client/UI/UIController@UIController",
 			"file": "Code/Client/UI/UIController.ts",
@@ -2892,19 +2902,9 @@
 			"inherits": []
 		},
 		{
-			"name": "GearController",
-			"id": "Code/Client/Controller/Gear/GearController@GearController",
-			"file": "Code/Client/Controller/Gear/GearController.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "DataService",
-			"id": "Code/Server/Data/DataService@DataService",
-			"file": "Code/Server/Data/DataService.ts",
+			"name": "DraggableSlotComponent",
+			"id": "Code/Client/UI/Drag/DraggableSlotComponent@DraggableSlotComponent",
+			"file": "Code/Client/UI/Drag/DraggableSlotComponent.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"
@@ -2934,6 +2934,7 @@
 			"typescript:Code/Client/Controller/Modules/Ladder/Ladders@Ladders": "Client/Controller/Modules/Ladder/Ladders@Ladders",
 			"typescript:Code/Client/ClientController@ClientController": "Client/ClientController@ClientController",
 			"typescript:Code/Client/Controller/Modules/TimeTrials/TimeTrials@TimeTrials": "Client/Controller/Modules/TimeTrials/TimeTrials@TimeTrials",
+			"typescript:Code/Client/UI/UIController@Hotbar": "Client/UI/UIController@Hotbar",
 			"typescript:Code/Client/UI/UIController@UIController": "Client/UI/UIController@UIController",
 			"typescript:Code/Client/Controller/Gear/GearController@GearController": "Client/Controller/Gear/GearController@GearController",
 			"typescript:Code/Client/Controller/SoundController@SoundController": "Client/Controller/SoundController@SoundController",

@@ -4,10 +4,71 @@ import { Binding } from "@Easy/Core/Shared/Input/Binding";
 import { Mouse } from "@Easy/Core/Shared/UserInput";
 import { Bin } from "@Easy/Core/Shared/Util/Bin";
 import Core from "Code/Core/Core";
-import type { AnyItem } from "Code/Shared/Types";
+import { type AnyItem, type Inventory, ItemTypes } from "Code/Shared/Types";
 import TooltipComponent from "../Components/TooltipComponent";
 import type ClientComponent from "../Controller/ClientComponent";
 import type DraggableSlotComponent from "./Drag/DraggableSlotComponent";
+
+class Hotbar {
+	constructor(
+		public Hotbar: RectTransform,
+		public HotbarSlot: GameObject,
+	) {
+		task.spawn(() => (this.Inventory = Core().Client.Data.GetLink().Data.Inventories.Hotbar));
+
+		let LastScrolled = os.clock();
+		Mouse.onScrolled.Connect((Event) => {
+			if (os.clock() - LastScrolled <= 0.001) return;
+			LastScrolled = os.clock();
+
+			this.SelectedSlot = this.SelectedSlot - math.sign(Event.delta);
+			if (this.SelectedSlot > this.Inventory.Size) {
+				this.SelectedSlot -= this.Inventory.Size;
+			}
+			if (this.SelectedSlot < 1) {
+				this.SelectedSlot += this.Inventory.Size;
+			}
+			this.UpdateSelected();
+		});
+	}
+
+	public Inventory: Inventory;
+	private HotbarContents: GameObject[] = [];
+	public SelectedSlot = 1;
+
+	public UpdateSelected() {
+		this.HotbarContents.forEach((Instance, Index) => {
+			const Image = Instance.GetComponent<RawImage>()!;
+			Image.texture = Asset.LoadAsset(`Assets/Resources/Textures/UI/HotbarSlot${Index + 1 === this.SelectedSlot ? "Selected" : ""}.png`);
+			Instance.transform.localScale = Index + 1 === this.SelectedSlot ? Vector3.one.mul(1.2) : Vector3.one;
+		});
+	}
+
+	public RefreshContents() {
+		while (!this.Inventory) task.wait();
+
+		this.HotbarContents.forEach((Target) => Destroy(Target));
+		this.HotbarContents.clear();
+
+		for (const Index of $range(1, this.Inventory.Size)) {
+			const Slot = Instantiate(this.HotbarSlot);
+			Slot.transform.SetParent(this.Hotbar, false);
+			this.HotbarContents.push(Slot);
+
+			const Components = Slot.GetAirshipComponent<DraggableSlotComponent>()!;
+			Components.IS_Inventory = "Hotbar";
+			Components.IS_SlotID = Index;
+
+			const Content = this.Inventory.Content[Index];
+			if (Content) {
+				Components.SlotContents = Content;
+				Components.UpdateContents();
+			}
+		}
+
+		this.UpdateSelected();
+	}
+}
 
 export default class UIController extends AirshipSingleton {
 	@NonSerialized() public MenuOpen = false;
@@ -19,9 +80,14 @@ export default class UIController extends AirshipSingleton {
 
 	@Header("References")
 	public Inventory: GameObject;
+	public Inventory_TEMP: GameObject;
 	public Loading: GameObject;
 	public TooltipTransform: RectTransform;
 	public TooltipText: TMP_Text;
+	@Header("References/Hotbar")
+	@SerializeField()
+	private HotbarRef: RectTransform;
+	@SerializeField() private HotbarSlot: GameObject;
 	@Header("References/Momentum")
 	public MomentumBar: RectTransform;
 	public MomentumCanvas: CanvasGroup;
@@ -34,9 +100,11 @@ export default class UIController extends AirshipSingleton {
 	public TT_Medal: Image;
 
 	public Connections = new Bin();
+	public Hotbar: Hotbar;
 
 	@Client()
 	override Start() {
+		this.Hotbar = new Hotbar(this.HotbarRef, this.HotbarSlot);
 		this.Loading.SetActive(true);
 
 		Airship.Menu.SetTabListEnabled(false);
@@ -64,24 +132,25 @@ export default class UIController extends AirshipSingleton {
 
 	private Contents: GameObject[] = [];
 	public RefreshContents() {
-		this.Contents.mapFiltered((Target) => {
-			Destroy(Target);
-		});
+		this.Contents.mapFiltered((Target) => Destroy(Target));
+		this.Contents.clear();
+
+		this.Hotbar.RefreshContents();
 
 		const SortedList: { [Index: string]: [Transform, AnyItem][] } = {};
 
-		for (const [_Index, Value] of pairs(Core().Client.Data.GetLink().Data.Inventories.Player.Content)) {
-			if (Value.Type === "Gear") {
-				const GearSlot = Instantiate(Asset.LoadAsset("Assets/Resources/UI/ItemSlot.prefab"));
+		// TODO: replace with Player inv
+		for (const [Index, Value] of pairs(Core().Client.Data.GetLink().Data.Inventories.Debug.Content)) {
+			if (Value.Type === ItemTypes.Gear) {
+				const GearSlot = Instantiate(this.Hotbar.HotbarSlot);
 				this.Contents.push(GearSlot);
-				GearSlot.transform.SetParent(this.Inventory.transform, false);
-				(GearSlot.transform as RectTransform).localScale = Vector3.one;
-				GearSlot.transform.localPosition = Vector3.zero;
+				GearSlot.transform.SetParent(this.Inventory_TEMP.transform, false);
 
-				const Slot = GearSlot.GetAirshipComponent<DraggableSlotComponent>();
-				if (!Slot) continue;
+				const Slot = GearSlot.GetAirshipComponent<DraggableSlotComponent>()!;
+				Slot.IS_Inventory = "Debug";
+				Slot.IS_SlotID = Index;
 				Slot.SlotContents = Value;
-				Slot.UpdateFilled();
+				Slot.UpdateContents();
 
 				let Existing = SortedList[Value.Key];
 				if (!Existing) {

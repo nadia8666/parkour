@@ -8,7 +8,7 @@ public class ItemMeshBaker : UnityEditor.Editor
     [MenuItem("Parkour/Bake Generated Item Meshes")]
     public static void Bake()
     {
-        string outDir = "Assets/Assets/Models/Item";
+        string outDir = "Assets/Resources/Models/Item";
         if (!System.IO.Directory.Exists(outDir)) System.IO.Directory.CreateDirectory(outDir);
 
         string[] guids = AssetDatabase.FindAssets("t:ScriptableObject", new[] { "Assets/Resources/Items" });
