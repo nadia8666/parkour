@@ -5,7 +5,7 @@ import { Mouse } from "@Easy/Core/Shared/UserInput";
 import { Bin } from "@Easy/Core/Shared/Util/Bin";
 import Core from "Code/Core/Core";
 import type { AnyItem } from "Code/Shared/Types";
-import type TooltipComponent from "../Components/TooltipComponent";
+import TooltipComponent from "../Components/TooltipComponent";
 import type ClientComponent from "../Controller/ClientComponent";
 import type DraggableSlotComponent from "./Drag/DraggableSlotComponent";
 
@@ -150,13 +150,14 @@ export default class UIController extends AirshipSingleton {
 		const HoverTarget = this.RaycastUI();
 
 		if (HoverTarget !== this.LastTooltipObject) {
-			const TooltipComponent = HoverTarget?.GetAirshipComponent<TooltipComponent>();
-
-			if (TooltipComponent) {
-				this.TooltipTransform.gameObject.SetActive(true);
-				this.TooltipText.text = TooltipComponent.GetText();
-			} else this.TooltipTransform.gameObject.SetActive(false);
 			this.LastTooltipObject = HoverTarget;
+			
+			const Target = TooltipComponent.Get(HoverTarget);
+
+			if (Target) {
+				this.TooltipTransform.gameObject.SetActive(true);
+				this.TooltipText.text = Target.GetText();
+			} else this.TooltipTransform.gameObject.SetActive(false);
 		}
 
 		if (this.TooltipTransform.gameObject.activeSelf) {
