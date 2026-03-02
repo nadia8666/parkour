@@ -3,7 +3,6 @@ import type ProximityPrompt from "@Easy/Core/Shared/Input/ProximityPrompts/Proxi
 import { ForceRefreshGearSignal } from "Code/Client/Config";
 import Core from "Code/Core/Core";
 import type TimeTrialObject from "Code/Shared/Object/TimeTrialObject";
-import type { DataFormat } from "Code/Shared/Types";
 import CFrame from "@inkyaker/CFrame/Code";
 import type ClientComponent from "../../ClientComponent";
 import type TimeTrialComponent from "./TimeTrialComponent";
@@ -22,7 +21,7 @@ export class TimeTrials {
 	private PromptBase = Asset.LoadAsset("Assets/Resources/TimeTrials/TrialPrompt.prefab");
 	private LastTrialStart = math.huge;
 	private InIntro = false;
-	public TrialGear: DataFormat["EquippedGear"] | undefined;
+	public TrialGear: undefined;
 
 	constructor() {
 		for (const [_, Target] of pairs(GameObject.FindGameObjectsWithTag("TimeTrial"))) {
@@ -56,7 +55,7 @@ export class TimeTrials {
 			WorldModels: [PromptGameObject],
 		};
 
-		// Decorate Prompt
+		// decorate Prompt
 		PromptGameObject.transform.SetParent(Trial.gameObject.transform);
 		PromptGameObject.transform.localPosition = Vector3.up.mul(1.25);
 		PromptGameObject.transform.localRotation = Quaternion.identity;
@@ -91,12 +90,13 @@ export class TimeTrials {
 	public Start(Controller: ClientComponent, Trial: TimeTrialComponent, RunIntro?: boolean) {
 		if (this.IsActive()) this.Stop(Controller);
 
-		this.TrialGear = {
+		// TODO: recode trial gear
+		this.TrialGear = undefined/* {
 			Grip: ["None"],
 			Core: ["None"],
 			Mod: ["None", "None"],
 			Augment: ["None", "None", "None"],
-		};
+		};*/
 		ForceRefreshGearSignal.Fire();
 
 		const Start = os.clock();

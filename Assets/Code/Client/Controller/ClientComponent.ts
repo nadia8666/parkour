@@ -1,19 +1,22 @@
 import { Game } from "@Easy/Core/Shared/Game";
+import { Mouse } from "@Easy/Core/Shared/UserInput";
 import { Bin } from "@Easy/Core/Shared/Util/Bin";
 import Core from "Code/Core/Core";
+import type InteractableBlockComponent from "Code/Shared/Components/InteractableBlockComponent";
 import { Network } from "Code/Shared/Network";
 import { Client } from "Code/Shared/Types";
 import CFrame from "@inkyaker/CFrame/Code";
 import type GenericTrigger from "../Components/Collision/GenericTriggerComponent";
 import Config from "../Config";
 import { Settings } from "../Framework/SettingsController";
+import type WorldController from "../Framework/WorldController";
 import type AnimationController from "./Animation/AnimationController";
 import type { ValidAnimation } from "./Animation/AnimationController";
 import type ViewmodelComponent from "./Animation/ViewmodelComponent";
 import { ClientCamera as CameraController } from "./Camera";
 import type GearController from "./Gear/GearController";
 import { Actions, Input } from "./Input";
-import { MovesetBase } from "./Moveset/Base";
+import { MovesetBase, Raycast } from "./Moveset/Base";
 import { MovesetGeneric } from "./Moveset/Generic";
 import { MovesetGrappler } from "./Moveset/Grappler";
 import { MovesetWorld } from "./Moveset/World";
@@ -23,6 +26,9 @@ export default class ClientComponent extends AirshipBehaviour {
 	@Header("Main")
 	public Rigidbody: Rigidbody;
 	public Identity: NetworkIdentity;
+	public BlockCursorRef: GameObject;
+	@NonSerialized() public BlockCursor: GameObject;
+	@NonSerialized() public TargetedBlock?: Vector3;
 
 	@Header("Colliders")
 	public BodyCollider: CapsuleCollider;
@@ -76,6 +82,7 @@ export default class ClientComponent extends AirshipBehaviour {
 
 	// Control
 	@NonSerialized() public Gear: GearController;
+	@NonSerialized() public World: WorldController;
 	public Moveset = {
 		Base: new MovesetBase(),
 		Generic: new MovesetGeneric(),
@@ -107,6 +114,7 @@ export default class ClientComponent extends AirshipBehaviour {
 		}
 
 		this.Gear = Core().Client.Gear;
+		this.World = Core().Client.WorldController;
 
 		this.AnimationController = Core().Client.Animation;
 		while (!this.AnimationController.Component) {
@@ -126,6 +134,14 @@ export default class ClientComponent extends AirshipBehaviour {
 		this._LOADED = true;
 		Core().Client.UI.Loading.SetActive(false);
 		this.FOV = this.FOVCurve.Evaluate(0) * Settings.FOV;
+
+		this.BlockCursor = Instantiate(this.BlockCursorRef);
+		this.BlockCursor.SetActive(false);
+		this.Bin.Add(this.BlockCursor);
+
+		//TODO: mobile support
+		this.Bin.Add(Mouse.onLeftDown.Connect(() => this.OnLeftMB()));
+		this.Bin.Add(Mouse.onRightDown.Connect(() => this.OnRightMB()));
 	}
 
 	public ReloadShadows() {
@@ -294,6 +310,40 @@ export default class ClientComponent extends AirshipBehaviour {
 	@Client()
 	override Update() {
 		if (!this._LOADED) return;
+
+		const Cast = Raycast(this.Camera.Transform.position, this.Camera.TargetRotation.mul(Vector3.forward), Config.InteractionReach);
+		if (Cast.Hit) {
+			const VoxelPos = VoxelWorld.FloorInt(Cast.Pos.sub(Cast.Normal.mul(0.5)));
+			this.BlockCursor.transform.position = VoxelPos.add(new Vector3(0.5, 0.5, 0.5));
+			this.TargetedBlock = VoxelPos;
+		} else this.TargetedBlock = undefined;
+
+		this.BlockCursor.SetActive(Cast.Hit);
+	}
+
+	public OnLeftMB() {
+		// TODO: mining
+	}
+
+	public OnRightMB() {
+		print("rmb");
+		if (this.TargetedBlock) {
+			print("Targ");
+			const HeldItem = Core().Client.UI.Hotbar.HeldItem;
+			const Prefab = Core().Client.WorldController.World.GetPrefabAt(this.TargetedBlock);
+			let TryPlace = true;
+			if (Prefab) {
+				print("prefab");
+				const Interactable = Prefab.GetAirshipComponent<InteractableBlockComponent>();
+				print(Interactable);
+
+				if (Interactable?.OnUse(this)) TryPlace = false;
+			}
+
+			if (TryPlace && HeldItem) {
+				// TODO: placing blocks
+			}
+		}
 	}
 
 	@Client()

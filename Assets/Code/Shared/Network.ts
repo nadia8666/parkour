@@ -13,6 +13,7 @@ export const Network = {
 		GetInitialChunks: new NetworkSignal<void>("Network/VoxelWorld/GetInitialChunks"),
 		WriteGroup: new NetworkSignal<[Vector3[], readonly number[]]>("Network/VoxelWorld/WriteGroup"),
 		WriteVoxel: new NetworkSignal<[Vector3, number]>("Network/VoxelWorld/WriteVoxel"),
+		InitializeInteractableBlock: new NetworkSignal<[Vector3, string]>("Network/VoxelWorld/InitializeInteractableBlock"),
 	},
 
 	Effect: {

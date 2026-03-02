@@ -1140,6 +1140,24 @@ MonoBehaviour:
       serializedValue: 
       serializedObject: {fileID: 0}
       modified: 1
+    - name: BlockCursorRef
+      type: object
+      objectType: GameObject
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators: []
+      nullable: 0
+      serializedValue: 
+      serializedObject: {fileID: 73407792901705803, guid: a81c7a6e50173d74a8ff3ace63c09071, type: 3}
+      modified: 1
     displayIcon: {fileID: 0}
     displayName: 
 --- !u!114 &6647136626085009081

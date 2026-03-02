@@ -9,7 +9,7 @@ export default class ItemObject extends AirshipScriptableObject {
 	public ModelType: ItemEnums.ItemModelType;
 
 	@Header("Renderer")
-	@ShowIf("ModelType", ItemEnums.ItemModelType.IMAGE_GENERATED)
+	@ShowIf("ModelType", ItemEnums.ItemModelType.ImageGenerated)
 	public ItemTexture: Texture;
-	@ShowIf("ModelType", ItemEnums.ItemModelType.IMAGE_GENERATED) public ItemThickness: number;
+	@ShowIf("ModelType", ItemEnums.ItemModelType.ImageGenerated) public ItemThickness: number;
 }

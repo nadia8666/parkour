@@ -3,12 +3,13 @@ import { Mouse } from "@Easy/Core/Shared/UserInput";
 import { Bin } from "@Easy/Core/Shared/Util/Bin";
 import type TooltipComponent from "Code/Client/Components/TooltipComponent";
 import Core from "Code/Core/Core";
-import type { GearRegistryKey } from "Code/Shared/GearRegistry";
-import { type AnyItem, type GearSlots, type ItemInfo, ItemTypes } from "Code/Shared/Types";
+import { type AnyItem, type Inventory, type ItemInfo, ItemTypes } from "Code/Shared/Types";
 
 export enum CallbackType {
 	Loadout,
 	Inventory,
+	ContainerInventory,
+	None,
 }
 
 const AllSlots = new Set<DraggableSlotComponent>();
@@ -21,23 +22,25 @@ export default class DraggableSlotComponent extends AirshipBehaviour {
 	@Header("Config")
 	@SerializeField()
 	private Draggable = true;
-	public CallbackType: CallbackType = CallbackType.Inventory;
-
-	// Loadout Slot
-	@ShowIf("CallbackType", CallbackType.Loadout)
-	@Header("Loadout Slot Config")
-	public LS_TargetSlot: GearSlots;
-	@ShowIf("CallbackType", CallbackType.Loadout)
-	public LS_SlotID: number;
-	public Tooltip: TooltipComponent | undefined;
-
-	// InventorySlot
-	@ShowIf("CallbackType", CallbackType.Inventory)
-	@Header("Inventory Slot Config")
+	public CallbackType: CallbackType = CallbackType.None;
 	@NonSerialized()
 	public SlotContents: AnyItem | undefined;
-	@ShowIf("CallbackType", CallbackType.Inventory) public IS_Inventory: string;
-	@ShowIf("CallbackType", CallbackType.Inventory) public IS_SlotID: number;
+	public Tooltip: TooltipComponent | undefined;
+
+	// Inventory Slot
+	@ShowIf("CallbackType", CallbackType.Inventory, CallbackType.Loadout)
+	@Header("Inventory Slot Config")
+	@ShowIf("CallbackType", CallbackType.Inventory, CallbackType.Loadout)
+	public PlayerInventory: string;
+	@ShowIf("CallbackType", CallbackType.Inventory, CallbackType.Loadout)
+	public SlotID: number;
+
+	// Container Inventory Slot
+	@ShowIf("CallbackType", CallbackType.ContainerInventory)
+	@Header("Inventory Slot Config")
+	@NonSerialized()
+	@ShowIf("CallbackType", CallbackType.ContainerInventory)
+	public CIS_Inventory: Inventory;
 
 	@Client()
 	override OnEnable() {
@@ -49,12 +52,7 @@ export default class DraggableSlotComponent extends AirshipBehaviour {
 			}),
 		);
 
-		if (this.CallbackType === CallbackType.Loadout) {
-			AllSlots.add(this);
-			this.LS_FetchSlotContents();
-		} else {
-			this.UpdateContents();
-		}
+		if (this.CallbackType === CallbackType.Loadout) AllSlots.add(this);
 	}
 
 	@Client()
@@ -73,6 +71,8 @@ export default class DraggableSlotComponent extends AirshipBehaviour {
 	}
 
 	public UpdateContents() {
+		this.FetchContents();
+
 		this.gameObject.ClearChildren();
 
 		if (this.SlotContents) {
@@ -80,11 +80,12 @@ export default class DraggableSlotComponent extends AirshipBehaviour {
 
 			switch (this.SlotContents.Type) {
 				case ItemTypes.Gear: {
+					ItemMesh = Asset.LoadAsset(`Assets/Resources/Models/Item/None.asset`);
 					break;
 				}
 
 				case ItemTypes.Item: {
-					ItemMesh = Asset.LoadAssetIfExists(`Assets/Resources/Models/Item/${this.SlotContents.Key}.asset`) as Mesh;
+					ItemMesh = Asset.LoadAssetIfExists(`Assets/Resources/Models/Item/${this.SlotContents.Key}.asset`) ?? Asset.LoadAsset(`Assets/Resources/Models/Item/None.asset`);
 					break;
 				}
 			}
@@ -98,7 +99,8 @@ export default class DraggableSlotComponent extends AirshipBehaviour {
 				const Filter = Item.AddComponent<MeshFilter>();
 				Filter.mesh = Instantiate(ItemMesh);
 
-				const Material = Asset.LoadAssetIfExists(`Assets/Resources/Models/Item/Materials/${this.SlotContents.Key}.mat`) as Material;
+				const Material: Material | undefined =
+					Asset.LoadAssetIfExists(`Assets/Resources/Models/Item/Materials/${this.SlotContents.Key}.mat`) ?? Asset.LoadAsset(`Assets/Resources/Models/Item/Materials/None.mat`);
 				const Renderer = Item.AddComponent<MeshRenderer>();
 				if (Material) Renderer.SetMaterial(0, Material);
 
@@ -117,89 +119,66 @@ export default class DraggableSlotComponent extends AirshipBehaviour {
 				this.Tooltip.TooltipString = `${Core().Client.Gear.GetName(this.SlotContents)}`;
 			}
 		} else {
-			if (this.CallbackType === CallbackType.Inventory) {
-				this.Tooltip.TooltipString = `Empty`;
+			if (this.CallbackType === CallbackType.Loadout) {
+				this.Tooltip.TooltipString = `Empty ${this.PlayerInventory} Slot`;
 			} else {
-				this.Tooltip.TooltipString = `Empty ${this.LS_TargetSlot} Slot`;
+				this.Tooltip.TooltipString = `Empty`;
 			}
 
 			this.Tooltip.TooltipGear.GearTarget = undefined;
 		}
+
+		const UI = Core().Client.UI;
+		if (UI.LastTooltipObject === this.gameObject) UI.LastTooltipObject = undefined;
 	}
 
 	public DraggedOnto(Target?: DraggableSlotComponent) {
-		const IsLoadout = this.CallbackType === CallbackType.Loadout;
 		if (Target) {
+			const [TargetInventory, MyInventory] = [DraggableSlotComponent.GetInventoryFor(Target), this.GetInventory()];
+
+			if (!(TargetInventory && MyInventory)) return;
+
+			const [TargetContents, MyContents] = [TargetInventory.Content[Target.SlotID], MyInventory.Content[this.SlotID]];
 			const TargetIsLoadout = Target.CallbackType === CallbackType.Loadout;
+			const ContentAsGear = Core().Gear.GearFromKey(MyContents.Key);
 
-			if (TargetIsLoadout) {
-				if (Core().Client.Gear.TryEquipGear(Target.LS_TargetSlot, Target.LS_SlotID, this.SlotContents!)) {
-					if (this.CallbackType === CallbackType.Inventory) {
-						//this.SlotContents = undefined;
-						
-						// TODO: refactor gear so that equipped gear is more or less its own inventory instead of dedicated slots
-						//delete Core().Client.Data.GetLink().Data.Inventories[this.IS_Inventory].Content[this.IS_SlotID];
-					}
-					Target.LS_ReloadAllSlots();
-				}
-			} else if (Target.CallbackType === CallbackType.Inventory) {
-				const Container = Core().Client.Data.GetLink().Data.Inventories;
-				const TargetInventory = Container[Target.IS_Inventory].Content[Target.IS_SlotID];
+			if (TargetIsLoadout) if (!ContentAsGear || Target.PlayerInventory !== ContentAsGear.Slot) return;
+			
+			TargetInventory.Content[Target.SlotID] = MyContents;
+			MyInventory.Content[this.SlotID] = TargetContents;
 
-				if (TargetInventory) {
-					// swap slots if possible
-					if (IsLoadout) {
-						if (TargetInventory.Type === ItemTypes.Gear) {
-							const TargetGear = Core().Gear.GearFromKey(TargetInventory.Key as GearRegistryKey);
-							if (TargetGear.Slot === this.LS_TargetSlot) {
-								Container[Target.IS_Inventory].Content[Target.IS_SlotID] = this.SlotContents!;
-								Core().Client.Data.GetLink().Data.EquippedGear[this.LS_TargetSlot][this.LS_SlotID - 1] = TargetInventory.UID;
-								this.SlotContents = TargetInventory;
-							}
-						}
-					} else {
-						const Current = Container[this.IS_Inventory].Content[this.IS_SlotID];
-
-						Container[this.IS_Inventory].Content[this.IS_SlotID] = TargetInventory;
-						Container[Target.IS_Inventory].Content[Target.IS_SlotID] = Current;
-					}
-				} else {
-					// clear current slot, fill target
-					if (IsLoadout) {
-						Container[Target.IS_Inventory].Content[Target.IS_SlotID] = this.SlotContents!;
-						Core().Client.Data.GetLink().Data.EquippedGear[this.LS_TargetSlot][this.LS_SlotID - 1] = "None";
-						this.SlotContents = undefined;
-					} else {
-						Container[Target.IS_Inventory].Content[Target.IS_SlotID] = Container[this.IS_Inventory].Content[this.IS_SlotID];
-						delete Container[this.IS_Inventory].Content[this.IS_SlotID];
-					}
-				}
-
-				Target.UpdateContents();
-				this.UpdateContents();
-			}
+			Target.UpdateContents();
+			this.UpdateContents();
 		} else {
-			if (IsLoadout) {
-				// unequip
-				if (Core().Client.Gear.TryEquipGear(this.LS_TargetSlot, this.LS_SlotID)) this.LS_ReloadAllSlots();
-			} else {
-				// TODO: drop item
-				//delete Core().Client.Data.GetLink().Data.Inventories[this.IS_Inventory].Content[this.IS_SlotID];
-			}
+			// TODO: drop item
 		}
 	}
 
-	public LS_ReloadAllSlots() {
-		for (const [Slot] of pairs(AllSlots)) {
-			Slot.LS_FetchSlotContents();
-		}
-	}
-
-	public LS_FetchSlotContents() {
+	public static GetInventoryFor(Target: DraggableSlotComponent) {
 		const Data = Core().Client.Data.GetLink().Data;
+		switch (Target.CallbackType) {
+			case CallbackType.Loadout:
+				return Data.Inventories[Target.PlayerInventory];
 
-		const ID = Data.EquippedGear[this.LS_TargetSlot][this.LS_SlotID - 1];
-		this.SlotContents = Core().Client.Gear.GetItem(ID)[0];
-		this.UpdateContents();
+			case CallbackType.Inventory:
+				return Data.Inventories[Target.PlayerInventory];
+
+			case CallbackType.ContainerInventory:
+				return Target.CIS_Inventory;
+		}
+	}
+
+	public GetInventory() {
+		return DraggableSlotComponent.GetInventoryFor(this);
+	}
+
+	public static LS_ReloadAllSlots() {
+		for (const [Slot] of pairs(AllSlots)) {
+			Slot.FetchContents();
+		}
+	}
+
+	public FetchContents() {
+		this.SlotContents = this.GetInventory()?.Content[this.SlotID];
 	}
 }

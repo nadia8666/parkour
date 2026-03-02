@@ -1,7 +1,7 @@
 import { Signal } from "@Easy/Core/Shared/Util/Signal";
 import Core from "Code/Core/Core";
 import type { GearRegistryKey } from "Code/Shared/GearRegistry";
-import type { ItemInfo, ItemTypes } from "Code/Shared/Types";
+import { GearSlots } from "Code/Shared/Types";
 
 export const ForceRefreshGearSignal = new Signal();
 const RecacheSignal = new Signal();
@@ -17,13 +17,10 @@ function InitializeCache() {
 			delete CacheMap[Index];
 		}
 
-		for (const [_, Gear] of pairs(Core().Client.Objective.TimeTrials.TrialGear ?? Link.Data.EquippedGear)) {
-			for (const [_, Value] of pairs(Gear)) {
-				if (Value !== "None") {
-					const Item = Core().Client.Gear.GetItem(Value)[0] as ItemInfo<ItemTypes.Gear>;
-					if (!Item) continue;
-					CacheMap[Item.Key] = Item.Level;
-				}
+		//Core().Client.Objective.TimeTrials.TrialGear
+		for (const [_, Gear] of pairs(GearSlots)) {
+			for (const [_, Item] of pairs(Link.Data.Inventories[Gear].Content)) {
+				CacheMap[Item.Key as GearRegistryKey] = Item.Level!;
 			}
 		}
 
@@ -33,9 +30,9 @@ function InitializeCache() {
 		if (Actor) Actor.Gear.ResetAmmo();
 	}
 
-	for (const [Slot, Gear] of pairs(Link.Data.EquippedGear)) {
-		for (const [Index] of pairs(Gear)) {
-			Link.GetChanged(`EquippedGear/${Slot}/${Index}`).Connect(() => GenerateCache());
+	for (const [_, Slot] of pairs(GearSlots)) {
+		for (const [Index] of pairs(Link.Data.Inventories[Slot].Content)) {
+			Link.GetChanged(`Inventories/${Slot}/${Index}`).Connect(() => GenerateCache());
 		}
 	}
 
@@ -73,6 +70,8 @@ const Config = {
 	Gravity: new Vector3(0, -35, 0),
 	PlayerRadius: 0.5,
 	PlayerHeight: 2,
+
+	InteractionReach: 3.5,
 
 	RunMaxSpeed: 15,
 

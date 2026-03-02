@@ -7,9 +7,13 @@ import { Game } from "@Easy/Core/Shared/Game";
 import Config from "Code/Client/Config";
 import { Settings } from "Code/Client/Framework/SettingsController";
 import Core from "Code/Core/Core";
+import type BlockContainerComponent from "Code/Shared/Components/BlockContainerComponent";
+import GearRegistrySingleton from "Code/Shared/GearRegistry";
 import { Network } from "Code/Shared/Network";
-import { type PlayerInfoGetter, World } from "Code/Shared/Types";
+import GearObject from "Code/Shared/Object/GearObject";
+import { ItemTypes, type PlayerInfoGetter, World } from "Code/Shared/Types";
 import { NoiseHandler } from "Code/Shared/Utility/Noise";
+import ENV from "./ENV";
 import { SettingsService } from "./SettingsService";
 
 function instance() {
@@ -59,16 +63,16 @@ class ChunkManager {
 	}
 
 	public GetBiomeBlock(BiomeID: World.BiomeTypes, Depth: number, WorldY: number): number {
-		if ([World.BiomeTypes.DESERT, World.BiomeTypes.OCEAN].includes(BiomeID)) {
+		if ([World.BiomeTypes.Desert, World.BiomeTypes.Ocean].includes(BiomeID)) {
 			if (Depth < 5) return this.GetBlock("Sand");
 			if (Depth < 12) return this.GetBlock("Sandstone");
 			return this.GetBlock("Stone");
 		}
-		if (BiomeID === World.BiomeTypes.MOUNTAIN) {
+		if (BiomeID === World.BiomeTypes.Mountain) {
 			if (WorldY > 115) return this.GetBlock("Snow");
 			return this.GetBlock("Stone");
 		}
-		if (Depth === 0) return this.GetBlock(BiomeID === World.BiomeTypes.SNOW ? "Snow" : "Grass");
+		if (Depth === 0) return this.GetBlock(BiomeID === World.BiomeTypes.Snow ? "Snow" : "Grass");
 		if (Depth < 4) return this.GetBlock("Dirt");
 		return this.GetBlock("Stone");
 	}
@@ -147,11 +151,11 @@ class ChunkManager {
 					const Temp = Noise.Get2DValue(WorldX * 0.00015, WorldZ * 0.00015);
 					const Dither = Noise.Get2DValue(WorldX * 0.15, WorldZ * 0.15) * 0.06;
 
-					let BiomeID = World.BiomeTypes.PLAINS;
-					if (SurfaceY < Config.WaterLevel - 1) BiomeID = World.BiomeTypes.OCEAN;
-					else if (ContinentalVal + Dither > 0.55) BiomeID = World.BiomeTypes.MOUNTAIN;
-					else if (Temp + Dither > 0.35) BiomeID = World.BiomeTypes.DESERT;
-					else if (Temp + Dither < -0.35) BiomeID = World.BiomeTypes.SNOW;
+					let BiomeID = World.BiomeTypes.Plains;
+					if (SurfaceY < Config.WaterLevel - 1) BiomeID = World.BiomeTypes.Ocean;
+					else if (ContinentalVal + Dither > 0.55) BiomeID = World.BiomeTypes.Mountain;
+					else if (Temp + Dither > 0.35) BiomeID = World.BiomeTypes.Desert;
+					else if (Temp + Dither < -0.35) BiomeID = World.BiomeTypes.Snow;
 
 					for (let y = 0; y < 16; y++) {
 						const WorldY = Origin.y + y;
@@ -319,8 +323,6 @@ export default class WorldService extends AirshipSingleton {
 					const Chunks = new Set<Vector3>();
 					const Keys = this.ChunkManager.ExpandCube(this.ChunkManager.ToKey(Position).sub(Vector3.one.mul(RenderDistance / 2)), RenderDistance);
 
-					//print(Keys, Keys.size());
-
 					for (const [_, Key] of pairs(Keys)) {
 						const Origin = Key.mul(16);
 						const ContinentalBuffer = this.Noise.Get2DFBMBatch(Origin.x, Origin.z, 16, 16, new Array(256), 1, 0.0004, 3, 0.5, 2);
@@ -434,6 +436,33 @@ export default class WorldService extends AirshipSingleton {
 		const Det = this.Noise.Get2DFBM(0, 0, 2, 0.01, 4, 0.5, 2);
 		const Surface = this.ChunkManager.GetTerrainHeight(Cont, Det);
 		Config.SpawnPos = new Vector3(0, Surface + 4, 0);
+
+		if (ENV.Runtime === "DEV") {
+			const Pos = new Vector3(0, Surface + 15, 0);
+			this.World.WriteVoxelAt(Pos, this.ChunkManager.GetBlock("WoodenChest"), true);
+			while (!this.World.GetPrefabAt(Pos)) task.wait();
+			const Container = this.World.GetPrefabAt(Pos).GetAirshipComponent<BlockContainerComponent>(true)!;
+			Container.ID = Guid.NewGuid().ToString()
+			let Elements = 0;
+			for (const [GearID, Gear] of pairs(GearRegistrySingleton.Get())) {
+				if (Gear instanceof GearObject) {
+					for (const Level of $range(1, Gear.MaxLevel)) {
+						const ID = `Debug${GearID}${Level}`;
+						Elements++;
+						Container.GetInventory().Content[Elements] = {
+							Type: ItemTypes.Gear,
+							Key: GearID,
+							Level: Level,
+							Amount: 1,
+							ObtainedTime: 0,
+							UID: ID,
+							Temporary: true,
+						};
+					}
+				}
+			}
+			Container.GetInventory().Size = Elements;
+		}
 
 		this.WorldReady = true;
 	}
