@@ -1,4 +1,3 @@
-/** biome-ignore-all lint/style/noNonNullAssertion: abc */
 import { Mouse } from "@Easy/Core/Shared/UserInput/Mouse";
 import Core from "Code/Core/Core";
 import type DraggableSlotComponent from "./DraggableSlotComponent";
@@ -21,7 +20,10 @@ export default class DragController extends AirshipSingleton {
 		(UI.transform as RectTransform).localScale = (Slot.transform as RectTransform).lossyScale.div((MainUI.transform as RectTransform).lossyScale);
 
 		const NewSlot = UI.GetAirshipComponent<DraggableSlotComponent>()!;
-		NewSlot.SlotContents = Slot.SlotContents;
+		NewSlot.CIS_Inventory = Slot.CIS_Inventory;
+		NewSlot.PlayerInventory = Slot.PlayerInventory;
+		NewSlot.CallbackType = Slot.CallbackType;
+		NewSlot.SlotID = Slot.SlotID;
 		NewSlot.UpdateContents();
 
 		this.CurrentUI = UI.transform as RectTransform;

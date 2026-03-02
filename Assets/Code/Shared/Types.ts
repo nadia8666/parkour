@@ -8,7 +8,9 @@ export enum ItemTypes {
 	Gear,
 	Item,
 }
-export type GearSlots = "Grip" | "Core" | "Mod" | "Augment";
+export const GearSlots = ["Grip", "Core", "Mod", "Augment"] as const;
+export type GearSlots = (typeof GearSlots)[number];
+
 export interface ItemInfo<Type extends ItemTypes> {
 	Type: Type;
 	Key: Type extends ItemTypes.Gear ? GearRegistryKey : string;
@@ -27,12 +29,6 @@ export interface Inventory {
 }
 
 export interface DataFormat {
-	EquippedGear: {
-		Grip: [InventoryKey];
-		Core: [InventoryKey];
-		Mod: [InventoryKey, InventoryKey];
-		Augment: [InventoryKey, InventoryKey, InventoryKey];
-	};
 	Inventories: { [Index: string]: Inventory };
 	TrialRecords: { [Index: string]: number | undefined };
 	DataVersion: number;
@@ -41,13 +37,11 @@ export interface DataFormat {
 export type InventoryKey = string;
 
 export const DataTemplate: DataFormat = {
-	EquippedGear: {
-		Grip: ["None"],
-		Core: ["None"],
-		Mod: ["None", "None"],
-		Augment: ["None", "None", "None"],
-	},
 	Inventories: {
+		Grip: { Size: 1, Content: {} },
+		Core: { Size: 1, Content: {} },
+		Mod: { Size: 2, Content: {} },
+		Augment: { Size: 3, Content: {} },
 		Player: {
 			Size: 10,
 			Content: {},
@@ -73,26 +67,26 @@ export const DataTemplate: DataFormat = {
 
 export namespace World {
 	export enum BiomeTypes {
-		OCEAN,
-		PLAINS,
-		DESERT,
-		MOUNTAIN,
-		SNOW,
+		Ocean,
+		Plains,
+		Desert,
+		Mountain,
+		Snow,
 	}
 }
 
 export namespace ItemEnums {
 	export enum ItemRarity {
-		COMMON,
-		UNCOMMON,
-		RARE,
-		EPIC,
-		LEGENDARY,
-		ADMINISTRATOR,
+		Common,
+		Uncommon,
+		Rare,
+		Epic,
+		Legendary,
+		Administrator,
 	}
 
 	export enum ItemModelType {
-		IMAGE_GENERATED,
+		ImageGenerated,
 	}
 }
 

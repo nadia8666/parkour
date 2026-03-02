@@ -2,7 +2,7 @@ import { deepCopy as DeepCopy } from "@Easy/Core/Shared/Util/ObjectUtils";
 import { WithGear } from "Code/Client/Config";
 import Core from "Code/Core/Core";
 import type { GearRegistryKey } from "Code/Shared/GearRegistry";
-import { type AnyItem, type GearSlots, type InventoryKey, type ItemInfo, ItemTypes } from "Code/Shared/Types";
+import { type AnyItem, type InventoryKey, type ItemInfo, ItemTypes } from "Code/Shared/Types";
 
 const MaxAmmo = {
 	Wallrun: 2,
@@ -55,35 +55,13 @@ export default class GearController extends AirshipSingleton {
 	}
 
 	// Gear functions
-	public TryEquipGear(Slot: GearSlots, Index: number, Contents?: AnyItem) {
-		if (Contents && Contents.Type !== ItemTypes.Gear) return;
-
-		const Key = Contents ? (Contents as ItemInfo<ItemTypes.Gear>).Key : "None";
-		const Gear = Core().Gear[Key];
-		if (Key === "None" ? false : Gear.Slot !== Slot) return;
-
-		const Data = Core().Client.Data.GetLink().Data;
-		if (Contents) {
-			for (const [Index, ItemID] of pairs(Data.EquippedGear[Slot])) {
-				if (ItemID === Contents.UID) {
-					Data.EquippedGear[Slot][Index - 1] = "None";
-				}
-			}
-		}
-
-		Data.EquippedGear[Slot][Index - 1] = Contents?.UID ?? "None";
-
-		return true;
-	}
-
 	public HasLevel(GearName: GearRegistryKey, Level: number) {
 		const Gear = Core().Gear[GearName];
-		const Slot = Core().Client.Data.GetLink().Data.EquippedGear[Gear.Slot];
+		const Slot = Core().Client.Data.GetLink().Data.Inventories[Gear.Slot];
 
-		for (const [_, ID] of pairs(Slot)) {
-			const Item = this.GetItem(ID)[0] as ItemInfo<ItemTypes.Gear>;
+		for (const [_, Item] of pairs(Slot.Content)) {
 			if (!Item) continue;
-			if (Item.Key === GearName && Item.Level >= Level) {
+			if (Item.Key === GearName && Item.Level! >= Level) {
 				return true;
 			}
 		}

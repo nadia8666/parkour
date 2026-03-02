@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &7502504890089645172
+--- !u!1 &2949437546639149275
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,12 +8,9 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 5269592383721820451}
-  - component: {fileID: 7264327482967938225}
-  - component: {fileID: 5897814645519397629}
-  - component: {fileID: 8496376345205227413}
-  - component: {fileID: 3874579303399803206}
-  - component: {fileID: 2731064001715974787}
+  - component: {fileID: 1161941460389928354}
+  - component: {fileID: 7406705676554583611}
+  - component: {fileID: 961146998068553362}
   m_Layer: 5
   m_Name: ItemSlot
   m_TagString: Untagged
@@ -21,88 +18,38 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!224 &5269592383721820451
+--- !u!224 &1161941460389928354
 RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7502504890089645172}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -10}
+  m_GameObject: {fileID: 2949437546639149275}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 85, y: 85}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!222 &7264327482967938225
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7502504890089645172}
-  m_CullTransparentMesh: 1
---- !u!114 &5897814645519397629
+--- !u!114 &7406705676554583611
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7502504890089645172}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 0
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Texture: {fileID: 2800000, guid: c40e93c78887e7d4ea13caff2a7a30b1, type: 3}
-  m_UVRect:
-    serializedVersion: 2
-    x: 0
-    y: 0
-    width: 1
-    height: 1
---- !u!114 &8496376345205227413
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7502504890089645172}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cfabb0440166ab443bba8876756fdfa9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.2784314}
-  m_EffectDistance: {x: 5, y: -5}
-  m_UseGraphicAlpha: 0
---- !u!114 &3874579303399803206
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7502504890089645172}
+  m_GameObject: {fileID: 2949437546639149275}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fa4feffba88dce746a2607f0ec6233b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  guid: 6ded830e-4a02-4f2a-864b-5f723e8e7a8d
+  guid: 12243cb0-2234-4dcf-b16c-fa99c2884d67
   script: {fileID: -3639529724776267727, guid: 7e2bd329a4cedba4bac1aaa1ee3bfc90, type: 3}
   scriptPath: Assets/Code/Client/UI/Drag/DraggableSlotComponent.lua
   forceContext: 0
@@ -124,11 +71,7 @@ MonoBehaviour:
       jsDocs:
         text: []
         tags: []
-      decorators:
-      - name: Header
-        parameters:
-        - type: string
-          serializedValue: '"Config"'
+      decorators: []
       nullable: 0
       serializedValue: 1
       serializedObject: {fileID: 0}
@@ -148,59 +91,7 @@ MonoBehaviour:
         tags: []
       decorators: []
       nullable: 0
-      serializedValue: 1
-      serializedObject: {fileID: 0}
-      modified: 1
-    - name: LS_TargetSlot
-      type: StringEnum
-      objectType: 
-      items:
-        type: 
-        objectType: 
-        serializedItems: []
-        objectRefs: []
-      refPath: ::global@0801697fa5dca7f181825c734f20a1b501652980
-      fileRef: 
-      jsDocs:
-        text: []
-        tags: []
-      decorators:
-      - name: ShowIf
-        parameters:
-        - type: string
-          serializedValue: '"CallbackType"'
-        - type: number
-          serializedValue: 0
-      - name: Header
-        parameters:
-        - type: string
-          serializedValue: '"Loadout Slot Config"'
-      nullable: 0
-      serializedValue: Grip
-      serializedObject: {fileID: 0}
-      modified: 0
-    - name: LS_SlotID
-      type: number
-      objectType: 
-      items:
-        type: 
-        objectType: 
-        serializedItems: []
-        objectRefs: []
-      refPath: 
-      fileRef: 
-      jsDocs:
-        text: []
-        tags: []
-      decorators:
-      - name: ShowIf
-        parameters:
-        - type: string
-          serializedValue: '"CallbackType"'
-        - type: number
-          serializedValue: 0
-      nullable: 0
-      serializedValue: 
+      serializedValue: 3
       serializedObject: {fileID: 0}
       modified: 0
     - name: Tooltip
@@ -219,9 +110,9 @@ MonoBehaviour:
       decorators: []
       nullable: 0
       serializedValue: 
-      serializedObject: {fileID: 2731064001715974787}
+      serializedObject: {fileID: 961146998068553362}
       modified: 1
-    - name: IS_Inventory
+    - name: PlayerInventory
       type: string
       objectType: 
       items:
@@ -241,11 +132,25 @@ MonoBehaviour:
           serializedValue: '"CallbackType"'
         - type: number
           serializedValue: 1
+        - type: number
+          serializedValue: 0
+      - name: Header
+        parameters:
+        - type: string
+          serializedValue: '"Inventory Slot Config"'
+      - name: ShowIf
+        parameters:
+        - type: string
+          serializedValue: '"CallbackType"'
+        - type: number
+          serializedValue: 1
+        - type: number
+          serializedValue: 0
       nullable: 0
       serializedValue: 
       serializedObject: {fileID: 0}
       modified: 0
-    - name: IS_SlotID
+    - name: SlotID
       type: number
       objectType: 
       items:
@@ -265,49 +170,27 @@ MonoBehaviour:
           serializedValue: '"CallbackType"'
         - type: number
           serializedValue: 1
-      nullable: 0
-      serializedValue: 
-      serializedObject: {fileID: 0}
-      modified: 0
-    - name: CIS_SlotID
-      type: number
-      objectType: 
-      items:
-        type: 
-        objectType: 
-        serializedItems: []
-        objectRefs: []
-      refPath: 
-      fileRef: 
-      jsDocs:
-        text: []
-        tags: []
-      decorators:
-      - name: ShowIf
-        parameters:
-        - type: string
-          serializedValue: '"CallbackType"'
         - type: number
-          serializedValue: 2
+          serializedValue: 0
       nullable: 0
       serializedValue: 
       serializedObject: {fileID: 0}
       modified: 0
     displayIcon: {fileID: 0}
     displayName: 
---- !u!114 &2731064001715974787
+--- !u!114 &961146998068553362
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7502504890089645172}
+  m_GameObject: {fileID: 2949437546639149275}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fa4feffba88dce746a2607f0ec6233b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  guid: e61fd806-8599-477b-8f19-0939f9c39476
+  guid: 1739c957-ff17-4172-9651-fa4ab1a05a86
   script: {fileID: -2821057540941615920, guid: 781c2b74a15fffe40adf098916b74ca2, type: 3}
   scriptPath: Assets/Code/Client/Components/TooltipComponent.lua
   forceContext: 0

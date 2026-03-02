@@ -14,7 +14,7 @@ export const Settings = {
 	FOV: 100,
 	CameraRotationLerp: 15,
 
-	RenderDistance: Game.IsEditor() ? 2 : 16,
+	RenderDistance: 4,
 };
 export type Settings = typeof Settings;
 
@@ -32,7 +32,7 @@ export default class SettingsController extends AirshipSingleton {
 		this.AddSlider("CameraRotationLerp", "Camera Rotation Force", [1, 30], 0.5);
 		this.AddSlider("FOV", "Field of View", [60, 120], 0.5);
 
-		this.AddSlider("RenderDistance", "Render Distance", [2, 256], 1);
+		this.AddSlider("RenderDistance", "Render Distance", [2, 16], 1);
 	}
 
 	public AddBool(Key: ExtractKeys<typeof Settings, boolean>, DisplayName: string) {
