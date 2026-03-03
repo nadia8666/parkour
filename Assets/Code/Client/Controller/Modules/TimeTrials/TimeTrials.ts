@@ -193,7 +193,6 @@ export class TimeTrials {
 
 					if (ToSet) {
 						Records[Trial.TrialData.ID] = CurrentTime;
-						Core().Client.Data.GetLink(true).RebuildHash();
 						print(`Set ${Trial.TrialData.ID} record!`);
 						this.RefreshTrialStates();
 					}

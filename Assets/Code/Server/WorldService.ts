@@ -11,7 +11,7 @@ import type BlockContainerComponent from "Code/Shared/Components/BlockContainerC
 import GearRegistrySingleton, { type GearRegistryKey } from "Code/Shared/GearRegistry";
 import { Network } from "Code/Shared/Network";
 import GearObject from "Code/Shared/Object/GearObject";
-import { Inventory, ItemTypes, type PlayerInfoGetter, World } from "Code/Shared/Types";
+import { type Inventory, ItemTypes, type PlayerInfoGetter, World } from "Code/Shared/Types";
 import { NoiseHandler } from "Code/Shared/Utility/Noise";
 import { DualLink } from "@inkyaker/DualLink/Code";
 import ENV from "./ENV";

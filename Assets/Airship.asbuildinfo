@@ -1973,16 +1973,6 @@
 			"inherits": []
 		},
 		{
-			"name": "WorldService",
-			"id": "Code/Server/WorldService@WorldService",
-			"file": "Code/Server/WorldService.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
 			"name": "ServerService",
 			"id": "Code/Server/ServerService@ServerService",
 			"file": "Code/Server/ServerService.ts",
@@ -2985,6 +2975,16 @@
 			"inherits": [
 				"Code/Shared/Components/EntityComponent@EntityComponent"
 			]
+		},
+		{
+			"name": "WorldService",
+			"id": "Code/Server/WorldService@WorldService",
+			"file": "Code/Server/WorldService.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
 		}
 	],
 	"flamework": {
