@@ -12,4 +12,5 @@ export default class ItemObject extends AirshipScriptableObject {
 	@ShowIf("ModelType", ItemEnums.ItemModelType.ImageGenerated)
 	public ItemTexture: Texture;
 	@ShowIf("ModelType", ItemEnums.ItemModelType.ImageGenerated) public ItemThickness: number;
+	@ShowIf("ModelType", ItemEnums.ItemModelType.BlockModel) public BlockDef: VoxelBlockDefinition;
 }

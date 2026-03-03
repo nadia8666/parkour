@@ -2212,6 +2212,24 @@ MonoBehaviour:
       serializedValue: 
       serializedObject: {fileID: 0}
       modified: 1
+    - name: LastTooltipObject
+      type: object
+      objectType: GameObject
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators: []
+      nullable: 0
+      serializedValue: 
+      serializedObject: {fileID: 0}
+      modified: 0
     displayIcon: {fileID: 0}
     displayName: 
 --- !u!114 &667655506
@@ -5251,6 +5269,24 @@ MonoBehaviour:
       nullable: 0
       serializedValue: 
       serializedObject: {fileID: 1904944123}
+      modified: 1
+    - name: DroppedItem
+      type: object
+      objectType: GameObject
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators: []
+      nullable: 0
+      serializedValue: 
+      serializedObject: {fileID: 4492196824436303209, guid: b75ac71c22515b145ab0be6c6cdb76e8, type: 3}
       modified: 1
     displayIcon: {fileID: 0}
     displayName: 

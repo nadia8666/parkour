@@ -37,6 +37,8 @@ export const Actions = {
 	FlyBoost: new InputEntry(Key.LeftShift, -1, "AP - Debug"),
 
 	CoreUse: new InputEntry(Key.E, 1, "AP - Gear"),
+
+	DropItem: new InputEntry(Key.X, 1, "AP - Inventory")
 };
 
 const InverseMap = new Map<Key, (keyof typeof Actions)[]>();
@@ -162,6 +164,9 @@ export class Input {
 					return;
 				}
 				break;
+			case "DropItem": {
+				this.Controller.DropItem();
+			}
 		}
 
 		this.Controller.Moveset.Base.ActionPressed(Name, this.Controller);

@@ -608,6 +608,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: -1624083086148811293, guid: 4bfcf38072e582e42b941b472d5f3dcb, type: 3}
+      propertyPath: metadata.properties.Array.data[0].serializedObject
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: -1624083086148811293, guid: 4bfcf38072e582e42b941b472d5f3dcb, type: 3}
       propertyPath: metadata.properties.Array.data[1].serializedObject
       value: 
       objectReference: {fileID: 0}
@@ -713,6 +717,7 @@ PrefabInstance:
     - {fileID: 48927515562287013, guid: 4bfcf38072e582e42b941b472d5f3dcb, type: 3}
     - {fileID: 7088081142443290682, guid: 4bfcf38072e582e42b941b472d5f3dcb, type: 3}
     - {fileID: 7124091312930647041, guid: 4bfcf38072e582e42b941b472d5f3dcb, type: 3}
+    - {fileID: 3239827073778428190, guid: 4bfcf38072e582e42b941b472d5f3dcb, type: 3}
     m_RemovedGameObjects:
     - {fileID: 6156126593727608046, guid: 4bfcf38072e582e42b941b472d5f3dcb, type: 3}
     m_AddedGameObjects:
@@ -725,7 +730,7 @@ PrefabInstance:
       addedObject: {fileID: -5502288348065292581}
     - targetCorrespondingSourceObject: {fileID: 8616685848737228372, guid: 4bfcf38072e582e42b941b472d5f3dcb, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 6647136626085009081}
+      addedObject: {fileID: 7094915412371472379}
   m_SourcePrefab: {fileID: 100100000, guid: 4bfcf38072e582e42b941b472d5f3dcb, type: 3}
 --- !u!137 &1109497932334028605 stripped
 SkinnedMeshRenderer:
@@ -1160,7 +1165,7 @@ MonoBehaviour:
       modified: 1
     displayIcon: {fileID: 0}
     displayName: 
---- !u!114 &6647136626085009081
+--- !u!114 &7094915412371472379
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1169,7 +1174,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 3061699078004531044}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a553cb17010b2403e8523b558bffbc14, type: 3}
+  m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   syncDirection: 1
@@ -1190,10 +1195,10 @@ MonoBehaviour:
   showGizmos: 0
   showOverlay: 0
   overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
-  bufferResetMultiplier: 3
-  positionSensitivity: 0.01
+  onlySyncOnChangeCorrectionMultiplier: 2
   rotationSensitivity: 0.01
-  scaleSensitivity: 0.01
+  positionPrecision: 0.01
+  scalePrecision: 0.01
 --- !u!137 &4822570741934896372 stripped
 SkinnedMeshRenderer:
   m_CorrespondingSourceObject: {fileID: 2235192509741354436, guid: 4bfcf38072e582e42b941b472d5f3dcb, type: 3}

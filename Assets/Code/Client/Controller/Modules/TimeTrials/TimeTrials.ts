@@ -91,7 +91,7 @@ export class TimeTrials {
 		if (this.IsActive()) this.Stop(Controller);
 
 		// TODO: recode trial gear
-		this.TrialGear = undefined/* {
+		this.TrialGear = undefined; /* {
 			Grip: ["None"],
 			Core: ["None"],
 			Mod: ["None", "None"],
@@ -130,7 +130,7 @@ export class TimeTrials {
 
 		Controller.LastPromptInteract = os.clock();
 		Controller.Input.KillLockByID("TimeTrialStart");
-		
+
 		this.CurrentTrial = undefined;
 		this.InIntro = false;
 		this.LastTrialStart = math.huge;
@@ -193,7 +193,7 @@ export class TimeTrials {
 
 					if (ToSet) {
 						Records[Trial.TrialData.ID] = CurrentTime;
-						Core().Client.Data.GetLink(true).RecalculateHash();
+						Core().Client.Data.GetLink(true).RebuildHash();
 						print(`Set ${Trial.TrialData.ID} record!`);
 						this.RefreshTrialStates();
 					}

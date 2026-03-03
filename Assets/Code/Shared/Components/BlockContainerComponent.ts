@@ -1,4 +1,6 @@
+import { Game } from "@Easy/Core/Shared/Game";
 import { DualLink } from "@inkyaker/DualLink/Code";
+import { Network } from "../Network";
 import type { Inventory } from "../Types";
 
 export default class BlockContainerComponent extends AirshipBehaviour {
@@ -8,9 +10,12 @@ export default class BlockContainerComponent extends AirshipBehaviour {
 	private Inventory: Inventory;
 
 	override Start() {
-		this.Link = new DualLink<Inventory>(`BlockContainer${this.ID}`, { Size: 0, Content: {} });
+		this.Link = new DualLink<Inventory>(
+			`BlockContainer${this.ID}`,
+			Game.IsClient() && !Game.IsHosting() ? Network.VoxelWorld.GetInitialContainerInventory.client.FireServer(`BlockContainer${this.ID}`) : { Size: this.SlotCount, Content: {} },
+			{ AutoReplicate: true },
+		);
 		this.Inventory = this.Link.Data;
-		this.Inventory.Size = this.SlotCount;
 	}
 
 	override OnDestroy() {

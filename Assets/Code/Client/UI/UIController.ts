@@ -82,7 +82,8 @@ export default class UIController extends AirshipSingleton {
 			this.RefreshContents();
 			Core()
 				.Client.Data.GetLink()
-				.AnyChanged.Connect(() => this.RefreshContents());
+				.GetChanged("Inventories/Player/*")
+				.Connect(() => this.RefreshContents());
 
 			this.InventorySlots.forEach((Slot) => Slot.UpdateContents());
 		});

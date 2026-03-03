@@ -1,7 +1,7 @@
 import { Signal } from "@Easy/Core/Shared/Util/Signal";
 import Core from "Code/Core/Core";
 import type { GearRegistryKey } from "Code/Shared/GearRegistry";
-import { GearSlots } from "Code/Shared/Types";
+import { GearSlots, ItemTypes } from "Code/Shared/Types";
 
 export const ForceRefreshGearSignal = new Signal();
 const RecacheSignal = new Signal();
@@ -17,10 +17,10 @@ function InitializeCache() {
 			delete CacheMap[Index];
 		}
 
-		//Core().Client.Objective.TimeTrials.TrialGear
 		for (const [_, Gear] of pairs(GearSlots)) {
-			for (const [_, Item] of pairs(Link.Data.Inventories[Gear].Content)) {
-				CacheMap[Item.Key as GearRegistryKey] = Item.Level!;
+			for (const [_, Item] of pairs((Core().Client.Objective.TimeTrials.TrialGear ?? Link.Data.Inventories)[Gear].Content)) {
+				if (Item.Type !== ItemTypes.Gear) continue;
+				CacheMap[Item.Key] = Item.Level;
 			}
 		}
 
@@ -31,9 +31,7 @@ function InitializeCache() {
 	}
 
 	for (const [_, Slot] of pairs(GearSlots)) {
-		for (const [Index] of pairs(Link.Data.Inventories[Slot].Content)) {
-			Link.GetChanged(`Inventories/${Slot}/${Index}`).Connect(() => GenerateCache());
-		}
+		Link.GetChanged(`Inventories/${Slot}/Content/*`).Connect(() => GenerateCache());
 	}
 
 	GenerateCache();
