@@ -8,11 +8,12 @@ import Config from "Code/Client/Config";
 import { Settings } from "Code/Client/Framework/SettingsController";
 import Core from "Code/Core/Core";
 import type BlockContainerComponent from "Code/Shared/Components/BlockContainerComponent";
-import GearRegistrySingleton from "Code/Shared/GearRegistry";
+import GearRegistrySingleton, { type GearRegistryKey } from "Code/Shared/GearRegistry";
 import { Network } from "Code/Shared/Network";
 import GearObject from "Code/Shared/Object/GearObject";
-import { ItemTypes, type PlayerInfoGetter, World } from "Code/Shared/Types";
+import { Inventory, ItemTypes, type PlayerInfoGetter, World } from "Code/Shared/Types";
 import { NoiseHandler } from "Code/Shared/Utility/Noise";
+import { DualLink } from "@inkyaker/DualLink/Code";
 import ENV from "./ENV";
 import { SettingsService } from "./SettingsService";
 
@@ -107,7 +108,14 @@ class ChunkManager {
 		}
 	}
 
-	public GenerateChunk(ChunkKey: Vector3, SurfaceMap: number[] | undefined, ContinentalMap: number[] | undefined, Priority: boolean = false, LinkedPlayer?: PlayerInfoGetter) {
+	public GenerateChunk(
+		ChunkKey: Vector3,
+		SurfaceMap: number[] | undefined,
+		ContinentalMap: number[] | undefined,
+		Priority: boolean = false,
+		LinkedPlayer?: PlayerInfoGetter,
+		CanExpand: boolean = false,
+	) {
 		if (this.LoadedChunks.has(ChunkKey)) return Promise.resolve<boolean>(false);
 		this.LoadedChunks.add(ChunkKey);
 
@@ -235,7 +243,7 @@ class ChunkManager {
 				}
 			}
 
-			this.TryPropagate(ChunkKey, LinkedPlayer, LoadNegX, LoadPosX, LoadNegY, LoadPosY, LoadNegZ, LoadPosZ, SurfaceMap, ContinentalMap, ForcePropagate);
+			if (CanExpand) this.TryPropagate(ChunkKey, LinkedPlayer, LoadNegX, LoadPosX, LoadNegY, LoadPosY, LoadNegZ, LoadPosZ, SurfaceMap, ContinentalMap, ForcePropagate);
 
 			Generated = true;
 		};
@@ -302,9 +310,9 @@ export default class WorldService extends AirshipSingleton {
 	public FixedUpdate() {
 		if (!this.WorldReady) return;
 
-		this.ChunkManager.ProcessQueue(2);
+		this.ChunkManager.ProcessQueue(1);
 
-		if (os.clock() - this.LastUpdate <= 0.25) return;
+		if (os.clock() - this.LastUpdate <= 0.5) return;
 		this.LastUpdate = os.clock();
 
 		Airship.Players.GetPlayers().forEach((Player) => {
@@ -319,53 +327,48 @@ export default class WorldService extends AirshipSingleton {
 						};
 					};
 					const RenderDistance = SettingsService.Settings.GetSetting("RenderDistance", Player);
+					const AboveGround =
+						Position.y + 8 >=
+						this.ChunkManager.GetTerrainHeight(this.Noise.Get2DFBM(Position.x, Position.z, 1, 0.0004, 3, 0.5, 2), this.Noise.Get2DFBM(Position.x, Position.z, 2, 0.01, 4, 0.5, 2));
 
-					const Chunks = new Set<Vector3>();
 					const Keys = this.ChunkManager.ExpandCube(this.ChunkManager.ToKey(Position).sub(Vector3.one.mul(RenderDistance / 2)), RenderDistance);
 
 					for (const [_, Key] of pairs(Keys)) {
 						const Origin = Key.mul(16);
+
 						const ContinentalBuffer = this.Noise.Get2DFBMBatch(Origin.x, Origin.z, 16, 16, new Array(256), 1, 0.0004, 3, 0.5, 2);
 						const DetailBuffer = this.Noise.Get2DFBMBatch(Origin.x, Origin.z, 16, 16, new Array(256), 2, 0.01, 4, 0.5, 2);
-						if (!Chunks.has(Key)) {
-							this.ChunkManager.GenerateChunk(Key, DetailBuffer, ContinentalBuffer, false, LinkedPlayer);
-							Chunks.add(Key);
-						}
+						if (AboveGround) {
+							if (!this.ChunkManager.SurfaceLoadedChunks.has(Key.WithY(0))) {
+								// Load surface chunk
+								this.ChunkManager.SurfaceLoadedChunks.add(Key.WithY(0));
 
-						if (!this.ChunkManager.SurfaceLoadedChunks.has(Key.WithY(0))) {
-							// Load surface chunk
-							this.ChunkManager.SurfaceLoadedChunks.add(Key.WithY(0));
+								let IterationCount = 0;
+								for (const x of $range(0, this.ChunkManager.ChunkSize - 1)) {
+									for (const z of $range(0, this.ChunkManager.ChunkSize - 1)) {
+										const WorldX = Origin.x + x;
+										const WorldZ = Origin.z + z;
 
-							let IterationCount = 0;
-							for (const x of $range(0, this.ChunkManager.ChunkSize - 1)) {
-								for (const z of $range(0, this.ChunkManager.ChunkSize - 1)) {
-									const WorldX = Origin.x + x;
-									const WorldZ = Origin.z + z;
+										const Continental = ContinentalBuffer[z * 16 + x];
+										const Detail = DetailBuffer[z * 16 + x];
+										const SurfaceY = this.ChunkManager.GetTerrainHeight(Continental, Detail);
 
-									const Continental = ContinentalBuffer[z * 16 + x];
-									const Detail = DetailBuffer[z * 16 + x];
-									const SurfaceY = this.ChunkManager.GetTerrainHeight(Continental, Detail);
+										const TopChunk = this.ChunkManager.ToKey(new Vector3(WorldX, SurfaceY, WorldZ));
+										const BottomChunk = TopChunk.sub(Vector3.up);
 
-									const TopChunk = this.ChunkManager.ToKey(new Vector3(WorldX, SurfaceY, WorldZ));
-									const BottomChunk = TopChunk.sub(Vector3.up);
-
-									if (!Chunks.has(TopChunk)) {
 										this.ChunkManager.GenerateChunk(TopChunk, DetailBuffer, ContinentalBuffer, false, LinkedPlayer);
-										Chunks.add(TopChunk);
-									}
-
-									if (!Chunks.has(BottomChunk)) {
 										this.ChunkManager.GenerateChunk(BottomChunk, DetailBuffer, ContinentalBuffer, false, LinkedPlayer);
-										Chunks.add(BottomChunk);
-									}
 
-									IterationCount++;
-									if (IterationCount >= 16) {
-										IterationCount = 0;
-										task.wait();
+										IterationCount++;
+										if (IterationCount >= 16) {
+											IterationCount = 0;
+											task.wait();
+										}
 									}
 								}
 							}
+						} else {
+							this.ChunkManager.GenerateChunk(Key, DetailBuffer, ContinentalBuffer, false, LinkedPlayer, true);
 						}
 					}
 				}
@@ -387,6 +390,12 @@ export default class WorldService extends AirshipSingleton {
 					Network.VoxelWorld.WriteGroup.server.FireClient(Player, PositionArray, this.World.BulkReadVoxels(PositionArray));
 				});
 			}
+		});
+
+		Network.VoxelWorld.GetInitialContainerInventory.server.SetCallback((_, LinkID) => {
+			assert(LinkID.includes("BlockContainer"));
+			const Link = DualLink.FromID(LinkID) as DualLink<Inventory>;
+			return Link?.Data;
 		});
 
 		Config.Seed = math.random(1, 2 ** 30);
@@ -442,7 +451,7 @@ export default class WorldService extends AirshipSingleton {
 			this.World.WriteVoxelAt(Pos, this.ChunkManager.GetBlock("WoodenChest"), true);
 			while (!this.World.GetPrefabAt(Pos)) task.wait();
 			const Container = this.World.GetPrefabAt(Pos).GetAirshipComponent<BlockContainerComponent>(true)!;
-			Container.ID = Guid.NewGuid().ToString()
+			Container.ID = Guid.NewGuid().ToString();
 			let Elements = 0;
 			for (const [GearID, Gear] of pairs(GearRegistrySingleton.Get())) {
 				if (Gear instanceof GearObject) {
@@ -451,7 +460,7 @@ export default class WorldService extends AirshipSingleton {
 						Elements++;
 						Container.GetInventory().Content[Elements] = {
 							Type: ItemTypes.Gear,
-							Key: GearID,
+							Key: GearID as GearRegistryKey,
 							Level: Level,
 							Amount: 1,
 							ObtainedTime: 0,

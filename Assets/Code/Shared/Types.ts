@@ -7,25 +7,37 @@ export type ValueOf<T> = T[keyof T];
 export enum ItemTypes {
 	Gear,
 	Item,
+	Block,
 }
 export const GearSlots = ["Grip", "Core", "Mod", "Augment"] as const;
 export type GearSlots = (typeof GearSlots)[number];
 
-export interface ItemInfo<Type extends ItemTypes> {
-	Type: Type;
-	Key: Type extends ItemTypes.Gear ? GearRegistryKey : string;
-	Level: Type extends ItemTypes.Gear ? number : undefined;
-	ObtainedTime: number;
-	UID: string;
-	Amount: number;
-	Temporary?: boolean;
+interface BaseItemInfo<T extends ItemTypes> {
+  Type: T;
+  Key: T extends ItemTypes.Gear ? GearRegistryKey : string;
+  ObtainedTime: number;
+  UID: string;
+  Amount: number;
+  Temporary?: boolean;
 }
 
-export type AnyItem = ItemInfo<ItemTypes>;
+export interface GearItem extends BaseItemInfo<ItemTypes.Gear> {
+  Level: number;
+}
+
+export interface BlockItem extends BaseItemInfo<ItemTypes.Block> {
+  BlockDef: VoxelBlockDefinition;
+}
+
+export interface OtherItem extends BaseItemInfo<Exclude<ItemTypes, ItemTypes.Gear | ItemTypes.Block>> {}
+
+export type ItemInfo = GearItem | BlockItem | OtherItem;
+
+export type AnyItem = ItemInfo;
 
 export interface Inventory {
 	Size: number;
-	Content: { [Index: number]: ItemInfo<ItemTypes> };
+	Content: { [Index: number]: AnyItem };
 }
 
 export interface DataFormat {
@@ -56,7 +68,6 @@ export const DataTemplate: DataFormat = {
 					Temporary: true,
 					UID: "cr",
 					ObtainedTime: 0,
-					Level: undefined,
 				},
 			},
 		},
@@ -87,6 +98,7 @@ export namespace ItemEnums {
 
 	export enum ItemModelType {
 		ImageGenerated,
+		BlockModel,
 	}
 }
 

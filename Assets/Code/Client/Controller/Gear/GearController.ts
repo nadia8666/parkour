@@ -2,7 +2,7 @@ import { deepCopy as DeepCopy } from "@Easy/Core/Shared/Util/ObjectUtils";
 import { WithGear } from "Code/Client/Config";
 import Core from "Code/Core/Core";
 import type { GearRegistryKey } from "Code/Shared/GearRegistry";
-import { type AnyItem, type InventoryKey, type ItemInfo, ItemTypes } from "Code/Shared/Types";
+import { type AnyItem, type GearItem, type InventoryKey, type ItemInfo, ItemTypes } from "Code/Shared/Types";
 
 const MaxAmmo = {
 	Wallrun: 2,
@@ -61,7 +61,7 @@ export default class GearController extends AirshipSingleton {
 
 		for (const [_, Item] of pairs(Slot.Content)) {
 			if (!Item) continue;
-			if (Item.Key === GearName && Item.Level! >= Level) {
+			if (Item.Key === GearName && Item.Type === ItemTypes.Gear && Item.Level! >= Level) {
 				return true;
 			}
 		}
@@ -72,7 +72,7 @@ export default class GearController extends AirshipSingleton {
 	// Utillity
 	public GetName(Item: AnyItem) {
 		if (Item.Type === ItemTypes.Gear) {
-			return Core().Gear[(Item as ItemInfo<ItemTypes.Gear>).Key].Name;
+			return Core().Gear[(Item as GearItem).Key].Name;
 		} else {
 			// TEMP
 			return Item.Key;
@@ -82,7 +82,7 @@ export default class GearController extends AirshipSingleton {
 	public GetItem(ID: InventoryKey) {
 		if (ID === "None") return $tuple(undefined, undefined);
 
-		let [Inventory, Item]: [string | undefined, ItemInfo<ItemTypes> | undefined] = [undefined, undefined];
+		let [Inventory, Item]: [string | undefined, ItemInfo | undefined] = [undefined, undefined];
 
 		for (const [Inv, Data] of pairs(Core().Client.Data.GetLink().Data.Inventories)) {
 			for (const [_, Value] of pairs(Data.Content)) {

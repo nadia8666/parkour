@@ -1,9 +1,10 @@
-import { Asset } from "@Easy/Core/Shared/Asset";
 import { Mouse } from "@Easy/Core/Shared/UserInput";
 import { Bin } from "@Easy/Core/Shared/Util/Bin";
 import type TooltipComponent from "Code/Client/Components/TooltipComponent";
 import Core from "Code/Core/Core";
-import { type AnyItem, type Inventory, type ItemInfo, ItemTypes } from "Code/Shared/Types";
+import { Network } from "Code/Shared/Network";
+import { type AnyItem, type Inventory, ItemTypes } from "Code/Shared/Types";
+import { ModelBuilder } from "Code/Shared/Utility/ModelBuilder";
 
 export enum CallbackType {
 	Loadout,
@@ -12,10 +13,11 @@ export enum CallbackType {
 	None,
 }
 
-const AllSlots = new Set<DraggableSlotComponent>();
-
 export default class DraggableSlotComponent extends AirshipBehaviour {
 	private Connections = new Bin();
+
+	public static AllLoadoutSlots = new Set<DraggableSlotComponent>();
+	public static AllSlots = new Map<GameObject, DraggableSlotComponent>();
 
 	@Header("References")
 
@@ -52,14 +54,16 @@ export default class DraggableSlotComponent extends AirshipBehaviour {
 			}),
 		);
 
-		if (this.CallbackType === CallbackType.Loadout) AllSlots.add(this);
+		if (this.CallbackType === CallbackType.Loadout) DraggableSlotComponent.AllLoadoutSlots.add(this);
+		DraggableSlotComponent.AllSlots.set(this.gameObject, this);
 	}
 
 	@Client()
 	override OnDisable() {
 		this.Connections.Clean();
 
-		AllSlots.delete(this);
+		DraggableSlotComponent.AllLoadoutSlots.delete(this);
+		DraggableSlotComponent.AllSlots.delete(this.gameObject);
 	}
 
 	public IsDraggable() {
@@ -76,34 +80,12 @@ export default class DraggableSlotComponent extends AirshipBehaviour {
 		this.gameObject.ClearChildren();
 
 		if (this.SlotContents) {
-			let ItemMesh: Mesh | undefined;
+			const [Item] = ModelBuilder.BuildItemModel(this.SlotContents);
 
-			switch (this.SlotContents.Type) {
-				case ItemTypes.Gear: {
-					ItemMesh = Asset.LoadAsset(`Assets/Resources/Models/Item/None.asset`);
-					break;
-				}
-
-				case ItemTypes.Item: {
-					ItemMesh = Asset.LoadAssetIfExists(`Assets/Resources/Models/Item/${this.SlotContents.Key}.asset`) ?? Asset.LoadAsset(`Assets/Resources/Models/Item/None.asset`);
-					break;
-				}
-			}
-
-			if (ItemMesh) {
-				const Item = GameObject.Create("ItemMesh");
+			if (Item) {
 				Item.transform.SetParent(this.transform, false);
 				Item.transform.localPosition = new Vector3(0.363, 0.666, -10);
 				Item.transform.localScale = new Vector3(74.75, 74.75, 74.75);
-
-				const Filter = Item.AddComponent<MeshFilter>();
-				Filter.mesh = Instantiate(ItemMesh);
-
-				const Material: Material | undefined =
-					Asset.LoadAssetIfExists(`Assets/Resources/Models/Item/Materials/${this.SlotContents.Key}.mat`) ?? Asset.LoadAsset(`Assets/Resources/Models/Item/Materials/None.mat`);
-				const Renderer = Item.AddComponent<MeshRenderer>();
-				if (Material) Renderer.SetMaterial(0, Material);
-
 				Item.layer = LayerMask.NameToLayer("UI");
 			}
 		}
@@ -111,9 +93,9 @@ export default class DraggableSlotComponent extends AirshipBehaviour {
 		if (!this.Tooltip) return;
 		const IsGear = this.SlotContents?.Type === ItemTypes.Gear;
 		if (this.SlotContents) {
-			if (IsGear) {
-				this.Tooltip.TooltipGear.GearTarget = Core().Gear[(this.SlotContents as ItemInfo<ItemTypes.Gear>).Key];
-				this.Tooltip.TooltipGear.PerkLevel = this.SlotContents.Level ?? 1;
+			if (IsGear && this.SlotContents.Type === ItemTypes.Gear) {
+				this.Tooltip.TooltipGear.GearTarget = Core().Gear[this.SlotContents.Key];
+				this.Tooltip.TooltipGear.PerkLevel = this.SlotContents.Level;
 			} else {
 				this.Tooltip.TooltipGear.GearTarget = undefined;
 				this.Tooltip.TooltipString = `${Core().Client.Gear.GetName(this.SlotContents)}`;
@@ -143,14 +125,14 @@ export default class DraggableSlotComponent extends AirshipBehaviour {
 			const ContentAsGear = Core().Gear.GearFromKey(MyContents.Key);
 
 			if (TargetIsLoadout) if (!ContentAsGear || Target.PlayerInventory !== ContentAsGear.Slot) return;
-			
+
 			TargetInventory.Content[Target.SlotID] = MyContents;
 			MyInventory.Content[this.SlotID] = TargetContents;
 
 			Target.UpdateContents();
 			this.UpdateContents();
 		} else {
-			// TODO: drop item
+			if (this.PlayerInventory) Network.Generic.DropItem.client.FireServer(this.PlayerInventory, this.SlotID);
 		}
 	}
 
@@ -173,12 +155,13 @@ export default class DraggableSlotComponent extends AirshipBehaviour {
 	}
 
 	public static LS_ReloadAllSlots() {
-		for (const [Slot] of pairs(AllSlots)) {
+		for (const [Slot] of pairs(DraggableSlotComponent.AllLoadoutSlots)) {
 			Slot.FetchContents();
 		}
 	}
 
 	public FetchContents() {
 		this.SlotContents = this.GetInventory()?.Content[this.SlotID];
+		return this.SlotContents;
 	}
 }

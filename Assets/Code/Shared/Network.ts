@@ -1,7 +1,7 @@
 import { NetworkFunction } from "@Easy/Core/Shared/Network/NetworkFunction";
 import { NetworkSignal } from "@Easy/Core/Shared/Network/NetworkSignal";
 import type { Settings } from "Code/Client/Framework/SettingsController";
-import type { DataFormat, ValueOf } from "./Types";
+import type { AnyItem, DataFormat, Inventory, ValueOf } from "./Types";
 
 export const Network = {
 	Data: {
@@ -13,10 +13,15 @@ export const Network = {
 		GetInitialChunks: new NetworkSignal<void>("Network/VoxelWorld/GetInitialChunks"),
 		WriteGroup: new NetworkSignal<[Vector3[], readonly number[]]>("Network/VoxelWorld/WriteGroup"),
 		WriteVoxel: new NetworkSignal<[Vector3, number]>("Network/VoxelWorld/WriteVoxel"),
-		InitializeInteractableBlock: new NetworkSignal<[Vector3, string]>("Network/VoxelWorld/InitializeInteractableBlock"),
+		GetInitialContainerInventory: new NetworkFunction<string, Inventory>("Network/VoxelWorld/GetInitialContainerInventory"),
 	},
 
 	Effect: {
 		Respawn: new NetworkSignal<void>("Network/Effect/Respawn"),
+	},
+
+	Generic: {
+		DropItem: new NetworkSignal<[string, number]>("Network/Generic/DropItem"),
+		GetDroppedItemData: new NetworkFunction<number, AnyItem | undefined>("Network/Generic/GetDroppedItemData"),
 	},
 };

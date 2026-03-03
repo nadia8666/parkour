@@ -10,6 +10,7 @@ import type GenericTrigger from "../Components/Collision/GenericTriggerComponent
 import Config from "../Config";
 import { Settings } from "../Framework/SettingsController";
 import type WorldController from "../Framework/WorldController";
+import DraggableSlotComponent from "../UI/Drag/DraggableSlotComponent";
 import type AnimationController from "./Animation/AnimationController";
 import type { ValidAnimation } from "./Animation/AnimationController";
 import type ViewmodelComponent from "./Animation/ViewmodelComponent";
@@ -326,16 +327,12 @@ export default class ClientComponent extends AirshipBehaviour {
 	}
 
 	public OnRightMB() {
-		print("rmb");
 		if (this.TargetedBlock) {
-			print("Targ");
 			const HeldItem = Core().Client.UI.Hotbar.HeldItem;
 			const Prefab = Core().Client.WorldController.World.GetPrefabAt(this.TargetedBlock);
 			let TryPlace = true;
 			if (Prefab) {
-				print("prefab");
 				const Interactable = Prefab.GetAirshipComponent<InteractableBlockComponent>();
-				print(Interactable);
 
 				if (Interactable?.OnUse(this)) TryPlace = false;
 			}
@@ -485,5 +482,29 @@ export default class ClientComponent extends AirshipBehaviour {
 	public SetVelocity(Velocity: Vector3) {
 		this.Rigidbody.linearVelocity = Velocity;
 		return Velocity;
+	}
+
+	public DropItem() {
+		const UI = Core().Client.UI;
+
+		let HeldItem = UI.AreMenusOpen()
+			? (() => {
+					const UITarget = UI.RaycastUI();
+					return UITarget && DraggableSlotComponent.AllSlots.get(UITarget)?.FetchContents();
+				})()
+			: Core().Client.UI.Hotbar.HeldItem;
+
+		print(HeldItem, Core().Client.Data.GetLink().Data.Inventories);
+
+		if (!HeldItem) return;
+
+		for (const [TargetSlot, Inventory] of pairs(Core().Client.Data.GetLink(true).Data.Inventories)) {
+			for (const [Index, Value] of pairs(Inventory.Content)) {
+				if (Value === HeldItem) {
+					Network.Generic.DropItem.client.FireServer(TargetSlot as string, Index);
+					break;
+				}
+			}
+		}
 	}
 }
