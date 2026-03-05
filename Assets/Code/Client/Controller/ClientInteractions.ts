@@ -11,6 +11,7 @@ import { Raycast } from "./Moveset/Base";
 export class ClientInteractions {
 	public BlockCursor: GameObject;
 	public TargetedBlock?: Vector3;
+	public TargetNormal: Vector3 = Vector3.forward;
 	constructor(private Controller: ClientComponent) {}
 
 	public OnEnable() {
@@ -31,6 +32,7 @@ export class ClientInteractions {
 			const VoxelPos = VoxelWorld.FloorInt(Cast.Pos.sub(Cast.Normal.mul(0.5)));
 			this.BlockCursor.transform.position = VoxelPos.add(new Vector3(0.5, 0.5, 0.5));
 			this.TargetedBlock = VoxelPos;
+			this.TargetNormal = Cast.Normal;
 		} else this.TargetedBlock = undefined;
 
 		this.BlockCursor.SetActive(Cast.Hit);
@@ -38,23 +40,34 @@ export class ClientInteractions {
 
 	public OnLMBDown() {
 		// TODO: mining
+		if (this.Controller.UI.UI.Get().RaycastUI() || this.Controller.UI.UI.Get().AreMenusOpen()) return;
+		if (this.TargetedBlock) Network.TEMP.DESTROY_VOXEL.client.FireServer(this.TargetedBlock);
 	}
 
 	public OnLMBUp() {}
 
 	public OnRMBDown() {
+		if (this.Controller.UI.UI.Get().RaycastUI() || this.Controller.UI.UI.Get().AreMenusOpen()) return;
 		if (this.TargetedBlock) {
 			const HeldItem = Core().Client.UI.Hotbar.HeldItem;
 			const Prefab = this.Controller.World.World.GetPrefabAt(this.TargetedBlock);
 			let TryPlace = true;
 			if (Prefab) {
-				const Interactable = Prefab.GetAirshipComponent<InteractableBlockComponent>();
+				const Interactable = Prefab.GetAirshipComponent<InteractableBlockComponent>(true);
 
 				if (Interactable?.OnUse(this.Controller)) TryPlace = false;
 			}
 
 			if (TryPlace && HeldItem) {
-				// TODO: placing blocks
+				// TODO: move to registry util
+				for (const [TargetSlot, Inventory] of pairs(Core().Client.Data.GetLink(true).Data.Inventories)) {
+					for (const [Index, Value] of pairs(Inventory.Content)) {
+						if (Value === HeldItem) {
+							Network.TEMP.PLACE_VOXEL.client.FireServer(this.TargetedBlock.add(this.TargetNormal), TargetSlot as string, Index);
+							break;
+						}
+					}
+				}
 			}
 		}
 	}
@@ -74,6 +87,7 @@ export class ClientInteractions {
 
 		if (!HeldItem) return;
 
+		// TODO: move to registry util
 		for (const [TargetSlot, Inventory] of pairs(Core().Client.Data.GetLink(true).Data.Inventories)) {
 			for (const [Index, Value] of pairs(Inventory.Content)) {
 				if (Value === HeldItem) {

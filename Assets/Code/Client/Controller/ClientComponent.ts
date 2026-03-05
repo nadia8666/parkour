@@ -7,7 +7,7 @@ import CFrame from "@inkyaker/CFrame/Code";
 import type GenericTrigger from "../Components/Collision/GenericTriggerComponent";
 import Config from "../Config";
 import { Settings } from "../Framework/SettingsController";
-import type WorldController from "../Framework/WorldController";
+import type WorldSingleton from "../Framework/WorldSingleton";
 import type AnimationController from "./Animation/AnimationController";
 import type { ValidAnimation } from "./Animation/AnimationController";
 import type ViewmodelComponent from "./Animation/ViewmodelComponent";
@@ -94,7 +94,7 @@ export default class ClientComponent extends AirshipBehaviour {
 	// Control
 
 	@NonSerialized() public Gear: GearController;
-	@NonSerialized() public World: WorldController;
+	@NonSerialized() public World: WorldSingleton;
 	@NonSerialized() public Moveset = {
 		Base: new MovesetBase(),
 		Generic: new MovesetGeneric(),
@@ -128,7 +128,7 @@ export default class ClientComponent extends AirshipBehaviour {
 		}
 
 		this.Gear = Core().Client.Gear;
-		this.World = Core().Client.WorldController;
+		this.World = Core().World;
 
 		this.AnimationController = Core().Client.Animation;
 		while (!this.AnimationController.Component) {

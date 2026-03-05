@@ -52,9 +52,6 @@ task.spawn(() => {
 	while (!Core.Server) {
 		task.wait();
 	}
-	while (!Core.Server.World) {
-		task.wait();
-	}
 	while (!Core.Server.DataService) {
 		task.wait();
 	}
@@ -64,14 +61,14 @@ task.spawn(() => {
 
 export = () => {
 	while (!CoreLoaded) {
-		FramesPassed++
+		FramesPassed++;
 		if (FramesPassed % 500 === 0) {
-			task.wait()
+			task.wait();
 		}
-		//while (FramesPassed <= 10) {
-		//	FramesPassed++;
-		//	task.wait();
-		//}
+		while (FramesPassed <= 10) {
+			FramesPassed++;
+			task.wait();
+		}
 	}
 	return Core;
 };

@@ -1,23 +1,22 @@
-// ai edited
 //--!native
 //--!optimize 2
 
 import { Airship } from "@Easy/Core/Shared/Airship";
-import { Game } from "@Easy/Core/Shared/Game";
-import Config from "Code/Client/Config";
 import Core from "Code/Core/Core";
-import type BlockContainerComponent from "Code/Shared/Components/BlockContainerComponent";
+import ENV from "Code/Server/ENV";
+import { SettingsService } from "Code/Server/SettingsService";
+import type InteractableBlockComponent from "Code/Shared/Components/InteractableBlockComponent";
 import GearRegistrySingleton, { type GearRegistryKey } from "Code/Shared/GearRegistry";
 import { Network } from "Code/Shared/Network";
 import GearObject from "Code/Shared/Object/GearObject";
 import { type Inventory, ItemTypes, type PlayerInfoGetter, World } from "Code/Shared/Types";
 import { NoiseHandler } from "Code/Shared/Utility/Noise";
 import { DualLink } from "@inkyaker/DualLink/Code";
-import ENV from "./ENV";
-import { SettingsService } from "./SettingsService";
+import Config from "../Config";
+import { Settings } from "./SettingsController";
 
 function instance() {
-	return Core().Server.World;
+	return Core().World;
 }
 
 type ChunkTask = {
@@ -237,15 +236,15 @@ class ChunkManager {
 
 			if (Positions.size() > 0) {
 				instance().World.WriteVoxelGroupAt(Positions, Blocks, Priority);
-				if (!Game.IsHosting()) {
+				if (!ENV.Shared) {
 					Network.VoxelWorld.WriteGroup.server.FireAllClients(Positions, Blocks);
 				}
 			}
 
 			if (CanExpand) this.TryPropagate(ChunkKey, LinkedPlayer, LoadNegX, LoadPosX, LoadNegY, LoadPosY, LoadNegZ, LoadPosZ, SurfaceMap, ContinentalMap, ForcePropagate);
 			else if (LoadPosY && ForcePropagate) {
-				const [Pos, Render] = LinkedPlayer ? [LinkedPlayer().Position, SettingsService.Settings.GetSetting("RenderDistance", LinkedPlayer().Player)] : [Vector3.zero, 16];
-				this.CheckAndLoad(ChunkKey.add(new Vector3(0, 1, 0)), Pos, Render, SurfaceMap, ContinentalMap, true, LinkedPlayer);
+				//const [Pos, Render] = LinkedPlayer ? [LinkedPlayer().Position, SettingsService.Settings.GetSetting("RenderDistance", LinkedPlayer().Player)] : [Vector3.zero, 16];
+				//this.CheckAndLoad(ChunkKey.add(new Vector3(0, 1, 0)), Pos, Render, SurfaceMap, ContinentalMap, true, LinkedPlayer, false);
 			}
 
 			Generated = true;
@@ -293,9 +292,10 @@ class ChunkManager {
 		ContinentalMap: number[] | undefined,
 		ForcePropagate: boolean = false,
 		LinkedPlayer: PlayerInfoGetter | undefined,
+		CanExpand: boolean = true,
 	) {
 		if (!this.LoadedChunks.has(Key) && (this.IsChunkInRange(Key, PlayerPos, Dist) || ForcePropagate)) {
-			this.GenerateChunk(Key, SurfaceMap, ContinentalMap, false, LinkedPlayer, true);
+			this.GenerateChunk(Key, SurfaceMap, ContinentalMap, false, LinkedPlayer, CanExpand);
 		}
 	}
 
@@ -308,181 +308,258 @@ class ChunkManager {
 	}
 }
 
-export default class WorldService extends AirshipSingleton {
+export default class WorldSingleton extends AirshipSingleton {
+	@Header("Shared Properties")
 	public World: VoxelWorld;
+
+	@Header("Client Properties")
+	@NonSerialized()
+	public LightingTexture: Texture3D;
+	@NonSerialized() public ActorPosition = Vector3.zero;
+	@NonSerialized() private ChunkSize = 16;
+	@NonSerialized() public Resolution = this.ChunkSize * Settings.RenderDistance;
+
+	private IsDirty = true;
+	private LastChunkPos = Vector3.zero;
+
+	@Header("Server Properties")
+	@NonSerialized()
 	public readonly ChunkManager = new ChunkManager();
-	public Noise: NoiseHandler;
-	public LastUpdate = 0;
-	public WorldReady = false;
+	@NonSerialized() public Noise: NoiseHandler;
+	@NonSerialized() public LastUpdate = 0;
+	@NonSerialized() public WorldReady = false;
 
-	@Server()
-	public FixedUpdate() {
-		if (!this.WorldReady) return;
+	public Start() {
+		if ($CLIENT) {
+			Network.VoxelWorld.WriteGroup.client.OnServerEvent((PosArr, Blocks) => this.World.WriteVoxelGroupAt(PosArr, Blocks, false));
 
-		this.ChunkManager.ProcessQueue(1);
+			this.LightingTexture = new Texture3D(this.Resolution, this.Resolution, this.Resolution, TextureFormat.R8, false, true);
+			const Pixels: Color[] = [];
+			for (const _ of $range(0, this.Resolution ** 3)) {
+				Pixels.push(new Color(1, 0, 0, 1));
+			}
+			this.LightingTexture.SetPixels(Pixels);
+			this.LightingTexture.filterMode = FilterMode.Point;
+			this.LightingTexture.wrapMode = TextureWrapMode.Repeat;
+			this.LightingTexture.mipMapBias = 0;
+			this.LightingTexture.Apply();
 
-		if (os.clock() - this.LastUpdate <= 0.5) return;
-		this.LastUpdate = os.clock();
+			this.World.VoxelChunkUpdated.Connect((_Chunk) => {
+				this.IsDirty = true;
+			});
 
-		Airship.Players.GetPlayers().forEach((Player) => {
-			task.spawn(() => {
-				const Character = Core().Server.CharacterMap.get(Player);
-				if (Character) {
-					let Position = Character.transform.position;
-					Position = new Vector3(math.floor(Position.x), math.floor(Position.y), math.floor(Position.z));
-					const LinkedPlayer: PlayerInfoGetter = () => {
-						return {
-							Player: Player,
-							Position: Position,
-						};
-					};
-					const RenderDistance = SettingsService.Settings.GetSetting("RenderDistance", Player);
-					const AboveGround =
-						Position.y + 8 >=
-						this.ChunkManager.GetTerrainHeight(this.Noise.Get2DFBM(Position.x, Position.z, 1, 0.0004, 3, 0.5, 2), this.Noise.Get2DFBM(Position.x, Position.z, 2, 0.01, 4, 0.5, 2));
+			Network.VoxelWorld.GetInitialChunks.client.FireServer();
+		}
 
-					const Keys = this.ChunkManager.ExpandCube(this.ChunkManager.ToKey(Position).sub(Vector3.one.mul(RenderDistance / 2)), RenderDistance);
+		if ($SERVER) {
+			Network.VoxelWorld.GetInitialChunks.server.OnClientEvent((Player) => {
+				if (ENV.Shared) return;
+				while (!this.WorldReady) task.wait();
 
-					for (const [_, Key] of pairs(Keys)) {
-						const Origin = Key.mul(16);
+				for (const [Chunk] of pairs(this.ChunkManager.LoadedChunks)) {
+					task.spawn(() => {
+						const PositionArray = this.ChunkManager.ExpandCube(this.ChunkManager.FromKey(Chunk), 15);
+						Network.VoxelWorld.WriteGroup.server.FireClient(Player, PositionArray, this.World.BulkReadVoxels(PositionArray));
+					});
+				}
+			});
 
-						const ContinentalBuffer = this.Noise.Get2DFBMBatch(Origin.x, Origin.z, 16, 16, new Array(256), 1, 0.0004, 3, 0.5, 2);
-						const DetailBuffer = this.Noise.Get2DFBMBatch(Origin.x, Origin.z, 16, 16, new Array(256), 2, 0.01, 4, 0.5, 2);
-						if (AboveGround) {
-							if (!this.ChunkManager.SurfaceLoadedChunks.has(Key.WithY(0))) {
-								// Load surface chunk
-								this.ChunkManager.SurfaceLoadedChunks.add(Key.WithY(0));
+			Network.VoxelWorld.GetInitialContainerInventory.server.SetCallback((_, LinkID) => {
+				assert(LinkID.includes("BlockContainer"));
+				const Link = DualLink.FromID(LinkID) as DualLink<Inventory>;
+				return Link?.Data;
+			});
 
-								let IterationCount = 0;
-								for (const x of $range(0, this.ChunkManager.ChunkSize - 1)) {
-									for (const z of $range(0, this.ChunkManager.ChunkSize - 1)) {
-										const WorldX = Origin.x + x;
-										const WorldZ = Origin.z + z;
+			Config.Seed = math.random(1, 2 ** 30);
+			print(`world seed: ${Config.Seed}`);
+			math.randomseed(Config.Seed);
+			this.Noise = new NoiseHandler(Config.Seed);
 
-										const Continental = ContinentalBuffer[z * 16 + x];
-										const Detail = DetailBuffer[z * 16 + x];
-										const SurfaceY = this.ChunkManager.GetTerrainHeight(Continental, Detail);
+			let [ChunksWritten, MaxChunks] = [0, 0];
+			for (const ChunkX of $range(-4, 4)) {
+				for (const ChunkZ of $range(-4, 4)) {
+					MaxChunks += 2;
+					const Origin = new Vector3(ChunkX, 0, ChunkZ).mul(16);
 
-										const TopChunk = this.ChunkManager.ToKey(new Vector3(WorldX, SurfaceY, WorldZ));
-										const BottomChunk = TopChunk.sub(Vector3.up);
+					const ContinentalBuffer = this.Noise.Get2DFBMBatch(Origin.x, Origin.z, 16, 16, new Array(256), 1, 0.0004, 3, 0.5, 2);
+					const DetailBuffer = this.Noise.Get2DFBMBatch(Origin.x, Origin.z, 16, 16, new Array(256), 2, 0.01, 4, 0.5, 2);
 
-										this.ChunkManager.GenerateChunk(TopChunk, DetailBuffer, ContinentalBuffer, false, LinkedPlayer);
-										this.ChunkManager.GenerateChunk(BottomChunk, DetailBuffer, ContinentalBuffer, false, LinkedPlayer);
+					const AllChunks = new Set<Vector3>();
 
-										IterationCount++;
-										if (IterationCount >= 16) {
-											IterationCount = 0;
-											task.wait();
-										}
-									}
-								}
-							}
-						} else {
-							this.ChunkManager.GenerateChunk(Key, DetailBuffer, ContinentalBuffer, false, LinkedPlayer, true);
+					for (const x of $range(0, this.ChunkManager.ChunkSize - 1)) {
+						for (const z of $range(0, this.ChunkManager.ChunkSize - 1)) {
+							const WorldX = Origin.x + x;
+							const WorldZ = Origin.z + z;
+
+							const Continental = ContinentalBuffer[z * 16 + x];
+							const Detail = DetailBuffer[z * 16 + x];
+							const SurfaceY = this.ChunkManager.GetTerrainHeight(Continental, Detail);
+
+							const TopChunk = this.ChunkManager.ToKey(new Vector3(WorldX, SurfaceY, WorldZ));
+							AllChunks.add(TopChunk);
+						}
+					}
+
+					AllChunks.forEach((TopChunk) => {
+						this.ChunkManager.GenerateChunk(TopChunk, DetailBuffer, ContinentalBuffer, true).andThen((Written) => {
+							if (Written) ChunksWritten++;
+						});
+						this.ChunkManager.GenerateChunk(TopChunk.sub(Vector3.up), DetailBuffer, ContinentalBuffer, true).andThen((Written) => {
+							if (Written) ChunksWritten++;
+						});
+					});
+				}
+			}
+
+			while (ChunksWritten < MaxChunks) task.wait();
+
+			const Cont = this.Noise.Get2DFBM(0, 0, 1, 0.0004, 3, 0.5, 2);
+			const Det = this.Noise.Get2DFBM(0, 0, 2, 0.01, 4, 0.5, 2);
+			const Surface = this.ChunkManager.GetTerrainHeight(Cont, Det);
+			Config.SpawnPos = new Vector3(0, Surface + 4, 0);
+
+			if (ENV.Runtime === "DEV") {
+				const Pos = new Vector3(0, Surface + 15, 0);
+				this.World.WriteVoxelAt(Pos, this.ChunkManager.GetBlock("WoodenChest"), true);
+				while (!this.World.GetPrefabAt(Pos)) task.wait();
+				const Block = this.World.GetPrefabAt(Pos).GetAirshipComponent<InteractableBlockComponent>(true)!;
+				task.wait(0.1);
+				let Elements = 0;
+				for (const [GearID, Gear] of pairs(GearRegistrySingleton.Get())) {
+					if (Gear instanceof GearObject) {
+						for (const Level of $range(1, Gear.MaxLevel)) {
+							const ID = `Debug${GearID}${Level}`;
+							Elements++;
+							Block.Container!.GetInventory().Content[Elements] = {
+								Type: ItemTypes.Gear,
+								Key: GearID as GearRegistryKey,
+								Level: Level,
+								Amount: 1,
+								ObtainedTime: 0,
+								UID: ID,
+								Temporary: true,
+							};
 						}
 					}
 				}
+				Block.Container!.GetInventory().Size = Elements;
+			}
+
+			this.WorldReady = true;
+		}
+	}
+
+	public Update() {
+		if ($CLIENT) {
+			const Actor = Core().Client.Actor;
+			if (!Actor) return;
+
+			this.ActorPosition = VoxelWorld.Floor(Actor.transform.position);
+
+			const x = math.floor(this.ActorPosition.x / this.ChunkSize) * this.ChunkSize;
+			const y = math.floor(this.ActorPosition.y / this.ChunkSize) * this.ChunkSize;
+			const z = math.floor(this.ActorPosition.z / this.ChunkSize) * this.ChunkSize;
+
+			if (x !== this.LastChunkPos.x || y !== this.LastChunkPos.y || z !== this.LastChunkPos.z) {
+				this.LastChunkPos = new Vector3(x, y, z);
+				this.IsDirty = true;
+			}
+
+			if (this.IsDirty) {
+				this.RedrawLighting();
+				this.IsDirty = false;
+			}
+		}
+	}
+
+	public FixedUpdate() {
+		if ($SERVER) {
+			if (!this.WorldReady) return;
+
+			this.ChunkManager.ProcessQueue(1);
+
+			if (os.clock() - this.LastUpdate <= 0.5) return;
+			this.LastUpdate = os.clock();
+
+			Airship.Players.GetPlayers().forEach((Player) => {
+				task.spawn(() => {
+					const Character = Core().Server.CharacterMap.get(Player);
+					if (Character) {
+						let Position = Character.transform.position;
+						Position = new Vector3(math.floor(Position.x), math.floor(Position.y), math.floor(Position.z));
+						const LinkedPlayer: PlayerInfoGetter = () => {
+							return {
+								Player: Player,
+								Position: Position,
+							};
+						};
+						const RenderDistance = SettingsService.Settings.GetSetting("RenderDistance", Player);
+						const AboveGround =
+							Position.y + 8 >=
+							this.ChunkManager.GetTerrainHeight(
+								this.Noise.Get2DFBM(Position.x, Position.z, 1, 0.0004, 3, 0.5, 2),
+								this.Noise.Get2DFBM(Position.x, Position.z, 2, 0.01, 4, 0.5, 2),
+							);
+
+						const Keys = this.ChunkManager.ExpandCube(this.ChunkManager.ToKey(Position).sub(Vector3.one.mul(RenderDistance / 2)), RenderDistance);
+
+						for (const [_, Key] of pairs(Keys)) {
+							const Origin = Key.mul(16);
+
+							const ContinentalBuffer = this.Noise.Get2DFBMBatch(Origin.x, Origin.z, 16, 16, new Array(256), 1, 0.0004, 3, 0.5, 2);
+							const DetailBuffer = this.Noise.Get2DFBMBatch(Origin.x, Origin.z, 16, 16, new Array(256), 2, 0.01, 4, 0.5, 2);
+							if (AboveGround) {
+								if (!this.ChunkManager.SurfaceLoadedChunks.has(Key.WithY(0))) {
+									// Load surface chunk
+									this.ChunkManager.SurfaceLoadedChunks.add(Key.WithY(0));
+
+									let IterationCount = 0;
+									for (const x of $range(0, this.ChunkManager.ChunkSize - 1)) {
+										for (const z of $range(0, this.ChunkManager.ChunkSize - 1)) {
+											const WorldX = Origin.x + x;
+											const WorldZ = Origin.z + z;
+
+											const Continental = ContinentalBuffer[z * 16 + x];
+											const Detail = DetailBuffer[z * 16 + x];
+											const SurfaceY = this.ChunkManager.GetTerrainHeight(Continental, Detail);
+
+											const TopChunk = this.ChunkManager.ToKey(new Vector3(WorldX, SurfaceY, WorldZ));
+											const BottomChunk = TopChunk.sub(Vector3.up);
+
+											this.ChunkManager.GenerateChunk(TopChunk, DetailBuffer, ContinentalBuffer, false, LinkedPlayer);
+											this.ChunkManager.GenerateChunk(BottomChunk, DetailBuffer, ContinentalBuffer, false, LinkedPlayer);
+
+											IterationCount++;
+											if (IterationCount >= 16) {
+												IterationCount = 0;
+												task.wait();
+											}
+										}
+									}
+								}
+							} else {
+								this.ChunkManager.GenerateChunk(Key, DetailBuffer, ContinentalBuffer, false, LinkedPlayer, true);
+							}
+						}
+					}
+				});
 			});
-		});
+		}
 	}
 
 	public OnChunkLoadEnd() {}
 
-	@Server()
-	override Start() {
-		Network.VoxelWorld.GetInitialChunks.server.OnClientEvent((Player) => {
-			if (Game.IsHosting()) return; // shared
-			while (!this.WorldReady) task.wait();
+	public GetDefinition(BlockID: number) {
+		return this.World.voxelBlocks.GetBlockDefinitionFromBlockId(BlockID).definition;
+	}
+	public GetBlock(BlockDef: VoxelBlockDefinition) {
+		return this.ChunkManager.GetBlock(BlockDef.name);
+	}
 
-			for (const [Chunk] of pairs(this.ChunkManager.LoadedChunks)) {
-				task.spawn(() => {
-					const PositionArray = this.ChunkManager.ExpandCube(this.ChunkManager.FromKey(Chunk), 15);
-					Network.VoxelWorld.WriteGroup.server.FireClient(Player, PositionArray, this.World.BulkReadVoxels(PositionArray));
-				});
-			}
-		});
-
-		Network.VoxelWorld.GetInitialContainerInventory.server.SetCallback((_, LinkID) => {
-			assert(LinkID.includes("BlockContainer"));
-			const Link = DualLink.FromID(LinkID) as DualLink<Inventory>;
-			return Link?.Data;
-		});
-
-		Config.Seed = math.random(1, 2 ** 30);
-		print(`world seed: ${Config.Seed}`);
-		math.randomseed(Config.Seed);
-		this.Noise = new NoiseHandler(Config.Seed);
-
-		let [ChunksWritten, MaxChunks] = [0, 0];
-		for (const ChunkX of $range(-4, 4)) {
-			for (const ChunkZ of $range(-4, 4)) {
-				MaxChunks += 2;
-				const Origin = new Vector3(ChunkX, 0, ChunkZ).mul(16);
-
-				const ContinentalBuffer = this.Noise.Get2DFBMBatch(Origin.x, Origin.z, 16, 16, new Array(256), 1, 0.0004, 3, 0.5, 2);
-				const DetailBuffer = this.Noise.Get2DFBMBatch(Origin.x, Origin.z, 16, 16, new Array(256), 2, 0.01, 4, 0.5, 2);
-
-				const AllChunks = new Set<Vector3>();
-
-				for (const x of $range(0, this.ChunkManager.ChunkSize - 1)) {
-					for (const z of $range(0, this.ChunkManager.ChunkSize - 1)) {
-						const WorldX = Origin.x + x;
-						const WorldZ = Origin.z + z;
-
-						const Continental = ContinentalBuffer[z * 16 + x];
-						const Detail = DetailBuffer[z * 16 + x];
-						const SurfaceY = this.ChunkManager.GetTerrainHeight(Continental, Detail);
-
-						const TopChunk = this.ChunkManager.ToKey(new Vector3(WorldX, SurfaceY, WorldZ));
-						AllChunks.add(TopChunk);
-					}
-				}
-
-				AllChunks.forEach((TopChunk) => {
-					this.ChunkManager.GenerateChunk(TopChunk, DetailBuffer, ContinentalBuffer, true).andThen((Written) => {
-						if (Written) ChunksWritten++;
-					});
-					this.ChunkManager.GenerateChunk(TopChunk.sub(Vector3.up), DetailBuffer, ContinentalBuffer, true).andThen((Written) => {
-						if (Written) ChunksWritten++;
-					});
-				});
-			}
-		}
-
-		while (ChunksWritten < MaxChunks) task.wait();
-
-		const Cont = this.Noise.Get2DFBM(0, 0, 1, 0.0004, 3, 0.5, 2);
-		const Det = this.Noise.Get2DFBM(0, 0, 2, 0.01, 4, 0.5, 2);
-		const Surface = this.ChunkManager.GetTerrainHeight(Cont, Det);
-		Config.SpawnPos = new Vector3(0, Surface + 4, 0);
-
-		if (ENV.Runtime === "DEV") {
-			const Pos = new Vector3(0, Surface + 15, 0);
-			this.World.WriteVoxelAt(Pos, this.ChunkManager.GetBlock("WoodenChest"), true);
-			while (!this.World.GetPrefabAt(Pos)) task.wait();
-			const Container = this.World.GetPrefabAt(Pos).GetAirshipComponent<BlockContainerComponent>(true)!;
-			Container.ID = Guid.NewGuid().ToString();
-			let Elements = 0;
-			for (const [GearID, Gear] of pairs(GearRegistrySingleton.Get())) {
-				if (Gear instanceof GearObject) {
-					for (const Level of $range(1, Gear.MaxLevel)) {
-						const ID = `Debug${GearID}${Level}`;
-						Elements++;
-						Container.GetInventory().Content[Elements] = {
-							Type: ItemTypes.Gear,
-							Key: GearID as GearRegistryKey,
-							Level: Level,
-							Amount: 1,
-							ObtainedTime: 0,
-							UID: ID,
-							Temporary: true,
-						};
-					}
-				}
-			}
-			Container.GetInventory().Size = Elements;
-		}
-
-		this.WorldReady = true;
+	public RedrawLighting() {
+		const Origin = new Vector4(this.LastChunkPos.x, this.LastChunkPos.y, this.LastChunkPos.z, 1);
+		Shader.SetGlobalTexture("_Lightmap", this.LightingTexture);
+		Shader.SetGlobalVector("_GridCenter", Origin);
+		Shader.SetGlobalVector("_GridSize", new Vector4(this.Resolution, this.Resolution, this.Resolution, 1));
 	}
 }

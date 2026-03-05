@@ -70,6 +70,7 @@ const Config = {
 	PlayerHeight: 2,
 
 	InteractionReach: 3.5,
+	MaxStackSize: 128,
 
 	RunMaxSpeed: 15,
 
@@ -135,6 +136,7 @@ const Config = {
 	CollisionLayer: LayerMask.GetMask("Default"),
 	ZiplineLayer: LayerMask.GetMask("GameLayer1"),
 	LadderLayer: LayerMask.GetMask("GameLayer2"),
+	DroppedItemLayer: LayerMask.GetMask("GameLayer10"),
 
 	// WORLD GEN
 	MountainHeight: 256,

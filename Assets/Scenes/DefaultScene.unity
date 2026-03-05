@@ -130,6 +130,7 @@ GameObject:
   - component: {fileID: 107226}
   - component: {fileID: 107227}
   - component: {fileID: 107228}
+  - component: {fileID: 107229}
   m_Layer: 0
   m_Name: Singletons
   m_TagString: Untagged
@@ -385,6 +386,69 @@ MonoBehaviour:
       nullable: 0
       serializedValue: 
       serializedObject: {fileID: 1904944121}
+      modified: 1
+    - name: World
+      type: AirshipBehaviour
+      objectType: WorldSingleton
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: Code/Client/Framework/WorldSingleton.ts
+      jsDocs:
+        text: []
+        tags: []
+      decorators: []
+      nullable: 0
+      serializedValue: 
+      serializedObject: {fileID: 107229}
+      modified: 1
+    displayIcon: {fileID: 0}
+    displayName: 
+--- !u!114 &107229
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 107225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa4feffba88dce746a2607f0ec6233b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  guid: 89f1a2fe-8315-43e5-b614-a721bf49248d
+  script: {fileID: -2120360863041505001, guid: 96addc2463f0f4b4fa5d4a12ad32d45f, type: 3}
+  scriptPath: Assets/Code/Client/Framework/WorldSingleton.lua
+  forceContext: 0
+  metadata:
+    name: WorldSingleton
+    singleton: 0
+    decorators: []
+    properties:
+    - name: World
+      type: object
+      objectType: VoxelWorld
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators:
+      - name: Header
+        parameters:
+        - type: string
+          serializedValue: '"Shared Properties"'
+      nullable: 0
+      serializedValue: 
+      serializedObject: {fileID: 1594687465}
       modified: 1
     displayIcon: {fileID: 0}
     displayName: 
@@ -1535,7 +1599,6 @@ GameObject:
   - component: {fileID: 667655509}
   - component: {fileID: 667655510}
   - component: {fileID: 667655511}
-  - component: {fileID: 667655512}
   m_Layer: 0
   m_Name: Controllers
   m_TagString: Untagged
@@ -1704,24 +1767,6 @@ MonoBehaviour:
       nullable: 0
       serializedValue: 
       serializedObject: {fileID: 667655510}
-      modified: 1
-    - name: WorldController
-      type: AirshipBehaviour
-      objectType: WorldController
-      items:
-        type: 
-        objectType: 
-        serializedItems: []
-        objectRefs: []
-      refPath: 
-      fileRef: Code/Client/Framework/WorldController.ts
-      jsDocs:
-        text: []
-        tags: []
-      decorators: []
-      nullable: 0
-      serializedValue: 
-      serializedObject: {fileID: 667655512}
       modified: 1
     displayIcon: {fileID: 0}
     displayName: 
@@ -2544,47 +2589,6 @@ MonoBehaviour:
       serializedValue: 
       serializedObject: {fileID: 0}
       modified: 0
-    displayIcon: {fileID: 0}
-    displayName: 
---- !u!114 &667655512
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 667655501}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fa4feffba88dce746a2607f0ec6233b4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  guid: fd38389f-7559-4266-8e48-0d6ecacaf0e9
-  script: {fileID: 6566268254733555367, guid: 96addc2463f0f4b4fa5d4a12ad32d45f, type: 3}
-  scriptPath: Assets/Code/Client/Framework/WorldController.lua
-  forceContext: 0
-  metadata:
-    name: WorldController
-    singleton: 0
-    decorators: []
-    properties:
-    - name: World
-      type: object
-      objectType: VoxelWorld
-      items:
-        type: 
-        objectType: 
-        serializedItems: []
-        objectRefs: []
-      refPath: 
-      fileRef: 
-      jsDocs:
-        text: []
-        tags: []
-      decorators: []
-      nullable: 0
-      serializedValue: 
-      serializedObject: {fileID: 1594687465}
-      modified: 1
     displayIcon: {fileID: 0}
     displayName: 
 --- !u!1 &764383742
@@ -5190,7 +5194,6 @@ GameObject:
   - component: {fileID: 1904944120}
   - component: {fileID: 1904944121}
   - component: {fileID: 1904944122}
-  - component: {fileID: 1904944123}
   m_Layer: 0
   m_Name: Services
   m_TagString: Untagged
@@ -5252,24 +5255,6 @@ MonoBehaviour:
       serializedValue: 
       serializedObject: {fileID: 1904944122}
       modified: 1
-    - name: World
-      type: AirshipBehaviour
-      objectType: WorldService
-      items:
-        type: 
-        objectType: 
-        serializedItems: []
-        objectRefs: []
-      refPath: 
-      fileRef: Code/Server/WorldService.ts
-      jsDocs:
-        text: []
-        tags: []
-      decorators: []
-      nullable: 0
-      serializedValue: 
-      serializedObject: {fileID: 1904944123}
-      modified: 1
     - name: DroppedItem
       type: object
       objectType: GameObject
@@ -5311,83 +5296,6 @@ MonoBehaviour:
     singleton: 0
     decorators: []
     properties: []
-    displayIcon: {fileID: 0}
-    displayName: 
---- !u!114 &1904944123
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1904944119}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fa4feffba88dce746a2607f0ec6233b4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  guid: 937f2dd0-806e-4ab0-947e-c543b9cdb97f
-  script: {fileID: -936339280531226265, guid: 3b9c9e25190ff834fa1b8ebc1e99c955, type: 3}
-  scriptPath: Assets/Code/Server/WorldService.lua
-  forceContext: 0
-  metadata:
-    name: WorldService
-    singleton: 0
-    decorators: []
-    properties:
-    - name: World
-      type: object
-      objectType: VoxelWorld
-      items:
-        type: 
-        objectType: 
-        serializedItems: []
-        objectRefs: []
-      refPath: 
-      fileRef: 
-      jsDocs:
-        text: []
-        tags: []
-      decorators: []
-      nullable: 0
-      serializedValue: 
-      serializedObject: {fileID: 1594687465}
-      modified: 1
-    - name: LastUpdate
-      type: number
-      objectType: 
-      items:
-        type: 
-        objectType: 
-        serializedItems: []
-        objectRefs: []
-      refPath: 
-      fileRef: 
-      jsDocs:
-        text: []
-        tags: []
-      decorators: []
-      nullable: 0
-      serializedValue: 0
-      serializedObject: {fileID: 0}
-      modified: 0
-    - name: WorldReady
-      type: boolean
-      objectType: 
-      items:
-        type: 
-        objectType: 
-        serializedItems: []
-        objectRefs: []
-      refPath: 
-      fileRef: 
-      jsDocs:
-        text: []
-        tags: []
-      decorators: []
-      nullable: 0
-      serializedValue: 0
-      serializedObject: {fileID: 0}
-      modified: 0
     displayIcon: {fileID: 0}
     displayName: 
 --- !u!1 &1916340132

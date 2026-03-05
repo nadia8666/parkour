@@ -1,12 +1,14 @@
 import { Airship } from "@Easy/Core/Shared/Airship";
 import type Character from "@Easy/Core/Shared/Character/Character";
-import { Game } from "@Easy/Core/Shared/Game";
 import type { Player } from "@Easy/Core/Shared/Player/Player";
 import Core from "Code/Core/Core";
+import ENV from "Code/Server/ENV";
 import { Network } from "../Network";
 import type { AnyItem } from "../Types";
+import { ItemUtil } from "../Utility/ItemUtil";
 import { ModelBuilder } from "../Utility/ModelBuilder";
 import EntityComponent from "./EntityComponent";
+import type InteractableBlockComponent from "./InteractableBlockComponent";
 
 export default class DroppedItemEntityComponent extends EntityComponent {
 	public ModelContainer: Transform;
@@ -17,7 +19,7 @@ export default class DroppedItemEntityComponent extends EntityComponent {
 
 	@Client()
 	override Start() {
-		if (!Game.IsHosting()) {
+		if (!ENV.Shared) {
 			this.ModelContainer.gameObject.ClearChildren();
 			this.Item = Network.Generic.GetDroppedItemData.client.FireServer(this.Identity.netId)!;
 			this.DrawModel();
@@ -26,14 +28,28 @@ export default class DroppedItemEntityComponent extends EntityComponent {
 
 	public DrawModel() {
 		this.ModelContainer.gameObject.ClearChildren();
-		if ($SERVER && !Game.IsHosting()) return;
+		if ($SERVER && !ENV.Shared) return;
 
-		const [Model] = ModelBuilder.BuildItemModel(this.Item);
+		const [Type, Item] = ModelBuilder.BuildItemModel(this.Item);
 
-		if (!Model) return;
-		Model.transform.SetParent(this.ModelContainer, false);
-		Model.transform.localPosition = Vector3.zero;
-		Model.transform.localScale = Vector3.one.mul(0.6);
+		if (!Item) return;
+		if ([ModelBuilder.ModelBuilderType.ItemMesh, ModelBuilder.ModelBuilderType.VoxelBlock, ModelBuilder.ModelBuilderType.VoxelPrefab].includes(Type)) {
+			Item.transform.SetParent(this.ModelContainer, false);
+			Item.transform.localPosition = Vector3.zero;
+			Item.transform.localScale = Vector3.one.mul(0.4);
+			Item.SetLayerRecursive(27);
+
+			if (Type === ModelBuilder.ModelBuilderType.VoxelBlock) {
+				const Block = new MaterialPropertyBlock();
+				Block.SetFloat("_VerticalOffset", 0.5);
+				Item.GetComponent<MeshRenderer>()!.SetPropertyBlock(Block);
+			}
+
+			if (Type === ModelBuilder.ModelBuilderType.VoxelPrefab) {
+				const Interactable = Item.GetAirshipComponent<InteractableBlockComponent>();
+				if (Interactable) Interactable.enabled = false;
+			}
+		}
 	}
 
 	@Client()
@@ -69,14 +85,9 @@ export default class DroppedItemEntityComponent extends EntityComponent {
 				const Data = Core().Server.DataService;
 				const Link = Data.GetPlayerData(Data.Key(ToPickup));
 
-				if ((Link.Inventories.Hotbar.Content as Array<AnyItem>).size() < Link.Inventories.Hotbar.Size) {
-					(Link.Inventories.Hotbar.Content as Array<AnyItem>).push(this.Item);
-					this.Destroy();
-					return;
-				}
-
-				if ((Link.Inventories.Player.Content as Array<AnyItem>).size() < Link.Inventories.Player.Size) {
-					(Link.Inventories.Player.Content as Array<AnyItem>).push(this.Item);
+				const TargetInventory = ItemUtil.GetNextSlotForItem(this.Item, Link.Inventories);
+				if (TargetInventory) {
+					TargetInventory.SetItem();
 					this.Destroy();
 					return;
 				}
