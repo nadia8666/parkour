@@ -222,8 +222,8 @@ MonoBehaviour:
       serializedValue: 10
       serializedObject: {fileID: 0}
       modified: 1
-    - name: ID
-      type: string
+    - name: HasInitialized
+      type: boolean
       objectType: 
       items:
         type: 
@@ -237,7 +237,7 @@ MonoBehaviour:
         tags: []
       decorators: []
       nullable: 0
-      serializedValue: 
+      serializedValue: 0
       serializedObject: {fileID: 0}
       modified: 0
     displayIcon: {fileID: 0}

@@ -26,7 +26,8 @@ Shader "Unlit/VoxelWorldTransparentShader"
             HLSLPROGRAM
             #pragma vertex vert
             #pragma fragment frag
-
+            #pragma multi_compile_fragment _ _SCREEN_SPACE_OCCLUSION
+            
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
 
@@ -59,7 +60,7 @@ Shader "Unlit/VoxelWorldTransparentShader"
             {
                 Varyings output;
                 output.positionWS = TransformObjectToWorld(input.positionOS.xyz);
-                output.positionCS = TransformWorldToHClip(input.positionOS.xyz);
+                output.positionCS = TransformObjectToHClip(input.positionOS.xyz);
                 output.normalWS = TransformObjectToWorldNormal(input.normalOS);
                 return output;
             }

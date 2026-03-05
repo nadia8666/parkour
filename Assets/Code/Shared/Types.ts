@@ -13,20 +13,20 @@ export const GearSlots = ["Grip", "Core", "Mod", "Augment"] as const;
 export type GearSlots = (typeof GearSlots)[number];
 
 interface BaseItemInfo<T extends ItemTypes> {
-  Type: T;
-  Key: T extends ItemTypes.Gear ? GearRegistryKey : string;
-  ObtainedTime: number;
-  UID: string;
-  Amount: number;
-  Temporary?: boolean;
+	Type: T;
+	Key: T extends ItemTypes.Gear ? GearRegistryKey : string;
+	ObtainedTime: number;
+	UID: string;
+	Amount: number;
+	Temporary?: boolean;
 }
 
 export interface GearItem extends BaseItemInfo<ItemTypes.Gear> {
-  Level: number;
+	Level: number;
 }
 
 export interface BlockItem extends BaseItemInfo<ItemTypes.Block> {
-  BlockDef: VoxelBlockDefinition;
+	BlockID: number;
 }
 
 export interface OtherItem extends BaseItemInfo<Exclude<ItemTypes, ItemTypes.Gear | ItemTypes.Block>> {}

@@ -2,6 +2,7 @@ import { Mouse } from "@Easy/Core/Shared/UserInput";
 import { Bin } from "@Easy/Core/Shared/Util/Bin";
 import type TooltipComponent from "Code/Client/Components/TooltipComponent";
 import Core from "Code/Core/Core";
+import type InteractableBlockComponent from "Code/Shared/Components/InteractableBlockComponent";
 import { Network } from "Code/Shared/Network";
 import { type AnyItem, type Inventory, ItemTypes } from "Code/Shared/Types";
 import { ModelBuilder } from "Code/Shared/Utility/ModelBuilder";
@@ -80,13 +81,26 @@ export default class DraggableSlotComponent extends AirshipBehaviour {
 		this.gameObject.ClearChildren();
 
 		if (this.SlotContents) {
-			const [Item] = ModelBuilder.BuildItemModel(this.SlotContents);
+			const [Type, Item] = ModelBuilder.BuildItemModel(this.SlotContents);
 
 			if (Item) {
 				Item.transform.SetParent(this.transform, false);
 				Item.transform.localPosition = new Vector3(0.363, 0.666, -10);
-				Item.transform.localScale = new Vector3(74.75, 74.75, 74.75);
-				Item.layer = LayerMask.NameToLayer("UI");
+				Item.transform.localScale = Type === ModelBuilder.ModelBuilderType.VoxelBlock ? Vector3.one.mul(37.5) : Vector3.one.mul(74.75);
+				Item.SetLayerRecursive(5);
+
+				if ([ModelBuilder.ModelBuilderType.VoxelBlock, ModelBuilder.ModelBuilderType.VoxelPrefab].includes(Type)) {
+					Item.transform.localRotation = Quaternion.Euler(25, 45, 0);
+
+					if (Type === ModelBuilder.ModelBuilderType.VoxelPrefab) {
+						const Interactable = Item.GetAirshipComponent<InteractableBlockComponent>();
+						if (Interactable) Interactable.enabled = false;
+					} else {
+						const Block = new MaterialPropertyBlock();
+						Block.SetFloat("_VerticalOffset", 0.5);
+						Item.GetComponent<MeshRenderer>()!.SetPropertyBlock(Block);
+					}
+				}
 			}
 		}
 

@@ -3,6 +3,7 @@ import type ProximityPrompt from "@Easy/Core/Shared/Input/ProximityPrompts/Proxi
 import { ForceRefreshGearSignal } from "Code/Client/Config";
 import Core from "Code/Core/Core";
 import type TimeTrialObject from "Code/Shared/Object/TimeTrialObject";
+import type { Inventory } from "Code/Shared/Types";
 import CFrame from "@inkyaker/CFrame/Code";
 import type ClientComponent from "../../ClientComponent";
 import type TimeTrialComponent from "./TimeTrialComponent";
@@ -21,7 +22,7 @@ export class TimeTrials {
 	private PromptBase = Asset.LoadAsset("Assets/Resources/TimeTrials/TrialPrompt.prefab");
 	private LastTrialStart = math.huge;
 	private InIntro = false;
-	public TrialGear: undefined;
+	public TrialGear: { [Index: string]: Inventory } | undefined;
 
 	constructor() {
 		for (const [_, Target] of pairs(GameObject.FindGameObjectsWithTag("TimeTrial"))) {
@@ -90,13 +91,7 @@ export class TimeTrials {
 	public Start(Controller: ClientComponent, Trial: TimeTrialComponent, RunIntro?: boolean) {
 		if (this.IsActive()) this.Stop(Controller);
 
-		// TODO: recode trial gear
-		this.TrialGear = undefined; /* {
-			Grip: ["None"],
-			Core: ["None"],
-			Mod: ["None", "None"],
-			Augment: ["None", "None", "None"],
-		};*/
+		this.TrialGear = { Grip: { Size: 1, Content: {} }, Core: { Size: 1, Content: {} }, Mod: { Size: 2, Content: {} }, Augment: { Size: 3, Content: {} } };
 		ForceRefreshGearSignal.Fire();
 
 		const Start = os.clock();

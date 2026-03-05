@@ -26,6 +26,7 @@ Shader "Unlit/VoxelWorldShader"
             HLSLPROGRAM
             #pragma vertex vert
             #pragma fragment frag
+            #pragma multi_compile_fragment _ _SCREEN_SPACE_OCCLUSION
 
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
@@ -41,15 +42,18 @@ Shader "Unlit/VoxelWorldShader"
                 float4 positionCS : SV_POSITION;
                 float3 positionWS : TEXCOORD0;
                 float3 normalWS   : TEXCOORD1;
+                float3 positionOS : TEXCOORD3;
+                float3 normalOS   : TEXCOORD4;
             };
 
             TEXTURE2D(_BaseMap);
             SAMPLER(sampler_BaseMap);
-            
             TEXTURE3D(_Lightmap);
             SAMPLER(sampler_Lightmap);
+
             float4 _GridCenter;
             float4 _GridSize;
+            float _VerticalOffset;
 
             CBUFFER_START(UnityPerMaterial)
                 float4 _BaseMap_ST;
@@ -59,27 +63,30 @@ Shader "Unlit/VoxelWorldShader"
             {
                 Varyings output;
                 output.positionWS = TransformObjectToWorld(input.positionOS.xyz);
-                output.positionCS = TransformWorldToHClip(input.positionOS.xyz);
+                output.positionCS = TransformObjectToHClip(input.positionOS.xyz);
                 output.normalWS = TransformObjectToWorldNormal(input.normalOS);
+                output.positionOS = input.positionOS.xyz;
+                output.normalOS = input.normalOS;
                 return output;
             }
 
             float4 frag(Varyings input) : SV_Target
             {
-                float3 normal = normalize(input.normalWS);
-                float3 blend = abs(normal);
+                float3 triplanarPos = input.positionOS + _VerticalOffset;
+                float3 localNormal = normalize(input.normalOS);
+                float3 blend = abs(localNormal);
                 blend /= (blend.x + blend.y + blend.z);
 
-                float2 uvX = input.positionWS.zy * _BaseMap_ST.xy + _BaseMap_ST.zw;
-                float2 uvY = input.positionWS.xz * _BaseMap_ST.xy + _BaseMap_ST.zw;
-                float2 uvZ = input.positionWS.xy * _BaseMap_ST.xy + _BaseMap_ST.zw;
+                float2 uvX = triplanarPos.zy * _BaseMap_ST.xy + _BaseMap_ST.zw;
+                float2 uvY = triplanarPos.xz * _BaseMap_ST.xy + _BaseMap_ST.zw;
+                float2 uvZ = triplanarPos.xy * _BaseMap_ST.xy + _BaseMap_ST.zw;
 
-                float4 colX = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, uvX);
-                float4 colY = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, uvY);
-                float4 colZ = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, uvZ);
-                float4 triplanar = colX * blend.x + colY * blend.y + colZ * blend.z;
+                float4 triplanar = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, uvX) * blend.x +
+                                   SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, uvY) * blend.y +
+                                   SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, uvZ) * blend.z;
 
-                float3 adjustedPos = input.positionWS + (normal * 0.5);
+                float3 normalWS = normalize(input.normalWS);
+                float3 adjustedPos = input.positionWS + (normalWS * 0.5);
                 float3 uvw = (adjustedPos - _GridCenter.xyz + (_GridSize.xyz/2)) / _GridSize.xyz;
                 float light = SAMPLE_TEXTURE3D(_Lightmap, sampler_Lightmap, float3(uvw.x, floor(adjustedPos.y)/_GridSize.y, uvw.z)).r;
                 //half ao = SampleAmbientOcclusion(GetNormalizedScreenSpaceUV(input.positionCS));

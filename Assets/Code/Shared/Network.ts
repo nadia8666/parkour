@@ -24,4 +24,9 @@ export const Network = {
 		DropItem: new NetworkSignal<[string, number, number]>("Network/Generic/DropItem"),
 		GetDroppedItemData: new NetworkFunction<number, AnyItem | undefined>("Network/Generic/GetDroppedItemData"),
 	},
+
+	TEMP: {
+		DESTROY_VOXEL: new NetworkSignal<Vector3>("Network/TEMP/DESTROY_VOXEL"),
+		PLACE_VOXEL: new NetworkSignal<[Vector3, string, number]>("Network/TEMP/PLACE_VOXEL")
+	}
 };
