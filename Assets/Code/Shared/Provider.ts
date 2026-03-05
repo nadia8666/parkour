@@ -1,12 +1,12 @@
-export class Provider<T, U extends unknown | undefined> {
-	constructor(private Executor: (Arg1: U) => T) {}
-	private CachedValue = new Map<unknown, T>();
+export class Provider<ReturnValue, Args extends unknown | undefined> {
+	constructor(private Executor: (Arg1: Args) => ReturnValue) {}
+	private CachedValue = new Map<unknown, ReturnValue>();
 
-	public Get(Arg1?: U) {
+	public Get(Arg1?: Args) {
 		return this.CachedValue.getOrInsert(
 			Arg1 === undefined ? -1 : Arg1,
-			new Promise<T>((Resolve) => {
-				Resolve(this.Executor(Arg1 as U));
+			new Promise<ReturnValue>((Resolve) => {
+				Resolve(this.Executor(Arg1 as Args));
 			}).expect(),
 		);
 	}

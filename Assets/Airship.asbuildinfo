@@ -590,6 +590,13 @@
 			"extends": [],
 			"singleton": true
 		},
+		"WorldController": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "Code\\Client\\Framework\\WorldController.lua",
+			"extends": [],
+			"singleton": true
+		},
 		"DraggableSlotComponent": {
 			"component": true,
 			"type": "AirshipBehaviour",
@@ -601,13 +608,6 @@
 			"component": true,
 			"type": "AirshipBehaviour",
 			"filePath": "Code\\Client\\UI\\Drag\\DragController.lua",
-			"extends": [],
-			"singleton": true
-		},
-		"WorldController": {
-			"component": true,
-			"type": "AirshipBehaviour",
-			"filePath": "Code\\Client\\Framework\\WorldController.lua",
 			"extends": [],
 			"singleton": true
 		},
@@ -1973,6 +1973,16 @@
 			"inherits": []
 		},
 		{
+			"name": "WorldService",
+			"id": "Code/Server/WorldService@WorldService",
+			"file": "Code/Server/WorldService.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
 			"name": "ServerService",
 			"id": "Code/Server/ServerService@ServerService",
 			"file": "Code/Server/ServerService.ts",
@@ -1991,6 +2001,18 @@
 				"default"
 			],
 			"inherits": []
+		},
+		{
+			"name": "DroppedItemEntityComponent",
+			"id": "Code/Shared/Components/DroppedItemEntityComponent@DroppedItemEntityComponent",
+			"file": "Code/Shared/Components/DroppedItemEntityComponent.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": [
+				"Code/Shared/Components/EntityComponent@EntityComponent"
+			]
 		},
 		{
 			"name": "AnimationController",
@@ -2063,6 +2085,16 @@
 			"inherits": []
 		},
 		{
+			"name": "WorldController",
+			"id": "Code/Client/Framework/WorldController@WorldController",
+			"file": "Code/Client/Framework/WorldController.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
 			"name": "DraggableSlotComponent",
 			"id": "Code/Client/UI/Drag/DraggableSlotComponent@DraggableSlotComponent",
 			"file": "Code/Client/UI/Drag/DraggableSlotComponent.ts",
@@ -2076,16 +2108,6 @@
 			"name": "DragController",
 			"id": "Code/Client/UI/Drag/DragController@DragController",
 			"file": "Code/Client/UI/Drag/DragController.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "WorldController",
-			"id": "Code/Client/Framework/WorldController@WorldController",
-			"file": "Code/Client/Framework/WorldController.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"
@@ -2963,28 +2985,6 @@
 				"default"
 			],
 			"inherits": []
-		},
-		{
-			"name": "DroppedItemEntityComponent",
-			"id": "Code/Shared/Components/DroppedItemEntityComponent@DroppedItemEntityComponent",
-			"file": "Code/Shared/Components/DroppedItemEntityComponent.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": [
-				"Code/Shared/Components/EntityComponent@EntityComponent"
-			]
-		},
-		{
-			"name": "WorldService",
-			"id": "Code/Server/WorldService@WorldService",
-			"file": "Code/Server/WorldService.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
 		}
 	],
 	"flamework": {
@@ -3000,24 +3000,28 @@
 			"typescript:Code/Client/Controller/Animation/AnimationController@AnimationController": "Client/Controller/Animation/AnimationController@AnimationController",
 			"typescript:Code/Client/Controller/Animation/ViewmodelComponent@ViewmodelComponent": "Client/Controller/Animation/ViewmodelComponent@ViewmodelComponent",
 			"typescript:Code/Client/Controller/ClientComponent@ClientComponent": "Client/Controller/ClientComponent@ClientComponent",
-			"typescript:Code/Client/UI/UIController@UIController": "Client/UI/UIController@UIController",
-			"typescript:Code/Shared/Components/InteractableBlockComponent@InteractableBlockComponent": "Shared/Components/InteractableBlockComponent@InteractableBlockComponent",
-			"typescript:Code/Client/ClientController@ClientController": "Client/ClientController@ClientController",
 			"typescript:Code/Client/Controller/Camera@ClientCamera": "Client/Controller/Camera@ClientCamera",
-			"typescript:Code/Client/Controller/Input@InputEntry": "Client/Controller/Input@InputEntry",
-			"typescript:Code/Client/Controller/Input@Input": "Client/Controller/Input@Input",
+			"typescript:Code/Client/Controller/ClientInput@InputEntry": "Client/Controller/ClientInput@InputEntry",
+			"typescript:Code/Client/Controller/ClientInput@ClientInput": "Client/Controller/ClientInput@ClientInput",
 			"typescript:Code/Client/Controller/Moveset/Base@MovesetBase": "Client/Controller/Moveset/Base@MovesetBase",
+			"typescript:Code/Client/Controller/ClientInteractions@ClientInteractions": "Client/Controller/ClientInteractions@ClientInteractions",
 			"typescript:Code/Client/Controller/Moveset/Generic@MovesetGeneric": "Client/Controller/Moveset/Generic@MovesetGeneric",
 			"typescript:Code/Client/Controller/Moveset/Grappler@MovesetGrappler": "Client/Controller/Moveset/Grappler@MovesetGrappler",
 			"typescript:Code/Client/Controller/Moveset/World@MovesetWorld": "Client/Controller/Moveset/World@MovesetWorld",
+			"typescript:Code/Client/UI/UIController@UIController": "Client/UI/UIController@UIController",
+			"typescript:Code/Shared/Components/InteractableBlockComponent@InteractableBlockComponent": "Shared/Components/InteractableBlockComponent@InteractableBlockComponent",
+			"typescript:Code/Client/Controller/ClientUI@ClientUI": "Client/Controller/ClientUI@ClientUI",
+			"typescript:Code/Client/ClientController@ClientController": "Client/ClientController@ClientController",
+			"typescript:Code/Client/Controller/ClientPhysics@ClientPhysics": "Client/Controller/ClientPhysics@ClientPhysics",
+			"typescript:Code/Client/Controller/ClientRenderer@ClientRenderer": "Client/Controller/ClientRenderer@ClientRenderer",
 			"typescript:Code/Client/Controller/Modules/Ladder/Ladders@Ladders": "Client/Controller/Modules/Ladder/Ladders@Ladders",
 			"typescript:Code/Client/Controller/Modules/TimeTrials/TimeTrials@TimeTrials": "Client/Controller/Modules/TimeTrials/TimeTrials@TimeTrials",
 			"typescript:Code/Client/Controller/Gear/GearController@GearController": "Client/Controller/Gear/GearController@GearController",
+			"typescript:Code/Client/Framework/WorldController@WorldController": "Client/Framework/WorldController@WorldController",
 			"typescript:Code/Client/UI/Drag/DraggableSlotComponent@DraggableSlotComponent": "Client/UI/Drag/DraggableSlotComponent@DraggableSlotComponent",
 			"typescript:Code/Client/UI/Modules/ContainerInventory@ContainerInventory": "Client/UI/Modules/ContainerInventory@ContainerInventory",
 			"typescript:Code/Client/UI/Modules/Hotbar@Hotbar": "Client/UI/Modules/Hotbar@Hotbar",
 			"typescript:Code/Client/UI/Drag/DragController@DragController": "Client/UI/Drag/DragController@DragController",
-			"typescript:Code/Client/Framework/WorldController@WorldController": "Client/Framework/WorldController@WorldController",
 			"typescript:Code/Client/Controller/SoundController@SoundController": "Client/Controller/SoundController@SoundController",
 			"typescript:Code/Client/Framework/DataController@DataController": "Client/Framework/DataController@DataController",
 			"typescript:Code/Server/Data/DataService@DataService": "Server/Data/DataService@DataService",
@@ -3030,8 +3034,8 @@
 			"typescript:Code/Client/Controller/Modules/Zipline/Ziplines@Ziplines": "Client/Controller/Modules/Zipline/Ziplines@Ziplines",
 			"typescript:Code/Shared/Components/EntityComponent@EntityComponent": "Shared/Components/EntityComponent@EntityComponent",
 			"typescript:Code/Shared/Utility/Noise@NoiseHandler": "Shared/Utility/Noise@NoiseHandler",
-			"typescript:Code/Shared/Provider@Provider": "Shared/Provider@Provider",
 			"typescript:Code/Client/Components/Collision/GenericTriggerComponent@GenericTriggerComponent": "Client/Components/Collision/GenericTriggerComponent@GenericTriggerComponent",
+			"typescript:Code/Shared/Provider@Provider": "Shared/Provider@Provider",
 			"typescript:Code/Client/Controller/Modules/Ladder/LadderComponent@LadderComponent": "Client/Controller/Modules/Ladder/LadderComponent@LadderComponent",
 			"typescript:Code/Shared/Object/TimeTrialObject@TimeTrialObject": "Shared/Object/TimeTrialObject@TimeTrialObject",
 			"typescript:Code/Client/Controller/Modules/TimeTrials/TimeTrialComponent@TimeTrialComponent": "Client/Controller/Modules/TimeTrials/TimeTrialComponent@TimeTrialComponent",

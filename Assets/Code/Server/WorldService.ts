@@ -5,7 +5,6 @@
 import { Airship } from "@Easy/Core/Shared/Airship";
 import { Game } from "@Easy/Core/Shared/Game";
 import Config from "Code/Client/Config";
-import { Settings } from "Code/Client/Framework/SettingsController";
 import Core from "Code/Core/Core";
 import type BlockContainerComponent from "Code/Shared/Components/BlockContainerComponent";
 import GearRegistrySingleton, { type GearRegistryKey } from "Code/Shared/GearRegistry";
@@ -244,6 +243,10 @@ class ChunkManager {
 			}
 
 			if (CanExpand) this.TryPropagate(ChunkKey, LinkedPlayer, LoadNegX, LoadPosX, LoadNegY, LoadPosY, LoadNegZ, LoadPosZ, SurfaceMap, ContinentalMap, ForcePropagate);
+			else if (LoadPosY && ForcePropagate) {
+				const [Pos, Render] = LinkedPlayer ? [LinkedPlayer().Position, SettingsService.Settings.GetSetting("RenderDistance", LinkedPlayer().Player)] : [Vector3.zero, 16];
+				this.CheckAndLoad(ChunkKey.add(new Vector3(0, 1, 0)), Pos, Render, SurfaceMap, ContinentalMap, true, LinkedPlayer);
+			}
 
 			Generated = true;
 		};
@@ -272,21 +275,27 @@ class ChunkManager {
 		ContinentalMap: number[],
 		ForcePropagate: boolean = false,
 	) {
-		const [Pos, Render] = LinkedPlayer
-			? [LinkedPlayer().Position, SettingsService.Settings.GetSetting("RenderDistance", LinkedPlayer().Player)]
-			: [Vector3.zero, Settings.RenderDistance];
+		const [Pos, Render] = LinkedPlayer ? [LinkedPlayer().Position, SettingsService.Settings.GetSetting("RenderDistance", LinkedPlayer().Player)] : [Vector3.zero, 16];
 
-		if (nX) this.CheckAndLoad(CenterKey.sub(new Vector3(1, 0, 0)), Pos, Render, undefined, undefined);
-		if (pX) this.CheckAndLoad(CenterKey.add(new Vector3(1, 0, 0)), Pos, Render, undefined, undefined);
-		if (nY) this.CheckAndLoad(CenterKey.sub(new Vector3(0, 1, 0)), Pos, Render, SurfaceMap, ContinentalMap);
-		if (pY) this.CheckAndLoad(CenterKey.add(new Vector3(0, 1, 0)), Pos, Render, SurfaceMap, ContinentalMap, ForcePropagate);
-		if (nZ) this.CheckAndLoad(CenterKey.sub(new Vector3(0, 0, 1)), Pos, Render, undefined, undefined);
-		if (pZ) this.CheckAndLoad(CenterKey.add(new Vector3(0, 0, 1)), Pos, Render, undefined, undefined);
+		if (nX) this.CheckAndLoad(CenterKey.sub(new Vector3(1, 0, 0)), Pos, Render, undefined, undefined, false, LinkedPlayer);
+		if (pX) this.CheckAndLoad(CenterKey.add(new Vector3(1, 0, 0)), Pos, Render, undefined, undefined, false, LinkedPlayer);
+		if (nY) this.CheckAndLoad(CenterKey.sub(new Vector3(0, 1, 0)), Pos, Render, SurfaceMap, ContinentalMap, false, LinkedPlayer);
+		if (pY) this.CheckAndLoad(CenterKey.add(new Vector3(0, 1, 0)), Pos, Render, SurfaceMap, ContinentalMap, ForcePropagate, LinkedPlayer);
+		if (nZ) this.CheckAndLoad(CenterKey.sub(new Vector3(0, 0, 1)), Pos, Render, undefined, undefined, false, LinkedPlayer);
+		if (pZ) this.CheckAndLoad(CenterKey.add(new Vector3(0, 0, 1)), Pos, Render, undefined, undefined, false, LinkedPlayer);
 	}
 
-	private CheckAndLoad(Key: Vector3, PlayerPos: Vector3, Dist: number, SurfaceMap: number[] | undefined, ContinentalMap: number[] | undefined, ForcePropagate: boolean = false) {
+	private CheckAndLoad(
+		Key: Vector3,
+		PlayerPos: Vector3,
+		Dist: number,
+		SurfaceMap: number[] | undefined,
+		ContinentalMap: number[] | undefined,
+		ForcePropagate: boolean = false,
+		LinkedPlayer: PlayerInfoGetter | undefined,
+	) {
 		if (!this.LoadedChunks.has(Key) && (this.IsChunkInRange(Key, PlayerPos, Dist) || ForcePropagate)) {
-			this.GenerateChunk(Key, SurfaceMap, ContinentalMap, false);
+			this.GenerateChunk(Key, SurfaceMap, ContinentalMap, false, LinkedPlayer, true);
 		}
 	}
 
@@ -319,7 +328,8 @@ export default class WorldService extends AirshipSingleton {
 			task.spawn(() => {
 				const Character = Core().Server.CharacterMap.get(Player);
 				if (Character) {
-					const Position = Character.transform.position;
+					let Position = Character.transform.position;
+					Position = new Vector3(math.floor(Position.x), math.floor(Position.y), math.floor(Position.z));
 					const LinkedPlayer: PlayerInfoGetter = () => {
 						return {
 							Player: Player,

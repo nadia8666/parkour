@@ -132,7 +132,7 @@ export default class DraggableSlotComponent extends AirshipBehaviour {
 			Target.UpdateContents();
 			this.UpdateContents();
 		} else {
-			if (this.PlayerInventory) Network.Generic.DropItem.client.FireServer(this.PlayerInventory, this.SlotID);
+			if (this.PlayerInventory) Network.Generic.DropItem.client.FireServer(this.PlayerInventory, this.SlotID, this.FetchContents()!.Amount);
 		}
 	}
 

@@ -6,7 +6,7 @@ import Core from "Code/Core/Core";
 import ENV from "Code/Server/ENV";
 import type GenericTrigger from "../../Components/Collision/GenericTriggerComponent";
 import type ClientComponent from "../ClientComponent";
-import { Actions } from "../Input";
+import { Actions } from "../ClientInput";
 
 export interface CastResults {
 	Hit: boolean;
@@ -82,28 +82,13 @@ export function Cubecast(Origin: Vector3, Direction: Vector3, Distance: number, 
 	return WrapCastResults(Physics.BoxCast(Origin, Vector3.one.mul(Size / 2), Direction, Orientation, Distance, Config.CollisionLayer));
 }
 
-function SignVector(Vector: Vector3) {
-	return new Vector3(Vector.x !== 0 ? (Vector.x > 0 ? 1 : -1) : 0, Vector.y !== 0 ? (Vector.y > 0 ? 1 : -1) : 0, Vector.z !== 0 ? (Vector.z > 0 ? 1 : -1) : 0);
-}
-
-function WrapFriction(Current: number, Input: number) {
-	if (Input === 0) {
-		return 1;
-	} else {
-		if (math.sign(Current) === math.sign(Input)) {
-			return 0;
-		} else {
-			return 1;
-		}
-	}
-}
-
 export enum LedgeGrabType {
 	VaultHigh,
 	VaultLow,
 	LedgeGrab,
 }
 
+// TODO: refactor
 export class MovesetBase {
 	private AnimationController = Core().Client.Animation;
 
@@ -111,9 +96,6 @@ export class MovesetBase {
 	public DashStart = 0;
 	public DashCharge = -1;
 
-	// #region Input
-
-	// #endregion
 	public OnAnimationEvent(Key: string, Controller: ClientComponent) {
 		switch (Key) {
 			case "WallclimbStep":
@@ -193,74 +175,11 @@ export class MovesetBase {
 		if (Config.GrapplerEnabled()) Controller.Moveset.Grappler.StepGrapple(Controller, FixedDT);
 	}
 
-	//TODO: rewrite this function so it isnt evil and messy
-	public AccelerateToInput(Controller: ClientComponent, FixedDT: number) {
-		const Sliding = Controller.State === "Slide";
-		const Grounded = Controller.State === "Grounded";
-		const LocalMoveVector = Sliding ? new Vector3(Controller.Input.GetMoveVector().x, 0, 1).normalized : Controller.Input.GetMoveVector();
-
-		const TargetVelocity = Controller.Rigidbody.transform.TransformDirection(LocalMoveVector);
-		const CurrentVelocity = Controller.Rigidbody.linearVelocity.WithY(0).magnitude;
-		const AccelerationForce =
-			Controller.AccelerationCurve.Evaluate(CurrentVelocity / Config.RunMaxSpeed) *
-			Config.RunMaxSpeed *
-			(Grounded ? 1 : 1) *
-			(Grounded && this.DashActive() ? 1.5 : 1) *
-			(Sliding ? 0.35 : 1);
-		const GlobalMoveVector = TargetVelocity.magnitude > 0 ? TargetVelocity.normalized : Vector3.zero;
-
-		const MVFriction = LocalMoveVector.magnitude > 0 ? 1 : Grounded ? 1 : 0.1;
-		const FrictionRate = (Grounded ? 0.25 : 0.1) * FixedDT * Config.ReferenceFPS * MVFriction;
-
-		const MomentumDecay = FrictionRate * this.GetMomentumFriction(Controller.Momentum);
-		Controller.Momentum = math.max(0, Controller.Momentum - MomentumDecay);
-
-		Controller.Rigidbody.linearVelocity = Controller.Rigidbody.linearVelocity.MoveTowards(Vector3.zero, FrictionRate);
-		Controller.Rigidbody.AddForce(GlobalMoveVector.mul(AccelerationForce), ForceMode.Acceleration);
-
-		let AccelAlignment = 0;
-		if (GlobalMoveVector.magnitude > 0) {
-			const HorizontalVel = Controller.Rigidbody.linearVelocity.WithY(0);
-			AccelAlignment = HorizontalVel.magnitude > 0 ? math.max(0, GlobalMoveVector.Dot(HorizontalVel.normalized)) : 1;
-		}
-
-		// extra friction for smoother control
-		const FrictionScalar = -(Grounded ? 0.3 : 0.15) * FixedDT * Config.ReferenceFPS * MVFriction;
-		const SignVec = SignVector(LocalMoveVector);
-		const LocalForce = Controller.transform.InverseTransformDirection(Controller.Rigidbody.linearVelocity);
-		const TargetFriction = new Vector3(WrapFriction(LocalForce.x, SignVec.x), 0, WrapFriction(LocalForce.z, SignVec.z)).mul(FrictionScalar);
-		const FrictionVector = LocalForce.mul(TargetFriction);
-		Controller.Rigidbody.linearVelocity = Controller.transform.TransformDirection(LocalForce.add(FrictionVector));
-
-		const DeltaMomentum = (AccelerationForce / 40) * FixedDT * Config.ReferenceFPS * AccelAlignment;
-		Controller.Momentum = math.max(Controller.Momentum + DeltaMomentum, 0);
-
-		// velocity angling
-		if (TargetVelocity.magnitude > 0.25) {
-			const RedirectForce = Controller.VelocityLocked ? 0.1 : 1;
-			const Speed = Controller.GetVelocity();
-			Controller.SetVelocity(
-				Speed.WithY(0)
-					.normalized.Slerp(TargetVelocity.WithY(0), math.clamp01(FixedDT * 2.5 * RedirectForce))
-					.mul(Speed.WithY(0).magnitude)
-					.WithY(Speed.y),
-			);
-		}
-
-		this.SyncMomentum(Controller, FixedDT);
-	}
-
 	public SyncMomentum(Controller: ClientComponent, FixedDT: number) {
 		const HorizontalSpeed = Controller.Rigidbody.linearVelocity.WithY(0).magnitude;
 		if (HorizontalSpeed - Controller.Momentum > Config.MomentumSyncThreshold) {
 			Controller.Momentum = math.lerp(Controller.Momentum, HorizontalSpeed, math.clamp01(FixedDT * 15));
 		}
-	}
-
-	private GetMomentumFriction(Momentum: number) {
-		const Alpha = math.max((Momentum - 10) / 30, 0);
-
-		return 1 + Alpha ** 1.75 * 6;
 	}
 
 	// #region Dash
@@ -365,7 +284,6 @@ export class MovesetBase {
 				break;
 			}
 			case "Ladder": {
-				// biome-ignore lint/style/noNonNullAssertion: known
 				const LadderDot = Controller.Moveset.World.CurrentLadder!.Object.transform.forward.WithY(0).normalized.Dot(
 					Controller.Camera.TargetRotation.mul(Vector3.forward).WithY(0).normalized,
 				);
@@ -769,9 +687,9 @@ export class MovesetBase {
 		let LastPosition = Origin.Position;
 
 		if (IsKinematic) {
-			let Offset = Origin.Down.mul(1.67)
-			const Cast = Raycast(EndPosition.add(Origin.Back.mul(0.515)), Offset.normalized, Offset.magnitude)
-			if (Cast.Hit) Offset = Cast.Pos.sub(EndPosition.add(Origin.Back.mul(0.515)))
+			let Offset = Origin.Down.mul(1.67);
+			const Cast = Raycast(EndPosition.add(Origin.Back.mul(0.515)), Offset.normalized, Offset.magnitude);
+			if (Cast.Hit) Offset = Cast.Pos.sub(EndPosition.add(Origin.Back.mul(0.515)));
 
 			const EdgeGrabPosition = EndPosition.add(Origin.Back.mul(0.515)).add(Offset);
 			const UpTween = Tween.Vector3(
@@ -886,7 +804,7 @@ export class MovesetBase {
 		this.DashCharge = 0;
 
 		Controller.Rigidbody.AddForce(Config.Gravity, ForceMode.Acceleration);
-		this.AccelerateToInput(Controller, FixedDT);
+		Controller.Physics.AccelerateToInput(Controller, FixedDT);
 
 		const TargetLook = Quaternion.LookRotation(Controller.Rigidbody.linearVelocity.WithY(0).normalized).eulerAngles.y;
 		const LastRotation = Controller.transform.rotation.eulerAngles;

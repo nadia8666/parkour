@@ -2,6 +2,7 @@ import { Airship } from "@Easy/Core/Shared/Airship";
 import type Character from "@Easy/Core/Shared/Character/Character";
 import type { Player } from "@Easy/Core/Shared/Player/Player";
 import { NetworkUtil } from "@Easy/Core/Shared/Util/NetworkUtil";
+import { deepCopy as DeepCopy } from "@Easy/Core/Shared/Util/ObjectUtils";
 import Config from "Code/Client/Config";
 import type DroppedItemEntityComponent from "Code/Shared/Components/DroppedItemEntityComponent";
 import { Network } from "Code/Shared/Network";
@@ -39,7 +40,7 @@ export default class ServerService extends AirshipSingleton {
 			this.SafeSpawnCharacter(Player);
 		});
 
-		Network.Generic.DropItem.server.OnClientEvent((Player, Slot, Index) => {
+		Network.Generic.DropItem.server.OnClientEvent((Player, Slot, Index, Amount) => {
 			const Data = this.DataService.GetPlayerData(this.DataService.Key(Player));
 			const Item = Data.Inventories[Slot]?.Content[Index];
 			if (!Item) return;
@@ -47,16 +48,24 @@ export default class ServerService extends AirshipSingleton {
 			const Character = this.CharacterMap.get(Player);
 			if (!Character) return;
 
-			delete Data.Inventories[Slot].Content[Index];
-
-			print(Data.Inventories[Slot].Content);
+			let TargetAmount = 1;
+			if (Amount >= Item.Amount) {
+				// drop all items
+				delete Data.Inventories[Slot].Content[Index];
+				TargetAmount = Item.Amount;
+			} else {
+				// drop only one
+				if (Item.Amount - Amount <= 0) delete Data.Inventories[Slot].Content[Index];
+				TargetAmount = math.min(Item.Amount, Amount);
+			}
 
 			const Dropped = Instantiate(this.DroppedItem, Character.transform.position.add(Vector3.up), Quaternion.identity);
 			Dropped.GetComponent<Rigidbody>()!.linearVelocity = Character.transform.forward.add(Vector3.up).mul(3);
 			NetworkServer.Spawn(Dropped);
 
 			const ItemEntity = Dropped.GetAirshipComponent<DroppedItemEntityComponent>()!;
-			ItemEntity.Item = Item;
+			ItemEntity.Item = DeepCopy(Item);
+			ItemEntity.Item.Amount = TargetAmount;
 			ItemEntity.DrawModel();
 		});
 

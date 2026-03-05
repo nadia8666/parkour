@@ -1,7 +1,7 @@
 // ai generated
-using UnityEngine;
-using UnityEditor;
 using System.Collections.Generic;
+using UnityEditor;
+using UnityEngine;
 
 public class ItemMeshBaker : UnityEditor.Editor
 {
@@ -21,7 +21,7 @@ public class ItemMeshBaker : UnityEditor.Editor
 
             EditorUtility.DisplayProgressBar("Baking Meshes", $"Processing {so.name}...", (float)i / count);
 
-            AirshipSerializedObject serObj = new AirshipSerializedObject(so);
+            AirshipSerializedObject serObj = new(so);
             var texProp = serObj.FindAirshipProperty("ItemTexture");
             var thickProp = serObj.FindAirshipProperty("ItemThickness");
 
@@ -37,7 +37,7 @@ public class ItemMeshBaker : UnityEditor.Editor
                 }
                 else
                 {
-                    Mesh newMesh = new Mesh();
+                    Mesh newMesh = new();
                     GenerateGridMesh(tex, thickProp.numberValue, newMesh);
                     AssetDatabase.CreateAsset(newMesh, meshPath);
                 }
@@ -67,25 +67,25 @@ public class ItemMeshBaker : UnityEditor.Editor
 
         bool IsSolid(int x, int y) => x >= 0 && x < w && y >= 0 && y < h && pixels[y * w + x].a > 128;
 
-        Dictionary<VertKey, int> vertMap = new Dictionary<VertKey, int>();
-        List<Vector3> verts = new List<Vector3>();
-        List<Vector2> uvs = new List<Vector2>();
-        List<Vector3> normals = new List<Vector3>();
-        List<int> tris = new List<int>();
+        Dictionary<VertKey, int> vertMap = new();
+        List<Vector3> verts = new();
+        List<Vector2> uvs = new();
+        List<Vector3> normals = new();
+        List<int> tris = new();
 
         float maxDim = Mathf.Max(w, h);
 
-        Vector3 GetPos(float x, float y, float z) => new Vector3((x - w / 2f) / maxDim, (y - h / 2f) / maxDim, z);
+        Vector3 GetPos(float x, float y, float z) => new((x - w / 2f) / maxDim, (y - h / 2f) / maxDim, z);
 
         int GetOrAddVert(Vector3 pos, Vector3 normal)
         {
-            Vector3 keyPos = new Vector3(
+            Vector3 keyPos = new(
                 Mathf.Round(pos.x * 1000f) / 1000f,
                 Mathf.Round(pos.y * 1000f) / 1000f,
                 Mathf.Round(pos.z * 1000f) / 1000f
             );
 
-            VertKey key = new VertKey(keyPos, normal);
+            VertKey key = new(keyPos, normal);
             if (vertMap.TryGetValue(key, out int index)) return index;
 
             index = verts.Count;
@@ -95,7 +95,7 @@ public class ItemMeshBaker : UnityEditor.Editor
 
             float px = pos.x * maxDim + w / 2f;
             float py = pos.y * maxDim + h / 2f;
-            Vector2 uv = new Vector2(px / w, py / h);
+            Vector2 uv = new(px / w, py / h);
 
             if (Mathf.Abs(normal.z) < 0.5f)
             {
@@ -132,7 +132,7 @@ public class ItemMeshBaker : UnityEditor.Editor
             AddTri(v1, v3, v4);
         }
 
-        List<Rect> rects = new List<Rect>();
+        List<Rect> rects = new();
         bool[,] visited = new bool[w, h];
 
         for (int y = 0; y < h; y++)
@@ -158,10 +158,10 @@ public class ItemMeshBaker : UnityEditor.Editor
 
         foreach (var R in rects)
         {
-            HashSet<int> topX = new HashSet<int> { R.x0, R.x1 };
-            HashSet<int> botX = new HashSet<int> { R.x0, R.x1 };
-            HashSet<int> leftY = new HashSet<int> { R.y0, R.y1 };
-            HashSet<int> rightY = new HashSet<int> { R.y0, R.y1 };
+            HashSet<int> topX = new() { R.x0, R.x1 };
+            HashSet<int> botX = new() { R.x0, R.x1 };
+            HashSet<int> leftY = new() { R.y0, R.y1 };
+            HashSet<int> rightY = new() { R.y0, R.y1 };
 
             foreach (var N in rects)
             {
@@ -172,18 +172,18 @@ public class ItemMeshBaker : UnityEditor.Editor
                 if (N.x0 == R.x1 && N.y1 > R.y0 && N.y0 < R.y1) { if (N.y0 > R.y0) rightY.Add(N.y0); if (N.y1 < R.y1) rightY.Add(N.y1); }
             }
 
-            List<int> tX = new List<int>(topX); tX.Sort();
-            List<int> bX = new List<int>(botX); bX.Sort();
-            List<int> lY = new List<int>(leftY); lY.Sort();
-            List<int> rY = new List<int>(rightY); rY.Sort();
+            List<int> tX = new(topX); tX.Sort();
+            List<int> bX = new(botX); bX.Sort();
+            List<int> lY = new(leftY); lY.Sort();
+            List<int> rY = new(rightY); rY.Sort();
 
-            List<Vector2> perimeter = new List<Vector2>();
+            List<Vector2> perimeter = new();
             for (int i = 0; i < bX.Count; i++) perimeter.Add(new Vector2(bX[i], R.y0));
             for (int i = 1; i < rY.Count; i++) perimeter.Add(new Vector2(R.x1, rY[i]));
             for (int i = tX.Count - 2; i >= 0; i--) perimeter.Add(new Vector2(tX[i], R.y1));
             for (int i = lY.Count - 2; i > 0; i--) perimeter.Add(new Vector2(R.x0, lY[i]));
 
-            Vector2 C = new Vector2((R.x0 + R.x1) / 2f, (R.y0 + R.y1) / 2f);
+            Vector2 C = new((R.x0 + R.x1) / 2f, (R.y0 + R.y1) / 2f);
             Vector3 c_f = GetPos(C.x, C.y, halfZ);
             Vector3 c_b = GetPos(C.x, C.y, -halfZ);
 

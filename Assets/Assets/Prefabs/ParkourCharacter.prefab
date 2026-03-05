@@ -1077,42 +1077,6 @@ MonoBehaviour:
       serializedValue: 0,0.8500061,0,0,0,0;0.25,0.8504163,0.2746366,0.2746366,0.3333333,0.3333333;1,1.100006,0,0,0,0
       serializedObject: {fileID: 0}
       modified: 1
-    - name: FOV
-      type: number
-      objectType: 
-      items:
-        type: 
-        objectType: 
-        serializedItems: []
-        objectRefs: []
-      refPath: 
-      fileRef: 
-      jsDocs:
-        text: []
-        tags: []
-      decorators: []
-      nullable: 0
-      serializedValue: 85
-      serializedObject: {fileID: 0}
-      modified: 0
-    - name: LastPromptInteract
-      type: number
-      objectType: 
-      items:
-        type: 
-        objectType: 
-        serializedItems: []
-        objectRefs: []
-      refPath: 
-      fileRef: 
-      jsDocs:
-        text: []
-        tags: []
-      decorators: []
-      nullable: 0
-      serializedValue: 
-      serializedObject: {fileID: 0}
-      modified: 0
     - name: SkinnedMeshes
       type: Array
       objectType: 
