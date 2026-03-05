@@ -9,9 +9,11 @@ import { ModelBuilder } from "../Utility/ModelBuilder";
 import EntityComponent from "./EntityComponent";
 
 export default class DroppedItemEntityComponent extends EntityComponent {
-	public Item: AnyItem;
 	public ModelContainer: Transform;
+	@NonSerialized() public Item: AnyItem;
 	@NonSerialized() public Lifetime = 0;
+	@NonSerialized() public PickupDelay = 2;
+	@NonSerialized() public LifetimeDuration = 300; // 5 minutes
 
 	@Client()
 	override Start() {
@@ -44,12 +46,12 @@ export default class DroppedItemEntityComponent extends EntityComponent {
 		this.transform.rotation = Quaternion.identity;
 
 		this.Lifetime += DeltaTime;
-		if (this.Lifetime >= 300) {
+		if (this.Lifetime >= this.LifetimeDuration) {
 			this.Destroy();
 			return;
 		}
 
-		if (this.Lifetime <= 2) return;
+		if (this.Lifetime <= this.PickupDelay) return;
 		const NearbyPlayers: [Character, number, Player][] = [];
 		Airship.Players.GetPlayers().forEach((Player) => {
 			const Character = Core().Server.CharacterMap.get(Player);

@@ -1,4 +1,4 @@
-import { ItemEnums } from "../Types";
+import type { ItemEnums } from "../Types";
 
 @CreateAssetMenu("Parkour/Item/New", "New Item.asset")
 export default class ItemObject extends AirshipScriptableObject {
@@ -9,8 +9,7 @@ export default class ItemObject extends AirshipScriptableObject {
 	public ModelType: ItemEnums.ItemModelType;
 
 	@Header("Renderer")
-	@ShowIf("ModelType", ItemEnums.ItemModelType.ImageGenerated)
 	public ItemTexture: Texture;
-	@ShowIf("ModelType", ItemEnums.ItemModelType.ImageGenerated) public ItemThickness: number;
-	@ShowIf("ModelType", ItemEnums.ItemModelType.BlockModel) public BlockDef: VoxelBlockDefinition;
+	public ItemThickness: number;
+	public BlockDef: VoxelBlockDefinition;
 }

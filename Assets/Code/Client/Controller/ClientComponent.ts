@@ -1,8 +1,6 @@
 import { Game } from "@Easy/Core/Shared/Game";
-import { Mouse } from "@Easy/Core/Shared/UserInput";
 import { Bin } from "@Easy/Core/Shared/Util/Bin";
 import Core from "Code/Core/Core";
-import type InteractableBlockComponent from "Code/Shared/Components/InteractableBlockComponent";
 import { Network } from "Code/Shared/Network";
 import { Client } from "Code/Shared/Types";
 import CFrame from "@inkyaker/CFrame/Code";
@@ -10,26 +8,28 @@ import type GenericTrigger from "../Components/Collision/GenericTriggerComponent
 import Config from "../Config";
 import { Settings } from "../Framework/SettingsController";
 import type WorldController from "../Framework/WorldController";
-import DraggableSlotComponent from "../UI/Drag/DraggableSlotComponent";
 import type AnimationController from "./Animation/AnimationController";
 import type { ValidAnimation } from "./Animation/AnimationController";
 import type ViewmodelComponent from "./Animation/ViewmodelComponent";
 import { ClientCamera as CameraController } from "./Camera";
+import { Actions, ClientInput } from "./ClientInput";
+import { ClientInteractions } from "./ClientInteractions";
+import { ClientPhysics } from "./ClientPhysics";
+import { ClientRenderer } from "./ClientRenderer";
+import { ClientUI } from "./ClientUI";
 import type GearController from "./Gear/GearController";
-import { Actions, Input } from "./Input";
-import { MovesetBase, Raycast } from "./Moveset/Base";
+import { MovesetBase } from "./Moveset/Base";
 import { MovesetGeneric } from "./Moveset/Generic";
 import { MovesetGrappler } from "./Moveset/Grappler";
 import { MovesetWorld } from "./Moveset/World";
 
 @AirshipComponentMenu("Client/Controller/Physics Controller")
 export default class ClientComponent extends AirshipBehaviour {
+	// References
 	@Header("Main")
 	public Rigidbody: Rigidbody;
 	public Identity: NetworkIdentity;
 	public BlockCursorRef: GameObject;
-	@NonSerialized() public BlockCursor: GameObject;
-	@NonSerialized() public TargetedBlock?: Vector3;
 
 	@Header("Colliders")
 	public BodyCollider: CapsuleCollider;
@@ -50,8 +50,18 @@ export default class ClientComponent extends AirshipBehaviour {
 	public Face: GameObject;
 	public SkinnedMeshes: SkinnedMeshRenderer[];
 
-	// Misc
-	public Bin = new Bin();
+	// Values
+	private _LOADED = false;
+	private CameraTarget = CFrame.identity;
+	@NonSerialized() public Bin = new Bin();
+	@NonSerialized() public FOV = 85;
+	@NonSerialized() public LastPromptInteract = os.clock();
+
+	// Values - Health
+	@NonSerialized() public Health = 100;
+	@NonSerialized() private _LastHealth = 100;
+	@NonSerialized() public _LastHealthLowered = 0;
+	@NonSerialized() public _LastHealthChanged = 0;
 
 	// Animation
 	@NonSerialized() public AnimationController: AnimationController;
@@ -66,8 +76,8 @@ export default class ClientComponent extends AirshipBehaviour {
 
 	// States
 	@NonSerialized() public State: Client.ValidStates = "Airborne";
-	public MatchCameraStates: Client.ValidStates[] = ["Airborne", "Grounded", "Fly"];
-	public FallIgnoreAnimations: ValidAnimation[] = [
+	@NonSerialized() public MatchCameraStates: Client.ValidStates[] = ["Airborne", "Grounded", "Fly"];
+	@NonSerialized() public FallIgnoreAnimations: ValidAnimation[] = [
 		"VM_JumpL",
 		"VM_JumpR",
 		"VM_JumpLWallrun",
@@ -82,27 +92,30 @@ export default class ClientComponent extends AirshipBehaviour {
 	];
 
 	// Control
+
 	@NonSerialized() public Gear: GearController;
 	@NonSerialized() public World: WorldController;
-	public Moveset = {
+	@NonSerialized() public Moveset = {
 		Base: new MovesetBase(),
 		Generic: new MovesetGeneric(),
 		World: new MovesetWorld(),
 
 		Grappler: new MovesetGrappler(),
 	};
-	public Camera = new CameraController({
+	@NonSerialized() public Camera = new CameraController({
 		X: this.transform.rotation.eulerAngles.x,
 		Y: this.transform.rotation.eulerAngles.y,
 		Z: this.transform.rotation.eulerAngles.z,
 	});
-	public FOV = 85;
-	public Input = new Input(this);
-	public LastPromptInteract = os.clock();
+	@NonSerialized() public Input = new ClientInput(this);
 
-	// Main
-	private _LOADED = false;
+	// Submodules
+	@NonSerialized() public Physics = new ClientPhysics();
+	@NonSerialized() public UI = new ClientUI(this);
+	@NonSerialized() public Renderer = new ClientRenderer(this);
+	@NonSerialized() public Interactions = new ClientInteractions(this);
 
+	// Init
 	@Client()
 	override OnEnable() {
 		if ($CLIENT && !$SERVER) {
@@ -125,38 +138,17 @@ export default class ClientComponent extends AirshipBehaviour {
 
 		this.Input.BindInputs();
 
-		this.AccessoryBuilder.OnMeshCombined.Connect(() => this.ReloadShadows());
-		this.AccessoryBuilder.OnAccessoryAdded.Connect(() => this.ReloadShadows());
-		this.AccessoryBuilder.OnAccessoryRemoved.Connect(() => this.ReloadShadows());
-		this.ReloadShadows();
+		this.AccessoryBuilder.OnMeshCombined.Connect(() => this.Renderer.ReloadShadows());
+		this.AccessoryBuilder.OnAccessoryAdded.Connect(() => this.Renderer.ReloadShadows());
+		this.AccessoryBuilder.OnAccessoryRemoved.Connect(() => this.Renderer.ReloadShadows());
+		this.Renderer.ReloadShadows();
 
 		Core().Client.Actor = this;
 
 		this._LOADED = true;
 		Core().Client.UI.Loading.SetActive(false);
 		this.FOV = this.FOVCurve.Evaluate(0) * Settings.FOV;
-
-		this.BlockCursor = Instantiate(this.BlockCursorRef);
-		this.BlockCursor.SetActive(false);
-		this.Bin.Add(this.BlockCursor);
-
-		//TODO: mobile support
-		this.Bin.Add(Mouse.onLeftDown.Connect(() => this.OnLeftMB()));
-		this.Bin.Add(Mouse.onRightDown.Connect(() => this.OnRightMB()));
-	}
-
-	public ReloadShadows() {
-		const MainRenderer = this.AccessoryBuilder.GetCombinedSkinnedMesh();
-		const AccessoryRenderers = this.AccessoryBuilder.GetAllAccessoryRenderers();
-
-		if (MainRenderer) MainRenderer.shadowCastingMode = ShadowCastingMode.ShadowsOnly;
-		for (const [_, Renderer] of pairs(AccessoryRenderers)) {
-			if (Renderer) Renderer.shadowCastingMode = ShadowCastingMode.ShadowsOnly;
-		}
-
-		this.SkinnedMeshes.forEach((Mesh) => (Mesh.shadowCastingMode = ShadowCastingMode.ShadowsOnly));
-
-		this.Face.SetActive(false);
+		this.Interactions.OnEnable();
 	}
 
 	@Client()
@@ -170,7 +162,8 @@ export default class ClientComponent extends AirshipBehaviour {
 		}
 	}
 
-	public CameraRotationToCharacter() {
+	// Utility Functions
+	public RotateCharacterToCamera() {
 		const YRotation = this.Camera.TargetRotation.eulerAngles.y;
 		this.Rigidbody.rotation = Quaternion.FromToRotation(
 			Quaternion.Euler(0, this.Rigidbody.rotation.eulerAngles.y, 0).mul(Vector3.forward),
@@ -178,20 +171,143 @@ export default class ClientComponent extends AirshipBehaviour {
 		).mul(this.Rigidbody.rotation);
 	}
 
+	public TeleportTo(Target: CFrame) {
+		this.transform.rotation = Target.Rotation;
+		this.transform.position = Target.Position;
+	}
+
+	public DamageSelf(Damage: number) {
+		const Character = Game.localPlayer.character;
+		if (Core().Client.Objective.TimeTrials.IsActive()) {
+			if (Character && Character.GetHealth() - Damage > 0) {
+				this.Health -= Damage;
+			} else {
+				this.Input.KeyPressed("QuickRestart", true);
+			}
+		} else {
+			this.Health -= Damage;
+
+			if (Damage > 25) {
+				this.SetVelocity(Vector3.up.mul(this.GetVelocity().y));
+			}
+		}
+	}
+
+	public Land() {
+		this.VelocityLocked = false;
+		this.LastLanded = os.clock();
+		this.State = "Grounded";
+		this.AirborneTime = 0;
+		this.Gear.ResetAmmo();
+
+		let Damage = this.LastFallSpeed - Config.FallDamageThreshold;
+
+		if (Damage > 0) {
+			Damage *= Config.FallDamageMultiplier;
+		}
+
+		if (this.Moveset.Base.DashActive()) {
+			if (Damage > 0) {
+				const CurrentDashTime = this.Moveset.Base.DashCharge;
+				const TargetTime = math.max(0, Config.FallDamgeRollTime * (1 - math.clamp(Damage / Config.FallDamageMaxSurvivable, 0, 1)));
+
+				if (CurrentDashTime <= TargetTime) {
+					Core().Client.Sound.Play("roll");
+					this.AnimationController.Current = "VM_Roll";
+					Damage = 0;
+				}
+
+				this.Moveset.Base.ResetDash();
+			} else {
+				this.Moveset.Base.StartSlide(this);
+			}
+		}
+
+		if (Damage > 0) {
+			Core().Client.Sound.Play(Damage <= 25 ? "strongland" : "landhard");
+
+			this.AnimationController.Current = `VM_Damage${Damage <= 25 ? "Light" : "Heavy"}`;
+
+			this.DamageSelf(Damage);
+		}
+
+		this.Momentum = this.Rigidbody.linearVelocity.WithY(0).magnitude;
+	}
+
+	public ResetLastFallSpeed() {
+		this.LastFallSpeed = 0;
+	}
+
+	public ResetState() {
+		this.Health = 100;
+		this._LastHealth = 100;
+
+		this.ResetLastFallSpeed();
+		this.Moveset.Base.ResetState();
+		this.Moveset.Grappler.ResetState();
+
+		this.Land();
+		this.SetVelocity(Vector3.zero);
+		this.Momentum = 0;
+	}
+
+	// Utility Functions - Getters/Setters
 	public GetCFrame(Raw?: boolean) {
 		return new CFrame(Raw ? this.transform.position : this.Rigidbody.worldCenterOfMass, this.Rigidbody.rotation);
 	}
 
-	public UpdateUI(DeltaTime: number) {
-		this.Gear.UpdateUI();
-		Core().Client.UI.UpdateUI(this, DeltaTime);
+	public GetVelocity() {
+		return this.Rigidbody.linearVelocity;
 	}
 
-	public Step(FixedDT: number) {
+	public SetVelocity(Velocity: Vector3) {
+		this.Rigidbody.linearVelocity = Velocity;
+		return Velocity;
+	}
+
+	// Lifecycle
+	@Client()
+	override Update() {
+		if (!this._LOADED) return;
+
+		this.Interactions.Update();
+	}
+
+	@Client()
+	override FixedUpdate(FixedDT: number) {
+		if (!this._LOADED) return;
+		this.OnStepMovement(FixedDT);
+	}
+
+	@Client()
+	public LateUpdate(DeltaTime: number) {
+		if (!this._LOADED) return;
+		this.OnStepViewmodel();
+		let Target = CFrame.FromTransform(this.Animator.HeadTransform);
+
+		if (this.State === "Slide") {
+			Target = new CFrame(Target.Position, Target.Rotation.mul(Quaternion.Euler(-Target.Rotation.eulerAngles.x, 0, 0)));
+		}
+
+		const NewTarget = this.AnimationController.Current === "VM_Run" ? new CFrame(Target.Position, Quaternion.Euler(0, Target.Rotation.eulerAngles.y, 0)) : Target;
+		this.CameraTarget = new CFrame(NewTarget.Position, Quaternion.Slerp(this.CameraTarget.Rotation, NewTarget.Rotation, Settings.CameraRotationLerp * DeltaTime));
+
+		this.FOV = math.lerpClamped(this.FOV, this.FOVCurve.Evaluate(math.clamp01(this.GetVelocity().magnitude / 30)) * Settings.FOV, 2.5 * DeltaTime);
+		this.Camera.Update(DeltaTime, this, this.CameraTarget, NewTarget, this.FOV);
+
+		if (this.MatchCameraStates.includes(this.State)) this.RotateCharacterToCamera();
+
+		this.Animator.Animate(DeltaTime);
+		this.UI.LateUpdate(DeltaTime);
+
+		this.Moveset.Grappler.DrawRope(this);
+	}
+
+	public OnStepMovement(FixedDT: number) {
 		this.Input.UpdateInputs();
 		this.Moveset.Base.StepMoveset(this, FixedDT);
 
-		if (this.MatchCameraStates.includes(this.State)) this.CameraRotationToCharacter();
+		if (this.MatchCameraStates.includes(this.State)) this.RotateCharacterToCamera();
 
 		switch (this.State) {
 			case "Grounded":
@@ -205,7 +321,7 @@ export default class ClientComponent extends AirshipBehaviour {
 				this.Moveset.Base.TryStepUp(this);
 
 				if (this.AnimationController.Current !== "VM_DamageHeavy") {
-					this.Moveset.Base.AccelerateToInput(this, FixedDT);
+					this.Physics.AccelerateToInput(this, FixedDT);
 				}
 
 				if (!["VM_VaultStart", "VM_LedgeGrab", "VM_Roll", "VM_DamageLight", "VM_DamageHeavy"].includes(this.AnimationController.Current)) {
@@ -233,7 +349,7 @@ export default class ClientComponent extends AirshipBehaviour {
 
 				if (this.Rigidbody.linearVelocity.y < 0) this.LastFallSpeed = math.max(this.LastFallSpeed, -this.Rigidbody.linearVelocity.y);
 
-				this.Moveset.Base.AccelerateToInput(this, FixedDT);
+				this.Physics.AccelerateToInput(this, FixedDT);
 
 				this.Moveset.Base.TryStepUp(this);
 
@@ -278,78 +394,12 @@ export default class ClientComponent extends AirshipBehaviour {
 			}
 		}
 
-		this.HealTick(FixedDT);
+		this.OnStepHealing(FixedDT);
 
 		Core().Client.Objective.TimeTrials.StepTrials(this);
 	}
 
-	@Client()
-	public LateUpdate(DeltaTime: number) {
-		if (!this._LOADED) return;
-		this.UpdateViewmodel();
-		let Target = CFrame.FromTransform(this.Animator.HeadTransform);
-
-		if (this.State === "Slide") {
-			Target = new CFrame(Target.Position, Target.Rotation.mul(Quaternion.Euler(-Target.Rotation.eulerAngles.x, 0, 0)));
-		}
-
-		const NewTarget = this.AnimationController.Current === "VM_Run" ? new CFrame(Target.Position, Quaternion.Euler(0, Target.Rotation.eulerAngles.y, 0)) : Target;
-		this.CameraTarget = new CFrame(NewTarget.Position, Quaternion.Slerp(this.CameraTarget.Rotation, NewTarget.Rotation, Settings.CameraRotationLerp * DeltaTime));
-
-		this.FOV = math.lerpClamped(this.FOV, this.FOVCurve.Evaluate(math.clamp01(this.GetVelocity().magnitude / 30)) * Settings.FOV, 2.5 * DeltaTime);
-		this.Camera.Update(DeltaTime, this, this.CameraTarget, NewTarget, this.FOV);
-
-		if (this.MatchCameraStates.includes(this.State)) this.CameraRotationToCharacter();
-
-		this.Animator.Animate(DeltaTime);
-		this.UpdateUI(DeltaTime);
-
-		this.Moveset.Grappler.DrawRope(this);
-	}
-	private CameraTarget = CFrame.identity;
-
-	@Client()
-	override Update() {
-		if (!this._LOADED) return;
-
-		const Cast = Raycast(this.Camera.Transform.position, this.Camera.TargetRotation.mul(Vector3.forward), Config.InteractionReach);
-		if (Cast.Hit) {
-			const VoxelPos = VoxelWorld.FloorInt(Cast.Pos.sub(Cast.Normal.mul(0.5)));
-			this.BlockCursor.transform.position = VoxelPos.add(new Vector3(0.5, 0.5, 0.5));
-			this.TargetedBlock = VoxelPos;
-		} else this.TargetedBlock = undefined;
-
-		this.BlockCursor.SetActive(Cast.Hit);
-	}
-
-	public OnLeftMB() {
-		// TODO: mining
-	}
-
-	public OnRightMB() {
-		if (this.TargetedBlock) {
-			const HeldItem = Core().Client.UI.Hotbar.HeldItem;
-			const Prefab = Core().Client.WorldController.World.GetPrefabAt(this.TargetedBlock);
-			let TryPlace = true;
-			if (Prefab) {
-				const Interactable = Prefab.GetAirshipComponent<InteractableBlockComponent>();
-
-				if (Interactable?.OnUse(this)) TryPlace = false;
-			}
-
-			if (TryPlace && HeldItem) {
-				// TODO: placing blocks
-			}
-		}
-	}
-
-	@Client()
-	override FixedUpdate(FixedDT: number) {
-		if (!this._LOADED) return;
-		this.Step(FixedDT);
-	}
-
-	public UpdateViewmodel() {
+	public OnStepViewmodel() {
 		const Rotation = this.GetCFrame().Rotation;
 
 		let TargetRotation = Quaternion.LookRotation(Rotation.mul(Vector3.forward), Vector3.up);
@@ -364,99 +414,9 @@ export default class ClientComponent extends AirshipBehaviour {
 		this.Animator.gameObject.transform.position = this.transform.position.add(Rotation.mul(Vector3.forward.mul(0.1)));
 	}
 
-	public Land() {
-		this.VelocityLocked = false;
-		this.LastLanded = os.clock();
-		this.State = "Grounded";
-		this.AirborneTime = 0;
-		this.Gear.ResetAmmo();
-
-		let Damage = this.LastFallSpeed - Config.FallDamageThreshold;
-
-		if (Damage > 0) {
-			Damage *= Config.FallDamageMultiplier;
-		}
-
-		if (this.Moveset.Base.DashActive()) {
-			if (Damage > 0) {
-				const CurrentDashTime = this.Moveset.Base.DashCharge;
-				const TargetTime = math.max(0, Config.FallDamgeRollTime * (1 - math.clamp(Damage / Config.FallDamageMaxSurvivable, 0, 1)));
-
-				if (CurrentDashTime <= TargetTime) {
-					Core().Client.Sound.Play("roll");
-					this.AnimationController.Current = "VM_Roll";
-					Damage = 0;
-				}
-
-				this.Moveset.Base.ResetDash();
-			} else {
-				this.Moveset.Base.StartSlide(this);
-			}
-		}
-
-		if (Damage > 0) {
-			Core().Client.Sound.Play(Damage <= 25 ? "strongland" : "landhard");
-
-			this.AnimationController.Current = `VM_Damage${Damage <= 25 ? "Light" : "Heavy"}`;
-
-			this.DamageSelf(Damage);
-		}
-
-		this.Momentum = this.Rigidbody.linearVelocity.WithY(0).magnitude;
-	}
-
-	public ResetState() {
-		this.Health = 100;
-		this._LastHealth = 100;
-
-		this.ResetLastFallSpeed();
-		this.Moveset.Base.ResetState();
-		this.Moveset.Grappler.ResetState();
-
-		this.Land();
-		this.SetVelocity(Vector3.zero);
-		this.Momentum = 0;
-	}
-
-	public TeleportTo(Target: CFrame) {
-		this.transform.rotation = Target.Rotation;
-		this.transform.position = Target.Position;
-	}
-
-	public DamageSelf(Damage: number) {
-		const Character = Game.localPlayer.character;
-		if (Core().Client.Objective.TimeTrials.IsActive()) {
-			if (Character && Character.GetHealth() - Damage > 0) {
-				this.Health -= Damage;
-			} else {
-				this.Input.KeyPressed("QuickRestart", true);
-			}
-		} else {
-			this.Health -= Damage;
-
-			if (Damage > 25) {
-				this.SetVelocity(Vector3.up.mul(this.GetVelocity().y));
-			}
-		}
-	}
-
-	@NonSerialized() public Health = 100;
-	@NonSerialized() private _LastHealth = 100;
-	@NonSerialized() public _LastHealthLowered = 0;
-	@NonSerialized() public _LastHealthChanged = 0;
-	private _HealthUpdated() {
-		if (this.Health <= 0) {
-			if (Core().Client.Objective.TimeTrials.IsActive()) {
-				Core().Client.Objective.TimeTrials.Restart(this);
-			} else {
-				Network.Effect.Respawn.client.FireServer();
-			}
-		}
-	}
-
-	public HealTick(FixedDT: number) {
+	public OnStepHealing(FixedDT: number) {
 		if (this._LastHealth !== this.Health) {
-			this._HealthUpdated();
+			this.OnHealthChanged();
 
 			if (this._LastHealth > this.Health) {
 				this._LastHealthLowered = os.clock();
@@ -471,39 +431,12 @@ export default class ClientComponent extends AirshipBehaviour {
 		}
 	}
 
-	public ResetLastFallSpeed() {
-		this.LastFallSpeed = 0;
-	}
-
-	public GetVelocity() {
-		return this.Rigidbody.linearVelocity;
-	}
-
-	public SetVelocity(Velocity: Vector3) {
-		this.Rigidbody.linearVelocity = Velocity;
-		return Velocity;
-	}
-
-	public DropItem() {
-		const UI = Core().Client.UI;
-
-		let HeldItem = UI.AreMenusOpen()
-			? (() => {
-					const UITarget = UI.RaycastUI();
-					return UITarget && DraggableSlotComponent.AllSlots.get(UITarget)?.FetchContents();
-				})()
-			: Core().Client.UI.Hotbar.HeldItem;
-
-		print(HeldItem, Core().Client.Data.GetLink().Data.Inventories);
-
-		if (!HeldItem) return;
-
-		for (const [TargetSlot, Inventory] of pairs(Core().Client.Data.GetLink(true).Data.Inventories)) {
-			for (const [Index, Value] of pairs(Inventory.Content)) {
-				if (Value === HeldItem) {
-					Network.Generic.DropItem.client.FireServer(TargetSlot as string, Index);
-					break;
-				}
+	private OnHealthChanged() {
+		if (this.Health <= 0) {
+			if (Core().Client.Objective.TimeTrials.IsActive()) {
+				Core().Client.Objective.TimeTrials.Restart(this);
+			} else {
+				Network.Effect.Respawn.client.FireServer();
 			}
 		}
 	}

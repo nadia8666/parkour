@@ -38,7 +38,8 @@ export const Actions = {
 
 	CoreUse: new InputEntry(Key.E, 1, "AP - Gear"),
 
-	DropItem: new InputEntry(Key.X, 1, "AP - Inventory")
+	DropItem: new InputEntry(Key.X, 1, "AP - Inventory"),
+	DropModifier: new InputEntry(Key.LeftShift, 0, "AP - Inventory"),
 };
 
 const InverseMap = new Map<Key, (keyof typeof Actions)[]>();
@@ -74,7 +75,7 @@ Airship.Input.DisableCoreActions([
 	CoreAction.InventoryQuickMoveModifierKey,
 ]);
 
-export class Input {
+export class ClientInput {
 	private readonly KeyMap = new Map<Key, Array<keyof typeof Actions>>();
 	public Bin = new Bin();
 
@@ -165,7 +166,7 @@ export class Input {
 				}
 				break;
 			case "DropItem": {
-				this.Controller.DropItem();
+				this.Controller.Interactions.DropItem();
 			}
 		}
 

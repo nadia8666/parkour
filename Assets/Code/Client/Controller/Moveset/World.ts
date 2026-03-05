@@ -2,7 +2,7 @@ import { TweenEasingFunction } from "@Easy/Core/Shared/Tween/EasingFunctions";
 import { Tween } from "@Easy/Core/Shared/Tween/Tween";
 import Core from "Code/Core/Core";
 import type ClientComponent from "../ClientComponent";
-import { Actions } from "../Input";
+import { Actions } from "../ClientInput";
 import type { VirtualizedLadder } from "../Modules/Ladder/Ladders";
 import { LedgeGrabType } from "./Base";
 
