@@ -53,15 +53,6 @@ MonoBehaviour:
     disabled: 0
     defaultPackage: 0
     forceLatestVersion: 1
-  - id: '@Easy/VoxelWorld'
-    assetVersion: 28
-    codeVersion: 28
-    publishVersionNumber: 24
-    game: 0
-    localSource: 0
-    disabled: 0
-    defaultPackage: 0
-    forceLatestVersion: 0
   tags: []
   gameLayers:
   - Default

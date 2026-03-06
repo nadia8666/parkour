@@ -87,14 +87,11 @@ export default class ServerService extends AirshipSingleton {
 				BlockID: BlockDef,
 			};
 
-			task.delay(0.5, () => {
-				ItemUtil.SpawnDroppedItem(Pos.add(Vector3.one.mul(0.5)), ItemUtil.GetDroppedItemVelocity(), NewItem, {
-					PickupDelay: 0.5,
-				});
-			});
-
 			Core().World.World.WriteVoxelAt(Pos, 0, true);
 			Network.VoxelWorld.WriteVoxel.server.FireAllClients(Pos, 0);
+			ItemUtil.SpawnDroppedItem(Pos.add(Vector3.one.mul(0.5)), ItemUtil.GetDroppedItemVelocity(), NewItem, {
+				PickupDelay: 0.5,
+			});
 
 			if (Core().World.World.GetVoxelAt(Pos.add(Vector3.up)) === Core().World.ChunkManager.GetBlock("ShortGrass")) {
 				Core().World.World.WriteVoxelAt(Pos.add(Vector3.up), 0, true);

@@ -369,6 +369,7 @@ export default class WorldSingleton extends AirshipSingleton {
 
 				let Iterations = 0;
 				for (const [Chunk] of pairs(this.ChunkManager.LoadedChunks)) {
+					if (!Player) return;
 					task.spawn(() => {
 						const PositionArray = this.ChunkManager.ExpandCube(this.ChunkManager.FromKey(Chunk), 15);
 						Network.VoxelWorld.WriteGroup.server.FireClient(Player, PositionArray, this.World.BulkReadVoxels(PositionArray));
