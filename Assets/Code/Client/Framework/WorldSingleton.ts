@@ -330,6 +330,11 @@ export default class WorldSingleton extends AirshipSingleton {
 				Config.Seed = Seed;
 			});
 
+			Network.VoxelWorld.SetLoadedStatus.client.OnServerEvent((Loaded) => {
+				this.WorldReady = Loaded;
+				warn("Client world ready!")
+			});
+
 			if (Config.Seed === 0) Network.Sync.SetSeed.client.FireServer(0);
 
 			Network.VoxelWorld.WriteGroup.client.OnServerEvent((PosArr, Blocks) => this.World.WriteVoxelGroupAt(PosArr, Blocks, false));
@@ -358,13 +363,18 @@ export default class WorldSingleton extends AirshipSingleton {
 				if (ENV.Shared) return;
 				while (!this.WorldReady) task.wait();
 
+				let Iterations = 0;
 				for (const [Chunk] of pairs(this.ChunkManager.LoadedChunks)) {
 					task.spawn(() => {
 						const PositionArray = this.ChunkManager.ExpandCube(this.ChunkManager.FromKey(Chunk), 15);
 						Network.VoxelWorld.WriteGroup.server.FireClient(Player, PositionArray, this.World.BulkReadVoxels(PositionArray));
 					});
-					task.wait(math.random(1, 10) / 100);
+
+					Iterations++;
+					if (Iterations % 5 === 0) task.wait();
 				}
+
+				Network.VoxelWorld.SetLoadedStatus.server.FireClient(Player, true);
 			});
 
 			Network.VoxelWorld.GetInitialContainerInventory.server.SetCallback((_, LinkID) => {
@@ -426,6 +436,7 @@ export default class WorldSingleton extends AirshipSingleton {
 			Config.SpawnPos = new Vector3(0, Surface + 4, 0);
 
 			if (ENV.Runtime === "DEV") {
+				task.wait(1);
 				const Pos = new Vector3(0, Surface + 15, 0);
 				this.World.WriteVoxelAt(Pos, this.ChunkManager.GetBlock("WoodenChest"), true);
 				while (!this.World.GetPrefabAt(Pos)) task.wait();
@@ -450,6 +461,8 @@ export default class WorldSingleton extends AirshipSingleton {
 					}
 				}
 				Block.Container!.GetInventory().Size = Elements;
+
+				warn("Debug chest spawned!")
 			}
 
 			this.WorldReady = true;

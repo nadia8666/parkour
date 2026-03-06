@@ -86,7 +86,9 @@ export default class DraggableSlotComponent extends AirshipBehaviour {
 			if (Item) {
 				Item.transform.SetParent(this.transform, false);
 				Item.transform.localPosition = new Vector3(0.363, 0.666, -10);
-				Item.transform.localScale = Type === ModelBuilder.ModelBuilderType.VoxelBlock ? Vector3.one.mul(37.5) : Vector3.one.mul(74.75);
+				Item.transform.localScale = [ModelBuilder.ModelBuilderType.VoxelBlock, ModelBuilder.ModelBuilderType.VoxelPrefab].includes(Type)
+					? Vector3.one.mul(37.5)
+					: Vector3.one.mul(74.75);
 				Item.SetLayerRecursive(5);
 
 				if ([ModelBuilder.ModelBuilderType.VoxelBlock, ModelBuilder.ModelBuilderType.VoxelPrefab].includes(Type)) {

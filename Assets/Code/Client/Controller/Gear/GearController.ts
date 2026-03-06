@@ -3,6 +3,7 @@ import { WithGear } from "Code/Client/Config";
 import Core from "Code/Core/Core";
 import type { GearRegistryKey } from "Code/Shared/GearRegistry";
 import { type AnyItem, type GearItem, type InventoryKey, type ItemInfo, ItemTypes } from "Code/Shared/Types";
+import { Utility } from "Code/Shared/Utility/Utility";
 
 const MaxAmmo = {
 	Wallrun: 2,
@@ -75,7 +76,10 @@ export default class GearController extends AirshipSingleton {
 			return Core().Gear[(Item as GearItem).Key].Name;
 		} else {
 			// TEMP
-			return Item.Key;
+			if (Item.Type === ItemTypes.Block) {
+				return Utility.FormatStringForName(Core().World.GetDefinition(Item.BlockID).name);
+			}
+			return Utility.FormatStringForName(Item.Key);
 		}
 	}
 
