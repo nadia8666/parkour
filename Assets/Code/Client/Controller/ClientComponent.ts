@@ -233,6 +233,8 @@ export default class ClientComponent extends AirshipBehaviour {
 			this.AnimationController.Current = `VM_Damage${Damage <= 25 ? "Light" : "Heavy"}`;
 
 			this.DamageSelf(Damage);
+		} else {
+			this.Moveset.Base.OnAnimationEvent("Footstep", this)
 		}
 
 		this.Momentum = this.Rigidbody.linearVelocity.WithY(0).magnitude;

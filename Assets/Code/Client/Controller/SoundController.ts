@@ -24,7 +24,7 @@ export default class SoundController extends AirshipSingleton {
 		}
 	}
 
-	public Play(SoundName: string, Config: { Volume?: number } = {}) {
+	public Play(SoundName: string, Config: { Volume?: number; Speed?: number } = {}) {
 		let Sound = this.SoundMap[SoundName];
 
 		if (Sound) {
@@ -33,6 +33,7 @@ export default class SoundController extends AirshipSingleton {
 			SoundObject.clip = SoundFile;
 			SoundObject.Play();
 
+			SoundObject.pitch = Config.Speed ?? 1;
 			SoundObject.volume = Config.Volume ?? 1;
 
 			const Position = Core().Client.Actor?.transform.position;

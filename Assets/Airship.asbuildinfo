@@ -1990,16 +1990,6 @@
 			"inherits": []
 		},
 		{
-			"name": "ClientComponent",
-			"id": "Code/Client/Controller/ClientComponent@ClientComponent",
-			"file": "Code/Client/Controller/ClientComponent.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
 			"name": "UIController",
 			"id": "Code/Client/UI/UIController@UIController",
 			"file": "Code/Client/UI/UIController.ts",
@@ -2092,16 +2082,6 @@
 			]
 		},
 		{
-			"name": "BlockContainerComponent",
-			"id": "Code/Shared/Components/BlockContainerComponent@BlockContainerComponent",
-			"file": "Code/Shared/Components/BlockContainerComponent.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
 			"name": "ServerService",
 			"id": "Code/Server/ServerService@ServerService",
 			"file": "Code/Server/ServerService.ts",
@@ -2132,16 +2112,6 @@
 			"inherits": []
 		},
 		{
-			"name": "SoundController",
-			"id": "Code/Client/Controller/SoundController@SoundController",
-			"file": "Code/Client/Controller/SoundController.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
 			"name": "DataController",
 			"id": "Code/Client/Framework/DataController@DataController",
 			"file": "Code/Client/Framework/DataController.ts",
@@ -2165,16 +2135,6 @@
 			"name": "PredictedCommandManager",
 			"id": "AirshipPackages/@Easy/Core/Shared/Network/PredictedCommands/PredictedCommandManager@PredictedCommandManager",
 			"file": "AirshipPackages/@Easy/Core/Shared/Network/PredictedCommands/PredictedCommandManager.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "DualLinkReplicator",
-			"id": "AirshipPackages/@inkyaker/DualLink/Code/index@DualLinkReplicator",
-			"file": "AirshipPackages/@inkyaker/DualLink/Code/index.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"
@@ -2997,6 +2957,46 @@
 			"name": "testcomponent",
 			"id": "Code/Server/test@testcomponent",
 			"file": "Code/Server/test.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "SoundController",
+			"id": "Code/Client/Controller/SoundController@SoundController",
+			"file": "Code/Client/Controller/SoundController.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "ClientComponent",
+			"id": "Code/Client/Controller/ClientComponent@ClientComponent",
+			"file": "Code/Client/Controller/ClientComponent.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "BlockContainerComponent",
+			"id": "Code/Shared/Components/BlockContainerComponent@BlockContainerComponent",
+			"file": "Code/Shared/Components/BlockContainerComponent.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "DualLinkReplicator",
+			"id": "AirshipPackages/@inkyaker/DualLink/Code/index@DualLinkReplicator",
+			"file": "AirshipPackages/@inkyaker/DualLink/Code/index.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"

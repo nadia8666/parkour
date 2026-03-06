@@ -1161,7 +1161,7 @@ MonoBehaviour:
   sendIntervalMultiplier: 1
   timelineOffset: 0
   showGizmos: 0
-  showOverlay: 1
+  showOverlay: 0
   overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
   onlySyncOnChangeCorrectionMultiplier: 2
   rotationSensitivity: 0.01

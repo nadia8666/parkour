@@ -12,4 +12,24 @@ export namespace Utility {
 
 		return Copy;
 	}
+
+	export function CSDictionaryToMap<A, B, T extends CSDictionary<A, B>>(Input: T) {
+		const Keys: A[] = []
+		const Values: B[] = []
+
+		for (const i of $range(0, Input.Keys.Count)) {
+			Keys[i] = Input.Keys.ElementAt(i)
+		}
+
+		for (const i of $range(0, Input.Values.Count)) {
+			Values[i] = Input.Values.ElementAt(i)
+		}
+
+		const KVPairs = new Map<A,B>()
+		for (const [Index, Key] of pairs(Keys)) {
+			KVPairs.set(Key, Values[Index])
+		}
+
+		return KVPairs
+	}
 }
