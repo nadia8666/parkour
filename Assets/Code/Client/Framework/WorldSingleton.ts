@@ -330,14 +330,13 @@ export default class WorldSingleton extends AirshipSingleton {
 				Config.Seed = Seed;
 			});
 
-			Network.VoxelWorld.SetLoadedStatus.client.OnServerEvent((Loaded) => {
-				this.WorldReady = Loaded;
-				warn("Client world ready!")
-			});
-
 			if (Config.Seed === 0) Network.Sync.SetSeed.client.FireServer(0);
 
-			Network.VoxelWorld.WriteGroup.client.OnServerEvent((PosArr, Blocks) => this.World.WriteVoxelGroupAt(PosArr, Blocks, false));
+			let LoadedChunks = 0;
+			Network.VoxelWorld.WriteGroup.client.OnServerEvent((PosArr, Blocks) => {
+				this.World.WriteVoxelGroupAt(PosArr, Blocks, false);
+				LoadedChunks++;
+			});
 			Network.VoxelWorld.WriteVoxel.client.OnServerEvent((Pos, Block) => this.World.WriteVoxelAt(Pos, Block, true));
 
 			this.LightingTexture = new Texture3D(this.Resolution, this.Resolution, this.Resolution, TextureFormat.R8, false, true);
@@ -356,6 +355,11 @@ export default class WorldSingleton extends AirshipSingleton {
 			});
 
 			Network.VoxelWorld.GetInitialChunks.client.FireServer();
+			Network.VoxelWorld.SetLoadedStatus.client.OnServerEvent((NumChunks) => {
+				while (LoadedChunks < NumChunks) task.wait();
+				this.WorldReady = true;
+				warn("Client world ready!");
+			});
 		}
 
 		if ($SERVER) {
@@ -374,7 +378,7 @@ export default class WorldSingleton extends AirshipSingleton {
 					if (Iterations % 5 === 0) task.wait();
 				}
 
-				Network.VoxelWorld.SetLoadedStatus.server.FireClient(Player, true);
+				Network.VoxelWorld.SetLoadedStatus.server.FireClient(Player, Iterations);
 			});
 
 			Network.VoxelWorld.GetInitialContainerInventory.server.SetCallback((_, LinkID) => {
@@ -462,7 +466,7 @@ export default class WorldSingleton extends AirshipSingleton {
 				}
 				Block.Container!.GetInventory().Size = Elements;
 
-				warn("Debug chest spawned!")
+				warn("Debug chest spawned!");
 			}
 
 			this.WorldReady = true;
