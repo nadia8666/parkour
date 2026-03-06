@@ -102,9 +102,23 @@ export class MovesetBase {
 				this.WallclimbStep(Controller);
 				break;
 			case "Footstep": {
-				const IsFast = Controller.GetVelocity().WithY(0).magnitude > 20;
-				Core().Client.Sound.Play(`footstep${IsFast ? "fast" : ""}`);
-				task.delay(0.1, () => Core().Client.Sound.Play("cloth", { Volume: 0.5 }));
+				if (Controller.Floor.Touching) {
+					const GroundVoxel = Core().World.World.GetVoxelBlockDefAt(VoxelWorld.FloorInt(Controller.transform.position.sub(new Vector3(0, 0.5, 0)))).definition;
+
+					const Sound = (() => {
+						switch (GroundVoxel.name) {
+							case "Grass":
+								return "_grass";
+							case "Sand":
+								return "_soft";
+							case "Snow":
+								return "_soft";
+							default:
+								return "_hard";
+						}
+					})();
+					Core().Client.Sound.Play(`footstep${Sound}`, { Volume: 0.15 });
+				}
 
 				break;
 			}
@@ -353,7 +367,7 @@ export class MovesetBase {
 		this.JumpTimer = 0.75;
 		Controller.Gear.Ammo.Jump--;
 
-		Core().Client.Sound.Play("footstep"); // TEMP
+		this.OnAnimationEvent("Footstep", Controller)
 	}
 
 	public StepJump(Controller: ClientComponent, FixedDT: number) {
@@ -469,7 +483,7 @@ export class MovesetBase {
 		if (Controller.State !== "Wallclimb") return;
 
 		Controller.Rigidbody.AddForce(Vector3.up.mul((this.WallclimbTimer / Config.WallclimbLength()) * Config.WallclimbStepStrength()), ForceMode.Impulse);
-		Core().Client.Sound.Play("footstepfast");
+		Core().Client.Sound.Play("footstep_hard", { Volume: 0.25 });
 	}
 	// #endregion
 
@@ -890,10 +904,10 @@ export class MovesetBase {
 			Controller.Gear.Ammo.WallKick--;
 
 			Controller.Input.KeyReleased("Jump", true);
-			Controller.AnimationController.Current = "VM_JumpR"; // TEMP
+			Controller.AnimationController.Current = "VM_JumpR";
 			this.JumpTimer = 1.25;
 
-			Core().Client.Sound.Play("footstepfast"); // TEMP
+			Core().Client.Sound.Play("jump");
 		}
 	}
 
