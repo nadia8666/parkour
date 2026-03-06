@@ -1980,16 +1980,6 @@
 			"inherits": []
 		},
 		{
-			"name": "WorldSingleton",
-			"id": "Code/Client/Framework/WorldSingleton@WorldSingleton",
-			"file": "Code/Client/Framework/WorldSingleton.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
 			"name": "ClientComponent",
 			"id": "Code/Client/Controller/ClientComponent@ClientComponent",
 			"file": "Code/Client/Controller/ClientComponent.ts",
@@ -2095,16 +2085,6 @@
 			"name": "BlockContainerComponent",
 			"id": "Code/Shared/Components/BlockContainerComponent@BlockContainerComponent",
 			"file": "Code/Shared/Components/BlockContainerComponent.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "ServerService",
-			"id": "Code/Server/ServerService@ServerService",
-			"file": "Code/Server/ServerService.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"
@@ -2997,6 +2977,26 @@
 			"name": "testcomponent",
 			"id": "Code/Server/test@testcomponent",
 			"file": "Code/Server/test.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "ServerService",
+			"id": "Code/Server/ServerService@ServerService",
+			"file": "Code/Server/ServerService.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "WorldSingleton",
+			"id": "Code/Client/Framework/WorldSingleton@WorldSingleton",
+			"file": "Code/Client/Framework/WorldSingleton.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"

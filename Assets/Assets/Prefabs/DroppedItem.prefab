@@ -131,7 +131,7 @@ GameObject:
   - component: {fileID: 980140058684596258}
   - component: {fileID: 4190246028467129432}
   - component: {fileID: 4377819655575667650}
-  - component: {fileID: -446905708612281872}
+  - component: {fileID: -4819936032036180087}
   m_Layer: 27
   m_Name: DroppedItem
   m_TagString: Untagged
@@ -279,7 +279,7 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 80
   m_CollisionDetection: 0
---- !u!114 &-446905708612281872
+--- !u!114 &-4819936032036180087
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -288,7 +288,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 4492196824436303209}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
+  m_Script: {fileID: 11500000, guid: cb803efbe62c34d7baece46c9ffebad9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   syncDirection: 0
@@ -296,12 +296,12 @@ MonoBehaviour:
   syncInterval: 0
   target: {fileID: 3274233130414948381}
   syncPosition: 1
-  syncRotation: 1
+  syncRotation: 0
   syncScale: 0
   onlySyncOnChange: 1
   compressRotation: 1
   interpolatePosition: 1
-  interpolateRotation: 1
+  interpolateRotation: 0
   interpolateScale: 0
   coordinateSpace: 0
   sendIntervalMultiplier: 1
