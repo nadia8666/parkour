@@ -2122,16 +2122,6 @@
 			"inherits": []
 		},
 		{
-			"name": "DataService",
-			"id": "Code/Server/Data/DataService@DataService",
-			"file": "Code/Server/Data/DataService.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
 			"name": "SoundController",
 			"id": "Code/Client/Controller/SoundController@SoundController",
 			"file": "Code/Client/Controller/SoundController.ts",
@@ -2997,6 +2987,16 @@
 			"name": "testcomponent",
 			"id": "Code/Server/test@testcomponent",
 			"file": "Code/Server/test.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "DataService",
+			"id": "Code/Server/Data/DataService@DataService",
+			"file": "Code/Server/Data/DataService.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"
