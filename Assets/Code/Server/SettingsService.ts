@@ -23,6 +23,7 @@ class _SettingsService {
 	}
 
 	public GetSetting<T extends keyof typeof Settings>(Name: T, Player: Player): (typeof Settings)[T] {
+		if (!Player && Name === "RenderDistance") return 0 as (typeof Settings)[T];
 		return (this.PlayerMap.get(Player) ?? Settings)[Name];
 	}
 }

@@ -1,3 +1,4 @@
+// ai assisted
 //--!native
 //--!optimize 2
 
@@ -142,7 +143,6 @@ class ChunkManager {
 				LoadPosZ = false;
 
 			let ForcePropagate = false;
-
 			let IterationCount = 0;
 
 			for (let x = 0; x < 16; x++) {
@@ -187,7 +187,6 @@ class ChunkManager {
 									let OreType = 0;
 									const OreNoise = Noise.Get3DFBM(WorldX, WorldY, WorldZ, 1, 0.15, 2, 0.6, 2) / 2 + 0.5;
 
-									// TODO: random variation of heights between a range
 									if (OreNoise > 0.8) {
 										if (WorldY > 40) OreType = this.GetBlock("CoalOre");
 										else if (WorldY > -10) OreType = this.GetBlock("IronOre");
@@ -219,7 +218,6 @@ class ChunkManager {
 							}
 						}
 
-						// for large bodies of water
 						if (y === 15 && Target === this.GetBlock("Water")) {
 							LoadPosY = true;
 							ForcePropagate = true;
@@ -242,10 +240,6 @@ class ChunkManager {
 			}
 
 			if (CanExpand) this.TryPropagate(ChunkKey, LinkedPlayer, LoadNegX, LoadPosX, LoadNegY, LoadPosY, LoadNegZ, LoadPosZ, SurfaceMap, ContinentalMap, ForcePropagate);
-			else if (LoadPosY && ForcePropagate) {
-				//const [Pos, Render] = LinkedPlayer ? [LinkedPlayer().Position, SettingsService.Settings.GetSetting("RenderDistance", LinkedPlayer().Player)] : [Vector3.zero, 16];
-				//this.CheckAndLoad(ChunkKey.add(new Vector3(0, 1, 0)), Pos, Render, SurfaceMap, ContinentalMap, true, LinkedPlayer, false);
-			}
 
 			Generated = true;
 		};
@@ -274,7 +268,7 @@ class ChunkManager {
 		ContinentalMap: number[],
 		ForcePropagate: boolean = false,
 	) {
-		const [Pos, Render] = LinkedPlayer ? [LinkedPlayer().Position, SettingsService.Settings.GetSetting("RenderDistance", LinkedPlayer().Player)] : [Vector3.zero, 16];
+		const [Pos, Render] = LinkedPlayer ? [LinkedPlayer().Position, SettingsService.Settings.GetSetting("RenderDistance", LinkedPlayer().Player)] : [Vector3.zero, 4];
 
 		if (nX) this.CheckAndLoad(CenterKey.sub(new Vector3(1, 0, 0)), Pos, Render, undefined, undefined, false, LinkedPlayer);
 		if (pX) this.CheckAndLoad(CenterKey.add(new Vector3(1, 0, 0)), Pos, Render, undefined, undefined, false, LinkedPlayer);
@@ -331,7 +325,15 @@ export default class WorldSingleton extends AirshipSingleton {
 
 	public Start() {
 		if ($CLIENT) {
+			Network.Sync.SetSeed.client.OnServerEvent((Seed) => {
+				math.randomseed(Seed);
+				Config.Seed = Seed;
+			});
+
+			if (Config.Seed === 0) Network.Sync.SetSeed.client.FireServer(0);
+
 			Network.VoxelWorld.WriteGroup.client.OnServerEvent((PosArr, Blocks) => this.World.WriteVoxelGroupAt(PosArr, Blocks, false));
+			Network.VoxelWorld.WriteVoxel.client.OnServerEvent((Pos, Block) => this.World.WriteVoxelAt(Pos, Block, true));
 
 			this.LightingTexture = new Texture3D(this.Resolution, this.Resolution, this.Resolution, TextureFormat.R8, false, true);
 			const Pixels: Color[] = [];
@@ -371,10 +373,14 @@ export default class WorldSingleton extends AirshipSingleton {
 			});
 
 			Config.Seed = math.random(1, 2 ** 30);
-			print(`world seed: ${Config.Seed}`);
 			math.randomseed(Config.Seed);
-			this.Noise = new NoiseHandler(Config.Seed);
 
+			Network.Sync.SetSeed.server.FireAllClients(Config.Seed);
+			Network.Sync.SetSeed.server.OnClientEvent((Player) => Network.Sync.SetSeed.server.FireClient(Player, Config.Seed));
+
+			print(`WORLD SEED: ${Config.Seed}`);
+
+			this.Noise = new NoiseHandler(Config.Seed);
 			let [ChunksWritten, MaxChunks] = [0, 0];
 			for (const ChunkX of $range(-4, 4)) {
 				for (const ChunkZ of $range(-4, 4)) {
@@ -478,7 +484,7 @@ export default class WorldSingleton extends AirshipSingleton {
 
 			this.ChunkManager.ProcessQueue(1);
 
-			if (os.clock() - this.LastUpdate <= 0.5) return;
+			if (os.clock() - this.LastUpdate <= 0.25) return;
 			this.LastUpdate = os.clock();
 
 			Airship.Players.GetPlayers().forEach((Player) => {
@@ -488,11 +494,9 @@ export default class WorldSingleton extends AirshipSingleton {
 						let Position = Character.transform.position;
 						Position = new Vector3(math.floor(Position.x), math.floor(Position.y), math.floor(Position.z));
 						const LinkedPlayer: PlayerInfoGetter = () => {
-							return {
-								Player: Player,
-								Position: Position,
-							};
+							return { Player: Player, Position: Player ? Position : Vector3.zero };
 						};
+						Profiler.BeginSample("WorldSingleton/GetNoise");
 						const RenderDistance = SettingsService.Settings.GetSetting("RenderDistance", Player);
 						const AboveGround =
 							Position.y + 8 >=
@@ -500,18 +504,20 @@ export default class WorldSingleton extends AirshipSingleton {
 								this.Noise.Get2DFBM(Position.x, Position.z, 1, 0.0004, 3, 0.5, 2),
 								this.Noise.Get2DFBM(Position.x, Position.z, 2, 0.01, 4, 0.5, 2),
 							);
+						Profiler.EndSample();
 
 						const Keys = this.ChunkManager.ExpandCube(this.ChunkManager.ToKey(Position).sub(Vector3.one.mul(RenderDistance / 2)), RenderDistance);
 
 						for (const [_, Key] of pairs(Keys)) {
-							const Origin = Key.mul(16);
-
-							const ContinentalBuffer = this.Noise.Get2DFBMBatch(Origin.x, Origin.z, 16, 16, new Array(256), 1, 0.0004, 3, 0.5, 2);
-							const DetailBuffer = this.Noise.Get2DFBMBatch(Origin.x, Origin.z, 16, 16, new Array(256), 2, 0.01, 4, 0.5, 2);
 							if (AboveGround) {
 								if (!this.ChunkManager.SurfaceLoadedChunks.has(Key.WithY(0))) {
-									// Load surface chunk
 									this.ChunkManager.SurfaceLoadedChunks.add(Key.WithY(0));
+
+									const Origin = Key.WithY(0).mul(16);
+									Profiler.BeginSample("WorldSingleton/OtherNoise");
+									const ContinentalBuffer = this.Noise.Get2DFBMBatch(Origin.x, Origin.z, 16, 16, new Array(256), 1, 0.0004, 3, 0.5, 2);
+									const DetailBuffer = this.Noise.Get2DFBMBatch(Origin.x, Origin.z, 16, 16, new Array(256), 2, 0.01, 4, 0.5, 2);
+									Profiler.EndSample();
 
 									let IterationCount = 0;
 									for (const x of $range(0, this.ChunkManager.ChunkSize - 1)) {
@@ -519,15 +525,19 @@ export default class WorldSingleton extends AirshipSingleton {
 											const WorldX = Origin.x + x;
 											const WorldZ = Origin.z + z;
 
+											Profiler.BeginSample("WorldSingleton/GetHeight");
 											const Continental = ContinentalBuffer[z * 16 + x];
 											const Detail = DetailBuffer[z * 16 + x];
 											const SurfaceY = this.ChunkManager.GetTerrainHeight(Continental, Detail);
 
 											const TopChunk = this.ChunkManager.ToKey(new Vector3(WorldX, SurfaceY, WorldZ));
 											const BottomChunk = TopChunk.sub(Vector3.up);
+											Profiler.EndSample();
 
+											Profiler.BeginSample("WorldSingleton/GenChunks");
 											this.ChunkManager.GenerateChunk(TopChunk, DetailBuffer, ContinentalBuffer, false, LinkedPlayer);
 											this.ChunkManager.GenerateChunk(BottomChunk, DetailBuffer, ContinentalBuffer, false, LinkedPlayer);
+											Profiler.EndSample();
 
 											IterationCount++;
 											if (IterationCount >= 16) {
@@ -538,6 +548,12 @@ export default class WorldSingleton extends AirshipSingleton {
 									}
 								}
 							} else {
+								const Origin = Key.mul(16);
+								Profiler.BeginSample("WorldSingleton/OtherNoise");
+								const ContinentalBuffer = this.Noise.Get2DFBMBatch(Origin.x, Origin.z, 16, 16, new Array(256), 1, 0.0004, 3, 0.5, 2);
+								const DetailBuffer = this.Noise.Get2DFBMBatch(Origin.x, Origin.z, 16, 16, new Array(256), 2, 0.01, 4, 0.5, 2);
+								Profiler.EndSample();
+
 								this.ChunkManager.GenerateChunk(Key, DetailBuffer, ContinentalBuffer, false, LinkedPlayer, true);
 							}
 						}
