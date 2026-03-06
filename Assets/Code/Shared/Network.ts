@@ -11,6 +11,7 @@ export const Network = {
 
 	VoxelWorld: {
 		GetInitialChunks: new NetworkSignal<void>("Network/VoxelWorld/GetInitialChunks"),
+		SetLoadedStatus: new NetworkSignal<true>("Network/VoxelWorld/SetLoadedStatus"),
 		WriteGroup: new NetworkSignal<[Vector3[], readonly number[]]>("Network/VoxelWorld/WriteGroup"),
 		WriteVoxel: new NetworkSignal<[Vector3, number]>("Network/VoxelWorld/WriteVoxel"),
 		GetInitialContainerInventory: new NetworkFunction<string, Inventory>("Network/VoxelWorld/GetInitialContainerInventory"),

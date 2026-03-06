@@ -129,6 +129,8 @@ export default class ClientComponent extends AirshipBehaviour {
 				this.enabled = false;
 				return;
 			}
+
+			while (!Core().World.WorldReady) task.wait();
 		}
 
 		this.Gear = Core().Client.Gear;
@@ -234,7 +236,7 @@ export default class ClientComponent extends AirshipBehaviour {
 
 			this.DamageSelf(Damage);
 		} else {
-			this.Moveset.Base.OnAnimationEvent("Footstep", this)
+			this.Moveset.Base.OnAnimationEvent("Footstep", this);
 		}
 
 		this.Momentum = this.Rigidbody.linearVelocity.WithY(0).magnitude;

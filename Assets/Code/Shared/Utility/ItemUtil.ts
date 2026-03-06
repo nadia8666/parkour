@@ -19,6 +19,8 @@ export namespace ItemUtil {
 		Dropped.GetComponent<Rigidbody>()!.linearVelocity = Velocity;
 		NetworkServer.Spawn(Dropped);
 
+		Dropped.SetLayerRecursive(27);
+
 		const ItemEntity = Dropped.GetAirshipComponent<DroppedItemEntityComponent>()!;
 		ItemEntity.Item = Item;
 

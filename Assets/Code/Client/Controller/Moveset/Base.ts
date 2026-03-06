@@ -102,7 +102,7 @@ export class MovesetBase {
 				this.WallclimbStep(Controller);
 				break;
 			case "Footstep": {
-				if (Controller.Floor.Touching) {
+				if (Controller.Floor.Touching || Controller.State === "Wallrun") {
 					const GroundVoxel = Core().World.World.GetVoxelBlockDefAt(VoxelWorld.FloorInt(Controller.transform.position.sub(new Vector3(0, 0.5, 0)))).definition;
 
 					const Sound = (() => {
@@ -367,7 +367,7 @@ export class MovesetBase {
 		this.JumpTimer = 0.75;
 		Controller.Gear.Ammo.Jump--;
 
-		this.OnAnimationEvent("Footstep", Controller)
+		this.OnAnimationEvent("Footstep", Controller);
 	}
 
 	public StepJump(Controller: ClientComponent, FixedDT: number) {

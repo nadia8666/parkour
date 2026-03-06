@@ -14,22 +14,31 @@ export namespace Utility {
 	}
 
 	export function CSDictionaryToMap<A, B, T extends CSDictionary<A, B>>(Input: T) {
-		const Keys: A[] = []
-		const Values: B[] = []
+		const Keys: A[] = [];
+		const Values: B[] = [];
 
 		for (const i of $range(0, Input.Keys.Count)) {
-			Keys[i] = Input.Keys.ElementAt(i)
+			Keys[i] = Input.Keys.ElementAt(i);
 		}
 
 		for (const i of $range(0, Input.Values.Count)) {
-			Values[i] = Input.Values.ElementAt(i)
+			Values[i] = Input.Values.ElementAt(i);
 		}
 
-		const KVPairs = new Map<A,B>()
+		const KVPairs = new Map<A, B>();
 		for (const [Index, Key] of pairs(Keys)) {
-			KVPairs.set(Key, Values[Index])
+			KVPairs.set(Key, Values[Index]);
 		}
 
-		return KVPairs
+		return KVPairs;
+	}
+
+	/**
+	 * 'PascalCase123' to 'Pascal Case 123' string converter
+	 * @param InputString Target String
+	 * @returns String with number groups and capitalization differences spaced out
+	 */
+	export function FormatStringForName(InputString: string) {
+		return InputString.gsub("([%l%d])(%u)", "%1 %2")[0].gsub("(%u)(%u%l)", "%1 %2")[0].gsub("([%a])(%d)", "%1 %2")[0].gsub("(%d)([%a])", "%1 %2")[0];
 	}
 }
