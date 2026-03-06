@@ -1,19 +1,24 @@
 import { Airship, Platform } from "@Easy/Core/Shared/Airship";
 import type { Player } from "@Easy/Core/Shared/Player/Player";
 import { deepCopy as DeepCopy, deepCopy } from "@Easy/Core/Shared/Util/ObjectUtils";
+import Config from "Code/Client/Config";
 import { Network } from "Code/Shared/Network";
 import { type DataFormat, DataTemplate } from "Code/Shared/Types";
 import { DualLink } from "@inkyaker/DualLink/Code";
 import ENV from "../ENV";
 
 const Store = Platform.Server.DataStore;
-const TargetID = `${ENV.Runtime}-PlayerData:`;
+const TargetID = () => {
+	while (Config.Seed === 0) task.wait();
+
+	return `${ENV.Runtime}-World:${Config.Seed}-PlayerData:`;
+};
 
 export default class DataService extends AirshipSingleton {
 	private DataMap: { [Index: string]: DualLink<DataFormat> } = {};
 
 	public GetPlayer(Key: string) {
-		const UserID = string.sub(Key, TargetID.size() + 1);
+		const UserID = string.sub(Key, TargetID().size() + 1);
 		for (const [_, Player] of pairs(Airship.Players.GetPlayers())) {
 			if (Player.userId === UserID) return Player;
 		}
@@ -21,7 +26,7 @@ export default class DataService extends AirshipSingleton {
 
 	public Key(Player: Player) {
 		while (Player.userId === "loading") task.wait();
-		return `${TargetID}${Player.userId}`;
+		return `${TargetID()}${Player.userId}`;
 	}
 
 	@Server()

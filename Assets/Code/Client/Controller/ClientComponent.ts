@@ -1,6 +1,7 @@
 import { Game } from "@Easy/Core/Shared/Game";
 import { Bin } from "@Easy/Core/Shared/Util/Bin";
 import Core from "Code/Core/Core";
+import ENV from "Code/Server/ENV";
 import { Network } from "Code/Shared/Network";
 import { Client } from "Code/Shared/Types";
 import CFrame from "@inkyaker/CFrame/Code";
@@ -92,7 +93,6 @@ export default class ClientComponent extends AirshipBehaviour {
 	];
 
 	// Control
-
 	@NonSerialized() public Gear: GearController;
 	@NonSerialized() public World: WorldSingleton;
 	@NonSerialized() public Moveset = {
@@ -116,9 +116,13 @@ export default class ClientComponent extends AirshipBehaviour {
 	@NonSerialized() public Interactions = new ClientInteractions(this);
 
 	// Init
-	@Client()
 	override OnEnable() {
-		if ($CLIENT && !$SERVER) {
+		if ($SERVER && !ENV.Shared) {
+			this.gameObject.GetComponent<Rigidbody>()!.isKinematic = true;
+			return;
+		}
+
+		if (!ENV.Shared) {
 			const Character = Game.localPlayer.WaitForCharacter();
 
 			if (Character.gameObject !== this.gameObject) {

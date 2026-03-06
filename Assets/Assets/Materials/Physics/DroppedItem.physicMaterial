@@ -9,7 +9,7 @@ PhysicsMaterial:
   m_Name: DroppedItem
   serializedVersion: 2
   m_DynamicFriction: 1
-  m_StaticFriction: 0.25
+  m_StaticFriction: 1
   m_Bounciness: 0
   m_FrictionCombine: 1
   m_BounceCombine: 2

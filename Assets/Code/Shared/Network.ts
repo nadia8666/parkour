@@ -16,6 +16,10 @@ export const Network = {
 		GetInitialContainerInventory: new NetworkFunction<string, Inventory>("Network/VoxelWorld/GetInitialContainerInventory"),
 	},
 
+	Sync: {
+		SetSeed: new NetworkSignal<number>("Network/Sync/SetSeed"),
+	},
+
 	Effect: {
 		Respawn: new NetworkSignal<void>("Network/Effect/Respawn"),
 	},
