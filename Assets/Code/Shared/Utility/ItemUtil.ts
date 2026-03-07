@@ -1,3 +1,4 @@
+import type Character from "@Easy/Core/Shared/Character/Character";
 import Config from "Code/Client/Config";
 import Core from "Code/Core/Core";
 import type DroppedItemEntityComponent from "../Components/DroppedItemEntityComponent";
@@ -7,6 +8,24 @@ import { Utility } from "./Utility";
 export namespace ItemUtil {
 	export function GetDroppedItemVelocity() {
 		return Quaternion.Euler(math.random(45, 90), math.random(0, 360), 0).mul(Vector3.forward.mul(3));
+	}
+
+	/**
+	 *
+	 * @param Item
+	 * @param Inventories Mandatory on server, optional on client.
+	 * @returns
+	 */
+	export function FindItemInInventories(Item: AnyItem, Inventories?: { [Index: string]: Inventory }) {
+		for (const [TargetSlot, Inventory] of pairs(Inventories ?? Core().Client.Data.GetLink(true).Data.Inventories)) {
+			for (const [Index, Value] of pairs(Inventory.Content)) {
+				if (Value === Item) {
+					return $tuple(TargetSlot as string, Index);
+				}
+			}
+		}
+
+		return $tuple(undefined, undefined);
 	}
 
 	export function SpawnDroppedItem(
@@ -99,5 +118,25 @@ export namespace ItemUtil {
 		}
 
 		return OutputData;
+	}
+
+	export function DropItem(Item: AnyItem, Amount: number, Character: Character, Delete: () => void) {
+		let TargetAmount = 1;
+		if (Amount >= Item.Amount) {
+			// drop all items
+			Delete();
+			TargetAmount = Item.Amount;
+		} else {
+			// drop only one
+			if (Item.Amount - Amount <= 0) Delete();
+			TargetAmount = Amount;
+			Item.Amount -= TargetAmount;
+		}
+
+		ItemUtil.SpawnDroppedItem(
+			Character.transform.position.add(Vector3.up),
+			Character.transform.forward.add(Vector3.up).mul(3),
+			Utility.DeepCopyWithOverrides(Item, { Amount: TargetAmount }),
+		);
 	}
 }

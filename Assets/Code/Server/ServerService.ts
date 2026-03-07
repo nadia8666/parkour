@@ -5,10 +5,10 @@ import { NetworkUtil } from "@Easy/Core/Shared/Util/NetworkUtil";
 import Config from "Code/Client/Config";
 import Core from "Code/Core/Core";
 import type DroppedItemEntityComponent from "Code/Shared/Components/DroppedItemEntityComponent";
+import type InteractableBlockComponent from "Code/Shared/Components/InteractableBlockComponent";
 import { Network } from "Code/Shared/Network";
 import { type BlockItem, ItemTypes } from "Code/Shared/Types";
 import { ItemUtil } from "Code/Shared/Utility/ItemUtil";
-import { Utility } from "Code/Shared/Utility/Utility";
 import CFrame from "@inkyaker/CFrame/Code";
 import type DataService from "./Data/DataService";
 import CharacterSpawner from "./Modules/Spawner";
@@ -49,23 +49,23 @@ export default class ServerService extends AirshipSingleton {
 			const Character = this.CharacterMap.get(Player);
 			if (!Character) return;
 
-			let TargetAmount = 1;
-			if (Amount >= Item.Amount) {
-				// drop all items
-				delete Data.Inventories[Slot].Content[Index];
-				TargetAmount = Item.Amount;
-			} else {
-				// drop only one
-				if (Item.Amount - Amount <= 0) delete Data.Inventories[Slot].Content[Index];
-				TargetAmount = Amount;
-				Item.Amount -= TargetAmount;
-			}
+			ItemUtil.DropItem(Item, Amount, Character, () => delete Data.Inventories[Slot].Content[Index]);
+		});
 
-			ItemUtil.SpawnDroppedItem(
-				Character.transform.position.add(Vector3.up),
-				Character.transform.forward.add(Vector3.up).mul(3),
-				Utility.DeepCopyWithOverrides(Item, { Amount: TargetAmount }),
-			);
+		Network.Generic.DropItemFromBlockContainer.server.OnClientEvent((Player, BlockPos, Index, Amount) => {
+			const Prefab = Core().World.World.GetPrefabAt(BlockPos);
+			if (!Prefab) return;
+
+			const Inventory = Prefab.GetAirshipComponent<InteractableBlockComponent>()?.Container?.GetInventory();
+			if (!Inventory) return;
+
+			const Item = Inventory.Content[Index];
+			if (!Item) return;
+
+			const Character = this.CharacterMap.get(Player);
+			if (!Character) return;
+
+			ItemUtil.DropItem(Item, Amount, Character, () => delete Inventory.Content[Index]);
 		});
 
 		Network.Generic.GetDroppedItemData.server.SetCallback((_Player, NetworkID) => {
