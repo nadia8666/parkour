@@ -12,8 +12,10 @@ class InputEntry {
 	constructor(
 		public readonly Key: Key,
 		public readonly Priority: number,
-		public readonly Category?: string,
-		public readonly Hidden?: boolean,
+		public readonly Category: string = "AP - Unassigned",
+		public readonly Hidden: boolean = false,
+		public readonly MobileScale?: number,
+		public readonly MobilePosition?: Vector2,
 	) {}
 }
 
@@ -58,6 +60,9 @@ for (const [Name, Entry] of pairs(Actions)) {
 	}
 
 	Airship.Input.CreateAction(Name, Binding.Key(Entry.Key), { category: Entry.Category, hidden: Entry.Hidden });
+	if (Entry.MobilePosition) {
+		Airship.Input.CreateMobileButton(Name, Entry.MobilePosition, { scale: Vector2.one.mul(Entry.MobileScale ?? 1) });
+	}
 }
 
 Airship.Input.DisableCoreActions([
@@ -227,9 +232,14 @@ export class ClientInput {
 	}
 
 	public GetMoveVector() {
+		let MobileVector: Vector3 | Vector2 | undefined = Airship.Input.GetMobileTouchJoystick()?.input;
+		if (MobileVector) {
+			MobileVector = new Vector3(MobileVector.x, 0, MobileVector.y);
+		}
 		return this.IsDisabled()
 			? Vector3.zero
-			: new Vector3((Keyboard.IsKeyDown(Key.A) ? -1 : 0) + (Keyboard.IsKeyDown(Key.D) ? 1 : 0), 0, (Keyboard.IsKeyDown(Key.S) ? -1 : 0) + (Keyboard.IsKeyDown(Key.W) ? 1 : 0))
-					.normalized;
+			: new Vector3((Keyboard.IsKeyDown(Key.A) ? -1 : 0) + (Keyboard.IsKeyDown(Key.D) ? 1 : 0), 0, (Keyboard.IsKeyDown(Key.S) ? -1 : 0) + (Keyboard.IsKeyDown(Key.W) ? 1 : 0)).add(
+					MobileVector ?? Vector3.zero,
+				).normalized;
 	}
 }

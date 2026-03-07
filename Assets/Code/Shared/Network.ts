@@ -27,6 +27,7 @@ export const Network = {
 
 	Generic: {
 		DropItem: new NetworkSignal<[string, number, number]>("Network/Generic/DropItem"),
+		DropItemFromBlockContainer: new NetworkSignal<[Vector3, number, number]>("Network/Generic/DropItemFromBlockContainer"),
 		GetDroppedItemData: new NetworkFunction<number, AnyItem | undefined>("Network/Generic/GetDroppedItemData"),
 	},
 

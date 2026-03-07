@@ -2,6 +2,7 @@ import { Mouse } from "@Easy/Core/Shared/UserInput";
 import Core from "Code/Core/Core";
 import type InteractableBlockComponent from "Code/Shared/Components/InteractableBlockComponent";
 import { Network } from "Code/Shared/Network";
+import { ItemUtil } from "Code/Shared/Utility/ItemUtil";
 import Config from "../Config";
 import DraggableSlotComponent from "../UI/Drag/DraggableSlotComponent";
 import type ClientComponent from "./ClientComponent";
@@ -39,7 +40,6 @@ export class ClientInteractions {
 	}
 
 	public OnLMBDown() {
-		// TODO: mining
 		if (this.Controller.UI.UI.Get().RaycastUI() || this.Controller.UI.UI.Get().AreMenusOpen()) return;
 		if (this.TargetedBlock) Network.TEMP.DESTROY_VOXEL.client.FireServer(this.TargetedBlock);
 	}
@@ -54,20 +54,12 @@ export class ClientInteractions {
 			let TryPlace = true;
 			if (Prefab) {
 				const Interactable = Prefab.GetAirshipComponent<InteractableBlockComponent>(true);
-
 				if (Interactable?.OnUse(this.Controller)) TryPlace = false;
 			}
 
 			if (TryPlace && HeldItem) {
-				// TODO: move to registry util
-				for (const [TargetSlot, Inventory] of pairs(Core().Client.Data.GetLink(true).Data.Inventories)) {
-					for (const [Index, Value] of pairs(Inventory.Content)) {
-						if (Value === HeldItem) {
-							Network.TEMP.PLACE_VOXEL.client.FireServer(this.TargetedBlock.add(this.TargetNormal), TargetSlot as string, Index);
-							break;
-						}
-					}
-				}
+				const [Slot, Index] = ItemUtil.FindItemInInventories(HeldItem);
+				if (Slot) Network.TEMP.PLACE_VOXEL.client.FireServer(this.TargetedBlock.add(this.TargetNormal), Slot, Index);
 			}
 		}
 	}
@@ -78,23 +70,16 @@ export class ClientInteractions {
 	public DropItem() {
 		const UI = Core().Client.UI;
 
-		let HeldItem = UI.AreMenusOpen()
+		let Item = UI.AreMenusOpen()
 			? (() => {
 					const UITarget = UI.RaycastUI();
 					return UITarget && DraggableSlotComponent.AllSlots.get(UITarget)?.FetchContents();
 				})()
 			: Core().Client.UI.Hotbar.HeldItem;
 
-		if (!HeldItem) return;
+		if (!Item) return;
 
-		// TODO: move to registry util
-		for (const [TargetSlot, Inventory] of pairs(Core().Client.Data.GetLink(true).Data.Inventories)) {
-			for (const [Index, Value] of pairs(Inventory.Content)) {
-				if (Value === HeldItem) {
-					Network.Generic.DropItem.client.FireServer(TargetSlot as string, Index, Actions.DropModifier.Active ? Value.Amount : 1);
-					break;
-				}
-			}
-		}
+		const [Slot, Index] = ItemUtil.FindItemInInventories(Item);
+		if (Slot) Network.Generic.DropItem.client.FireServer(Slot, Index, Actions.DropModifier.Active ? Item.Amount : 1);
 	}
 }
