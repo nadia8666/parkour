@@ -1,4 +1,5 @@
 import { Airship } from "@Easy/Core/Shared/Airship";
+import { Game } from "@Easy/Core/Shared/Game";
 import { CoreAction } from "@Easy/Core/Shared/Input/AirshipCoreAction";
 import { Binding } from "@Easy/Core/Shared/Input/Binding";
 import { Keyboard } from "@Easy/Core/Shared/UserInput";
@@ -232,14 +233,14 @@ export class ClientInput {
 	}
 
 	public GetMoveVector() {
-		let MobileVector: Vector3 | Vector2 | undefined = Airship.Input.GetMobileTouchJoystick()?.input;
+		let MobileVector: Vector3 | Vector2 = (Game.IsMobile() ? Airship.Input.GetMobileTouchJoystick()?.input : Vector3.zero) ?? Vector3.zero;
 		if (MobileVector) {
 			MobileVector = new Vector3(MobileVector.x, 0, MobileVector.y);
 		}
 		return this.IsDisabled()
 			? Vector3.zero
 			: new Vector3((Keyboard.IsKeyDown(Key.A) ? -1 : 0) + (Keyboard.IsKeyDown(Key.D) ? 1 : 0), 0, (Keyboard.IsKeyDown(Key.S) ? -1 : 0) + (Keyboard.IsKeyDown(Key.W) ? 1 : 0)).add(
-					MobileVector ?? Vector3.zero,
+					MobileVector,
 				).normalized;
 	}
 }
