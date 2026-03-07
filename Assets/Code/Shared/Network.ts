@@ -44,6 +44,10 @@ export namespace Network {
 			protected UniqueID: string,
 		) {
 			if ($SERVER && !ENV.Shared) SyncerSignal.server.FireAllClients(this.UniqueID, this.Value);
+			if ($CLIENT)
+				SyncerSignal.client.OnServerEvent((ID, Value) => {
+					if (ID === UniqueID) this.Value = Value as T;
+				});
 		}
 
 		public Get() {
@@ -52,6 +56,7 @@ export namespace Network {
 
 		public Set(Next: T) {
 			this.Value = Next;
+			if ($SERVER && !ENV.Shared) SyncerSignal.server.FireAllClients(this.UniqueID, this.Value);
 		}
 	}
 }
