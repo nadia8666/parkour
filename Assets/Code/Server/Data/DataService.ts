@@ -31,9 +31,8 @@ export default class DataService extends AirshipSingleton {
 
 	@Server()
 	public async LoadPlayerData(Key: string) {
-		if (!Store.LockKeyOrStealSafely(Key)) {
+		if (!(await Store.LockKeyOrStealSafely(Key))) {
 			const Player = this.GetPlayer(Key);
-
 			if (Player) Player.Kick(`Failed to load data!`);
 
 			return;
