@@ -74,9 +74,9 @@ export default class ServerService extends AirshipSingleton {
 		});
 
 		// TODO: remove
-		Network.TEMP.DESTROY_VOXEL.server.OnClientEvent((_Player, Pos) => {
+		Network.VoxelWorld.Try.BreakBlock.server.SetCallback((_Player, Pos) => {
 			const BlockDef = Core().World.World.GetVoxelAt(Pos);
-			if (!BlockDef) return;
+			if (!BlockDef) return false;
 
 			const NewItem: BlockItem = {
 				Type: ItemTypes.Block,
@@ -97,20 +97,24 @@ export default class ServerService extends AirshipSingleton {
 				Core().World.World.WriteVoxelAt(Pos.add(Vector3.up), 0, true);
 				Network.VoxelWorld.WriteVoxel.server.FireAllClients(Pos.add(Vector3.up), 0);
 			}
+
+			return true;
 		});
-		Network.TEMP.PLACE_VOXEL.server.OnClientEvent((Player, Pos, Slot, Index) => {
+		Network.VoxelWorld.Try.PlaceBlock.server.SetCallback((Player, Pos, Index) => {
 			const BlockID = Core().World.World.GetVoxelAt(Pos);
-			if (BlockID !== 0) return;
+			if (![0, Core().World.ChunkManager.GetBlock("ShortGrass")].includes(BlockID)) return false;
 
 			const Data = this.DataService.GetPlayerData(this.DataService.Key(Player));
-			const Item = Data.Inventories[Slot]?.Content[Index];
-			if (!Item || Item.Type !== ItemTypes.Block) return;
+			const Item = Data.Inventories.Hotbar.Content[Index];
+			if (!Item || Item.Type !== ItemTypes.Block) return false;
 
 			Item.Amount--;
-			if (Item.Amount <= 0) delete Data.Inventories[Slot].Content[Index];
+			if (Item.Amount <= 0) delete Data.Inventories.Hotbar.Content[Index];
 
 			Core().World.World.WriteVoxelAt(Pos, Item.BlockID);
 			Network.VoxelWorld.WriteVoxel.server.FireAllClients(Pos, Item.BlockID);
+
+			return true;
 		});
 	}
 }
