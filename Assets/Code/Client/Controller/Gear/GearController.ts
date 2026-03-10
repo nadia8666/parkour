@@ -77,7 +77,7 @@ export default class GearController extends AirshipSingleton {
 		} else {
 			// TEMP
 			if (Item.Type === ItemTypes.Block) {
-				return Utility.FormatStringForName(Core().World.GetDefinition(Item.BlockID).name);
+				return Utility.FormatStringForName(Core().World.GetDefinitionFromBlock(Item.BlockID).name);
 			}
 			return Utility.FormatStringForName(Item.Key);
 		}

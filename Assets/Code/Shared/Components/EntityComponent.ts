@@ -1,3 +1,3 @@
 export default class EntityComponent extends AirshipBehaviour {
-    public Identity: NetworkIdentity
+	public Identity: NetworkIdentity;
 }

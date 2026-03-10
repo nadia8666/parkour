@@ -323,6 +323,7 @@ export default class WorldSingleton extends AirshipSingleton {
 	@NonSerialized() public LastUpdate = 0;
 	@NonSerialized() public WorldReady = false;
 
+	// Lifecycle Events
 	public Start() {
 		if ($CLIENT) {
 			Network.Sync.SetSeed.client.OnServerEvent((Seed) => {
@@ -461,6 +462,7 @@ export default class WorldSingleton extends AirshipSingleton {
 								ObtainedTime: 0,
 								UID: ID,
 								Temporary: true,
+								Attributes: {},
 							};
 						}
 					}
@@ -582,13 +584,32 @@ export default class WorldSingleton extends AirshipSingleton {
 		}
 	}
 
-	public OnChunkLoadEnd() {}
-
-	public GetDefinition(BlockID: number) {
+	// Utility Functions
+	public GetDefinitionFromBlock(BlockID: number) {
 		return this.World.voxelBlocks.GetBlockDefinitionFromBlockId(BlockID).definition;
 	}
-	public GetBlock(BlockDef: VoxelBlockDefinition) {
+	public GetBlockFromDef(BlockDef: VoxelBlockDefinition) {
 		return this.ChunkManager.GetBlock(BlockDef.name);
+	}
+
+	public WriteBlockAt(Position: Vector3, BlockID: number, Priority: boolean = false) {
+		this.World.WriteVoxelAt(Position, BlockID, Priority);
+
+		if ($SERVER && !ENV.Shared) Network.VoxelWorld.WriteVoxel.server.FireAllClients(Position, BlockID);
+	}
+
+	public WriteBlockGroupAt(Position: Vector3[], BlockID: number[], Priority: boolean = false) {
+		this.World.WriteVoxelGroupAt(Position, BlockID, Priority);
+
+		if ($SERVER && !ENV.Shared) Network.VoxelWorld.WriteGroup.server.FireAllClients(Position, BlockID);
+	}
+
+	public GetBlockAt(Pos: Vector3) {
+		return this.World.GetVoxelAt(Pos);
+	}
+
+	public GetBlockID(Name: string) {
+		return this.ChunkManager.GetBlock(Name);
 	}
 
 	public RedrawLighting() {

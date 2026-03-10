@@ -26,8 +26,11 @@ export class Hotbar {
 		});
 
 		task.spawn(() => {
-			Core().Client.Data.GetLink().GetChanged("Inventories/Hotbar/*").Connect(() => this.RefreshContents())
-		})
+			Core()
+				.Client.Data.GetLink()
+				.GetChanged("Inventories/Hotbar/*")
+				.Connect(() => this.RefreshContents());
+		});
 	}
 
 	public Inventory = new Provider(() => Core().Client.Data.GetLink().Data.Inventories.Hotbar);
