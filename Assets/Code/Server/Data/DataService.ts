@@ -91,7 +91,6 @@ export default class DataService extends AirshipSingleton {
 		await Store.UnlockKey(Key);
 	}
 
-	@Server()
 	public GetPlayerData(Key: string) {
 		return this.DataMap[Key]?.Data;
 	}

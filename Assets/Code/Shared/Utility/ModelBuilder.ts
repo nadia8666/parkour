@@ -24,7 +24,7 @@ export namespace ModelBuilder {
 			}
 
 			case ItemTypes.Block: {
-				const Definition = Core().World.GetDefinition(Item.BlockID);
+				const Definition = Core().World.GetDefinitionFromBlock(Item.BlockID);
 				switch (Definition.contextStyle) {
 					case ContextStyle.Block: {
 						const Mesh = MeshProcessor.ProduceSingleBlock(Item.BlockID, Core().World.World, 0, 1);

@@ -12,6 +12,10 @@ export enum ItemTypes {
 export const GearSlots = ["Grip", "Core", "Mod", "Augment"] as const;
 export type GearSlots = (typeof GearSlots)[number];
 
+interface ItemAttributes {
+	ToolType?: "Sword" | "Axe" | "Pickaxe" | "Shovel";
+}
+
 interface BaseItemInfo<T extends ItemTypes> {
 	Type: T;
 	Key: T extends ItemTypes.Gear ? GearRegistryKey : string;
@@ -19,6 +23,7 @@ interface BaseItemInfo<T extends ItemTypes> {
 	UID: string;
 	Amount: number;
 	Temporary?: boolean;
+	Attributes: ItemAttributes;
 }
 
 export interface GearItem extends BaseItemInfo<ItemTypes.Gear> {
@@ -60,16 +65,7 @@ export const DataTemplate: DataFormat = {
 		},
 		Hotbar: {
 			Size: 10,
-			Content: {
-				1: {
-					Type: ItemTypes.Item,
-					Key: "CrudeRope",
-					Amount: 1,
-					Temporary: true,
-					UID: "cr",
-					ObtainedTime: 0,
-				},
-			},
+			Content: {},
 		},
 	},
 	TrialRecords: {},

@@ -34,7 +34,7 @@ export namespace Utility {
 	}
 
 	/**
-	 * 'PascalCase123' to 'Pascal Case 123' string converter
+	 * ex: 'PascalCase123' to 'Pascal Case 123' string converter
 	 * @param InputString Target String
 	 * @returns String with number groups and capitalization differences spaced out
 	 */

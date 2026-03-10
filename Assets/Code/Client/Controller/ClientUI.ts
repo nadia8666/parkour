@@ -1,6 +1,5 @@
 import Core from "Code/Core/Core";
 import { Provider } from "Code/Shared/Provider";
-import UIController from "../UI/UIController";
 import type ClientComponent from "./ClientComponent";
 
 export class ClientUI {

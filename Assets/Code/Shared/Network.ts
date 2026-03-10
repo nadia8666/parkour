@@ -24,8 +24,8 @@ export namespace Network {
 			 * @returns Successful
 			 */
 			BreakBlock: new NetworkFunction<[Vector3, number], boolean>("Network/VoxelWorld/Try/BreakBlock"),
-			PlaceBlock: new NetworkFunction<[Vector3, number], boolean>("Network/VoxelWorld/Try/PlaceBlock")
-		}
+			PlaceBlock: new NetworkFunction<[Vector3, number], boolean>("Network/VoxelWorld/Try/PlaceBlock"),
+		},
 	};
 
 	export const Sync = {

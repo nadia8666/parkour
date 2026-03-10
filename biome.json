@@ -16,6 +16,6 @@
 		"lineWidth": 180
 	},
 	"files": {
-		"includes": ["**", "!**/Assets/AirshipPackages/@Easy"]
+		"includes": ["Assets/Code/**/*.ts"]
 	}
 }

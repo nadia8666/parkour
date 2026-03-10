@@ -1,3 +1,1 @@
-export namespace RegistryUtil {
-
-}
+export namespace RegistryUtil {}

@@ -69,9 +69,11 @@ export class NoiseHandler {
 
 		let i1: number, j1: number;
 		if (x0 > y0) {
-			i1 = 1; j1 = 0;
+			i1 = 1;
+			j1 = 0;
 		} else {
-			i1 = 0; j1 = 1;
+			i1 = 0;
+			j1 = 1;
 		}
 
 		const x1: number = x0 - i1 + G2;
@@ -86,7 +88,9 @@ export class NoiseHandler {
 		const gi1: number = p12[ii + i1 + p[jj + j1]];
 		const gi2: number = p12[ii + 1 + p[jj + 1]];
 
-		let n0: number = 0, n1: number = 0, n2: number = 0;
+		let n0: number = 0,
+			n1: number = 0,
+			n2: number = 0;
 
 		let t0: number = 0.5 - x0 * x0 - y0 * y0;
 		if (t0 > 0) {
@@ -130,13 +134,51 @@ export class NoiseHandler {
 		let i2: number, j2: number, k2: number;
 
 		if (x0 >= y0) {
-			if (y0 >= z0) { i1 = 1; j1 = 0; k1 = 0; i2 = 1; j2 = 1; k2 = 0; }
-			else if (x0 >= z0) { i1 = 1; j1 = 0; k1 = 0; i2 = 1; j2 = 0; k2 = 1; }
-			else { i1 = 0; j1 = 0; k1 = 1; i2 = 1; j2 = 0; k2 = 1; }
+			if (y0 >= z0) {
+				i1 = 1;
+				j1 = 0;
+				k1 = 0;
+				i2 = 1;
+				j2 = 1;
+				k2 = 0;
+			} else if (x0 >= z0) {
+				i1 = 1;
+				j1 = 0;
+				k1 = 0;
+				i2 = 1;
+				j2 = 0;
+				k2 = 1;
+			} else {
+				i1 = 0;
+				j1 = 0;
+				k1 = 1;
+				i2 = 1;
+				j2 = 0;
+				k2 = 1;
+			}
 		} else {
-			if (y0 < z0) { i1 = 0; j1 = 0; k1 = 1; i2 = 0; j2 = 1; k2 = 1; }
-			else if (x0 < z0) { i1 = 0; j1 = 1; k1 = 0; i2 = 0; j2 = 1; k2 = 1; }
-			else { i1 = 0; j1 = 1; k1 = 0; i2 = 1; j2 = 1; k2 = 0; }
+			if (y0 < z0) {
+				i1 = 0;
+				j1 = 0;
+				k1 = 1;
+				i2 = 0;
+				j2 = 1;
+				k2 = 1;
+			} else if (x0 < z0) {
+				i1 = 0;
+				j1 = 1;
+				k1 = 0;
+				i2 = 0;
+				j2 = 1;
+				k2 = 1;
+			} else {
+				i1 = 0;
+				j1 = 1;
+				k1 = 0;
+				i2 = 1;
+				j2 = 1;
+				k2 = 0;
+			}
 		}
 
 		const x1: number = x0 - i1 + G3;
@@ -158,7 +200,10 @@ export class NoiseHandler {
 		const gi2: number = p12[ii + i2 + p[jj + j2 + p[kk + k2]]];
 		const gi3: number = p12[ii + 1 + p[jj + 1 + p[kk + 1]]];
 
-		let n0: number = 0, n1: number = 0, n2: number = 0, n3: number = 0;
+		let n0: number = 0,
+			n1: number = 0,
+			n2: number = 0,
+			n3: number = 0;
 
 		let t0: number = 0.6 - x0 * x0 - y0 * y0 - z0 * z0;
 		if (t0 > 0) {
@@ -209,10 +254,18 @@ export class NoiseHandler {
 	}
 
 	public Get3DFBMBatch(
-		offsetX: number, offsetY: number, offsetZ: number,
-		width: number, height: number, depth: number,
+		offsetX: number,
+		offsetY: number,
+		offsetZ: number,
+		width: number,
+		height: number,
+		depth: number,
 		results: number[],
-		amplitude: number, frequency: number, octaveCount: number, persistence: number, lacunarity: number
+		amplitude: number,
+		frequency: number,
+		octaveCount: number,
+		persistence: number,
+		lacunarity: number,
 	): number[] {
 		const key = `${offsetX}_${offsetY}_${offsetZ}_${amplitude}_${frequency}_${octaveCount}`;
 		const cached = this._c3DBatch.get(key);
@@ -269,10 +322,16 @@ export class NoiseHandler {
 	}
 
 	public Get2DFBMBatch(
-		offsetX: number, offsetY: number,
-		width: number, height: number,
+		offsetX: number,
+		offsetY: number,
+		width: number,
+		height: number,
 		results: number[],
-		amplitude: number, frequency: number, octaveCount: number, persistence: number, lacunarity: number
+		amplitude: number,
+		frequency: number,
+		octaveCount: number,
+		persistence: number,
+		lacunarity: number,
 	): number[] {
 		const key = `${offsetX}_${offsetY}_${amplitude}_${frequency}_${octaveCount}`;
 		const cached = this._c2DBatch.get(key);
@@ -315,7 +374,13 @@ export class NoiseHandler {
 					const y0: number = freqY - (jy - t);
 
 					let i1: number, j1: number;
-					if (x0 > y0) { i1 = 1; j1 = 0; } else { i1 = 0; j1 = 1; }
+					if (x0 > y0) {
+						i1 = 1;
+						j1 = 0;
+					} else {
+						i1 = 0;
+						j1 = 1;
+					}
 
 					const x1: number = x0 - i1 + G2;
 					const y1: number = y0 - j1 + G2;
@@ -329,7 +394,9 @@ export class NoiseHandler {
 					const gi1: number = p12[ii + i1 + p[jj + j1]];
 					const gi2: number = p12[ii + 1 + p[jj + 1]];
 
-					let n0: number = 0, n1: number = 0, n2: number = 0;
+					let n0: number = 0,
+						n1: number = 0,
+						n2: number = 0;
 
 					let t0: number = 0.5 - x0 * x0 - y0 * y0;
 					if (t0 > 0) {
@@ -381,7 +448,13 @@ export class NoiseHandler {
 				const y0: number = posY - (jy - t);
 
 				let i1: number, j1: number;
-				if (x0 > y0) { i1 = 1; j1 = 0; } else { i1 = 0; j1 = 1; }
+				if (x0 > y0) {
+					i1 = 1;
+					j1 = 0;
+				} else {
+					i1 = 0;
+					j1 = 1;
+				}
 
 				const x1: number = x0 - i1 + G2;
 				const y1: number = y0 - j1 + G2;
@@ -395,7 +468,9 @@ export class NoiseHandler {
 				const gi1: number = p12[ii + i1 + p[jj + j1]];
 				const gi2: number = p12[ii + 1 + p[jj + 1]];
 
-				let n0: number = 0, n1: number = 0, n2: number = 0;
+				let n0: number = 0,
+					n1: number = 0,
+					n2: number = 0;
 
 				let t0: number = 0.5 - x0 * x0 - y0 * y0;
 				if (t0 > 0) {
