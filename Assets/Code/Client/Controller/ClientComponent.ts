@@ -275,10 +275,10 @@ export default class ClientComponent extends AirshipBehaviour {
 
 	// Lifecycle
 	@Client()
-	override Update() {
+	override Update(DeltaTime: number) {
 		if (!this._LOADED) return;
 
-		this.Interactions.Update();
+		this.Interactions.Update(DeltaTime);
 	}
 
 	@Client()

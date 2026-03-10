@@ -16,6 +16,16 @@ export namespace Network {
 		WriteGroup: new NetworkSignal<[Vector3[], readonly number[]]>("Network/VoxelWorld/WriteGroup"),
 		WriteVoxel: new NetworkSignal<[Vector3, number]>("Network/VoxelWorld/WriteVoxel"),
 		GetInitialContainerInventory: new NetworkFunction<string, Inventory>("Network/VoxelWorld/GetInitialContainerInventory"),
+
+		Try: {
+			/**
+			 * @param BlockPos Target position
+			 * @param Slot Hotbar Slot
+			 * @returns Successful
+			 */
+			BreakBlock: new NetworkFunction<[Vector3, number], boolean>("Network/VoxelWorld/Try/BreakBlock"),
+			PlaceBlock: new NetworkFunction<[Vector3, number], boolean>("Network/VoxelWorld/Try/PlaceBlock")
+		}
 	};
 
 	export const Sync = {
@@ -30,11 +40,6 @@ export namespace Network {
 		DropItem: new NetworkSignal<[string, number, number]>("Network/Generic/DropItem"),
 		DropItemFromBlockContainer: new NetworkSignal<[Vector3, number, number]>("Network/Generic/DropItemFromBlockContainer"),
 		GetDroppedItemData: new NetworkFunction<number, AnyItem | undefined>("Network/Generic/GetDroppedItemData"),
-	};
-
-	export const TEMP = {
-		DESTROY_VOXEL: new NetworkSignal<Vector3>("Network/TEMP/DESTROY_VOXEL"),
-		PLACE_VOXEL: new NetworkSignal<[Vector3, string, number]>("Network/TEMP/PLACE_VOXEL"),
 	};
 
 	const SyncerSignal = new NetworkSignal<[string, unknown]>("Network/Internal/SyncerSignal");
