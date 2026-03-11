@@ -450,6 +450,24 @@ MonoBehaviour:
       serializedValue: 
       serializedObject: {fileID: 1594687465}
       modified: 1
+    - name: BlockBreakAtlas
+      type: object
+      objectType: Texture2DArray
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators: []
+      nullable: 0
+      serializedValue: 
+      serializedObject: {fileID: 18700000, guid: 8aa8f720b0b9c144aa05310cb09c42df, type: 3}
+      modified: 0
     displayIcon: {fileID: 0}
     displayName: 
 --- !u!1 &6991713

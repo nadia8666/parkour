@@ -309,6 +309,7 @@ export default class WorldSingleton extends AirshipSingleton {
 	@Header("Client Properties")
 	@NonSerialized()
 	public LightingTexture: Texture3D;
+	public BlockBreakAtlas: Texture2DArray;
 	@NonSerialized() public ActorPosition = Vector3.zero;
 	@NonSerialized() private ChunkSize = 16;
 	@NonSerialized() public Resolution = this.ChunkSize * Settings.RenderDistance;
@@ -617,5 +618,6 @@ export default class WorldSingleton extends AirshipSingleton {
 		Shader.SetGlobalTexture("_Lightmap", this.LightingTexture);
 		Shader.SetGlobalVector("_GridCenter", Origin);
 		Shader.SetGlobalVector("_GridSize", new Vector4(this.Resolution, this.Resolution, this.Resolution, 1));
+		Shader.SetGlobalTexture("_DamageTexArray", this.BlockBreakAtlas);
 	}
 }
