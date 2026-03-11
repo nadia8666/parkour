@@ -1980,6 +1980,16 @@
 			"inherits": []
 		},
 		{
+			"name": "WorldSingleton",
+			"id": "Code/Client/Framework/WorldSingleton@WorldSingleton",
+			"file": "Code/Client/Framework/WorldSingleton.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
 			"name": "ClientComponent",
 			"id": "Code/Client/Controller/ClientComponent@ClientComponent",
 			"file": "Code/Client/Controller/ClientComponent.ts",
@@ -2065,6 +2075,16 @@
 			"name": "DraggableSlotComponent",
 			"id": "Code/Client/UI/Drag/DraggableSlotComponent@DraggableSlotComponent",
 			"file": "Code/Client/UI/Drag/DraggableSlotComponent.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "UIController",
+			"id": "Code/Client/UI/UIController@UIController",
+			"file": "Code/Client/UI/UIController.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"
@@ -2977,26 +2997,6 @@
 			"name": "testcomponent",
 			"id": "Code/Server/test@testcomponent",
 			"file": "Code/Server/test.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "UIController",
-			"id": "Code/Client/UI/UIController@UIController",
-			"file": "Code/Client/UI/UIController.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "WorldSingleton",
-			"id": "Code/Client/Framework/WorldSingleton@WorldSingleton",
-			"file": "Code/Client/Framework/WorldSingleton.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"

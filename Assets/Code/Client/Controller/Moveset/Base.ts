@@ -287,10 +287,8 @@ export class MovesetBase {
 
 		switch (JumpType) {
 			case "Default": {
-				const JumpHeight = math.clamp(Controller.Momentum / Config.JumpRequiredSpeed, 0.5, 1);
-
 				Controller.ResetLastFallSpeed();
-				Controller.Rigidbody.linearVelocity = Controller.Rigidbody.linearVelocity.WithY(9.5 * JumpHeight);
+				Controller.Rigidbody.linearVelocity = Controller.Rigidbody.linearVelocity.WithY(9.5);
 
 				const Dir = this.LastJump === "R" ? "L" : "R";
 				this.LastJump = Dir;
@@ -318,11 +316,10 @@ export class MovesetBase {
 					const TargetRotation = Quaternion.LookRotation(Controller.Camera.TargetRotation.mul(Vector3.forward).WithY(0).normalized);
 					Controller.Rigidbody.rotation = TargetRotation;
 
-					const JumpHeight = math.clamp(Controller.Momentum / Config.JumpRequiredSpeed, 0.5, 1);
 					Controller.SetVelocity(
 						TargetRotation.mul(Vector3.forward)
 							.mul(8)
-							.WithY(9.5 * JumpHeight),
+							.WithY(9.5),
 					);
 					this.AnimationController.Current = `VM_Jump${Dir}`;
 				}
