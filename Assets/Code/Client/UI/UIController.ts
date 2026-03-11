@@ -145,6 +145,8 @@ export default class UIController extends AirshipSingleton {
 		this.ContainerInventory.SetActive(false);
 
 		this.Connections.Clean();
+
+		this.TooltipTransform.gameObject.SetActive(false);
 	}
 
 	public OpenMenu(Target: UIMenus) {
