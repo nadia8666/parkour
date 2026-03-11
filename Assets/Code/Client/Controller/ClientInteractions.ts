@@ -49,7 +49,7 @@ export class ClientInteractions {
 
 		const Progress = this.BreakProgress;
 		if (this.BreakingBlock && this.TargetedBlock) {
-			this.BreakProgress += DeltaTime * 1; // TODO: held item attributes (break speed) & block attributes (required tool for break)
+			this.BreakProgress += DeltaTime * 2; // TODO: held item attributes (break speed) & block attributes (required tool for break)
 
 			if (this.BreakProgress >= 1) {
 				const BlockID = this.World.Get().GetVoxelAt(this.TargetedBlock);
