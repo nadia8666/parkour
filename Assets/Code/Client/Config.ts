@@ -1,7 +1,7 @@
 import { Signal } from "@Easy/Core/Shared/Util/Signal";
 import Core from "Code/Core/Core";
 import type { GearRegistryKey } from "Code/Shared/GearRegistry";
-import type { ItemInfo } from "Code/Shared/Types";
+import { GearSlots, ItemTypes } from "Code/Shared/Types";
 
 export const ForceRefreshGearSignal = new Signal();
 const RecacheSignal = new Signal();
@@ -17,13 +17,10 @@ function InitializeCache() {
 			delete CacheMap[Index];
 		}
 
-		for (const [_, Gear] of pairs(Core().Client.Objective.TimeTrials.TrialGear ?? Link.Data.EquippedGear)) {
-			for (const [_, Value] of pairs(Gear)) {
-				if (Value !== "None") {
-					const Item = Core().Client.Gear.GetItem(Value) as ItemInfo<"Gear">;
-					if (!Item) continue;
-					CacheMap[Item.Key] = Item.Level;
-				}
+		for (const [_, Gear] of pairs(GearSlots)) {
+			for (const [_, Item] of pairs((Core().Client.Objective.TimeTrials.TrialGear ?? Link.Data.Inventories)[Gear].Content)) {
+				if (Item.Type !== ItemTypes.Gear) continue;
+				CacheMap[Item.Key] = Item.Level;
 			}
 		}
 
@@ -33,10 +30,8 @@ function InitializeCache() {
 		if (Actor) Actor.Gear.ResetAmmo();
 	}
 
-	for (const [Slot, Gear] of pairs(Link.Data.EquippedGear)) {
-		for (const [Index] of pairs(Gear)) {
-			Link.GetChanged(`EquippedGear/${Slot}/${Index}`).Connect(() => GenerateCache());
-		}
+	for (const [_, Slot] of pairs(GearSlots)) {
+		Link.GetChanged(`Inventories/${Slot}/Content/*`).Connect(() => GenerateCache());
 	}
 
 	GenerateCache();
@@ -72,7 +67,10 @@ const inf = 9000;
 const Config = {
 	Gravity: new Vector3(0, -35, 0),
 	PlayerRadius: 0.5,
-	PlayerHeight: 1,
+	PlayerHeight: 2,
+
+	InteractionReach: 3.5,
+	MaxStackSize: 128,
 
 	RunMaxSpeed: 15,
 
@@ -135,9 +133,16 @@ const Config = {
 	GrapplerAttachTime: WithGear({ None: 0, Grappler: [1, 0.85, 0.75] }),
 	GrapplerMinAttachTime: 0.2,
 
-	CollisionLayer: LayerMask.GetMask("GameLayer0"),
+	CollisionLayer: LayerMask.GetMask("Default"),
 	ZiplineLayer: LayerMask.GetMask("GameLayer1"),
 	LadderLayer: LayerMask.GetMask("GameLayer2"),
+	DroppedItemLayer: LayerMask.GetMask("GameLayer10"),
+
+	// WORLD GEN
+	MountainHeight: 256,
+	WaterLevel: 0,
+	Seed: 0,
+	SpawnPos: new Vector3(0, 50, 0),
 };
 
 export default Config;

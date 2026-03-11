@@ -1,42 +1,66 @@
 import { Airship } from "@Easy/Core/Shared/Airship";
-import { Asset } from "@Easy/Core/Shared/Asset";
 import { Binding } from "@Easy/Core/Shared/Input/Binding";
 import { Mouse } from "@Easy/Core/Shared/UserInput";
 import { Bin } from "@Easy/Core/Shared/Util/Bin";
 import Core from "Code/Core/Core";
-import type { AnyItem } from "Code/Shared/Types";
-import type TooltipComponent from "../Components/TooltipComponent";
+import { type AnyItem, ItemTypes } from "Code/Shared/Types";
+import TooltipComponent from "../Components/TooltipComponent";
 import type ClientComponent from "../Controller/ClientComponent";
 import type DraggableSlotComponent from "./Drag/DraggableSlotComponent";
+import { ContainerInventory } from "./Modules/ContainerInventory";
+import { Hotbar } from "./Modules/Hotbar";
+
+export enum UIMenus {
+	Inventory,
+	ContainerInventory,
+}
 
 export default class UIController extends AirshipSingleton {
-	@NonSerialized() public MenuOpen = false;
 	@NonSerialized() public ESCMenuOpen = false;
 
 	@Header("Main")
 	public Main: GameObject;
+	public UICamera: Camera;
 
 	@Header("References")
-	public EquipmentMenu: GameObject;
-	public Inventory: GameObject;
 	public Loading: GameObject;
 	public TooltipTransform: RectTransform;
 	public TooltipText: TMP_Text;
+
+	@Header("References/Inventory")
+	public Inventory: GameObject;
+	public Inventory_TEMP: GameObject;
+	public InventorySlots: DraggableSlotComponent[] = [];
+
+	@Header("References/Hotbar")
+	@SerializeField()
+	private HotbarRef: RectTransform;
+	@SerializeField() private HotbarSlot: GameObject;
+
+	@Header("References/Block UIs")
+	public ContainerInventoryRef: RectTransform;
+
 	@Header("References/Momentum")
 	public MomentumBar: RectTransform;
 	public MomentumCanvas: CanvasGroup;
+
 	@Header("References/Health")
 	public HealthBar: RectTransform;
 	public HealthCanvas: CanvasGroup;
+
 	@Header("References/Time Trials")
 	public TT_Container: RectTransform;
 	public TT_Time: TMP_Text;
 	public TT_Medal: Image;
 
 	public Connections = new Bin();
+	public Hotbar: Hotbar;
+	public ContainerInventory: ContainerInventory;
 
 	@Client()
 	override Start() {
+		this.Hotbar = new Hotbar(this.HotbarRef, this.HotbarSlot);
+		this.ContainerInventory = new ContainerInventory(this.ContainerInventoryRef, this.HotbarSlot);
 		this.Loading.SetActive(true);
 
 		Airship.Menu.SetTabListEnabled(false);
@@ -45,18 +69,23 @@ export default class UIController extends AirshipSingleton {
 		Airship.Input.CreateAction("Menu", Binding.Key(Key.Tab));
 
 		Airship.Input.OnDown("Menu").Connect(() => {
-			this.MenuOpen = !this.MenuOpen;
-
-			this.UpdateMenuState();
+			if (this.AreMenusOpen()) {
+				this.CloseMenus();
+			} else {
+				this.OpenMenu(UIMenus.Inventory);
+			}
 		});
 
-		this.UpdateMenuState();
+		this.CloseMenus();
 
 		task.spawn(() => {
 			this.RefreshContents();
 			Core()
 				.Client.Data.GetLink()
-				.AnyChanged.Connect(() => this.RefreshContents());
+				.GetChanged("Inventories/Player/*")
+				.Connect(() => this.RefreshContents());
+
+			this.InventorySlots.forEach((Slot) => Slot.UpdateContents());
 		});
 
 		this.Main.SetActive(true);
@@ -64,24 +93,27 @@ export default class UIController extends AirshipSingleton {
 
 	private Contents: GameObject[] = [];
 	public RefreshContents() {
-		this.Contents.mapFiltered((Target) => {
-			Destroy(Target);
-		});
+		this.Contents.mapFiltered((Target) => Destroy(Target));
+		this.Contents.clear();
+
+		this.Hotbar.RefreshContents();
 
 		const SortedList: { [Index: string]: [Transform, AnyItem][] } = {};
 
-		for (const [_Index, Value] of pairs(Core().Client.Data.GetLink().Data.Inventory)) {
-			if (Value.Type === "Gear") {
-				const GearSlot = Instantiate(Asset.LoadAsset("Assets/Resources/UI/ItemSlot.prefab"));
-				this.Contents.push(GearSlot);
-				GearSlot.transform.SetParent(this.Inventory.transform);
-				(GearSlot.transform as RectTransform).localScale = Vector3.one;
+		const Inventory = Core().Client.Data.GetLink().Data.Inventories.Player;
+		for (const Index of $range(1, Inventory.Size)) {
+			const Value = Inventory.Content[Index];
+			const ItemSlot = Instantiate(this.Hotbar.SlotTemplate);
+			this.Contents.push(ItemSlot);
+			ItemSlot.transform.SetParent(this.Inventory_TEMP.transform, false);
 
-				const Slot = GearSlot.GetAirshipComponent<DraggableSlotComponent>();
-				if (!Slot) continue;
-				Slot.SlotContents = Value;
-				Slot.UpdateFilled();
+			const Slot = ItemSlot.GetAirshipComponent<DraggableSlotComponent>()!;
+			Slot.PlayerInventory = "Player";
+			Slot.SlotID = Index;
+			Slot.UpdateContents();
 
+			if (!Value) continue;
+			if (Value.Type === ItemTypes.Gear) {
 				let Existing = SortedList[Value.Key];
 				if (!Existing) {
 					Existing = [];
@@ -89,21 +121,13 @@ export default class UIController extends AirshipSingleton {
 				}
 
 				if (Value.Level) {
-					Existing[Value.Level - 1] = [GearSlot.transform, Value];
+					Existing[Value.Level - 1] = [ItemSlot.transform, Value];
 				} else {
-					Existing.push([GearSlot.transform, Value]);
+					Existing.push([ItemSlot.transform, Value]);
 					Existing.sort((a, b) => {
 						return a[1].ObtainedTime > b[1].ObtainedTime;
 					});
 				}
-			}
-		}
-
-		let Index = 0;
-		for (const [_, Items] of pairs(SortedList)) {
-			for (const [_, Item] of pairs(Items)) {
-				Item[0].SetSiblingIndex(Index);
-				Index++;
 			}
 		}
 	}
@@ -116,53 +140,57 @@ export default class UIController extends AirshipSingleton {
 		return System.RaycastAll(EventData)[0]?.gameObject;
 	}
 
-	public CloseCenterMenus() {
-		this.EquipmentMenu.SetActive(false);
+	public CloseMenus() {
 		this.Inventory.SetActive(false);
+		this.ContainerInventory.SetActive(false);
+
+		this.Connections.Clean();
 	}
 
-	public UpdateMenuState() {
-		if (this.MenuOpen) {
-			Mouse.WarpCursorPosition(new Vector2(Camera.main.pixelWidth, Camera.main.pixelHeight).div(2));
+	public OpenMenu(Target: UIMenus) {
+		this.CloseMenus();
 
-			// TEMP
-			this.EquipmentMenu.SetActive(true);
-			this.Inventory.SetActive(true);
+		switch (Target) {
+			case UIMenus.ContainerInventory:
+				this.ContainerInventory.SetActive(true);
+				break;
 
-			this.Connections.Add(Mouse.AddUnlocker());
-		} else {
-			this.Connections.Clean();
-			this.CloseCenterMenus();
+			case UIMenus.Inventory:
+				this.Inventory.SetActive(true);
+				break;
 		}
+
+		Mouse.WarpCursorPosition(new Vector2(Camera.main.pixelWidth, Camera.main.pixelHeight).div(2));
+		this.Connections.Add(Mouse.AddUnlocker());
 	}
 
-	private LastTooltipObject: GameObject | undefined;
+	public LastTooltipObject: GameObject | undefined;
 	private HealthAlpha = 1;
 	public UpdateUI(Controller: ClientComponent, DeltaTime: number) {
 		this.HealthAlpha = math.lerpClamped(this.HealthAlpha, math.clamp01(Controller.Health / 100), DeltaTime * 10);
-
-		//this.MomentumBar.SetSizeWithCurrentAnchors(Axis.Horizontal, 1340 * math.clamp01(Controller.Momentum / 30));
 		this.HealthBar.SetSizeWithCurrentAnchors(Axis.Horizontal, 885 * this.HealthAlpha);
 
-		//this.MomentumCanvas.alpha = math.lerpClamped(this.MomentumCanvas.alpha, Controller.Momentum <= 0 ? 0 : 1, DeltaTime * 5);
 		this.HealthCanvas.alpha = math.lerpClamped(this.HealthCanvas.alpha, Controller.Health < 99 ? 1 : os.clock() - Controller._LastHealthChanged >= 2.5 ? 0 : 1, DeltaTime * 5);
 		this.WallKickCanvas.alpha = 1 - this.HealthCanvas.alpha;
 
 		const HoverTarget = this.RaycastUI();
 
 		if (HoverTarget !== this.LastTooltipObject) {
-			const TooltipComponent = HoverTarget?.GetAirshipComponent<TooltipComponent>();
-
-			if (TooltipComponent) {
-				this.TooltipTransform.gameObject.SetActive(true);
-				this.TooltipText.text = TooltipComponent.GetText();
-			} else this.TooltipTransform.gameObject.SetActive(false);
 			this.LastTooltipObject = HoverTarget;
+
+			const Target = TooltipComponent.Get(HoverTarget);
+
+			if (Target) {
+				this.TooltipTransform.gameObject.SetActive(true);
+				this.TooltipText.text = Target.GetText();
+			} else this.TooltipTransform.gameObject.SetActive(false);
 		}
 
 		if (this.TooltipTransform.gameObject.activeSelf) {
-			const MousePos = Input.mousePosition.sub(new Vector3(-20, 0, 0));
-			this.TooltipTransform.position = MousePos;
+			const MousePos = Input.mousePosition;
+			this.TooltipTransform.localPosition = this.GetMouseLocalPosition(this.TooltipTransform.parent as RectTransform, MousePos)
+				.WithZ(-99)
+				.add(new Vector3(20, 0, 0));
 
 			const Width = Screen.width;
 			const Height = Screen.height;
@@ -200,7 +228,7 @@ export default class UIController extends AirshipSingleton {
 	private AddAmmoElements(Count: number, Container: RectTransform, Fills: Image[]) {
 		for (const _ of $range(1, Count)) {
 			const UI = Instantiate(this.AmmoTemplate);
-			UI.SetParent(Container);
+			UI.SetParent(Container, false);
 			UI.localRotation = Quaternion.identity;
 			Fills.push(UI.gameObject.GetComponent<Image>() as Image);
 		}
@@ -237,5 +265,19 @@ export default class UIController extends AirshipSingleton {
 
 	public InputDisabledFromMenu() {
 		return /*this.MenuOpen || */ this.ESCMenuOpen || Airship.Chat.IsOpen();
+	}
+
+	public AreMenusOpen() {
+		return this.ESCMenuOpen || this.Inventory.activeSelf || this.ContainerInventory.Container.gameObject.activeSelf;
+	}
+
+	public GetMouseLocalPosition(ParentRect: RectTransform, ScreenPos: Vector2 | Vector3) {
+		const [success, localPos] = RectTransformUtility.ScreenPointToLocalPointInRectangle(
+			ParentRect,
+			typeIs(ScreenPos, "Vector2") ? ScreenPos : new Vector2(ScreenPos.x, ScreenPos.y),
+			this.UICamera,
+		);
+
+		return success ? new Vector3(localPos.x, localPos.y, 0) : Vector3.zero;
 	}
 }

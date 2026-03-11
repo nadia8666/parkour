@@ -30,8 +30,8 @@ export default class GearRegistrySingleton extends AirshipSingleton {
 		error(`Unable to find Key for ${Gear.Name}`);
 	}
 
-	public GearFromKey(Key: GearRegistryKey): GearObject {
-		return this[Key];
+	public GearFromKey(Key: string): GearObject | undefined {
+		return this[Key as GearRegistryKey];
 	}
 
 	public Start() {

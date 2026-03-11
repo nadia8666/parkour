@@ -1,65 +1,108 @@
-import ENV from "Code/Server/ENV";
+import type { Player } from "@Easy/Core/Shared/Player/Player";
 import type { GearRegistryKey } from "./GearRegistry";
-import GearRegistrySingleton from "./GearRegistry";
-import GearObject from "./Object/GearObject";
 
-//type ValueOf<T> = T[keyof T];
-//type IntersectionToUnion<T> = T extends unknown ? keyof T : never;
+export type ValueOf<T> = T[keyof T];
+//export type IntersectionToUnion<T> = T extends unknown ? keyof T : never;
 
-export type ItemTypes = "Gear" | "Consumable" | "Resource" | "Key";
-export type GearSlots = "Grip" | "Core" | "Mod" | "Augment";
-export interface ItemInfo<Type extends ItemTypes> {
-	Type: Type;
-	Key: Type extends "Gear" ? GearRegistryKey : string;
-	Level: Type extends "Gear" ? number : undefined;
-	ObtainedTime: number;
-	UID: string;
+export enum ItemTypes {
+	Gear,
+	Item,
+	Block,
+}
+export const GearSlots = ["Grip", "Core", "Mod", "Augment"] as const;
+export type GearSlots = (typeof GearSlots)[number];
+
+interface ItemAttributes {
+	ToolType?: "Sword" | "Axe" | "Pickaxe" | "Shovel";
 }
 
-export type AnyItem = ItemInfo<ItemTypes>;
+interface BaseItemInfo<T extends ItemTypes> {
+	Type: T;
+	Key: T extends ItemTypes.Gear ? GearRegistryKey : string;
+	ObtainedTime: number;
+	UID: string;
+	Amount: number;
+	Temporary?: boolean;
+	Attributes: ItemAttributes;
+}
+
+export interface GearItem extends BaseItemInfo<ItemTypes.Gear> {
+	Level: number;
+}
+
+export interface BlockItem extends BaseItemInfo<ItemTypes.Block> {
+	BlockID: number;
+}
+
+export interface OtherItem extends BaseItemInfo<Exclude<ItemTypes, ItemTypes.Gear | ItemTypes.Block>> {}
+
+export type ItemInfo = GearItem | BlockItem | OtherItem;
+
+export type AnyItem = ItemInfo;
+
+export interface Inventory {
+	Size: number;
+	Content: { [Index: number]: AnyItem };
+}
 
 export interface DataFormat {
-	EquippedGear: {
-		Grip: [InventoryKey];
-		Core: [InventoryKey];
-		Mod: [InventoryKey, InventoryKey];
-		Augment: [InventoryKey, InventoryKey, InventoryKey];
-	};
-	Inventory: { [Index: string]: ItemInfo<ItemTypes> };
+	Inventories: { [Index: string]: Inventory };
 	TrialRecords: { [Index: string]: number | undefined };
 	DataVersion: number;
 }
 
-export type InventoryKey = keyof DataFormat["Inventory"];
+export type InventoryKey = string;
 
 export const DataTemplate: DataFormat = {
-	EquippedGear: {
-		Grip: ["None"],
-		Core: ["None"],
-		Mod: ["None", "None"],
-		Augment: ["None", "None", "None"],
+	Inventories: {
+		Grip: { Size: 1, Content: {} },
+		Core: { Size: 1, Content: {} },
+		Mod: { Size: 2, Content: {} },
+		Augment: { Size: 3, Content: {} },
+		Player: {
+			Size: 10,
+			Content: {},
+		},
+		Hotbar: {
+			Size: 10,
+			Content: {},
+		},
 	},
-	Inventory: {},
 	TrialRecords: {},
 	DataVersion: 1,
 };
 
-if (ENV.Runtime === "DEV") {
-	// intentionally NOT using core as this module is preloaded core
-	(() => {
-		for (const [GearID, Gear] of pairs(GearRegistrySingleton.Get())) {
-			if (Gear instanceof GearObject) {
-				for (const Level of $range(1, Gear.MaxLevel)) {
-					const ID = `Debug${GearID}${Level}`;
-					DataTemplate.Inventory[ID] = {
-						Type: "Gear",
-						Key: GearID,
-						Level: Level,
-						ObtainedTime: 0,
-						UID: ID,
-					};
-				}
-			}
-		}
-	})();
+export namespace World {
+	export enum BiomeTypes {
+		Ocean,
+		Plains,
+		Desert,
+		Mountain,
+		Snow,
+	}
 }
+
+export namespace ItemEnums {
+	export enum ItemRarity {
+		Common,
+		Uncommon,
+		Rare,
+		Epic,
+		Legendary,
+		Administrator,
+	}
+
+	export enum ItemModelType {
+		ImageGenerated,
+		BlockModel,
+	}
+}
+
+export namespace Client {
+	export type ValidStates = "Airborne" | "Grounded" | "Wallclutch" | "Wallclimb" | "Wallrun" | "LedgeGrab" | "Slide" | "Dropdown" | "Fly" | "LadderClimb" | "Zipline";
+}
+
+export type PlayerInfoGetter = () => {
+	Player: Player;
+	Position: Vector3;
+};

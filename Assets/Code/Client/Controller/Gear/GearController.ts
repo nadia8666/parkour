@@ -2,7 +2,8 @@ import { deepCopy as DeepCopy } from "@Easy/Core/Shared/Util/ObjectUtils";
 import { WithGear } from "Code/Client/Config";
 import Core from "Code/Core/Core";
 import type { GearRegistryKey } from "Code/Shared/GearRegistry";
-import type { AnyItem, GearSlots, InventoryKey, ItemInfo } from "Code/Shared/Types";
+import { type AnyItem, type GearItem, type InventoryKey, type ItemInfo, ItemTypes } from "Code/Shared/Types";
+import { Utility } from "Code/Shared/Utility/Utility";
 
 const MaxAmmo = {
 	Wallrun: 2,
@@ -55,35 +56,13 @@ export default class GearController extends AirshipSingleton {
 	}
 
 	// Gear functions
-	public TryEquipGear(Slot: GearSlots, Index: number, Contents?: AnyItem) {
-		if (Contents && Contents.Type !== "Gear") return;
-
-		const Key = Contents ? (Contents as ItemInfo<"Gear">).Key : "None";
-		const Gear = Core().Gear[Key];
-		if (Key === "None" ? false : Gear.Slot !== Slot) return;
-
-		const Data = Core().Client.Data.GetLink().Data;
-		if (Contents) {
-			for (const [Index, ItemID] of pairs(Data.EquippedGear[Slot])) {
-				if (ItemID === Contents.UID) {
-					Data.EquippedGear[Slot][Index - 1] = "None";
-				}
-			}
-		}
-
-		Data.EquippedGear[Slot][Index - 1] = Contents?.UID ?? "None";
-
-		return true;
-	}
-
 	public HasLevel(GearName: GearRegistryKey, Level: number) {
 		const Gear = Core().Gear[GearName];
-		const Slot = Core().Client.Data.GetLink().Data.EquippedGear[Gear.Slot];
+		const Slot = Core().Client.Data.GetLink().Data.Inventories[Gear.Slot];
 
-		for (const [_, ID] of pairs(Slot)) {
-			const Item = this.GetItem(ID) as ItemInfo<"Gear">;
+		for (const [_, Item] of pairs(Slot.Content)) {
 			if (!Item) continue;
-			if (Item.Key === GearName && Item.Level >= Level) {
+			if (Item.Key === GearName && Item.Type === ItemTypes.Gear && Item.Level! >= Level) {
 				return true;
 			}
 		}
@@ -93,17 +72,32 @@ export default class GearController extends AirshipSingleton {
 
 	// Utillity
 	public GetName(Item: AnyItem) {
-		if (Item.Type === "Gear") {
-			return Core().Gear[(Item as ItemInfo<"Gear">).Key].Name;
+		if (Item.Type === ItemTypes.Gear) {
+			return Core().Gear[(Item as GearItem).Key].Name;
 		} else {
 			// TEMP
-			return Item.Key;
+			if (Item.Type === ItemTypes.Block) {
+				return Utility.FormatStringForName(Core().World.GetDefinitionFromBlock(Item.BlockID).name);
+			}
+			return Utility.FormatStringForName(Item.Key);
 		}
 	}
 
 	public GetItem(ID: InventoryKey) {
-		if (ID === "None") return;
+		if (ID === "None") return $tuple(undefined, undefined);
 
-		return Core().Client.Data.GetLink().Data.Inventory[ID];
+		let [Inventory, Item]: [string | undefined, ItemInfo | undefined] = [undefined, undefined];
+
+		for (const [Inv, Data] of pairs(Core().Client.Data.GetLink().Data.Inventories)) {
+			for (const [_, Value] of pairs(Data.Content)) {
+				if (Value.UID === ID) {
+					Inventory = Inv as string;
+					Item = Value;
+					break;
+				}
+			}
+		}
+
+		return $tuple(Item, Inventory);
 	}
 }

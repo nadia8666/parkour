@@ -3,7 +3,7 @@ import type ProximityPrompt from "@Easy/Core/Shared/Input/ProximityPrompts/Proxi
 import { ForceRefreshGearSignal } from "Code/Client/Config";
 import Core from "Code/Core/Core";
 import type TimeTrialObject from "Code/Shared/Object/TimeTrialObject";
-import type { DataFormat } from "Code/Shared/Types";
+import type { Inventory } from "Code/Shared/Types";
 import CFrame from "@inkyaker/CFrame/Code";
 import type ClientComponent from "../../ClientComponent";
 import type TimeTrialComponent from "./TimeTrialComponent";
@@ -22,7 +22,7 @@ export class TimeTrials {
 	private PromptBase = Asset.LoadAsset("Assets/Resources/TimeTrials/TrialPrompt.prefab");
 	private LastTrialStart = math.huge;
 	private InIntro = false;
-	public TrialGear: DataFormat["EquippedGear"] | undefined;
+	public TrialGear: { [Index: string]: Inventory } | undefined;
 
 	constructor() {
 		for (const [_, Target] of pairs(GameObject.FindGameObjectsWithTag("TimeTrial"))) {
@@ -56,7 +56,7 @@ export class TimeTrials {
 			WorldModels: [PromptGameObject],
 		};
 
-		// Decorate Prompt
+		// decorate Prompt
 		PromptGameObject.transform.SetParent(Trial.gameObject.transform);
 		PromptGameObject.transform.localPosition = Vector3.up.mul(1.25);
 		PromptGameObject.transform.localRotation = Quaternion.identity;
@@ -91,12 +91,7 @@ export class TimeTrials {
 	public Start(Controller: ClientComponent, Trial: TimeTrialComponent, RunIntro?: boolean) {
 		if (this.IsActive()) this.Stop(Controller);
 
-		this.TrialGear = {
-			Grip: ["None"],
-			Core: ["None"],
-			Mod: ["None", "None"],
-			Augment: ["None", "None", "None"],
-		};
+		this.TrialGear = { Grip: { Size: 1, Content: {} }, Core: { Size: 1, Content: {} }, Mod: { Size: 2, Content: {} }, Augment: { Size: 3, Content: {} } };
 		ForceRefreshGearSignal.Fire();
 
 		const Start = os.clock();
@@ -130,7 +125,7 @@ export class TimeTrials {
 
 		Controller.LastPromptInteract = os.clock();
 		Controller.Input.KillLockByID("TimeTrialStart");
-		
+
 		this.CurrentTrial = undefined;
 		this.InIntro = false;
 		this.LastTrialStart = math.huge;
@@ -193,7 +188,6 @@ export class TimeTrials {
 
 					if (ToSet) {
 						Records[Trial.TrialData.ID] = CurrentTime;
-						Core().Client.Data.GetLink(true).RecalculateHash();
 						print(`Set ${Trial.TrialData.ID} record!`);
 						this.RefreshTrialStates();
 					}
