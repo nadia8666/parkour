@@ -2,7 +2,7 @@ import { Asset } from "@Easy/Core/Shared/Asset";
 import Config from "Code/Client/Config";
 import Core from "Code/Core/Core";
 import type ClientComponent from "../ClientComponent";
-import { Actions } from "../Input";
+import { Actions } from "../ClientInput";
 import { Raycast } from "./Base";
 
 const HitTemplate = Asset.LoadAsset("Assets/Resources/Prefabs/Gear/Grappler/GrapplerHit.prefab");

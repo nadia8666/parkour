@@ -1,4 +1,3 @@
-/** biome-ignore-all lint/style/noNonNullAssertion: abc */
 import { Mouse } from "@Easy/Core/Shared/UserInput/Mouse";
 import Core from "Code/Core/Core";
 import type DraggableSlotComponent from "./DraggableSlotComponent";
@@ -16,13 +15,16 @@ export default class DragController extends AirshipSingleton {
 
 		const MainUI = Core().Client.UI.Main;
 		const UI = Instantiate(this.DragTemplate);
-		UI.transform.SetParent(MainUI.transform);
+		UI.transform.SetParent(MainUI.transform, false);
 
 		(UI.transform as RectTransform).localScale = (Slot.transform as RectTransform).lossyScale.div((MainUI.transform as RectTransform).lossyScale);
 
 		const NewSlot = UI.GetAirshipComponent<DraggableSlotComponent>()!;
-		NewSlot.SlotContents = Slot.SlotContents;
-		NewSlot.UpdateFilled();
+		NewSlot.CIS_Inventory = Slot.CIS_Inventory;
+		NewSlot.PlayerInventory = Slot.PlayerInventory;
+		NewSlot.CallbackType = Slot.CallbackType;
+		NewSlot.SlotID = Slot.SlotID;
+		NewSlot.UpdateContents();
 
 		this.CurrentUI = UI.transform as RectTransform;
 	}
@@ -42,7 +44,9 @@ export default class DragController extends AirshipSingleton {
 		if (this.CurrentDrag) {
 			if (Mouse.isLeftDown) {
 				const Pos = Mouse.position;
-				this.CurrentUI!.position = new Vector3(Pos.x, Pos.y, 0);
+				this.CurrentUI!.localPosition = Core()
+					.Client.UI.GetMouseLocalPosition(this.CurrentUI!.parent as RectTransform, new Vector3(Pos.x, Pos.y, 0))
+					.WithZ(-50);
 			} else {
 				this.EndDrag();
 			}

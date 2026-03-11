@@ -37,17 +37,18 @@ task.spawn(() => {
 	while (!Core.Client.Objective.TimeTrials) {
 		task.wait();
 	}
+	while (!Core.Client.World) {
+		task.wait();
+	}
 	while (!Core.Client.World.Ziplines) {
 		task.wait();
 	}
 	while (!Core.Client.World.Ladders) {
 		task.wait();
 	}
-
 	while (!Core.Gear) {
 		task.wait();
 	}
-
 	while (!Core.Server) {
 		task.wait();
 	}
@@ -60,6 +61,10 @@ task.spawn(() => {
 
 export = () => {
 	while (!CoreLoaded) {
+		FramesPassed++;
+		if (FramesPassed % 500 === 0) {
+			task.wait();
+		}
 		while (FramesPassed <= 10) {
 			FramesPassed++;
 			task.wait();

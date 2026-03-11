@@ -3,7 +3,7 @@ import { Tween } from "@Easy/Core/Shared/Tween/Tween";
 import Config from "Code/Client/Config";
 import Core from "Code/Core/Core";
 import type ClientComponent from "../ClientComponent";
-import { Actions } from "../Input";
+import { Actions } from "../ClientInput";
 import type { CastResults } from "./Base";
 
 export class MovesetGeneric {
