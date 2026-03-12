@@ -2,7 +2,7 @@ import { deepCopy as DeepCopy } from "@Easy/Core/Shared/Util/ObjectUtils";
 import { WithGear } from "Code/Client/Config";
 import Core from "Code/Core/Core";
 import type { GearRegistryKey } from "Code/Shared/GearRegistry";
-import { type AnyItem, type GearItem, type InventoryKey, type ItemInfo, ItemTypes } from "Code/Shared/Types";
+import { type AnyItem, type GearItem, type InventoryKey, ItemTypes } from "Code/Shared/Types";
 import { Utility } from "Code/Shared/Utility/Utility";
 
 const MaxAmmo = {
@@ -86,7 +86,7 @@ export default class GearController extends AirshipSingleton {
 	public GetItem(ID: InventoryKey) {
 		if (ID === "None") return $tuple(undefined, undefined);
 
-		let [Inventory, Item]: [string | undefined, ItemInfo | undefined] = [undefined, undefined];
+		let [Inventory, Item]: [string | undefined, AnyItem | undefined] = [undefined, undefined];
 
 		for (const [Inv, Data] of pairs(Core().Client.Data.GetLink().Data.Inventories)) {
 			for (const [_, Value] of pairs(Data.Content)) {

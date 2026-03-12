@@ -3,7 +3,7 @@ import { Mouse } from "@Easy/Core/Shared/UserInput";
 import Core from "Code/Core/Core";
 import { Provider } from "Code/Shared/Provider";
 import type { AnyItem } from "Code/Shared/Types";
-import type DraggableSlotComponent from "../Drag/DraggableSlotComponent";
+import type SlotComponent from "../Drag/SlotComponent";
 
 export class Hotbar {
 	constructor(
@@ -46,7 +46,7 @@ export class Hotbar {
 			Image.texture = Asset.LoadAsset(`Assets/Resources/Textures/UI/HotbarSlot${Selected ? "Selected" : ""}.png`);
 			Instance.transform.localScale = Selected ? Vector3.one.mul(1.2) : Vector3.one;
 
-			if (Selected) this.HeldItem = Instance.GetAirshipComponent<DraggableSlotComponent>()?.SlotContents;
+			if (Selected) this.HeldItem = Instance.GetAirshipComponent<SlotComponent>()?.SlotContents;
 		});
 	}
 
@@ -61,7 +61,7 @@ export class Hotbar {
 			Slot.transform.SetParent(this.Hotbar, false);
 			this.Contents.push(Slot);
 
-			const Drag = Slot.GetAirshipComponent<DraggableSlotComponent>()!;
+			const Drag = Slot.GetAirshipComponent<SlotComponent>()!;
 			Drag.PlayerInventory = "Hotbar";
 			Drag.SlotID = Index;
 			Drag.UpdateContents();

@@ -34,11 +34,7 @@ export interface BlockItem extends BaseItemInfo<ItemTypes.Block> {
 	BlockID: number;
 }
 
-export interface OtherItem extends BaseItemInfo<Exclude<ItemTypes, ItemTypes.Gear | ItemTypes.Block>> {}
-
-export type ItemInfo = GearItem | BlockItem | OtherItem;
-
-export type AnyItem = ItemInfo;
+export type AnyItem = GearItem | BlockItem | BaseItemInfo<ItemTypes.Item>;
 
 export interface Inventory {
 	Size: number;

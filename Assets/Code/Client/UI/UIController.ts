@@ -1,12 +1,15 @@
 import { Airship } from "@Easy/Core/Shared/Airship";
+import { Asset } from "@Easy/Core/Shared/Asset";
 import { Binding } from "@Easy/Core/Shared/Input/Binding";
 import { Mouse } from "@Easy/Core/Shared/UserInput";
 import { Bin } from "@Easy/Core/Shared/Util/Bin";
 import Core from "Code/Core/Core";
+import type RecipeObject from "Code/Shared/Object/RecipeObject";
 import { type AnyItem, ItemTypes } from "Code/Shared/Types";
 import TooltipComponent from "../Components/TooltipComponent";
 import type ClientComponent from "../Controller/ClientComponent";
-import type DraggableSlotComponent from "./Drag/DraggableSlotComponent";
+import type SlotComponent from "./Drag/SlotComponent";
+import { CallbackType } from "./Drag/SlotComponent";
 import { ContainerInventory } from "./Modules/ContainerInventory";
 import { Hotbar } from "./Modules/Hotbar";
 
@@ -29,8 +32,13 @@ export default class UIController extends AirshipSingleton {
 
 	@Header("References/Inventory")
 	public Inventory: GameObject;
-	public Inventory_TEMP: GameObject;
-	public InventorySlots: DraggableSlotComponent[] = [];
+	public InventoryContainer: GameObject;
+	public InventorySlots: SlotComponent[] = [];
+	@NonSerialized() public InventoryTab = "PlayerInventories";
+	public PlayerInventoriesTabButton: Button;
+	public CraftingTabButton: Button;
+	public PlayerInventoriesTab: GameObject;
+	public CraftingTab: GameObject;
 
 	@Header("References/Hotbar")
 	@SerializeField()
@@ -56,6 +64,9 @@ export default class UIController extends AirshipSingleton {
 	public Connections = new Bin();
 	public Hotbar: Hotbar;
 	public ContainerInventory: ContainerInventory;
+
+	@Header("References/Crafting")
+	public CraftingContainer: RectTransform;
 
 	@Client()
 	override Start() {
@@ -89,6 +100,36 @@ export default class UIController extends AirshipSingleton {
 		});
 
 		this.Main.SetActive(true);
+
+		// TODO: dont hardcode
+		const Buttons = [this.CraftingTabButton, this.PlayerInventoriesTabButton];
+		const Frames = [this.CraftingTab, this.PlayerInventoriesTab];
+
+		function FocusUI(Button: Button, ContainerFrame: GameObject) {
+			Buttons.forEach((Button) => (Button.targetGraphic.color = Color.white));
+			Frames.forEach((Frame) => Frame.SetActive(false));
+			Button.targetGraphic.color = new Color(0.96, 0.97, 0.54);
+			ContainerFrame.SetActive(true);
+		}
+
+		this.CraftingTabButton.onClick.Connect(() => FocusUI(this.CraftingTabButton, this.CraftingTab));
+		this.PlayerInventoriesTabButton.onClick.Connect(() => FocusUI(this.PlayerInventoriesTabButton, this.PlayerInventoriesTab));
+		FocusUI(this.PlayerInventoriesTabButton, this.PlayerInventoriesTab);
+
+		// TODO: refactor
+		const Recipes = Asset.LoadAll("Assets/Resources/Recipes", true) as RecipeObject[];
+		Recipes.forEach((Recipe) => {
+			const ItemSlot = Instantiate(this.Hotbar.SlotTemplate);
+			this.Contents.push(ItemSlot);
+			ItemSlot.transform.SetParent(this.CraftingContainer.transform, false);
+
+			const Slot = ItemSlot.GetAirshipComponent<SlotComponent>()!;
+			Slot.CallbackType = CallbackType.Crafting;
+			Slot.Draggable = false;
+			Slot.SlotContents = Recipe.ItemFromString(Recipe.OutputItem);
+			Slot.UpdateContents();
+			print(Slot.SlotContents);
+		});
 	}
 
 	private Contents: GameObject[] = [];
@@ -105,9 +146,9 @@ export default class UIController extends AirshipSingleton {
 			const Value = Inventory.Content[Index];
 			const ItemSlot = Instantiate(this.Hotbar.SlotTemplate);
 			this.Contents.push(ItemSlot);
-			ItemSlot.transform.SetParent(this.Inventory_TEMP.transform, false);
+			ItemSlot.transform.SetParent(this.InventoryContainer.transform, false);
 
-			const Slot = ItemSlot.GetAirshipComponent<DraggableSlotComponent>()!;
+			const Slot = ItemSlot.GetAirshipComponent<SlotComponent>()!;
 			Slot.PlayerInventory = "Player";
 			Slot.SlotID = Index;
 			Slot.UpdateContents();
@@ -166,7 +207,7 @@ export default class UIController extends AirshipSingleton {
 		this.Connections.Add(Mouse.AddUnlocker());
 	}
 
-	public LastTooltipObject: GameObject | undefined;
+	@NonSerialized() public LastTooltipObject: GameObject | undefined;
 	private HealthAlpha = 1;
 	public UpdateUI(Controller: ClientComponent, DeltaTime: number) {
 		this.HealthAlpha = math.lerpClamped(this.HealthAlpha, math.clamp01(Controller.Health / 100), DeltaTime * 10);

@@ -1,14 +1,14 @@
 import { Mouse } from "@Easy/Core/Shared/UserInput/Mouse";
 import Core from "Code/Core/Core";
-import type DraggableSlotComponent from "./DraggableSlotComponent";
+import type SlotComponent from "./SlotComponent";
 
 export default class DragController extends AirshipSingleton {
-	@NonSerialized() public CurrentDrag: DraggableSlotComponent | undefined;
+	@NonSerialized() public CurrentDrag: SlotComponent | undefined;
 	@NonSerialized() public CurrentUI: RectTransform | undefined;
 
 	public DragTemplate: GameObject;
 
-	public StartDrag(Slot: DraggableSlotComponent) {
+	public StartDrag(Slot: SlotComponent) {
 		if (this.CurrentDrag) return;
 
 		this.CurrentDrag = Slot;
@@ -19,7 +19,7 @@ export default class DragController extends AirshipSingleton {
 
 		(UI.transform as RectTransform).localScale = (Slot.transform as RectTransform).lossyScale.div((MainUI.transform as RectTransform).lossyScale);
 
-		const NewSlot = UI.GetAirshipComponent<DraggableSlotComponent>()!;
+		const NewSlot = UI.GetAirshipComponent<SlotComponent>()!;
 		NewSlot.CIS_Inventory = Slot.CIS_Inventory;
 		NewSlot.PlayerInventory = Slot.PlayerInventory;
 		NewSlot.CallbackType = Slot.CallbackType;
@@ -37,7 +37,7 @@ export default class DragController extends AirshipSingleton {
 		this.CurrentDrag = undefined;
 
 		const UITarget = Core().Client.UI.RaycastUI();
-		DragOrigin?.DraggedOnto(UITarget?.GetAirshipComponent<DraggableSlotComponent>());
+		DragOrigin?.DraggedOnto(UITarget?.GetAirshipComponent<SlotComponent>());
 	}
 
 	override Update() {

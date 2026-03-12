@@ -11,20 +11,20 @@ export enum CallbackType {
 	Loadout,
 	Inventory,
 	ContainerInventory,
+	Crafting,
 	None,
 }
 
-export default class DraggableSlotComponent extends AirshipBehaviour {
+export default class SlotComponent extends AirshipBehaviour {
 	private Connections = new Bin();
 
-	public static AllLoadoutSlots = new Set<DraggableSlotComponent>();
-	public static AllSlots = new Map<GameObject, DraggableSlotComponent>();
+	public static AllLoadoutSlots = new Set<SlotComponent>();
+	public static AllSlots = new Map<GameObject, SlotComponent>();
 
 	@Header("References")
 
 	@Header("Config")
-	@SerializeField()
-	private Draggable = true;
+	public Draggable = true;
 	public CallbackType: CallbackType = CallbackType.None;
 	@NonSerialized()
 	public SlotContents: AnyItem | undefined;
@@ -55,16 +55,16 @@ export default class DraggableSlotComponent extends AirshipBehaviour {
 			}),
 		);
 
-		if (this.CallbackType === CallbackType.Loadout) DraggableSlotComponent.AllLoadoutSlots.add(this);
-		DraggableSlotComponent.AllSlots.set(this.gameObject, this);
+		if (this.CallbackType === CallbackType.Loadout) SlotComponent.AllLoadoutSlots.add(this);
+		SlotComponent.AllSlots.set(this.gameObject, this);
 	}
 
 	@Client()
 	override OnDisable() {
 		this.Connections.Clean();
 
-		DraggableSlotComponent.AllLoadoutSlots.delete(this);
-		DraggableSlotComponent.AllSlots.delete(this.gameObject);
+		SlotComponent.AllLoadoutSlots.delete(this);
+		SlotComponent.AllSlots.delete(this.gameObject);
 	}
 
 	public IsDraggable() {
@@ -130,9 +130,9 @@ export default class DraggableSlotComponent extends AirshipBehaviour {
 		if (UI.LastTooltipObject === this.gameObject) UI.LastTooltipObject = undefined;
 	}
 
-	public DraggedOnto(Target?: DraggableSlotComponent) {
+	public DraggedOnto(Target?: SlotComponent) {
 		if (Target) {
-			const [TargetInventory, MyInventory] = [DraggableSlotComponent.GetInventoryFor(Target), this.GetInventory()];
+			const [TargetInventory, MyInventory] = [SlotComponent.GetInventoryFor(Target), this.GetInventory()];
 
 			if (!(TargetInventory && MyInventory)) return;
 
@@ -152,7 +152,7 @@ export default class DraggableSlotComponent extends AirshipBehaviour {
 		}
 	}
 
-	public static GetInventoryFor(Target: DraggableSlotComponent) {
+	public static GetInventoryFor(Target: SlotComponent) {
 		const Data = Core().Client.Data.GetLink().Data;
 		switch (Target.CallbackType) {
 			case CallbackType.Loadout:
@@ -167,17 +167,17 @@ export default class DraggableSlotComponent extends AirshipBehaviour {
 	}
 
 	public GetInventory() {
-		return DraggableSlotComponent.GetInventoryFor(this);
+		return SlotComponent.GetInventoryFor(this);
 	}
 
 	public static LS_ReloadAllSlots() {
-		for (const [Slot] of pairs(DraggableSlotComponent.AllLoadoutSlots)) {
+		for (const [Slot] of pairs(SlotComponent.AllLoadoutSlots)) {
 			Slot.FetchContents();
 		}
 	}
 
 	public FetchContents() {
-		this.SlotContents = this.GetInventory()?.Content[this.SlotID];
+		if ([CallbackType.Inventory, CallbackType.Loadout, CallbackType.ContainerInventory].includes(this.CallbackType)) this.SlotContents = this.GetInventory()?.Content[this.SlotID];
 		return this.SlotContents;
 	}
 }

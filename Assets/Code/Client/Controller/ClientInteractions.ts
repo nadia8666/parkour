@@ -6,7 +6,7 @@ import { Network } from "Code/Shared/Network";
 import { Provider } from "Code/Shared/Provider";
 import { ItemUtil } from "Code/Shared/Utility/ItemUtil";
 import Config from "../Config";
-import DraggableSlotComponent from "../UI/Drag/DraggableSlotComponent";
+import SlotComponent from "../UI/Drag/SlotComponent";
 import type ClientComponent from "./ClientComponent";
 import { Actions } from "./ClientInput";
 import { Raycast } from "./Moveset/Base";
@@ -110,7 +110,7 @@ export class ClientInteractions {
 		let Item = UI.AreMenusOpen()
 			? (() => {
 					const UITarget = UI.RaycastUI();
-					return UITarget && DraggableSlotComponent.AllSlots.get(UITarget)?.FetchContents();
+					return UITarget && SlotComponent.AllSlots.get(UITarget)?.FetchContents();
 				})()
 			: Core().Client.UI.Hotbar.HeldItem;
 
