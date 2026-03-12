@@ -11,7 +11,7 @@ export const Settings = {
 	HoldWallrun: false,
 
 	CameraSensitivityMouse: 1,
-	FOV: 100,
+	FOV: 120,
 	CameraRotationLerp: 15,
 
 	RenderDistance: 4,

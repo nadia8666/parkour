@@ -3,6 +3,7 @@
 //--!optimize 2
 
 import { Airship } from "@Easy/Core/Shared/Airship";
+import { Asset } from "@Easy/Core/Shared/Asset";
 import Core from "Code/Core/Core";
 import ENV from "Code/Server/ENV";
 import { SettingsService } from "Code/Server/SettingsService";
@@ -10,21 +11,24 @@ import type InteractableBlockComponent from "Code/Shared/Components/Interactable
 import GearRegistrySingleton, { type GearRegistryKey } from "Code/Shared/GearRegistry";
 import { Network } from "Code/Shared/Network";
 import GearObject from "Code/Shared/Object/GearObject";
+import type StructureObject from "Code/Shared/Object/StructureObject";
+import { RandomChance, StructureRotationType } from "Code/Shared/Object/StructureObject";
 import { type Inventory, ItemTypes, type PlayerInfoGetter, World } from "Code/Shared/Types";
 import { NoiseHandler } from "Code/Shared/Utility/Noise";
 import { DualLink } from "@inkyaker/DualLink/Code";
 import Config from "../Config";
 import { Settings } from "./SettingsController";
 
-function instance() {
-	return Core().World;
-}
+const instance = () => Core().World;
 
 type ChunkTask = {
 	Key: Vector3;
 	DistSq: number;
 	Action: () => void;
 };
+
+const StructuresRegistry: { [Index: string]: StructureObject } = {};
+(Asset.LoadAll("Assets/Resources/Structures") as StructureObject[]).forEach((Structure) => (StructuresRegistry[Structure.Name] = Structure));
 
 class ChunkManager {
 	public readonly ChunkSize = 16;
@@ -33,6 +37,7 @@ class ChunkManager {
 
 	private readonly BlockCache = new Map<string, number>();
 	private readonly TaskQueue: ChunkTask[] = [];
+	private readonly ModifiedBlocks = new Map<Vector3, number>();
 
 	public ToKey(Position: Vector3) {
 		return new Vector3(
@@ -68,12 +73,15 @@ class ChunkManager {
 			if (Depth < 12) return this.GetBlock("Sandstone");
 			return this.GetBlock("Stone");
 		}
+
 		if (BiomeID === World.BiomeTypes.Mountain) {
 			if (WorldY > 115) return this.GetBlock("Snow");
 			return this.GetBlock("Stone");
 		}
+
 		if (Depth === 0) return this.GetBlock(BiomeID === World.BiomeTypes.Snow ? "Snow" : "Grass");
 		if (Depth < 4) return this.GetBlock("Dirt");
+
 		return this.GetBlock("Stone");
 	}
 
@@ -81,13 +89,10 @@ class ChunkManager {
 		const OceanH = math.lerp(Config.WaterLevel - 45, Config.WaterLevel - 2, math.clamp((Continental + 1) / 0.8, 0, 1));
 		const PlainsH = math.lerp(Config.WaterLevel + 2, Config.WaterLevel + 35, math.clamp((Continental + 0.2) / 0.7, 0, 1));
 		const MountainH = math.lerp(Config.WaterLevel + 45, Config.MountainHeight, math.clamp((Continental - 0.5) / 0.5, 0, 1));
-
 		const BlendOceanPlains = math.clamp((Continental + 0.25) / 0.1, 0, 1);
 		const BlendPlainsMountain = math.clamp((Continental - 0.45) / 0.1, 0, 1);
-
 		const BaseHeight = math.lerp(math.lerp(OceanH, PlainsH, BlendOceanPlains), MountainH, BlendPlainsMountain);
 		const Amplitude = math.lerp(math.lerp(4, 18, BlendOceanPlains), 45, BlendPlainsMountain);
-
 		return math.floor(BaseHeight + Detail * Amplitude);
 	}
 
@@ -95,7 +100,6 @@ class ChunkManager {
 		const PlayerPos = LinkedPlayer ? LinkedPlayer().Position : undefined;
 		const ChunkCenter = this.FromKey(ChunkKey).add(new Vector3(8, 8, 8));
 		const DistSq = PlayerPos ? ChunkCenter.sub(PlayerPos).sqrMagnitude : 0;
-
 		this.TaskQueue.push({ Key: ChunkKey, DistSq, Action });
 	}
 
@@ -105,6 +109,15 @@ class ChunkManager {
 			if (Task) Task.Action();
 			else break;
 		}
+	}
+
+	private CanModifyBlock(Position: Vector3, Priority: number): boolean {
+		const ExistingPriority = this.ModifiedBlocks.get(Position);
+		return !ExistingPriority || Priority > ExistingPriority;
+	}
+
+	private MarkBlockModified(Position: Vector3, Priority: number) {
+		this.ModifiedBlocks.set(Position, Priority);
 	}
 
 	public GenerateChunk(
@@ -121,139 +134,183 @@ class ChunkManager {
 		let Generated = false;
 		const Result = new Promise<boolean>((resolve) => {
 			while (!Generated) task.wait();
-
 			resolve(true);
 		});
 
 		const Action = () => {
 			const Origin = this.FromKey(ChunkKey);
-			const Positions: Vector3[] = [];
-			const Blocks: number[] = [];
 			const Noise = instance().Noise;
 
 			ContinentalMap ??= Noise.Get2DFBMBatch(Origin.x, Origin.z, 16, 16, new Array(256), 1, 0.0004, 3, 0.5, 2);
 			SurfaceMap ??= Noise.Get2DFBMBatch(Origin.x, Origin.z, 16, 16, new Array(256), 2, 0.01, 4, 0.5, 2);
 			const CaveMap = Noise.GetCaveBatch(Origin.x, Origin.y, Origin.z, 16, 16, 16, new Array(4096), 0.018);
 
-			let LoadNegX = false,
-				LoadPosX = false;
-			let LoadNegY = false,
-				LoadPosY = false;
-			let LoadNegZ = false,
-				LoadPosZ = false;
+			const ExecutePass = (Step: World.GenerationStep) => {
+				const Positions: Vector3[] = [];
+				const Blocks: number[] = [];
+				const StructurePass: { Position: Vector3; Structures: StructureObject[] }[] = [];
 
-			let ForcePropagate = false;
-			let IterationCount = 0;
+				for (let x = 0; x < 16; x++) {
+					for (let z = 0; z < 16; z++) {
+						const WorldX = Origin.x + x;
+						const WorldZ = Origin.z + z;
 
-			for (let x = 0; x < 16; x++) {
-				for (let z = 0; z < 16; z++) {
-					const WorldX = Origin.x + x;
-					const WorldZ = Origin.z + z;
+						const ContinentalVal = ContinentalMap![z * 16 + x];
+						const DetailVal = SurfaceMap![z * 16 + x];
+						const SurfaceY = this.GetTerrainHeight(ContinentalVal, DetailVal);
 
-					const ContinentalVal = ContinentalMap[z * 16 + x];
-					const DetailVal = SurfaceMap[z * 16 + x];
-					const SurfaceY = this.GetTerrainHeight(ContinentalVal, DetailVal);
+						const Temp = Noise.Get2DValue(WorldX * 0.00015, WorldZ * 0.00015);
+						const Dither = Noise.Get2DValue(WorldX * 0.15, WorldZ * 0.15) * 0.06;
 
-					const Temp = Noise.Get2DValue(WorldX * 0.00015, WorldZ * 0.00015);
-					const Dither = Noise.Get2DValue(WorldX * 0.15, WorldZ * 0.15) * 0.06;
+						let BiomeID = World.BiomeTypes.Plains;
+						if (SurfaceY < Config.WaterLevel - 1) BiomeID = World.BiomeTypes.Ocean;
+						else if (ContinentalVal + Dither > 0.55) BiomeID = World.BiomeTypes.Mountain;
+						else if (Temp + Dither > 0.35) BiomeID = World.BiomeTypes.Desert;
+						else if (Temp + Dither < -0.35) BiomeID = World.BiomeTypes.Snow;
 
-					let BiomeID = World.BiomeTypes.Plains;
-					if (SurfaceY < Config.WaterLevel - 1) BiomeID = World.BiomeTypes.Ocean;
-					else if (ContinentalVal + Dither > 0.55) BiomeID = World.BiomeTypes.Mountain;
-					else if (Temp + Dither > 0.35) BiomeID = World.BiomeTypes.Desert;
-					else if (Temp + Dither < -0.35) BiomeID = World.BiomeTypes.Snow;
-
-					for (let y = 0; y < 16; y++) {
-						const WorldY = Origin.y + y;
-						let Target = 0;
-
-						if (WorldY > SurfaceY) {
-							if (WorldY <= Config.WaterLevel) Target = this.GetBlock("Water");
-						} else {
-							const Depth = SurfaceY - WorldY;
-							const CaveAlpha = math.clamp((WorldY - -20000) / (60 - -20000), 0, 1);
-							let CaveThreshold = math.lerp(0.35, 0.8, CaveAlpha);
-
-							if (Depth < 15) CaveThreshold += 0.3;
-
-							const CaveVal = CaveMap[z * 256 + y * 16 + x];
-
-							if (CaveVal > CaveThreshold) {
-								Target = 0;
-							} else {
-								Target = this.GetBiomeBlock(BiomeID, Depth, WorldY);
-
-								if (Target === this.GetBlock("Stone")) {
-									let OreType = 0;
-									const OreNoise = Noise.Get3DFBM(WorldX, WorldY, WorldZ, 1, 0.15, 2, 0.6, 2) / 2 + 0.5;
-
-									if (OreNoise > 0.8) {
-										if (WorldY > 40) OreType = this.GetBlock("CoalOre");
-										else if (WorldY > -10) OreType = this.GetBlock("IronOre");
-										else if (WorldY < -50) OreType = this.GetBlock("GoldOre");
-									}
-									if (OreType !== 0) Target = OreType;
-								}
-							}
-						}
-
-						if (Target === 0) {
-							if (x === 0) LoadNegX = true;
-							if (x === 15) LoadPosX = true;
-							if (y === 0) LoadNegY = true;
-							if (y === 15) LoadPosY = true;
-							if (z === 0) LoadNegZ = true;
-							if (z === 15) LoadPosZ = true;
-						} else {
+						for (let y = 0; y < 16; y++) {
+							const WorldY = Origin.y + y;
 							const Position = new Vector3(WorldX, WorldY, WorldZ);
-							Positions.push(Position);
-							Blocks.push(Target);
 
-							const TargetPos = Position.add(Vector3.up);
-							if (Target === this.GetBlock("Grass") && math.random() <= 0.25 && instance().World.GetVoxelAt(TargetPos) === 0) {
-								if (!Positions.includes(TargetPos)) {
-									Positions.push(TargetPos);
-									Blocks.push(this.GetBlock("ShortGrass"));
+							if (!this.CanModifyBlock(Position, -1)) continue;
+
+							let Target = 0;
+							const ViableStructures: StructureObject[] = [];
+
+							if (Step === World.GenerationStep.Terrain && WorldY <= SurfaceY) {
+								const Depth = SurfaceY - WorldY;
+								const CaveAlpha = math.clamp((WorldY - -20000) / (60 - -20000), 0, 1);
+								let CaveThreshold = math.lerp(0.35, 0.8, CaveAlpha);
+								if (Depth < 15) CaveThreshold += 0.3;
+
+								if (CaveMap[z * 256 + y * 16 + x] <= CaveThreshold) {
+									Target = this.GetBiomeBlock(BiomeID, Depth, WorldY);
+
+									if (Target === this.GetBlock("Grass")) {
+										ViableStructures.push(StructuresRegistry.ShortGrass);
+										ViableStructures.push(StructuresRegistry.Tree);
+									}
+								}
+							} else if (Step === World.GenerationStep.Water && WorldY > SurfaceY && WorldY <= Config.WaterLevel) {
+								Target = this.GetBlock("Water");
+							} else if (Step === World.GenerationStep.Ore && WorldY <= SurfaceY) {
+								const CurrentBlock = instance().World.GetVoxelAt(Position);
+								if (CurrentBlock === this.GetBlock("Stone")) {
+									const OreNoise = Noise.Get3DFBM(WorldX, WorldY, WorldZ, 1, 0.15, 2, 0.6, 2) / 2 + 0.5;
+									if (OreNoise > 0.8) {
+										if (WorldY > 40) Target = this.GetBlock("CoalOre");
+										else if (WorldY > -10) Target = this.GetBlock("IronOre");
+										else if (WorldY < -50) Target = this.GetBlock("GoldOre");
+									}
 								}
 							}
-						}
 
-						if (y === 15 && Target === this.GetBlock("Water")) {
-							LoadPosY = true;
-							ForcePropagate = true;
-						}
+							if (Target !== 0 && this.CanModifyBlock(Position, Step)) {
+								Positions.push(Position);
+								Blocks.push(Target);
+								this.MarkBlockModified(Position, Step);
+							}
 
-						IterationCount++;
-						if (IterationCount >= 64) {
-							IterationCount = 0;
-							task.wait();
+							const StepStructures = ViableStructures.filter((S) => S.GenerationStep === Step);
+							if (StepStructures.size() > 0) {
+								StepStructures.sort((A, B) => B.GetPriority() < A.GetPriority());
+								StructurePass.push({ Position: Position, Structures: StepStructures });
+							}
 						}
 					}
 				}
-			}
 
-			if (Positions.size() > 0) {
-				instance().World.WriteVoxelGroupAt(Positions, Blocks, Priority);
-				if (!ENV.Shared) {
-					Network.VoxelWorld.WriteGroup.server.FireAllClients(Positions, Blocks);
+				if (Positions.size() > 0) {
+					instance().World.WriteVoxelGroupAt(Positions, Blocks, Priority);
+					if (!ENV.Shared) Network.VoxelWorld.WriteGroup.server.FireAllClients(Positions, Blocks);
 				}
-			}
 
-			if (CanExpand) this.TryPropagate(ChunkKey, LinkedPlayer, LoadNegX, LoadPosX, LoadNegY, LoadPosY, LoadNegZ, LoadPosZ, SurfaceMap, ContinentalMap, ForcePropagate);
+				for (const Pass of StructurePass) {
+					this.ProcessStructures(Pass.Position, Pass.Structures);
+				}
+			};
+
+			ExecutePass(World.GenerationStep.Terrain);
+			ExecutePass(World.GenerationStep.Ore);
+			ExecutePass(World.GenerationStep.Water);
+
+			if (CanExpand) this.TryPropagate(ChunkKey, LinkedPlayer, false, false, false, false, false, false, SurfaceMap, ContinentalMap, false);
 
 			Generated = true;
 		};
 
-		if (Priority) {
-			task.spawn(Action);
-		} else {
-			this.EnqueueTask(ChunkKey, LinkedPlayer, Action);
-		}
+		if (Priority) task.spawn(Action);
+		else this.EnqueueTask(ChunkKey, LinkedPlayer, Action);
 
 		return Result;
 	}
 
-	public UnloadChunk(_ChunkKey: Vector3) {}
+	private ProcessStructures(Origin: Vector3, ViableStructures: StructureObject[]) {
+		for (const Structure of ViableStructures) {
+			const ShouldGenerate = (() => {
+				switch (Structure.Name) {
+					case "Tree":
+						return RandomChance(500);
+					case "ShortGrass":
+						return RandomChance(10);
+
+					default:
+						return false;
+				}
+			})();
+			if (!ShouldGenerate) continue;
+
+			const Data = Structure.GetData();
+			const Positions: Vector3[] = [];
+			const Blocks: number[] = [];
+
+			if (Structure.RotationType === StructureRotationType.YAxis) {
+				// rotate 0-360 degrees in 90 degree increments (0, 90, 180, 270)
+				const RotationAmount = math.random(0, 3);
+				if (RotationAmount > 0)
+					Data.blockPositions.forEach((Position, Index) => {
+						Data.blockPositions[Index] =
+							RotationAmount === 1
+								? new Vector3(-Position.z, Position.y, Position.x)
+								: RotationAmount === 1
+									? new Vector3(-Position.x, Position.y, -Position.z)
+									: new Vector3(Position.z, Position.y, -Position.x);
+					});
+			}
+
+			for (const [Index, Position] of pairs(Data.blockPositions)) {
+				const TargetPos = Origin.add(Position);
+				if (this.CanModifyBlock(TargetPos, Structure.GetPriority())) {
+					const BlockName = Data.blockIDs[Index - 1];
+					if (BlockName === "Air") continue;
+
+					Positions.push(TargetPos);
+					Blocks.push(this.GetBlock(BlockName));
+					this.MarkBlockModified(TargetPos, Structure.GetPriority());
+				}
+			}
+
+			if (Positions.size() > 0) {
+				instance().World.WriteVoxelGroupAt(Positions, Blocks, false);
+				if (!ENV.Shared) Network.VoxelWorld.WriteGroup.server.FireAllClients(Positions, Blocks);
+				break;
+			}
+		}
+	}
+
+	public UnloadChunk(ChunkKey: Vector3) {
+		this.LoadedChunks.delete(ChunkKey);
+		this.SurfaceLoadedChunks.delete(ChunkKey.WithY(0));
+
+		const Origin = this.FromKey(ChunkKey);
+		for (let x = 0; x < 16; x++) {
+			for (let y = 0; y < 16; y++) {
+				for (let z = 0; z < 16; z++) {
+					this.ModifiedBlocks.delete(Origin.add(new Vector3(x, y, z)));
+				}
+			}
+		}
+	}
 
 	private TryPropagate(
 		CenterKey: Vector3,

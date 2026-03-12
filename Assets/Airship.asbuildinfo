@@ -1239,6 +1239,13 @@
 			"extends": [],
 			"singleton": false
 		},
+		"StructureObject": {
+			"component": true,
+			"type": "AirshipScriptableObject",
+			"filePath": "Code\\Shared\\Object\\StructureObject.lua",
+			"extends": [],
+			"singleton": false
+		},
 		"TimeTrialObject": {
 			"component": true,
 			"type": "AirshipScriptableObject",
@@ -1963,26 +1970,6 @@
 			"name": "SettingsSlider",
 			"id": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Settings/Controls/SettingsSlider@SettingsSlider",
 			"file": "AirshipPackages/@Easy/Core/Shared/MainMenu/Components/Settings/Controls/SettingsSlider.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "SettingsController",
-			"id": "Code/Client/Framework/SettingsController@SettingsController",
-			"file": "Code/Client/Framework/SettingsController.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "WorldSingleton",
-			"id": "Code/Client/Framework/WorldSingleton@WorldSingleton",
-			"file": "Code/Client/Framework/WorldSingleton.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"
@@ -3002,6 +2989,36 @@
 				"default"
 			],
 			"inherits": []
+		},
+		{
+			"name": "StructureObject",
+			"id": "Code/Shared/Object/StructureObject@StructureObject",
+			"file": "Code/Shared/Object/StructureObject.ts",
+			"declarationType": "AirshipScriptableObject",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "WorldSingleton",
+			"id": "Code/Client/Framework/WorldSingleton@WorldSingleton",
+			"file": "Code/Client/Framework/WorldSingleton.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "SettingsController",
+			"id": "Code/Client/Framework/SettingsController@SettingsController",
+			"file": "Code/Client/Framework/SettingsController.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
 		}
 	],
 	"flamework": {
@@ -3055,6 +3072,7 @@
 			"typescript:Code/Shared/Provider@Provider": "Shared/Provider@Provider",
 			"typescript:Code/Shared/Components/EntityComponent@EntityComponent": "Shared/Components/EntityComponent@EntityComponent",
 			"typescript:Code/Client/Controller/Modules/Ladder/LadderComponent@LadderComponent": "Client/Controller/Modules/Ladder/LadderComponent@LadderComponent",
+			"typescript:Code/Shared/Object/StructureObject@StructureObject": "Shared/Object/StructureObject@StructureObject",
 			"typescript:Code/Shared/Utility/Noise@NoiseHandler": "Shared/Utility/Noise@NoiseHandler",
 			"typescript:Code/Shared/Object/TimeTrialObject@TimeTrialObject": "Shared/Object/TimeTrialObject@TimeTrialObject",
 			"typescript:Code/Client/Controller/Modules/TimeTrials/TimeTrialComponent@TimeTrialComponent": "Client/Controller/Modules/TimeTrials/TimeTrialComponent@TimeTrialComponent",
