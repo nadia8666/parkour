@@ -1,6 +1,6 @@
 import type { ItemEnums } from "../Types";
 
-@CreateAssetMenu("Parkour/Item/New", "New Item.asset")
+@CreateAssetMenu("Parkour/Item/New", "Item.asset")
 export default class ItemObject extends AirshipScriptableObject {
 	@Header("Item Info")
 	public Name: string;

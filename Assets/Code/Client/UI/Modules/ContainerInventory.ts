@@ -1,6 +1,6 @@
 import type { Inventory } from "Code/Shared/Types";
-import type DraggableSlotComponent from "../Drag/DraggableSlotComponent";
-import { CallbackType } from "../Drag/DraggableSlotComponent";
+import type SlotComponent from "../Drag/SlotComponent";
+import { CallbackType } from "../Drag/SlotComponent";
 
 export class ContainerInventory {
 	public Contents: GameObject[] = [];
@@ -26,7 +26,7 @@ export class ContainerInventory {
 			Slot.transform.SetParent(this.Container, false);
 			this.Contents.push(Slot);
 
-			const Drag = Slot.GetAirshipComponent<DraggableSlotComponent>()!;
+			const Drag = Slot.GetAirshipComponent<SlotComponent>()!;
 			Drag.CallbackType = CallbackType.ContainerInventory;
 			Drag.CIS_Inventory = this.LinkedInventory;
 			Drag.SlotID = Index;

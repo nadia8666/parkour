@@ -103,8 +103,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   guid: 6ded830e-4a02-4f2a-864b-5f723e8e7a8d
-  script: {fileID: -3639529724776267727, guid: 7e2bd329a4cedba4bac1aaa1ee3bfc90, type: 3}
-  scriptPath: Assets/Code/Client/UI/Drag/DraggableSlotComponent.lua
+  script: {fileID: 175483563061795409, guid: 3e77f3bdc9ed71241bc4d8af800e527c, type: 3}
+  scriptPath: Assets/Code/Client/UI/Drag/SlotComponent.lua
   forceContext: 0
   metadata:
     name: DraggableSlotComponent
@@ -141,7 +141,7 @@ MonoBehaviour:
         objectType: 
         serializedItems: []
         objectRefs: []
-      refPath: Code/Client/UI/Drag/DraggableSlotComponent@CallbackType
+      refPath: Code/Client/UI/Drag/SlotComponent@CallbackType
       fileRef: 
       jsDocs:
         text: []
@@ -151,58 +151,6 @@ MonoBehaviour:
       serializedValue: 1
       serializedObject: {fileID: 0}
       modified: 1
-    - name: LS_TargetSlot
-      type: StringEnum
-      objectType: 
-      items:
-        type: 
-        objectType: 
-        serializedItems: []
-        objectRefs: []
-      refPath: ::global@0801697fa5dca7f181825c734f20a1b501652980
-      fileRef: 
-      jsDocs:
-        text: []
-        tags: []
-      decorators:
-      - name: ShowIf
-        parameters:
-        - type: string
-          serializedValue: '"CallbackType"'
-        - type: number
-          serializedValue: 0
-      - name: Header
-        parameters:
-        - type: string
-          serializedValue: '"Loadout Slot Config"'
-      nullable: 0
-      serializedValue: Grip
-      serializedObject: {fileID: 0}
-      modified: 0
-    - name: LS_SlotID
-      type: number
-      objectType: 
-      items:
-        type: 
-        objectType: 
-        serializedItems: []
-        objectRefs: []
-      refPath: 
-      fileRef: 
-      jsDocs:
-        text: []
-        tags: []
-      decorators:
-      - name: ShowIf
-        parameters:
-        - type: string
-          serializedValue: '"CallbackType"'
-        - type: number
-          serializedValue: 0
-      nullable: 0
-      serializedValue: 
-      serializedObject: {fileID: 0}
-      modified: 0
     - name: Tooltip
       type: AirshipBehaviour
       objectType: TooltipComponent
@@ -221,7 +169,7 @@ MonoBehaviour:
       serializedValue: 
       serializedObject: {fileID: 2731064001715974787}
       modified: 1
-    - name: IS_Inventory
+    - name: PlayerInventory
       type: string
       objectType: 
       items:
@@ -241,11 +189,25 @@ MonoBehaviour:
           serializedValue: '"CallbackType"'
         - type: number
           serializedValue: 1
+        - type: number
+          serializedValue: 0
+      - name: Header
+        parameters:
+        - type: string
+          serializedValue: '"Inventory Slot Config"'
+      - name: ShowIf
+        parameters:
+        - type: string
+          serializedValue: '"CallbackType"'
+        - type: number
+          serializedValue: 1
+        - type: number
+          serializedValue: 0
       nullable: 0
       serializedValue: 
       serializedObject: {fileID: 0}
       modified: 0
-    - name: IS_SlotID
+    - name: SlotID
       type: number
       objectType: 
       items:
@@ -265,30 +227,8 @@ MonoBehaviour:
           serializedValue: '"CallbackType"'
         - type: number
           serializedValue: 1
-      nullable: 0
-      serializedValue: 
-      serializedObject: {fileID: 0}
-      modified: 0
-    - name: CIS_SlotID
-      type: number
-      objectType: 
-      items:
-        type: 
-        objectType: 
-        serializedItems: []
-        objectRefs: []
-      refPath: 
-      fileRef: 
-      jsDocs:
-        text: []
-        tags: []
-      decorators:
-      - name: ShowIf
-        parameters:
-        - type: string
-          serializedValue: '"CallbackType"'
         - type: number
-          serializedValue: 2
+          serializedValue: 0
       nullable: 0
       serializedValue: 
       serializedObject: {fileID: 0}

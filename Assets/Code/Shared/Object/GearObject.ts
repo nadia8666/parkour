@@ -1,6 +1,6 @@
 import type { GearSlots } from "../Types";
 
-@CreateAssetMenu("Parkour/New Gear", "New Gear.asset")
+@CreateAssetMenu("Parkour/New Gear", "Gear.asset")
 export default class GearObject extends AirshipScriptableObject {
 	@Header("Registry Info")
 	public Slot: GearSlots;

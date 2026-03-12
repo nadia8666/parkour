@@ -1,0 +1,119 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 242626de727c4fe4ab54046da100263e, type: 3}
+  m_Name: Stick
+  m_EditorClassIdentifier: 
+  _scriptPath: Assets/Code/Shared/Object/RecipeObject.lua
+  _script: {fileID: 1174209668973173756, guid: 77bfd5bbfad2d984aa31c36fec97b26f, type: 3}
+  metadata:
+    name: RecipeObject
+    singleton: 0
+    decorators:
+    - name: CreateAssetMenu
+      parameters:
+      - type: string
+        serializedValue: '"Parkour/New Recipe"'
+      - type: string
+        serializedValue: '"Recipe.asset"'
+    properties:
+    - name: OutputItem
+      type: string
+      objectType: 
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators:
+      - name: Header
+        parameters:
+        - type: string
+          serializedValue: '"Output"'
+      nullable: 0
+      serializedValue: item,Stick,4
+      serializedObject: {fileID: 0}
+      modified: 1
+    - name: InputItems
+      type: Array
+      objectType: 
+      items:
+        type: string
+        objectType: 
+        serializedItems:
+        - block:OakPlanks:2
+        objectRefs:
+        - {fileID: 0}
+      refPath: 
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators:
+      - name: Header
+        parameters:
+        - type: string
+          serializedValue: '"Input"'
+      nullable: 0
+      serializedValue: 
+      serializedObject: {fileID: 0}
+      modified: 1
+    - name: InputLayout
+      type: string
+      objectType: 
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators:
+      - name: Multiline
+        parameters: []
+      nullable: 0
+      serializedValue: '000
+
+        000
+
+        000'
+      serializedObject: {fileID: 0}
+      modified: 1
+    - name: Shaped
+      type: boolean
+      objectType: 
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators:
+      - name: Multiline
+        parameters: []
+      nullable: 0
+      serializedValue: 0
+      serializedObject: {fileID: 0}
+      modified: 1
+    displayIcon: {fileID: 0}
+    displayName: 
