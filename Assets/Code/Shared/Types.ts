@@ -80,6 +80,12 @@ export namespace World {
 		Mountain,
 		Snow,
 	}
+
+	export enum GenerationStep {
+		Terrain = 20,
+		Ore = 10,
+		Water = 0,
+	}
 }
 
 export namespace ItemEnums {

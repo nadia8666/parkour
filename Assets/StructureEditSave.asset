@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba323a6048de1a5408ffef08e844ed0c, type: 3}
+  m_Name: StructureEditSave
+  m_EditorClassIdentifier: 
+  chunks: []
+  blockIdToScopeName:
+  - id: 0
+    name: air
+  - id: 1
+    name: '@Inkyaker/parkour:Grass'
+  - id: 2
+    name: '@Inkyaker/parkour:Dirt'
+  - id: 3
+    name: '@Inkyaker/parkour:Stone'
+  - id: 4
+    name: '@Inkyaker/parkour:CoalOre'
+  - id: 5
+    name: '@Inkyaker/parkour:IronOre'
+  - id: 6
+    name: '@Inkyaker/parkour:GoldOre'
+  - id: 7
+    name: '@Inkyaker/parkour:Sand'
+  - id: 8
+    name: '@Inkyaker/parkour:Sandstone'
+  - id: 9
+    name: '@Inkyaker/parkour:Snow'
+  - id: 10
+    name: '@Inkyaker/parkour:Water'
+  - id: 11
+    name: '@Inkyaker/parkour:ShortGrass'
+  - id: 12
+    name: '@Inkyaker/parkour:WoodenChest'
+  - id: 13
+    name: '@Inkyaker/parkour:OakLog'
+  chunksCompressed: 28b52ffd601a5f1d0100780200010010001000000d40000d003005005baf0ab05ef0a1520ceef2ff018f3b4004
+  chunksCompressedV2: 1

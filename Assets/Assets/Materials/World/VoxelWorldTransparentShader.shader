@@ -26,7 +26,6 @@ Shader "Unlit/VoxelWorldTransparentShader"
             HLSLPROGRAM
             #pragma vertex vert
             #pragma fragment frag
-            #pragma multi_compile_fragment _ _SCREEN_SPACE_OCCLUSION
             
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
@@ -35,22 +34,29 @@ Shader "Unlit/VoxelWorldTransparentShader"
             {
                 float4 positionOS : POSITION;
                 float3 normalOS   : NORMAL;
+                float2 damageUV   : TEXCOORD1; 
             };
 
             struct Varyings
             {
                 float4 positionCS : SV_POSITION;
                 float3 positionWS : TEXCOORD0;
+                float3 positionOS : TEXCOORD3;
                 float3 normalWS   : TEXCOORD1;
+                float3 normalOS   : TEXCOORD4;
+                float2 damageUV   : TEXCOORD5;
             };
 
             TEXTURE2D(_BaseMap);
             SAMPLER(sampler_BaseMap);
-            
             TEXTURE3D(_Lightmap);
             SAMPLER(sampler_Lightmap);
+            TEXTURE2D_ARRAY(_DamageTexArray);
+            SAMPLER(sampler_DamageTexArray);
+
             float4 _GridCenter;
             float4 _GridSize;
+            float _VerticalOffset;
 
             CBUFFER_START(UnityPerMaterial)
                 float4 _BaseMap_ST;
@@ -61,29 +67,40 @@ Shader "Unlit/VoxelWorldTransparentShader"
                 Varyings output;
                 output.positionWS = TransformObjectToWorld(input.positionOS.xyz);
                 output.positionCS = TransformObjectToHClip(input.positionOS.xyz);
+                output.positionOS = input.positionOS.xyz;
+                output.normalOS = input.normalOS;
                 output.normalWS = TransformObjectToWorldNormal(input.normalOS);
+                output.damageUV = input.damageUV;
                 return output;
             }
 
             float4 frag(Varyings input) : SV_Target
             {
-                float3 normal = normalize(input.normalWS);
-                float3 blend = abs(normal);
+                float3 triplanarPos = input.positionOS + _VerticalOffset;
+                float3 localNormal = normalize(input.normalOS);
+                float3 blend = abs(localNormal);
                 blend /= (blend.x + blend.y + blend.z);
 
-                float2 uvX = input.positionWS.zy * _BaseMap_ST.xy + _BaseMap_ST.zw;
-                float2 uvY = input.positionWS.xz * _BaseMap_ST.xy + _BaseMap_ST.zw;
-                float2 uvZ = input.positionWS.xy * _BaseMap_ST.xy + _BaseMap_ST.zw;
+                float2 uvX = triplanarPos.zy * _BaseMap_ST.xy + _BaseMap_ST.zw;
+                float2 uvY = triplanarPos.xz * _BaseMap_ST.xy + _BaseMap_ST.zw;
+                float2 uvZ = triplanarPos.xy * _BaseMap_ST.xy + _BaseMap_ST.zw;
 
-                float4 colX = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, uvX);
-                float4 colY = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, uvY);
-                float4 colZ = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, uvZ);
-                float4 triplanar = colX * blend.x + colY * blend.y + colZ * blend.z;
+                float4 triplanar = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, uvX) * blend.x +
+                                SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, uvY) * blend.y +
+                                SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, uvZ) * blend.z;
 
-                float3 adjustedPos = input.positionWS + (normal * 0.1);
+                float damageIndex = input.damageUV.x * 6;
+                
+                float4 damageTex = SAMPLE_TEXTURE2D_ARRAY(_DamageTexArray, sampler_DamageTexArray, uvX, damageIndex) * blend.x +
+                                SAMPLE_TEXTURE2D_ARRAY(_DamageTexArray, sampler_DamageTexArray, uvY, damageIndex) * blend.y +
+                                SAMPLE_TEXTURE2D_ARRAY(_DamageTexArray, sampler_DamageTexArray, uvZ, damageIndex) * blend.z;
+
+                triplanar.rgb = lerp(triplanar.rgb, damageTex.rgb, damageTex.a);
+
+                float3 normalWS = normalize(input.normalWS);
+                float3 adjustedPos = input.positionWS + (normalWS * 0.5);
                 float3 uvw = (adjustedPos - _GridCenter.xyz + (_GridSize.xyz/2)) / _GridSize.xyz;
                 float light = SAMPLE_TEXTURE3D(_Lightmap, sampler_Lightmap, float3(uvw.x, floor(adjustedPos.y)/_GridSize.y, uvw.z)).r;
-                //half ao = SampleAmbientOcclusion(GetNormalizedScreenSpaceUV(input.positionCS));
 
                 return float4(triplanar.rgb * light, triplanar.a);
             }
