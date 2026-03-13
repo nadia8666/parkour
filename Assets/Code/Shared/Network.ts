@@ -40,6 +40,7 @@ export namespace Network {
 		DropItem: new NetworkSignal<[string, number, number]>("Network/Generic/DropItem"),
 		DropItemFromBlockContainer: new NetworkSignal<[Vector3, number, number]>("Network/Generic/DropItemFromBlockContainer"),
 		GetDroppedItemData: new NetworkFunction<number, AnyItem | undefined>("Network/Generic/GetDroppedItemData"),
+		CraftRecipe: new NetworkFunction<[string], boolean>("Network/Generic/CraftRecipe"),
 	};
 
 	const SyncerSignal = new NetworkSignal<[string, unknown]>("Network/Internal/SyncerSignal");

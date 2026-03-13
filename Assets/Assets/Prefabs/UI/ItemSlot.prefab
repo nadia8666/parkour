@@ -50,11 +50,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   guid: 12243cb0-2234-4dcf-b16c-fa99c2884d67
-  script: {fileID: -3639529724776267727, guid: 7e2bd329a4cedba4bac1aaa1ee3bfc90, type: 3}
-  scriptPath: Assets/Code/Client/UI/Drag/DraggableSlotComponent.lua
+  script: {fileID: 175483563061795409, guid: 3e77f3bdc9ed71241bc4d8af800e527c, type: 3}
+  scriptPath: Assets/Code/Client/UI/Drag/SlotComponent.lua
   forceContext: 0
   metadata:
-    name: DraggableSlotComponent
+    name: SlotComponent
     singleton: 0
     decorators: []
     properties:
@@ -73,9 +73,9 @@ MonoBehaviour:
         tags: []
       decorators: []
       nullable: 0
-      serializedValue: 1
+      serializedValue: 0
       serializedObject: {fileID: 0}
-      modified: 0
+      modified: 1
     - name: CallbackType
       type: IntEnum
       objectType: 
@@ -84,14 +84,14 @@ MonoBehaviour:
         objectType: 
         serializedItems: []
         objectRefs: []
-      refPath: Code/Client/UI/Drag/DraggableSlotComponent@CallbackType
+      refPath: Code/Client/UI/Drag/SlotComponent@CallbackType
       fileRef: 
       jsDocs:
         text: []
         tags: []
       decorators: []
       nullable: 0
-      serializedValue: 3
+      serializedValue: 4
       serializedObject: {fileID: 0}
       modified: 0
     - name: Tooltip

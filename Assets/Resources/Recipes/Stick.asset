@@ -54,7 +54,7 @@ MonoBehaviour:
         type: string
         objectType: 
         serializedItems:
-        - block:OakPlanks:2
+        - block,OakPlanks,2
         objectRefs:
         - {fileID: 0}
       refPath: 
@@ -113,6 +113,24 @@ MonoBehaviour:
         parameters: []
       nullable: 0
       serializedValue: 0
+      serializedObject: {fileID: 0}
+      modified: 1
+    - name: Name
+      type: string
+      objectType: 
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators: []
+      nullable: 0
+      serializedValue: Stick
       serializedObject: {fileID: 0}
       modified: 1
     displayIcon: {fileID: 0}

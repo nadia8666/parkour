@@ -2,8 +2,16 @@ import Core from "Code/Core/Core";
 import type { GearRegistryKey } from "../GearRegistry";
 import { type AnyItem, ItemTypes } from "../Types";
 
+export interface RecipeMidState {
+	Item: AnyItem;
+	AmountOwned: number;
+	ToDecrement: AnyItem[];
+}
+
 @CreateAssetMenu("Parkour/New Recipe", "Recipe.asset")
 export default class RecipeObject extends AirshipScriptableObject {
+	public Name: string;
+
 	@Header("Output")
 	public OutputItem: string;
 
@@ -16,6 +24,7 @@ export default class RecipeObject extends AirshipScriptableObject {
 
 	public ItemFromString(ItemName: string): AnyItem {
 		const [Type, Name, Amount, MiscData] = ItemName.split(",");
+
 		const BaseItem = {
 			Key: Name,
 			Amount: tonumber(Amount)!,

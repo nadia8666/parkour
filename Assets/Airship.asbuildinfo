@@ -576,6 +576,13 @@
 			"extends": [],
 			"singleton": false
 		},
+		"SlotComponent": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "Code\\Client\\UI\\Drag\\SlotComponent.lua",
+			"extends": [],
+			"singleton": false
+		},
 		"UIController": {
 			"component": true,
 			"type": "AirshipBehaviour",
@@ -1193,20 +1200,6 @@
 			"filePath": "Code\\Server\\test.lua",
 			"extends": [],
 			"singleton": false
-		},
-		"DraggableSlotComponent": {
-			"component": true,
-			"type": "AirshipBehaviour",
-			"filePath": "Code\\Client\\UI\\Drag\\SlotComponent.lua",
-			"extends": [],
-			"singleton": false
-		},
-		"SlotComponent": {
-			"component": true,
-			"type": "AirshipBehaviour",
-			"filePath": "Code\\Client\\UI\\Drag\\SlotComponent.lua",
-			"extends": [],
-			"singleton": false
 		}
 	},
 	"extends": {
@@ -1232,6 +1225,13 @@
 	},
 	"serializables": {},
 	"scriptables": {
+		"RecipeObject": {
+			"component": true,
+			"type": "AirshipScriptableObject",
+			"filePath": "Code\\Shared\\Object\\RecipeObject.lua",
+			"extends": [],
+			"singleton": false
+		},
 		"GearObject": {
 			"component": true,
 			"type": "AirshipScriptableObject",
@@ -1239,17 +1239,17 @@
 			"extends": [],
 			"singleton": false
 		},
-		"ItemObject": {
-			"component": true,
-			"type": "AirshipScriptableObject",
-			"filePath": "Code\\Shared\\Object\\ItemObject.lua",
-			"extends": [],
-			"singleton": false
-		},
 		"StructureObject": {
 			"component": true,
 			"type": "AirshipScriptableObject",
 			"filePath": "Code\\Shared\\Object\\StructureObject.lua",
+			"extends": [],
+			"singleton": false
+		},
+		"ItemObject": {
+			"component": true,
+			"type": "AirshipScriptableObject",
+			"filePath": "Code\\Shared\\Object\\ItemObject.lua",
 			"extends": [],
 			"singleton": false
 		},
@@ -1264,13 +1264,6 @@
 			"component": true,
 			"type": "AirshipScriptableObject",
 			"filePath": "Code\\Shared\\Object\\SoundBankObject.lua",
-			"extends": [],
-			"singleton": false
-		},
-		"RecipeObject": {
-			"component": true,
-			"type": "AirshipScriptableObject",
-			"filePath": "Code\\Shared\\Object\\RecipeObject.lua",
 			"extends": [],
 			"singleton": false
 		}
@@ -1991,6 +1984,26 @@
 			"inherits": []
 		},
 		{
+			"name": "SettingsController",
+			"id": "Code/Client/Framework/SettingsController@SettingsController",
+			"file": "Code/Client/Framework/SettingsController.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "WorldSingleton",
+			"id": "Code/Client/Framework/WorldSingleton@WorldSingleton",
+			"file": "Code/Client/Framework/WorldSingleton.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
 			"name": "ClientComponent",
 			"id": "Code/Client/Controller/ClientComponent@ClientComponent",
 			"file": "Code/Client/Controller/ClientComponent.ts",
@@ -2073,6 +2086,16 @@
 			"inherits": []
 		},
 		{
+			"name": "DragController",
+			"id": "Code/Client/UI/Drag/DragController@DragController",
+			"file": "Code/Client/UI/Drag/DragController.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
 			"name": "ServerService",
 			"id": "Code/Server/ServerService@ServerService",
 			"file": "Code/Server/ServerService.ts",
@@ -2083,9 +2106,9 @@
 			"inherits": []
 		},
 		{
-			"name": "DataService",
-			"id": "Code/Server/Data/DataService@DataService",
-			"file": "Code/Server/Data/DataService.ts",
+			"name": "GearController",
+			"id": "Code/Client/Controller/Gear/GearController@GearController",
+			"file": "Code/Client/Controller/Gear/GearController.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"
@@ -2505,6 +2528,16 @@
 			"inherits": []
 		},
 		{
+			"name": "GearObject",
+			"id": "Code/Shared/Object/GearObject@GearObject",
+			"file": "Code/Shared/Object/GearObject.ts",
+			"declarationType": "AirshipScriptableObject",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
 			"name": "GearRegistrySingleton",
 			"id": "Code/Shared/GearRegistry@GearRegistrySingleton",
 			"file": "Code/Shared/GearRegistry.ts",
@@ -2519,6 +2552,26 @@
 			"id": "Code/Client/Components/TooltipComponent@TooltipComponent",
 			"file": "Code/Client/Components/TooltipComponent.ts",
 			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "StructureObject",
+			"id": "Code/Shared/Object/StructureObject@StructureObject",
+			"file": "Code/Shared/Object/StructureObject.ts",
+			"declarationType": "AirshipScriptableObject",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "ItemObject",
+			"id": "Code/Shared/Object/ItemObject@ItemObject",
+			"file": "Code/Shared/Object/ItemObject.ts",
+			"declarationType": "AirshipScriptableObject",
 			"modifiers": [
 				"default"
 			],
@@ -2945,89 +2998,19 @@
 			"inherits": []
 		},
 		{
-			"name": "StructureObject",
-			"id": "Code/Shared/Object/StructureObject@StructureObject",
-			"file": "Code/Shared/Object/StructureObject.ts",
-			"declarationType": "AirshipScriptableObject",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "WorldSingleton",
-			"id": "Code/Client/Framework/WorldSingleton@WorldSingleton",
-			"file": "Code/Client/Framework/WorldSingleton.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "SettingsController",
-			"id": "Code/Client/Framework/SettingsController@SettingsController",
-			"file": "Code/Client/Framework/SettingsController.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "ItemObject",
-			"id": "Code/Shared/Object/ItemObject@ItemObject",
-			"file": "Code/Shared/Object/ItemObject.ts",
-			"declarationType": "AirshipScriptableObject",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "GearObject",
-			"id": "Code/Shared/Object/GearObject@GearObject",
-			"file": "Code/Shared/Object/GearObject.ts",
-			"declarationType": "AirshipScriptableObject",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "GearController",
-			"id": "Code/Client/Controller/Gear/GearController@GearController",
-			"file": "Code/Client/Controller/Gear/GearController.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "SlotComponent",
-			"id": "Code/Client/UI/Drag/DraggableSlotComponent@SlotComponent",
-			"file": "Code/Client/UI/Drag/DraggableSlotComponent.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "DragController",
-			"id": "Code/Client/UI/Drag/DragController@DragController",
-			"file": "Code/Client/UI/Drag/DragController.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
 			"name": "SlotComponent",
 			"id": "Code/Client/UI/Drag/SlotComponent@SlotComponent",
 			"file": "Code/Client/UI/Drag/SlotComponent.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "DataService",
+			"id": "Code/Server/Data/DataService@DataService",
+			"file": "Code/Server/Data/DataService.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"
@@ -3084,7 +3067,7 @@
 			"typescript:Code/Shared/Utility/ItemUtil@ItemUtil.InventoryOutputData": "Shared/Utility/ItemUtil@ItemUtil.InventoryOutputData",
 			"typescript:Code/Shared/Components/BlockContainerComponent@BlockContainerComponent": "Shared/Components/BlockContainerComponent@BlockContainerComponent",
 			"typescript:Code/Shared/Components/InteractableBlockComponent@InteractableBlockComponent": "Shared/Components/InteractableBlockComponent@InteractableBlockComponent",
-			"typescript:Code/Client/UI/Drag/DraggableSlotComponent@DraggableSlotComponent": "Client/UI/Drag/DraggableSlotComponent@DraggableSlotComponent",
+			"typescript:Code/Client/UI/Drag/SlotComponent@SlotComponent": "Client/UI/Drag/SlotComponent@SlotComponent",
 			"typescript:Code/Client/UI/Modules/ContainerInventory@ContainerInventory": "Client/UI/Modules/ContainerInventory@ContainerInventory",
 			"typescript:Code/Client/UI/UIController@UIController": "Client/UI/UIController@UIController",
 			"typescript:Code/Client/UI/Modules/Hotbar@Hotbar": "Client/UI/Modules/Hotbar@Hotbar",
@@ -3092,6 +3075,7 @@
 			"typescript:Code/Server/ServerInteractions@ServerInteractions": "Server/ServerInteractions@ServerInteractions",
 			"typescript:Code/Server/ServerService@ServerService": "Server/ServerService@ServerService",
 			"typescript:Code/Client/Controller/Gear/GearController@GearController": "Client/Controller/Gear/GearController@GearController",
+			"typescript:Code/Shared/Object/RecipeObject@RecipeObject": "Shared/Object/RecipeObject@RecipeObject",
 			"typescript:Code/Server/Data/DataService@DataService": "Server/Data/DataService@DataService",
 			"typescript:Code/Client/Controller/Modules/TimeTrials/TimeTrials@TimeTrials": "Client/Controller/Modules/TimeTrials/TimeTrials@TimeTrials",
 			"typescript:Code/Client/Controller/SoundController@SoundController": "Client/Controller/SoundController@SoundController",
@@ -3099,6 +3083,7 @@
 			"typescript:Code/Shared/Object/GearObject@GearObject": "Shared/Object/GearObject@GearObject",
 			"typescript:Code/Shared/GearRegistry@GearRegistrySingleton": "Shared/GearRegistry@GearRegistrySingleton",
 			"typescript:Code/Client/Components/TooltipComponent@TooltipComponent": "Client/Components/TooltipComponent@TooltipComponent",
+			"typescript:Code/Shared/Object/StructureObject@StructureObject": "Shared/Object/StructureObject@StructureObject",
 			"typescript:Code/Shared/Object/ItemObject@ItemObject": "Shared/Object/ItemObject@ItemObject",
 			"typescript:Code/Server/Modules/Spawner@CharacterSpawner": "Server/Modules/Spawner@CharacterSpawner",
 			"typescript:Code/Client/Controller/Modules/Zipline/Ziplines@Ziplines": "Client/Controller/Modules/Zipline/Ziplines@Ziplines",
@@ -3106,18 +3091,12 @@
 			"typescript:Code/Shared/Provider@Provider": "Shared/Provider@Provider",
 			"typescript:Code/Shared/Components/EntityComponent@EntityComponent": "Shared/Components/EntityComponent@EntityComponent",
 			"typescript:Code/Client/Controller/Modules/Ladder/LadderComponent@LadderComponent": "Client/Controller/Modules/Ladder/LadderComponent@LadderComponent",
-			"typescript:Code/Shared/Object/StructureObject@StructureObject": "Shared/Object/StructureObject@StructureObject",
 			"typescript:Code/Shared/Utility/Noise@NoiseHandler": "Shared/Utility/Noise@NoiseHandler",
 			"typescript:Code/Shared/Object/TimeTrialObject@TimeTrialObject": "Shared/Object/TimeTrialObject@TimeTrialObject",
 			"typescript:Code/Client/Controller/Modules/TimeTrials/TimeTrialComponent@TimeTrialComponent": "Client/Controller/Modules/TimeTrials/TimeTrialComponent@TimeTrialComponent",
 			"typescript:Code/Client/Controller/Modules/Zipline/ZiplineComponent@ZiplineComponent": "Client/Controller/Modules/Zipline/ZiplineComponent@ZiplineComponent",
 			"typescript:Code/Shared/Object/SoundBankObject@SoundBankObject": "Shared/Object/SoundBankObject@SoundBankObject",
-			"typescript:Code/Server/test@testcomponent": "Server/test@testcomponent",
-			"typescript:Code/Shared/Object/RecipeObject@GearObject": "Shared/Object/RecipeObject@GearObject",
-			"typescript:Code/Shared/Object/RecipeObject@RecipeObject": "Shared/Object/RecipeObject@RecipeObject",
-			"typescript:Code/Client/UI/Drag/DraggableSlotComponent@SlotComponent": "Client/UI/Drag/DraggableSlotComponent@SlotComponent",
-			"typescript:Code/Client/UI/Drag/SlotComponent@SlotComponent": "Client/UI/Drag/SlotComponent@SlotComponent",
-			"typescript:Code/Client/UI/Drag/SlotComponent@DraggableSlotComponent": "Client/UI/Drag/SlotComponent@DraggableSlotComponent"
+			"typescript:Code/Server/test@testcomponent": "Server/test@testcomponent"
 		}
 	}
 }

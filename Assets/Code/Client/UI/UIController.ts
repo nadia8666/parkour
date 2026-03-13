@@ -4,6 +4,7 @@ import { Binding } from "@Easy/Core/Shared/Input/Binding";
 import { Mouse } from "@Easy/Core/Shared/UserInput";
 import { Bin } from "@Easy/Core/Shared/Util/Bin";
 import Core from "Code/Core/Core";
+import { Network } from "Code/Shared/Network";
 import type RecipeObject from "Code/Shared/Object/RecipeObject";
 import { type AnyItem, ItemTypes } from "Code/Shared/Types";
 import TooltipComponent from "../Components/TooltipComponent";
@@ -120,7 +121,6 @@ export default class UIController extends AirshipSingleton {
 		const Recipes = Asset.LoadAll("Assets/Resources/Recipes", true) as RecipeObject[];
 		Recipes.forEach((Recipe) => {
 			const ItemSlot = Instantiate(this.Hotbar.SlotTemplate);
-			this.Contents.push(ItemSlot);
 			ItemSlot.transform.SetParent(this.CraftingContainer.transform, false);
 
 			const Slot = ItemSlot.GetAirshipComponent<SlotComponent>()!;
@@ -128,7 +128,8 @@ export default class UIController extends AirshipSingleton {
 			Slot.Draggable = false;
 			Slot.SlotContents = Recipe.ItemFromString(Recipe.OutputItem);
 			Slot.UpdateContents();
-			print(Slot.SlotContents);
+
+			Slot.ClickCallback = () => Network.Generic.CraftRecipe.client.FireServer(Recipe.Name);
 		});
 	}
 

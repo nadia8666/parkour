@@ -45,12 +45,13 @@ export default class SlotComponent extends AirshipBehaviour {
 	@ShowIf("CallbackType", CallbackType.ContainerInventory)
 	public CIS_Inventory: Inventory;
 
+	// Misc
+	public ClickCallback: (() => void) | undefined;
+
 	@Client()
 	override OnEnable() {
 		this.Connections.Add(
 			Mouse.onLeftDown.Connect(() => {
-				if (this.IsDraggable()) return;
-
 				if (Core().Client.UI.RaycastUI() === this.gameObject) this.DragStart();
 			}),
 		);
@@ -72,6 +73,10 @@ export default class SlotComponent extends AirshipBehaviour {
 	}
 
 	public DragStart() {
+		if (this.ClickCallback) this.ClickCallback();
+
+		if (this.IsDraggable()) return;
+		
 		Core().Client.Drag.StartDrag(this);
 	}
 
