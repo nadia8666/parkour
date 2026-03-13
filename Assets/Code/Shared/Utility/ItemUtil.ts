@@ -85,6 +85,7 @@ export namespace ItemUtil {
 		}
 
 		function CheckInventory(Name: string) {
+			// Match pass
 			for (const Index of $range(1, Inventories[Name].Size)) {
 				const Content = Inventories[Name].Content[Index];
 
@@ -99,7 +100,14 @@ export namespace ItemUtil {
 						OutputData.Item = Utility.DeepCopyWithOverrides(Content, { Amount: TotalAmount, ObtainedTime: os.clock() });
 						return true;
 					}
-				} else if (!Content) {
+				}
+			}
+
+			// Empty pass
+			for (const Index of $range(1, Inventories[Name].Size)) {
+				const Content = Inventories[Name].Content[Index];
+
+				if (!Content) {
 					OutputData.WasFound = true;
 					OutputData.Inventory = Name;
 					OutputData.Slot = Index;
