@@ -2998,16 +2998,6 @@
 			"inherits": []
 		},
 		{
-			"name": "SlotComponent",
-			"id": "Code/Client/UI/Drag/SlotComponent@SlotComponent",
-			"file": "Code/Client/UI/Drag/SlotComponent.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
 			"name": "DataService",
 			"id": "Code/Server/Data/DataService@DataService",
 			"file": "Code/Server/Data/DataService.ts",
@@ -3031,6 +3021,16 @@
 			"name": "UIController",
 			"id": "Code/Client/UI/UIController@UIController",
 			"file": "Code/Client/UI/UIController.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "SlotComponent",
+			"id": "Code/Client/UI/Drag/SlotComponent@SlotComponent",
+			"file": "Code/Client/UI/Drag/SlotComponent.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"
