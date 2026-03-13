@@ -1,9 +1,12 @@
+import { Asset } from "@Easy/Core/Shared/Asset";
 import type { Player } from "@Easy/Core/Shared/Player/Player";
 import { NetworkUtil } from "@Easy/Core/Shared/Util/NetworkUtil";
 import Core from "Code/Core/Core";
 import type DroppedItemEntityComponent from "Code/Shared/Components/DroppedItemEntityComponent";
 import type InteractableBlockComponent from "Code/Shared/Components/InteractableBlockComponent";
 import { Network } from "Code/Shared/Network";
+import type RecipeObject from "Code/Shared/Object/RecipeObject";
+import type { RecipeMidState } from "Code/Shared/Object/RecipeObject";
 import { type BlockItem, ItemTypes } from "Code/Shared/Types";
 import { ItemUtil } from "Code/Shared/Utility/ItemUtil";
 import type ServerService from "./ServerService";
@@ -51,6 +54,70 @@ export class ServerInteractions {
 
 		Network.VoxelWorld.Try.BreakBlock.server.SetCallback((Player, Pos, Index) => this.TryBreakBlock(Player, Pos, Index));
 		Network.VoxelWorld.Try.PlaceBlock.server.SetCallback((Player, Pos, Index) => this.TryPlaceBlock(Player, Pos, Index));
+
+		Network.Generic.CraftRecipe.server.SetCallback((Player, RecipeName) => {
+			const Recipe = Asset.LoadAssetIfExists(`Assets/Resources/Recipes/${RecipeName}.asset`) as RecipeObject;
+			if (!Recipe) return false;
+
+			const Character = this.Server.CharacterMap.get(Player);
+			if (!Character) return false;
+
+			const Inventories = this.Server.DataService.GetPlayerData(Player).Inventories;
+			const OutItem = Recipe.ItemFromString(Recipe.OutputItem);
+			const InItems: RecipeMidState[] = [];
+
+			for (const ItemName of Recipe.InputItems) {
+				const Item = Recipe.ItemFromString(ItemName);
+				InItems.push({ Item: Item, AmountOwned: 0, ToDecrement: [] });
+			}
+
+			let HasResources = true;
+			InItems.forEach((Item) => {
+				for (const [_, Inventory] of pairs(Inventories)) {
+					if (Item.AmountOwned >= Item.Item.Amount) continue;
+					for (const [_, InventoryItem] of pairs(Inventory.Content)) {
+						if (InventoryItem.Type === Item.Item.Type && InventoryItem.Key === Item.Item.Key && Item.AmountOwned < Item.Item.Amount) {
+							Item.AmountOwned += InventoryItem.Amount;
+							Item.ToDecrement.push(InventoryItem);
+							if (Item.AmountOwned >= Item.Item.Amount) {
+								Item.AmountOwned = Item.Item.Amount;
+								break;
+							}
+						}
+					}
+				}
+
+				if (Item.AmountOwned < Item.Item.Amount) {
+					HasResources = false;
+				}
+			});
+
+			if (HasResources) {
+				InItems.forEach((Item) => {
+					for (const [_, Inventory] of pairs(Inventories)) {
+						for (const [Index, InventoryItem] of pairs(Inventory.Content)) {
+							if (Item.ToDecrement.includes(InventoryItem)) {
+								const Amount = InventoryItem.Amount;
+								InventoryItem.Amount = math.max(Amount - Item.AmountOwned, 0);
+								if (InventoryItem.Amount <= 0) delete Inventory.Content[Index];
+
+								const Diff = Amount - InventoryItem.Amount;
+								Item.AmountOwned -= Diff;
+							}
+						}
+					}
+				});
+
+				const TargetInventory = ItemUtil.GetNextSlotForItem(OutItem, Inventories);
+				if (TargetInventory) {
+					TargetInventory.SetItem();
+				} else ItemUtil.SpawnDroppedItem(Character.transform.position.add(Vector3.up), Character.transform.forward.add(Vector3.up).mul(3), OutItem);
+
+				return true;
+			}
+
+			return false;
+		});
 	}
 
 	public TryBreakBlock(_Player: Player, Pos: Vector3, _Index: number) {
@@ -60,7 +127,7 @@ export class ServerInteractions {
 		const NewItem: BlockItem = {
 			Type: ItemTypes.Block,
 			ObtainedTime: os.clock(),
-			Key: `VoxelBlock`,
+			Key: Core().World.GetDefinitionFromBlock(BlockDef).blockName,
 			UID: Guid.NewGuid().ToString(),
 			Amount: 1,
 			BlockID: BlockDef,
