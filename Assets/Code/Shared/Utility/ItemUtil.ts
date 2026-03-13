@@ -65,31 +65,32 @@ export namespace ItemUtil {
 		}
 	}
 
+	export function ItemMatches(ComparedItem: AnyItem, Item: AnyItem) {
+		if (ComparedItem.Type !== Item.Type) return false;
+		if (ComparedItem.Temporary !== Item.Temporary) return false;
+		if (ComparedItem.Key !== Item.Key) return false;
+
+		switch (Item.Type) {
+			case ItemTypes.Gear:
+				return false;
+			case ItemTypes.Item:
+				return ComparedItem.Key === Item.Key;
+			case ItemTypes.Block:
+				return Item.BlockID === (ComparedItem as BlockItem).BlockID;
+			default:
+				return false;
+		}
+	}
+
 	export function GetNextSlotForItem<T extends AnyItem>(Item: T, Inventories: { [Index: string]: Inventory }) {
 		const OutputData = new InventoryOutputData(Item);
-		function DoesMatch(ComparedItem: AnyItem) {
-			if (ComparedItem.Type !== Item.Type) return false;
-			if (ComparedItem.Temporary !== Item.Temporary) return false;
-			if (ComparedItem.Key !== Item.Key) return false;
-
-			switch (Item.Type) {
-				case ItemTypes.Gear:
-					return false;
-				case ItemTypes.Item:
-					return ComparedItem.Key === Item.Key;
-				case ItemTypes.Block:
-					return Item.BlockID === (ComparedItem as BlockItem).BlockID;
-				default:
-					return false;
-			}
-		}
 
 		function CheckInventory(Name: string) {
 			// Match pass
 			for (const Index of $range(1, Inventories[Name].Size)) {
 				const Content = Inventories[Name].Content[Index];
 
-				if (Content && DoesMatch(Content)) {
+				if (Content && ItemMatches(Content, Item)) {
 					const TotalAmount = Content.Amount + Item.Amount;
 
 					if (TotalAmount <= Config.MaxStackSize) {

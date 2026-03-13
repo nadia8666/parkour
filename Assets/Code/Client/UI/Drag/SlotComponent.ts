@@ -5,7 +5,9 @@ import Core from "Code/Core/Core";
 import type InteractableBlockComponent from "Code/Shared/Components/InteractableBlockComponent";
 import { Network } from "Code/Shared/Network";
 import { type AnyItem, type Inventory, ItemTypes } from "Code/Shared/Types";
+import { ItemUtil } from "Code/Shared/Utility/ItemUtil";
 import { ModelBuilder } from "Code/Shared/Utility/ModelBuilder";
+import { Utility } from "Code/Shared/Utility/Utility";
 
 export enum CallbackType {
 	Loadout,
@@ -76,7 +78,7 @@ export default class SlotComponent extends AirshipBehaviour {
 		if (this.ClickCallback) this.ClickCallback();
 
 		if (this.IsDraggable()) return;
-		
+
 		Core().Client.Drag.StartDrag(this);
 	}
 
@@ -147,8 +149,13 @@ export default class SlotComponent extends AirshipBehaviour {
 
 			if (TargetIsLoadout) if (!ContentAsGear || Target.PlayerInventory !== ContentAsGear.Slot) return;
 
-			TargetInventory.Content[Target.SlotID] = MyContents;
-			MyInventory.Content[this.SlotID] = TargetContents;
+			if (ItemUtil.ItemMatches(MyContents, TargetContents)) {
+				TargetInventory.Content[Target.SlotID] = Utility.DeepCopyWithOverrides(TargetContents, { ObtainedTime: os.clock(), Amount: TargetContents.Amount + MyContents.Amount });
+				delete MyInventory.Content[this.SlotID];
+			} else {
+				TargetInventory.Content[Target.SlotID] = MyContents;
+				MyInventory.Content[this.SlotID] = TargetContents;
+			}
 
 			Target.UpdateContents();
 			this.UpdateContents();
