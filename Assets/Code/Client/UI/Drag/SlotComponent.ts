@@ -31,6 +31,7 @@ export default class SlotComponent extends AirshipBehaviour {
 	@NonSerialized()
 	public SlotContents: AnyItem | undefined;
 	public Tooltip: TooltipComponent | undefined;
+	public AmountText: TMP_Text | undefined;
 
 	// Inventory Slot
 	@ShowIf("CallbackType", CallbackType.Inventory, CallbackType.Loadout)
@@ -48,6 +49,7 @@ export default class SlotComponent extends AirshipBehaviour {
 	public CIS_Inventory: Inventory;
 
 	// Misc
+	private ContentObject: GameObject | undefined;
 	public ClickCallback: (() => void) | undefined;
 
 	@Client()
@@ -85,7 +87,10 @@ export default class SlotComponent extends AirshipBehaviour {
 	public UpdateContents() {
 		this.FetchContents();
 
-		this.gameObject.ClearChildren();
+		if (this.ContentObject) {
+			Destroy(this.ContentObject);
+			this.ContentObject = undefined;
+		}
 
 		if (this.SlotContents) {
 			const [Type, Item] = ModelBuilder.BuildItemModel(this.SlotContents);
@@ -110,6 +115,16 @@ export default class SlotComponent extends AirshipBehaviour {
 						Item.GetComponent<MeshRenderer>()!.SetPropertyBlock(Block);
 					}
 				}
+
+				this.ContentObject = Item;
+			}
+		}
+
+		if (this.AmountText) {
+			this.AmountText.gameObject.SetActive(!!this.SlotContents);
+
+			if (this.SlotContents) {
+				this.AmountText.text = `${this.SlotContents.Amount}`;
 			}
 		}
 
