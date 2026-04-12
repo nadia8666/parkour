@@ -1,5 +1,5 @@
-//--!native
-//--!optimize 2
+//!native
+//!optimize 2
 
 const Floor = math.floor;
 const Sqrt = math.sqrt;
