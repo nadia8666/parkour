@@ -10,12 +10,12 @@ export namespace Network {
 		UpdateSetting: new NetworkSignal<[keyof Settings, ValueOf<Settings>]>("Network/Data/UpdateSetting"),
 	};
 
-	export const VoxelWorld = {
-		GetInitialChunks: new NetworkSignal<void>("Network/VoxelWorld/GetInitialChunks"),
-		SetLoadedStatus: new NetworkSignal<number>("Network/VoxelWorld/SetLoadedStatus"),
-		WriteGroup: new NetworkSignal<[Vector3[], readonly number[]]>("Network/VoxelWorld/WriteGroup"),
-		WriteVoxel: new NetworkSignal<[Vector3, number]>("Network/VoxelWorld/WriteVoxel"),
-		GetInitialContainerInventory: new NetworkFunction<string, Inventory>("Network/VoxelWorld/GetInitialContainerInventory"),
+	export const Level = {
+		GetInitialChunks: new NetworkSignal<void>("Network/Level/GetInitialChunks"),
+		SetLoadedStatus: new NetworkSignal<number>("Network/Level/SetLoadedStatus"),
+		WriteGroup: new NetworkSignal<[Vector3[], readonly string[]]>("Network/Level/WriteGroup"),
+		WriteVoxel: new NetworkSignal<[Vector3, string]>("Network/Level/WriteVoxel"),
+		GetInitialContainerInventory: new NetworkFunction<string, Inventory>("Network/Level/GetInitialContainerInventory"),
 
 		Try: {
 			/**
@@ -23,8 +23,8 @@ export namespace Network {
 			 * @param Slot Hotbar Slot
 			 * @returns Successful
 			 */
-			BreakBlock: new NetworkFunction<[Vector3, number], boolean>("Network/VoxelWorld/Try/BreakBlock"),
-			PlaceBlock: new NetworkFunction<[Vector3, number], boolean>("Network/VoxelWorld/Try/PlaceBlock"),
+			BreakBlock: new NetworkFunction<[Vector3, number], boolean>("Network/Level/Try/BreakBlock"),
+			PlaceBlock: new NetworkFunction<[Vector3, number], boolean>("Network/Level/Try/PlaceBlock"),
 		},
 	};
 

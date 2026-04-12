@@ -7,6 +7,7 @@ import ENV from "Code/Server/ENV";
 import type GenericTrigger from "../../Components/Collision/GenericTriggerComponent";
 import type ClientComponent from "../ClientComponent";
 import { Actions } from "../ClientInput";
+import { Utility } from "Code/Shared/Utility/Utility";
 
 export interface CastResults {
 	Hit: boolean;
@@ -103,10 +104,11 @@ export class MovesetBase {
 				break;
 			case "Footstep": {
 				if (Controller.Floor.Touching || Controller.State === "Wallrun") {
-					const GroundVoxel = Core().World.World.GetVoxelBlockDefAt(VoxelWorld.FloorInt(Controller.transform.position.sub(new Vector3(0, 0.5, 0)))).definition;
+					const GroundVoxel = Core().World.Level.GetBlockAt(Utility.Floor(Controller.transform.position.sub(new Vector3(0, 0.5, 0)))).Block.Definition;
 
+					// TODO: put into the block class
 					const Sound = (() => {
-						switch (GroundVoxel.name) {
+						switch (GroundVoxel.RegistryID) {
 							case "Grass":
 								return "_grass";
 							case "Sand":

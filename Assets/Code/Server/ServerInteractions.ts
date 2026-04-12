@@ -2,6 +2,7 @@ import { Asset } from "@Easy/Core/Shared/Asset";
 import type { Player } from "@Easy/Core/Shared/Player/Player";
 import { NetworkUtil } from "@Easy/Core/Shared/Util/NetworkUtil";
 import Core from "Code/Core/Core";
+import Blocks from "Code/Core/Registry/Blocks";
 import type DroppedItemEntityComponent from "Code/Shared/Components/DroppedItemEntityComponent";
 import type InteractableBlockComponent from "Code/Shared/Components/InteractableBlockComponent";
 import { Network } from "Code/Shared/Network";
@@ -32,6 +33,8 @@ export class ServerInteractions {
 		});
 
 		Network.Generic.DropItemFromBlockContainer.server.OnClientEvent((Player, BlockPos, Index, Amount) => {
+			// TODO: reimplement
+			/*
 			const Prefab = Core().World.World.GetPrefabAt(BlockPos);
 			if (!Prefab) return;
 
@@ -45,6 +48,7 @@ export class ServerInteractions {
 			if (!Character) return;
 
 			ItemUtil.DropItem(Item, Amount, Character, () => delete Inventory.Content[Index]);
+			*/
 		});
 
 		Network.Generic.GetDroppedItemData.server.SetCallback((_Player, NetworkID) => {
@@ -52,8 +56,8 @@ export class ServerInteractions {
 			if (NetworkIdentity) return NetworkIdentity.gameObject.GetAirshipComponent<DroppedItemEntityComponent>()?.Item;
 		});
 
-		Network.VoxelWorld.Try.BreakBlock.server.SetCallback((Player, Pos, Index) => this.TryBreakBlock(Player, Pos, Index));
-		Network.VoxelWorld.Try.PlaceBlock.server.SetCallback((Player, Pos, Index) => this.TryPlaceBlock(Player, Pos, Index));
+		Network.Level.Try.BreakBlock.server.SetCallback((Player, Pos, Index) => this.TryBreakBlock(Player, Pos, Index));
+		Network.Level.Try.PlaceBlock.server.SetCallback((Player, Pos, Index) => this.TryPlaceBlock(Player, Pos, Index));
 
 		Network.Generic.CraftRecipe.server.SetCallback((Player, RecipeName) => {
 			const Recipe = Asset.LoadAssetIfExists(`Assets/Resources/Recipes/${RecipeName}.asset`) as RecipeObject;
@@ -121,25 +125,26 @@ export class ServerInteractions {
 	}
 
 	public TryBreakBlock(_Player: Player, Pos: Vector3, _Index: number) {
-		const BlockDef = Core().World.World.GetVoxelAt(Pos);
-		if (!BlockDef) return false;
+		const State = Core().World.Level.GetBlockAt(Pos);
+		if (!State) return false;
 
 		const NewItem: BlockItem = {
 			Type: ItemTypes.Block,
 			ObtainedTime: os.clock(),
-			Key: Core().World.GetDefinitionFromBlock(BlockDef).blockName,
+			Key: State.Block.Definition.RegistryID,
 			UID: Guid.NewGuid().ToString(),
 			Amount: 1,
-			BlockID: BlockDef,
+			BlockID: State.Block.Identifier.AsString(),
 			Attributes: {},
 		};
 
-		Core().World.WriteBlockAt(Pos, 0, true);
+		Core().World.WriteBlockAt(Pos, Blocks.Air.Identifier.AsString(), true);
 		ItemUtil.SpawnDroppedItem(Pos.add(Vector3.one.mul(0.5)), ItemUtil.GetDroppedItemVelocity(), NewItem, {
 			PickupDelay: 0.5,
 		});
 
-		if (Core().World.GetBlockAt(Pos.add(Vector3.up)) === Core().World.GetBlockID("ShortGrass")) Core().World.WriteBlockAt(Pos.add(Vector3.up), 0, true);
+		if (Core().World.GetBlockAt(Pos.add(Vector3.up)) === Core().World.GetBlockID("ShortGrass"))
+			Core().World.WriteBlockAt(Pos.add(Vector3.up), Blocks.Air.Identifier.AsString(), true);
 
 		return true;
 	}

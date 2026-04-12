@@ -9,9 +9,11 @@ export class Registry<T> {
 
 	public Register(Target: T, ID: string) {
 		const Container = this.Connections.get(new Identifier(this.Namespace, ID));
-		if (Container) for (const [Callback] of pairs(Container)) if (Callback(Target)) return;
+		if (Container) for (const [Callback] of pairs(Container)) if (Callback(Target)) return Target;
 
 		this.Instances.set(new Identifier(this.Namespace, ID), Target);
+
+		return Target;
 	}
 
 	public OnRegister(ID: string, Callback: (Object: T) => void | boolean) {

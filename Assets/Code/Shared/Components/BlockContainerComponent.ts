@@ -15,7 +15,7 @@ export default class BlockContainerComponent extends AirshipBehaviour {
 	override Start() {
 		this.Link = new DualLink<Inventory>(
 			`BlockContainer${this.ID}`,
-			Game.IsClient() && !ENV.Shared ? Network.VoxelWorld.GetInitialContainerInventory.client.FireServer(`BlockContainer${this.ID}`) : { Size: this.SlotCount, Content: {} },
+			Game.IsClient() && !ENV.Shared ? Network.Level.GetInitialContainerInventory.client.FireServer(`BlockContainer${this.ID}`) : { Size: this.SlotCount, Content: {} },
 			{ AutoReplicate: true },
 		);
 		this.Inventory = this.Link.Data;

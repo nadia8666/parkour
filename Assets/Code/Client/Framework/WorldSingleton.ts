@@ -1,8 +1,12 @@
-// ai assisted
-
 import { Airship } from "@Easy/Core/Shared/Airship";
 import { Asset } from "@Easy/Core/Shared/Asset";
 import Core from "Code/Core/Core";
+import Blocks from "Code/Core/Registry/Blocks";
+import { Identifier } from "Code/Core/Registry/Identifier";
+import type BlockDef from "Code/Core/World/Block/BlockDef";
+import type { BlockState } from "Code/Core/World/Block/BlockState";
+import { Chunk } from "Code/Core/World/Level/Chunk";
+import { Level } from "Code/Core/World/Level/Level";
 import ENV from "Code/Server/ENV";
 import { SettingsService } from "Code/Server/SettingsService";
 import type InteractableBlockComponent from "Code/Shared/Components/InteractableBlockComponent";
@@ -13,6 +17,7 @@ import type StructureObject from "Code/Shared/Object/StructureObject";
 import { RandomChance, StructureRotationType } from "Code/Shared/Object/StructureObject";
 import { type Inventory, ItemTypes, type PlayerInfoGetter, World } from "Code/Shared/Types";
 import { NoiseHandler } from "Code/Shared/Utility/Noise";
+import { Utility } from "Code/Shared/Utility/Utility";
 import { DualLink } from "@inkyaker/DualLink/Code";
 import Config from "../Config";
 import { Settings } from "./SettingsController";
@@ -33,7 +38,6 @@ class ChunkManager {
 	public readonly LoadedChunks = new Set<Vector3>();
 	public readonly SurfaceLoadedChunks = new Set<Vector3>();
 
-	private readonly BlockCache = new Map<string, number>();
 	private readonly TaskQueue: ChunkTask[] = [];
 	private readonly ModifiedBlocks = new Map<Vector3, number>();
 
@@ -65,7 +69,7 @@ class ChunkManager {
 		return ChunkKey.sub(this.ToKey(PlayerPosition)).magnitude <= RangeChunks;
 	}
 
-	public GetBiomeBlock(BiomeID: World.BiomeTypes, Depth: number, WorldY: number): number {
+	public GetBiomeBlock(BiomeID: World.BiomeTypes, Depth: number, WorldY: number): string {
 		if ([World.BiomeTypes.Desert, World.BiomeTypes.Ocean].includes(BiomeID)) {
 			if (Depth < 5) return this.GetBlock("Sand");
 			if (Depth < 12) return this.GetBlock("Sandstone");
@@ -145,7 +149,7 @@ class ChunkManager {
 
 			const ExecutePass = (Step: World.GenerationStep) => {
 				const Positions: Vector3[] = [];
-				const Blocks: number[] = [];
+				const Blocks: string[] = [];
 				const StructurePass: { Position: Vector3; Structures: StructureObject[] }[] = [];
 
 				for (let x = 0; x < 16; x++) {
@@ -172,7 +176,7 @@ class ChunkManager {
 
 							if (!this.CanModifyBlock(Position, -1)) continue;
 
-							let Target = 0;
+							let Target = "";
 							const ViableStructures: StructureObject[] = [];
 
 							if (Step === World.GenerationStep.Terrain && WorldY <= SurfaceY) {
@@ -192,7 +196,7 @@ class ChunkManager {
 							} else if (Step === World.GenerationStep.Water && WorldY > SurfaceY && WorldY <= Config.WaterLevel) {
 								Target = this.GetBlock("Water");
 							} else if (Step === World.GenerationStep.Ore && WorldY <= SurfaceY) {
-								const CurrentBlock = instance().World.GetVoxelAt(Position);
+								const CurrentBlock = instance().GetBlockAt(Position);
 								if (CurrentBlock === this.GetBlock("Stone")) {
 									const OreNoise = Noise.Get3DFBM(WorldX, WorldY, WorldZ, 1, 0.15, 2, 0.6, 2) / 2 + 0.5;
 									if (OreNoise > 0.8) {
@@ -203,7 +207,7 @@ class ChunkManager {
 								}
 							}
 
-							if (Target !== 0 && this.CanModifyBlock(Position, Step)) {
+							if (Target !== "" && this.CanModifyBlock(Position, Step)) {
 								Positions.push(Position);
 								Blocks.push(Target);
 								this.MarkBlockModified(Position, Step);
@@ -219,8 +223,7 @@ class ChunkManager {
 				}
 
 				if (Positions.size() > 0) {
-					instance().World.WriteVoxelGroupAt(Positions, Blocks, Priority);
-					if (!ENV.Shared) Network.VoxelWorld.WriteGroup.server.FireAllClients(Positions, Blocks);
+					instance().WriteBlockGroupAt(Positions, Blocks, Priority);
 				}
 
 				for (const Pass of StructurePass) {
@@ -260,10 +263,9 @@ class ChunkManager {
 
 			const Data = Structure.GetData();
 			const Positions: Vector3[] = [];
-			const Blocks: number[] = [];
+			const Blocks: string[] = [];
 
 			if (Structure.RotationType === StructureRotationType.YAxis) {
-				// rotate 0-360 degrees in 90 degree increments (0, 90, 180, 270)
 				const RotationAmount = math.random(0, 3);
 				if (RotationAmount > 0)
 					Data.blockPositions.forEach((Position, Index) => {
@@ -289,8 +291,7 @@ class ChunkManager {
 			}
 
 			if (Positions.size() > 0) {
-				instance().World.WriteVoxelGroupAt(Positions, Blocks, false);
-				if (!ENV.Shared) Network.VoxelWorld.WriteGroup.server.FireAllClients(Positions, Blocks);
+				instance().WriteBlockGroupAt(Positions, Blocks, false);
 				break;
 			}
 		}
@@ -308,6 +309,8 @@ class ChunkManager {
 				}
 			}
 		}
+
+		instance().Level.UnloadChunk(ChunkKey);
 	}
 
 	private TryPropagate(
@@ -349,17 +352,13 @@ class ChunkManager {
 	}
 
 	public GetBlock(Name: string) {
-		let BlockID = this.BlockCache.get(Name);
-		if (BlockID) return BlockID;
-		BlockID = instance().World.voxelBlocks.GetBlockIdFromStringId(`@Inkyaker/parkour:${Name}`);
-		this.BlockCache.set(Name, BlockID);
-		return BlockID;
+		return `parkour:${Name}`;
 	}
 }
 
 export default class WorldSingleton extends AirshipSingleton {
 	@Header("Shared Properties")
-	public World: VoxelWorld;
+	public Level = new Level();
 
 	@Header("Client Properties")
 	@NonSerialized()
@@ -379,7 +378,6 @@ export default class WorldSingleton extends AirshipSingleton {
 	@NonSerialized() public LastUpdate = 0;
 	@NonSerialized() public WorldReady = false;
 
-	// Lifecycle Events
 	public Start() {
 		if ($CLIENT) {
 			Network.Sync.SetSeed.client.OnServerEvent((Seed) => {
@@ -390,11 +388,11 @@ export default class WorldSingleton extends AirshipSingleton {
 			if (Config.Seed === 0) Network.Sync.SetSeed.client.FireServer(0);
 
 			let LoadedChunks = 0;
-			Network.VoxelWorld.WriteGroup.client.OnServerEvent((PosArr, Blocks) => {
-				this.World.WriteVoxelGroupAt(PosArr, Blocks, false);
+			Network.Level.WriteGroup.client.OnServerEvent((PosArr, BlocksArr) => {
+				this.WriteBlockGroupAt(PosArr, BlocksArr, false);
 				LoadedChunks++;
 			});
-			Network.VoxelWorld.WriteVoxel.client.OnServerEvent((Pos, Block) => this.World.WriteVoxelAt(Pos, Block, true));
+			Network.Level.WriteVoxel.client.OnServerEvent((Pos, Block) => this.WriteBlockAt(Pos, Block, true));
 
 			this.LightingTexture = new Texture3D(this.Resolution, this.Resolution, this.Resolution, TextureFormat.R8, false, true);
 			const Pixels: Color[] = [];
@@ -407,12 +405,8 @@ export default class WorldSingleton extends AirshipSingleton {
 			this.LightingTexture.mipMapBias = 0;
 			this.LightingTexture.Apply();
 
-			this.World.VoxelChunkUpdated.Connect((_Chunk) => {
-				this.IsDirty = true;
-			});
-
-			Network.VoxelWorld.GetInitialChunks.client.FireServer();
-			Network.VoxelWorld.SetLoadedStatus.client.OnServerEvent((NumChunks) => {
+			Network.Level.GetInitialChunks.client.FireServer();
+			Network.Level.SetLoadedStatus.client.OnServerEvent((NumChunks) => {
 				while (LoadedChunks < NumChunks) task.wait();
 				this.WorldReady = true;
 				warn("Client world ready!");
@@ -420,7 +414,7 @@ export default class WorldSingleton extends AirshipSingleton {
 		}
 
 		if ($SERVER) {
-			Network.VoxelWorld.GetInitialChunks.server.OnClientEvent((Player) => {
+			Network.Level.GetInitialChunks.server.OnClientEvent((Player) => {
 				if (ENV.Shared) return;
 				while (!this.WorldReady) task.wait();
 
@@ -429,17 +423,18 @@ export default class WorldSingleton extends AirshipSingleton {
 					if (!Player) return;
 					task.spawn(() => {
 						const PositionArray = this.ChunkManager.ExpandCube(this.ChunkManager.FromKey(Chunk), 15);
-						Network.VoxelWorld.WriteGroup.server.FireClient(Player, PositionArray, this.World.BulkReadVoxels(PositionArray));
+						const BlocksArray = PositionArray.map((pos) => this.GetBlockAt(pos));
+						Network.Level.WriteGroup.server.FireClient(Player, PositionArray, BlocksArray);
 					});
 
 					Iterations++;
 					if (Iterations % 5 === 0) task.wait();
 				}
 
-				Network.VoxelWorld.SetLoadedStatus.server.FireClient(Player, Iterations);
+				Network.Level.SetLoadedStatus.server.FireClient(Player, Iterations);
 			});
 
-			Network.VoxelWorld.GetInitialContainerInventory.server.SetCallback((_, LinkID) => {
+			Network.Level.GetInitialContainerInventory.server.SetCallback((_, LinkID) => {
 				assert(LinkID.includes("BlockContainer"));
 				const Link = DualLink.FromID(LinkID) as DualLink<Inventory>;
 				return Link?.Data;
@@ -497,12 +492,14 @@ export default class WorldSingleton extends AirshipSingleton {
 			const Surface = this.ChunkManager.GetTerrainHeight(Cont, Det);
 			Config.SpawnPos = new Vector3(0, Surface + 4, 0);
 
+			//TODO: reimplement once world renderer is finished
+			/*
 			if (ENV.Runtime === "DEV") {
 				task.wait(1);
 				const Pos = new Vector3(0, Surface + 15, 0);
-				this.World.WriteVoxelAt(Pos, this.ChunkManager.GetBlock("WoodenChest"), true);
-				while (!this.World.GetPrefabAt(Pos)) task.wait();
-				const Block = this.World.GetPrefabAt(Pos).GetAirshipComponent<InteractableBlockComponent>(true)!;
+				this.WriteBlockAt(Pos, this.ChunkManager.GetBlock("WoodenChest"), true);
+				while (!(this.Level as any).GetPrefabAt(Pos)) task.wait();
+				const Block = (this.Level as any).GetPrefabAt(Pos).GetAirshipComponent<InteractableBlockComponent>(true)!;
 				task.wait(0.1);
 				let Elements = 0;
 				for (const [GearID, Gear] of pairs(GearRegistrySingleton.Get())) {
@@ -527,6 +524,7 @@ export default class WorldSingleton extends AirshipSingleton {
 
 				warn("Debug chest spawned!");
 			}
+			*/
 
 			this.WorldReady = true;
 		}
@@ -537,7 +535,7 @@ export default class WorldSingleton extends AirshipSingleton {
 			const Actor = Core().Client.Actor;
 			if (!Actor) return;
 
-			this.ActorPosition = VoxelWorld.Floor(Actor.transform.position);
+			this.ActorPosition = Utility.Floor(Actor.transform.position);
 
 			const x = math.floor(this.ActorPosition.x / this.ChunkSize) * this.ChunkSize;
 			const y = math.floor(this.ActorPosition.y / this.ChunkSize) * this.ChunkSize;
@@ -640,28 +638,81 @@ export default class WorldSingleton extends AirshipSingleton {
 		}
 	}
 
-	// Utility Functions
-	public GetDefinitionFromBlock(BlockID: number) {
-		return this.World.voxelBlocks.GetBlockDefinitionFromBlockId(BlockID).definition;
-	}
-	public GetBlockFromDef(BlockDef: VoxelBlockDefinition) {
-		return this.ChunkManager.GetBlock(BlockDef.name);
-	}
-
-	public WriteBlockAt(Position: Vector3, BlockID: number, Priority: boolean = false) {
-		this.World.WriteVoxelAt(Position, BlockID, Priority);
-
-		if ($SERVER && !ENV.Shared) Network.VoxelWorld.WriteVoxel.server.FireAllClients(Position, BlockID);
+	private GetStateFromString(BlockID: string): BlockState {
+		const ID = Identifier.Parse(BlockID);
+		for (const [Key, Block] of Blocks.Registry.Instances) {
+			if (Key.AsString() === ID.AsString()) {
+				return Block.NewBlockState();
+			}
+		}
+		return Blocks.Air.NewBlockState();
 	}
 
-	public WriteBlockGroupAt(Position: Vector3[], BlockID: number[], Priority: boolean = false) {
-		this.World.WriteVoxelGroupAt(Position, BlockID, Priority);
-
-		if ($SERVER && !ENV.Shared) Network.VoxelWorld.WriteGroup.server.FireAllClients(Position, BlockID);
+	public GetDefinitionFromBlock(BlockID: string) {
+		const ID = Identifier.Parse(BlockID);
+		for (const [Key, Block] of Blocks.Registry.Instances) {
+			if (Key.AsString() === ID.AsString()) return Block.Definition;
+		}
+		return Blocks.Air.Definition;
 	}
 
-	public GetBlockAt(Pos: Vector3) {
-		return this.World.GetVoxelAt(Pos);
+	public GetBlockFromDef(Def: BlockDef) {
+		return `parkour:${Def.RegistryID}`;
+	}
+
+	public WriteBlockAt(Position: Vector3, BlockID: string, Priority: boolean = false) {
+		const Key = Utility.Vector.ToKey(Position);
+		let TargetChunk = this.Level.Chunks.get(Key);
+
+		if (!TargetChunk) {
+			TargetChunk = new Chunk(this.Level, Key);
+			this.Level.Chunks.set(Key, TargetChunk);
+		}
+
+		const Index = Utility.Vector.ToIndex(Position);
+		const State = this.GetStateFromString(BlockID);
+		const Prev = TargetChunk.Blocks[Index - 1];
+
+		this.Level.OnStateUpdate(TargetChunk, Prev, State);
+		TargetChunk.Blocks[Index - 1] = State;
+
+		if ($CLIENT) this.IsDirty = true;
+		if ($SERVER && !ENV.Shared) Network.Level.WriteVoxel.server.FireAllClients(Position, BlockID);
+	}
+
+	public WriteBlockGroupAt(Positions: Vector3[], BlockIDs: readonly string[], Priority: boolean = false) {
+		for (let i = 0; i < Positions.size(); i++) {
+			const Position = Positions[i];
+			const Key = Utility.Vector.ToKey(Position);
+			let TargetChunk = this.Level.Chunks.get(Key);
+
+			if (!TargetChunk) {
+				TargetChunk = new Chunk(this.Level, Key);
+				this.Level.Chunks.set(Key, TargetChunk);
+			}
+
+			const Index = Utility.Vector.ToIndex(Position);
+			const State = this.GetStateFromString(BlockIDs[i]);
+			const Prev = TargetChunk.Blocks[Index - 1];
+
+			this.Level.OnStateUpdate(TargetChunk, Prev, State);
+			TargetChunk.Blocks[Index - 1] = State;
+		}
+
+		if ($CLIENT) this.IsDirty = true;
+		if ($SERVER && !ENV.Shared) Network.Level.WriteGroup.server.FireAllClients(Positions, BlockIDs);
+	}
+
+	public GetBlockAt(Position: Vector3): string {
+		const Key = Utility.Vector.ToKey(Position);
+		const TargetChunk = this.Level.Chunks.get(Key);
+
+		if (!TargetChunk) return "parkour:Air";
+
+		const Index = Utility.Vector.ToIndex(Position);
+		const State = TargetChunk.Blocks[Index - 1];
+
+		return State ? State.Block.Identifier.AsString() : "parkour:Air";
 	}
 
 	public GetBlockID(Name: string) {
