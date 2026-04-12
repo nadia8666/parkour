@@ -14,20 +14,20 @@ export default class Blocks {
 		return Blocks.Registry.Register(Generator ? Generator("parkour", Get(ID)) : Block.FromDefinition("parkour", Get(ID)), ID);
 	}
 
-	public static Air = this.Register("Air");
-	public static Grass = this.Register("Grass");
-	public static Dirt = this.Register("Dirt");
-	public static Stone = this.Register("Stone");
-	public static Sand = this.Register("Sand");
-	public static Sandstone = this.Register("Sandstone");
-	public static CoalOre = this.Register("CoalOre");
-	public static IronOre = this.Register("IronOre");
-	public static GoldOre = this.Register("GoldOre");
-	public static Water = this.Register("Water");
-	public static OakLog = this.Register("OakLog");
-	public static OakPlanks = this.Register("OakPlanks");
-	public static OakLeaves = this.Register("OakLeaves");
-	public static Snow = this.Register("Snow");
-	public static ShortGrass = this.Register("ShortGrass");
-	public static WoodenChest = this.Register("WoodenChest");
+	public static Air = Blocks.Register("Air");
+	public static Grass = Blocks.Register("Grass");
+	public static Dirt = Blocks.Register("Dirt");
+	public static Stone = Blocks.Register("Stone");
+	public static Sand = Blocks.Register("Sand");
+	public static Sandstone = Blocks.Register("Sandstone");
+	public static CoalOre = Blocks.Register("CoalOre");
+	public static IronOre = Blocks.Register("IronOre");
+	public static GoldOre = Blocks.Register("GoldOre");
+	public static Water = Blocks.Register("Water");
+	public static OakLog = Blocks.Register("OakLog");
+	public static OakPlanks = Blocks.Register("OakPlanks");
+	public static OakLeaves = Blocks.Register("OakLeaves");
+	public static Snow = Blocks.Register("Snow");
+	public static ShortGrass = Blocks.Register("ShortGrass");
+	public static WoodenChest = Blocks.Register("WoodenChest");
 }

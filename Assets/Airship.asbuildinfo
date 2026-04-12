@@ -2233,16 +2233,6 @@
 			"inherits": []
 		},
 		{
-			"name": "GearController",
-			"id": "Code/Client/Controller/Gear/GearController@GearController",
-			"file": "Code/Client/Controller/Gear/GearController.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
 			"name": "RecipeObject",
 			"id": "Code/Shared/Object/RecipeObject@RecipeObject",
 			"file": "Code/Shared/Object/RecipeObject.ts",
@@ -3048,6 +3038,16 @@
 			"name": "WorldSingleton",
 			"id": "Code/Client/Framework/WorldSingleton@WorldSingleton",
 			"file": "Code/Client/Framework/WorldSingleton.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "GearController",
+			"id": "Code/Client/Controller/Gear/GearController@GearController",
+			"file": "Code/Client/Controller/Gear/GearController.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"
