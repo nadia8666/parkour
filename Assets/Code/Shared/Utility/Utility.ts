@@ -41,4 +41,30 @@ export namespace Utility {
 	export function FormatStringForName(InputString: string) {
 		return InputString.gsub("([%l%d])(%u)", "%1 %2")[0].gsub("(%u)(%u%l)", "%1 %2")[0].gsub("([%a])(%d)", "%1 %2")[0].gsub("(%d)([%a])", "%1 %2")[0];
 	}
+
+	export function Floor(Vector: Vector3) {
+		return new Vector3(math.floor(Vector.x), math.floor(Vector.y), math.floor(Vector.z));
+	}
+
+	export namespace Vector {
+		export function FromIndex(Index: number) {
+			return new Vector3(Index % 16, math.floor((Index % 256) / 16), math.floor(Index / 256));
+		}
+
+		export function ToIndex(Vector: Vector3) {
+			return Vector.z * 256 + Vector.y * 16 + Vector.x;
+		}
+
+		export function ToKey(Position: Vector3) {
+			return new Vector3(
+				Position.x >= 0 ? Position.x >> 4 : -(-(Position.x + 1) >> 4) - 1,
+				Position.y >= 0 ? Position.y >> 4 : -(-(Position.y + 1) >> 4) - 1,
+				Position.z >= 0 ? Position.z >> 4 : -(-(Position.z + 1) >> 4) - 1,
+			);
+		}
+
+		export function FromKey(ChunkKey: Vector3) {
+			return ChunkKey.mul(16);
+		}
+	}
 }

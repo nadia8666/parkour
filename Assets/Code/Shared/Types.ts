@@ -31,7 +31,7 @@ export interface GearItem extends BaseItemInfo<ItemTypes.Gear> {
 }
 
 export interface BlockItem extends BaseItemInfo<ItemTypes.Block> {
-	BlockID: number;
+	BlockID: string;
 }
 
 export type AnyItem = GearItem | BlockItem | BaseItemInfo<ItemTypes.Item>;

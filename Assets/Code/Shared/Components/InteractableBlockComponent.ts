@@ -1,6 +1,7 @@
 import type ClientComponent from "Code/Client/Controller/ClientComponent";
 import { UIMenus } from "Code/Client/UI/UIController";
 import Core from "Code/Core/Core";
+import { Utility } from "../Utility/Utility";
 import type BlockContainerComponent from "./BlockContainerComponent";
 
 export default class InteractableBlockComponent extends AirshipBehaviour {
@@ -8,7 +9,7 @@ export default class InteractableBlockComponent extends AirshipBehaviour {
 	@NonSerialized() public ID: string;
 
 	public Start() {
-		this.ID = `${VoxelWorld.FloorInt(this.transform.position)}`;
+		this.ID = `${Utility.Floor(this.transform.position)}`;
 		if (this.Container) {
 			this.Container.ID = this.ID;
 			this.Container.enabled = true;

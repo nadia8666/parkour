@@ -10,6 +10,7 @@ import SlotComponent from "../UI/Drag/SlotComponent";
 import type ClientComponent from "./ClientComponent";
 import { Actions } from "./ClientInput";
 import { Raycast } from "./Moveset/Base";
+import Blocks from "Code/Core/Registry/Blocks";
 
 export class ClientInteractions {
 	public BlockCursor: GameObject;
@@ -17,7 +18,7 @@ export class ClientInteractions {
 	public BreakProgress = 0;
 	public BreakingBlock = false;
 	public TargetNormal: Vector3 = Vector3.forward;
-	public World = new Provider(() => Core().World.World);
+	public World = new Provider(() => Core().World.Level);
 	constructor(private Controller: ClientComponent) {}
 
 	public OnEnable() {
@@ -42,9 +43,10 @@ export class ClientInteractions {
 			this.TargetNormal = Cast.Normal;
 		} else this.TargetedBlock = undefined;
 
+		// TODO: reimplement commented out parts
 		if (LastPos !== this.TargetedBlock) {
 			this.ResetBreakState();
-			if (LastPos) this.World.Get().DamageVoxelAt(LastPos, 0, true);
+			//if (LastPos) this.World.Get().DamageVoxelAt(LastPos, 0, true);
 		}
 
 		const Progress = this.BreakProgress;
@@ -52,15 +54,15 @@ export class ClientInteractions {
 			this.BreakProgress += DeltaTime * 2; // TODO: held item attributes (break speed) & block attributes (required tool for break)
 
 			if (this.BreakProgress >= 1) {
-				const BlockID = this.World.Get().GetVoxelAt(this.TargetedBlock);
-				if (!ENV.Shared) this.World.Get().WriteVoxelAt(this.TargetedBlock, 0, true);
-				if (!Network.VoxelWorld.Try.BreakBlock.client.FireServer(this.TargetedBlock, Core().Client.UI.Hotbar.SelectedSlot))
-					this.World.Get().WriteVoxelAt(this.TargetedBlock, BlockID, true);
+				const BlockID = this.World.Get().GetBlockAt(this.TargetedBlock);
+				if (!ENV.Shared) this.World.Get().SetBlockAt(this.TargetedBlock, Blocks.Air.NewBlockState(), true);
+				if (!Network.Level.Try.BreakBlock.client.FireServer(this.TargetedBlock, Core().Client.UI.Hotbar.SelectedSlot))
+					this.World.Get().SetBlockAt(this.TargetedBlock, BlockID, true);
 				// TODO: durability--
 			}
 		}
 
-		if (this.BreakProgress !== Progress && this.TargetedBlock) this.World.Get().DamageVoxelAt(this.TargetedBlock, math.min(this.BreakProgress, 1), true);
+		//if (this.BreakProgress !== Progress && this.TargetedBlock) this.World.Get().DamageVoxelAt(this.TargetedBlock, math.min(this.BreakProgress, 1), true);
 
 		this.BlockCursor.SetActive(Cast.Hit);
 	}
@@ -83,20 +85,21 @@ export class ClientInteractions {
 		if (this.Controller.UI.UI.Get().RaycastUI() || this.Controller.UI.UI.Get().AreMenusOpen()) return;
 		if (this.TargetedBlock) {
 			const HeldItem = Core().Client.UI.Hotbar.HeldItem;
-			const Prefab = this.Controller.World.World.GetPrefabAt(this.TargetedBlock);
+			//TODO: reimplement
+			//const Prefab = this.Controller.World.World.GetPrefabAt(this.TargetedBlock);
 			let TryPlace = true;
-			if (Prefab) {
-				const Interactable = Prefab.GetAirshipComponent<InteractableBlockComponent>(true);
-				if (Interactable?.OnUse(this.Controller)) TryPlace = false;
-			}
+			//if (Prefab) {
+			//	const Interactable = Prefab.GetAirshipComponent<InteractableBlockComponent>(true);
+			//	if (Interactable?.OnUse(this.Controller)) TryPlace = false;
+			//}
 
 			if (TryPlace && HeldItem) {
 				const [_, Index] = ItemUtil.FindItemInInventories(HeldItem);
 				const BlockPos = this.TargetedBlock.add(this.TargetNormal);
-				const BlockID = this.World.Get().GetVoxelAt(BlockPos);
-				if (!ENV.Shared) this.World.Get().WriteVoxelAt(BlockPos, 0, true);
+				const BlockID = this.World.Get().GetBlockAt(BlockPos);
+				if (!ENV.Shared) this.World.Get().SetBlockAt(BlockPos, Blocks.Air.NewBlockState(), true);
 
-				if (!Network.VoxelWorld.Try.PlaceBlock.client.FireServer(BlockPos, Index!)) this.World.Get().WriteVoxelAt(BlockPos, BlockID, true);
+				if (!Network.Level.Try.PlaceBlock.client.FireServer(BlockPos, Index!)) this.World.Get().SetBlockAt(BlockPos, BlockID, true);
 			}
 		}
 	}
@@ -122,6 +125,7 @@ export class ClientInteractions {
 
 	public ResetBreakState() {
 		this.BreakProgress = 0;
-		if (this.TargetedBlock) this.World.Get().DamageVoxelAt(this.TargetedBlock, 0, true);
+		// TODO: reimplement
+		//if (this.TargetedBlock) this.World.Get().DamageVoxelAt(this.TargetedBlock, 0, true);
 	}
 }
