@@ -1,6 +1,4 @@
 // ai assisted
-//--!native
-//--!optimize 2
 
 import { Airship } from "@Easy/Core/Shared/Airship";
 import { Asset } from "@Easy/Core/Shared/Asset";
