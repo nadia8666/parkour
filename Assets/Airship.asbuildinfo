@@ -1200,6 +1200,13 @@
 			"filePath": "Code\\Server\\test.lua",
 			"extends": [],
 			"singleton": false
+		},
+		"Blocks": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "Code\\Core\\Registry\\Blocks.lua",
+			"extends": [],
+			"singleton": true
 		}
 	},
 	"extends": {
@@ -3118,7 +3125,10 @@
 			"typescript:Code/Core/World/Level/Chunk@Chunk": "Core/World/Level/Chunk@Chunk",
 			"typescript:Code/Core/World/Level/Level@Level": "Core/World/Level/Level@Level",
 			"typescript:Code/Server/test@testcomponent": "Server/test@testcomponent",
-			"typescript:Code/Core/World/Block/BlockDef@BlockDef": "Core/World/Block/BlockDef@BlockDef"
+			"typescript:Code/Core/World/Block/BlockDef@BlockDef": "Core/World/Block/BlockDef@BlockDef",
+			"typescript:Code/Core/Registry/Registries@Registry": "Core/Registry/Registries@Registry",
+			"typescript:Code/Core/Registry/Blocks@Blocks": "Core/Registry/Blocks@Blocks",
+			"typescript:Code/Core/Registry/Identifier@Identifier": "Core/Registry/Identifier@Identifier"
 		}
 	}
 }

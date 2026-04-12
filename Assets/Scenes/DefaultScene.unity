@@ -131,6 +131,7 @@ GameObject:
   - component: {fileID: 107227}
   - component: {fileID: 107228}
   - component: {fileID: 107229}
+  - component: {fileID: 107230}
   m_Layer: 0
   m_Name: Singletons
   m_TagString: Untagged
@@ -448,7 +449,7 @@ MonoBehaviour:
           serializedValue: '"Shared Properties"'
       nullable: 0
       serializedValue: 
-      serializedObject: {fileID: 1594687465}
+      serializedObject: {fileID: 0}
       modified: 1
     - name: BlockBreakAtlas
       type: object
@@ -468,6 +469,29 @@ MonoBehaviour:
       serializedValue: 
       serializedObject: {fileID: 18700000, guid: 8aa8f720b0b9c144aa05310cb09c42df, type: 3}
       modified: 0
+    displayIcon: {fileID: 0}
+    displayName: 
+--- !u!114 &107230
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 107225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa4feffba88dce746a2607f0ec6233b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  guid: 
+  script: {fileID: -8788616494533299071, guid: 4aec8854a9749a149b4d1199b1d27db9, type: 3}
+  scriptPath: Assets/Code/Core/Registry/Blocks.lua
+  forceContext: 0
+  metadata:
+    name: 
+    singleton: 0
+    decorators: []
+    properties: []
     displayIcon: {fileID: 0}
     displayName: 
 --- !u!1 &6991713
@@ -5461,61 +5485,6 @@ Transform:
   - {fileID: 286022333}
   m_Father: {fileID: 1254367197}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1594687462
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1594687466}
-  - component: {fileID: 1594687465}
-  m_Layer: 0
-  m_Name: VoxelWorld
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 2147483647
-  m_IsActive: 1
---- !u!114 &1594687465
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1594687462}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ffdbf2e5de07a2a48be696e24d5b6e44, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  useSimplifiedVoxels: 0
-  useCameraAsFocusPosition: 1
-  autoLoad: 1
-  voxelWorldFile: {fileID: 11400000, guid: c521dc56fd171114f904f960855e464e, type: 2}
-  worldNetworker: {fileID: 0}
-  chunksFolder: {fileID: 0}
-  lightsFolder: {fileID: 0}
-  finishedReplicatingChunksFromServer: 0
-  voxelBlocks: {fileID: 1524569812}
-  mirrorAround: {x: 0, y: 0, z: 0}
-  renderingDisabled: 0
---- !u!4 &1594687466
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1594687462}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1611988705
 GameObject:
   m_ObjectHideFlags: 0
@@ -6844,6 +6813,5 @@ SceneRoots:
   - {fileID: 1254367197}
   - {fileID: 107226}
   - {fileID: 764383744}
-  - {fileID: 1594687466}
   - {fileID: 952012265}
   - {fileID: 1524569813}

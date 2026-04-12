@@ -9,62 +9,365 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 386bf32d3c5413243ac0ba141748a33a, type: 3}
+  m_Script: {fileID: 11500000, guid: 242626de727c4fe4ab54046da100263e, type: 3}
   m_Name: OakLeaves
   m_EditorClassIdentifier: 
-  blockName: OakLeaves
-  description: 
-  contextStyle: 0
-  meshMaterial: {fileID: 0}
-  halfBlock: 0
-  topTexture:
-    material: {fileID: 2100000, guid: 1bc8a66509ee6bf45bf38d2961746d37, type: 2}
-    diffuse: {fileID: 0}
-    normal: {fileID: 0}
-    smooth: {fileID: 0}
-    metallic: {fileID: 0}
-    emissive: {fileID: 0}
-  sideTexture:
-    material: {fileID: 0}
-    diffuse: {fileID: 0}
-    normal: {fileID: 0}
-    smooth: {fileID: 0}
-    metallic: {fileID: 0}
-    emissive: {fileID: 0}
-  bottomTexture:
-    material: {fileID: 0}
-    diffuse: {fileID: 0}
-    normal: {fileID: 0}
-    smooth: {fileID: 0}
-    metallic: {fileID: 0}
-    emissive: {fileID: 0}
-  quarterBlockMeshes: []
-  prefab: {fileID: 0}
-  staticMeshLOD0: {fileID: 0}
-  staticMeshLOD1: {fileID: 0}
-  staticMeshLOD2: {fileID: 0}
-  meshTile1x1x1:
-    mesh_LOD0: {fileID: 0}
-    mesh_LOD1: {fileID: 0}
-    mesh_LOD2: {fileID: 0}
-  meshTile2x2x2:
-    mesh_LOD0: {fileID: 0}
-    mesh_LOD1: {fileID: 0}
-    mesh_LOD2: {fileID: 0}
-  meshTile3x3x3:
-    mesh_LOD0: {fileID: 0}
-    mesh_LOD1: {fileID: 0}
-    mesh_LOD2: {fileID: 0}
-  meshTile4x4x4:
-    mesh_LOD0: {fileID: 0}
-    mesh_LOD1: {fileID: 0}
-    mesh_LOD2: {fileID: 0}
-  rotatedPlacement: 1
-  metallic: 0
-  smoothness: 0
-  normalScale: 1
-  emissive: 0
-  brightness: 1
-  solid: 0
-  collisionType: 1
-  randomRotation: 1
+  _scriptPath: Assets/Code/Core/World/Block/BlockDef.lua
+  _script: {fileID: 3562045200781824685, guid: 2ece6314b7118ef49ae7f3970b960411, type: 3}
+  metadata:
+    name: BlockDef
+    singleton: 0
+    decorators:
+    - name: CreateAssetMenu
+      parameters:
+      - type: string
+        serializedValue: '"Parkour/Block/New Definition"'
+      - type: string
+        serializedValue: '"Block.asset"'
+    properties:
+    - name: RegistryID
+      type: string
+      objectType: 
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators: []
+      nullable: 0
+      serializedValue: OakLeaves
+      serializedObject: {fileID: 0}
+      modified: 1
+    - name: DisplayName
+      type: string
+      objectType: 
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators: []
+      nullable: 0
+      serializedValue: Oak Leaves
+      serializedObject: {fileID: 0}
+      modified: 1
+    - name: ModelType
+      type: IntEnum
+      objectType: 
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: Code/Core/World/Block/BlockDef@BlockModel
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators: []
+      nullable: 0
+      serializedValue: 0
+      serializedObject: {fileID: 0}
+      modified: 0
+    - name: TopTexture
+      type: object
+      objectType: Material
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators:
+      - name: ShowIf
+        parameters:
+        - type: string
+          serializedValue: '"ModelType"'
+        - type: number
+          serializedValue: 0
+      nullable: 0
+      serializedValue: 
+      serializedObject: {fileID: 0}
+      modified: 0
+    - name: BottomTexture
+      type: object
+      objectType: Material
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators:
+      - name: ShowIf
+        parameters:
+        - type: string
+          serializedValue: '"ModelType"'
+        - type: number
+          serializedValue: 0
+      nullable: 0
+      serializedValue: 
+      serializedObject: {fileID: 0}
+      modified: 0
+    - name: NorthTexture
+      type: object
+      objectType: Material
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators:
+      - name: ShowIf
+        parameters:
+        - type: string
+          serializedValue: '"ModelType"'
+        - type: number
+          serializedValue: 0
+      nullable: 0
+      serializedValue: 
+      serializedObject: {fileID: 0}
+      modified: 0
+    - name: EastTexture
+      type: object
+      objectType: Material
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators:
+      - name: ShowIf
+        parameters:
+        - type: string
+          serializedValue: '"ModelType"'
+        - type: number
+          serializedValue: 0
+      nullable: 0
+      serializedValue: 
+      serializedObject: {fileID: 0}
+      modified: 0
+    - name: SouthTexture
+      type: object
+      objectType: Material
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators:
+      - name: ShowIf
+        parameters:
+        - type: string
+          serializedValue: '"ModelType"'
+        - type: number
+          serializedValue: 0
+      nullable: 0
+      serializedValue: 
+      serializedObject: {fileID: 0}
+      modified: 0
+    - name: WestTexture
+      type: object
+      objectType: Material
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators:
+      - name: ShowIf
+        parameters:
+        - type: string
+          serializedValue: '"ModelType"'
+        - type: number
+          serializedValue: 0
+      nullable: 0
+      serializedValue: 
+      serializedObject: {fileID: 0}
+      modified: 0
+    - name: Prefab
+      type: object
+      objectType: GameObject
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators:
+      - name: ShowIf
+        parameters:
+        - type: string
+          serializedValue: '"ModelType"'
+        - type: number
+          serializedValue: 1
+      nullable: 0
+      serializedValue: 
+      serializedObject: {fileID: 0}
+      modified: 0
+    - name: NoCollide
+      type: boolean
+      objectType: 
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators: []
+      nullable: 0
+      serializedValue: 
+      serializedObject: {fileID: 0}
+      modified: 0
+    - name: NoOcclusion
+      type: boolean
+      objectType: 
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators: []
+      nullable: 0
+      serializedValue: 1
+      serializedObject: {fileID: 0}
+      modified: 1
+    - name: TextureType
+      type: IntEnum
+      objectType: 
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: Code/Core/World/Block/BlockDef@BlockTextureType
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators:
+      - name: ShowIf
+        parameters:
+        - type: string
+          serializedValue: '"ModelType"'
+        - type: number
+          serializedValue: 0
+      nullable: 0
+      serializedValue: 0
+      serializedObject: {fileID: 0}
+      modified: 0
+    - name: SingleTexture
+      type: object
+      objectType: Material
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators:
+      - name: ShowIf
+        parameters:
+        - type: string
+          serializedValue: '"ModelType"'
+        - type: number
+          serializedValue: 0
+      - name: ShowIf
+        parameters:
+        - type: string
+          serializedValue: '"TextureType"'
+        - type: number
+          serializedValue: 0
+      nullable: 0
+      serializedValue: 
+      serializedObject: {fileID: 2100000, guid: 1bc8a66509ee6bf45bf38d2961746d37, type: 2}
+      modified: 0
+    - name: HorizontalTexture
+      type: object
+      objectType: Material
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators:
+      - name: ShowIf
+        parameters:
+        - type: string
+          serializedValue: '"ModelType"'
+        - type: number
+          serializedValue: 0
+      - name: ShowIf
+        parameters:
+        - type: string
+          serializedValue: '"TextureType"'
+        - type: number
+          serializedValue: 1
+        - type: number
+          serializedValue: 2
+      nullable: 0
+      serializedValue: 
+      serializedObject: {fileID: 0}
+      modified: 0
+    displayIcon: {fileID: 0}
+    displayName: 
