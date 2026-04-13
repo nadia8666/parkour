@@ -1253,6 +1253,13 @@
 			"extends": [],
 			"singleton": false
 		},
+		"BlockDef": {
+			"component": true,
+			"type": "AirshipScriptableObject",
+			"filePath": "Code\\Core\\World\\Block\\BlockDef.lua",
+			"extends": [],
+			"singleton": false
+		},
 		"TimeTrialObject": {
 			"component": true,
 			"type": "AirshipScriptableObject",
@@ -1264,13 +1271,6 @@
 			"component": true,
 			"type": "AirshipScriptableObject",
 			"filePath": "Code\\Shared\\Object\\SoundBankObject.lua",
-			"extends": [],
-			"singleton": false
-		},
-		"BlockDef": {
-			"component": true,
-			"type": "AirshipScriptableObject",
-			"filePath": "Code\\Core\\World\\Block\\BlockDef.lua",
 			"extends": [],
 			"singleton": false
 		}
@@ -2233,6 +2233,16 @@
 			"inherits": []
 		},
 		{
+			"name": "GearController",
+			"id": "Code/Client/Controller/Gear/GearController@GearController",
+			"file": "Code/Client/Controller/Gear/GearController.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
 			"name": "RecipeObject",
 			"id": "Code/Shared/Object/RecipeObject@RecipeObject",
 			"file": "Code/Shared/Object/RecipeObject.ts",
@@ -2945,6 +2955,16 @@
 			"inherits": []
 		},
 		{
+			"name": "BlockDef",
+			"id": "Code/Core/World/Block/BlockDef@BlockDef",
+			"file": "Code/Core/World/Block/BlockDef.ts",
+			"declarationType": "AirshipScriptableObject",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
 			"name": "GenericTriggerComponent",
 			"id": "Code/Client/Components/Collision/GenericTriggerComponent@GenericTriggerComponent",
 			"file": "Code/Client/Components/Collision/GenericTriggerComponent.ts",
@@ -3015,16 +3035,6 @@
 			"inherits": []
 		},
 		{
-			"name": "BlockDef",
-			"id": "Code/Core/World/Block/BlockDef@BlockDef",
-			"file": "Code/Core/World/Block/BlockDef.ts",
-			"declarationType": "AirshipScriptableObject",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
 			"name": "testcomponent",
 			"id": "Code/Server/test@testcomponent",
 			"file": "Code/Server/test.ts",
@@ -3038,16 +3048,6 @@
 			"name": "WorldSingleton",
 			"id": "Code/Client/Framework/WorldSingleton@WorldSingleton",
 			"file": "Code/Client/Framework/WorldSingleton.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "GearController",
-			"id": "Code/Client/Controller/Gear/GearController@GearController",
-			"file": "Code/Client/Controller/Gear/GearController.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"
@@ -3078,6 +3078,10 @@
 			"typescript:Code/Client/Controller/Modules/Ladder/Ladders@Ladders": "Client/Controller/Modules/Ladder/Ladders@Ladders",
 			"typescript:Code/Client/ClientController@ClientController": "Client/ClientController@ClientController",
 			"typescript:Code/Core/CoreSingleton@_CoreSingleton": "Core/CoreSingleton@_CoreSingleton",
+			"typescript:Code/Core/World/Level/Chunk/Chunk@ChunkMeshRenderer": "Core/World/Level/Chunk/Chunk@ChunkMeshRenderer",
+			"typescript:Code/Core/World/Level/Chunk/Chunk@ChunkCollisionRenderer": "Core/World/Level/Chunk/Chunk@ChunkCollisionRenderer",
+			"typescript:Code/Core/World/Level/Chunk/Chunk@Chunk": "Core/World/Level/Chunk/Chunk@Chunk",
+			"typescript:Code/Core/World/Level/Level@Level": "Core/World/Level/Level@Level",
 			"typescript:Code/Client/Controller/Animation/ViewmodelComponent@ViewmodelComponent": "Client/Controller/Animation/ViewmodelComponent@ViewmodelComponent",
 			"typescript:Code/Client/Controller/Animation/AnimationController@AnimationController": "Client/Controller/Animation/AnimationController@AnimationController",
 			"typescript:Code/Shared/Components/DroppedItemEntityComponent@DroppedItemEntityComponent": "Shared/Components/DroppedItemEntityComponent@DroppedItemEntityComponent",
@@ -3103,11 +3107,13 @@
 			"typescript:Code/Shared/Object/StructureObject@StructureObject": "Shared/Object/StructureObject@StructureObject",
 			"typescript:Code/Shared/Object/ItemObject@ItemObject": "Shared/Object/ItemObject@ItemObject",
 			"typescript:Code/Server/Modules/Spawner@CharacterSpawner": "Server/Modules/Spawner@CharacterSpawner",
-			"typescript:Code/Core/World/Level/Level@Level": "Core/World/Level/Level@Level",
-			"typescript:Code/Core/World/Level/Chunk@Chunk": "Core/World/Level/Chunk@Chunk",
-			"typescript:Code/Client/Controller/Modules/Zipline/Ziplines@Ziplines": "Client/Controller/Modules/Zipline/Ziplines@Ziplines",
 			"typescript:Code/Core/Registry/Blocks@Blocks": "Core/Registry/Blocks@Blocks",
 			"typescript:Code/Core/Registry/Registries@Registry": "Core/Registry/Registries@Registry",
+			"typescript:Code/Client/Controller/Modules/Zipline/Ziplines@Ziplines": "Client/Controller/Modules/Zipline/Ziplines@Ziplines",
+			"typescript:Code/Core/Registry/Identifier@Identifier": "Core/Registry/Identifier@Identifier",
+			"typescript:Code/Core/World/Block/Block@Block": "Core/World/Block/Block@Block",
+			"typescript:Code/Core/World/Block/BlockState@BlockState": "Core/World/Block/BlockState@BlockState",
+			"typescript:Code/Core/World/Block/BlockDef@BlockDef": "Core/World/Block/BlockDef@BlockDef",
 			"typescript:Code/Client/Components/Collision/GenericTriggerComponent@GenericTriggerComponent": "Client/Components/Collision/GenericTriggerComponent@GenericTriggerComponent",
 			"typescript:Code/Shared/Provider@Provider": "Shared/Provider@Provider",
 			"typescript:Code/Shared/Components/EntityComponent@EntityComponent": "Shared/Components/EntityComponent@EntityComponent",
@@ -3117,10 +3123,6 @@
 			"typescript:Code/Client/Controller/Modules/TimeTrials/TimeTrialComponent@TimeTrialComponent": "Client/Controller/Modules/TimeTrials/TimeTrialComponent@TimeTrialComponent",
 			"typescript:Code/Client/Controller/Modules/Zipline/ZiplineComponent@ZiplineComponent": "Client/Controller/Modules/Zipline/ZiplineComponent@ZiplineComponent",
 			"typescript:Code/Shared/Object/SoundBankObject@SoundBankObject": "Shared/Object/SoundBankObject@SoundBankObject",
-			"typescript:Code/Core/Registry/Identifier@Identifier": "Core/Registry/Identifier@Identifier",
-			"typescript:Code/Core/World/Block/Block@Block": "Core/World/Block/Block@Block",
-			"typescript:Code/Core/World/Block/BlockState@BlockState": "Core/World/Block/BlockState@BlockState",
-			"typescript:Code/Core/World/Block/BlockDef@BlockDef": "Core/World/Block/BlockDef@BlockDef",
 			"typescript:Code/Server/test@testcomponent": "Server/test@testcomponent"
 		}
 	}

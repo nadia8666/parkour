@@ -5,7 +5,7 @@ import Blocks from "Code/Core/Registry/Blocks";
 import { Identifier } from "Code/Core/Registry/Identifier";
 import type BlockDef from "Code/Core/World/Block/BlockDef";
 import type { BlockState } from "Code/Core/World/Block/BlockState";
-import { Chunk } from "Code/Core/World/Level/Chunk";
+import type { Chunk } from "Code/Core/World/Level/Chunk/Chunk";
 import { Level } from "Code/Core/World/Level/Level";
 import ENV from "Code/Server/ENV";
 import { SettingsService } from "Code/Server/SettingsService";
@@ -551,6 +551,15 @@ export default class WorldSingleton extends AirshipSingleton {
 				this.IsDirty = false;
 			}
 		}
+
+		for (const [Chunk] of pairs(this.ChunkQueue)) {
+			this.ChunkQueue.delete(Chunk);
+
+			task.spawn(() => {
+				Chunk.RebuildCollision();
+				if ($CLIENT) Chunk.RebuildMesh();
+			});
+		}
 	}
 
 	public FixedUpdate() {
@@ -561,7 +570,7 @@ export default class WorldSingleton extends AirshipSingleton {
 
 			if (os.clock() - this.LastUpdate <= 0.25) return;
 			this.LastUpdate = os.clock();
-
+			if (true) return; // TODO: remove
 			Airship.Players.GetPlayers().forEach((Player) => {
 				task.spawn(() => {
 					const Character = Core().Server.CharacterMap.get(Player);
@@ -661,43 +670,23 @@ export default class WorldSingleton extends AirshipSingleton {
 	}
 
 	public WriteBlockAt(Position: Vector3, BlockID: string, Priority: boolean = false) {
-		const Key = Utility.Vector.ToKey(Position);
-		let TargetChunk = this.Level.Chunks.get(Key);
-
-		if (!TargetChunk) {
-			TargetChunk = new Chunk(this.Level, Key);
-			this.Level.Chunks.set(Key, TargetChunk);
-		}
-
-		const Index = Utility.Vector.ToIndex(Position);
-		const State = this.GetStateFromString(BlockID);
-		const Prev = TargetChunk.Blocks[Index - 1];
-
-		this.Level.OnStateUpdate(TargetChunk, Prev, State);
-		TargetChunk.Blocks[Index - 1] = State;
+		this.Level.SetBlockAt(Position, this.GetStateFromString(BlockID), true);
 
 		if ($CLIENT) this.IsDirty = true;
 		if ($SERVER && !ENV.Shared) Network.Level.WriteVoxel.server.FireAllClients(Position, BlockID);
 	}
 
 	public WriteBlockGroupAt(Positions: Vector3[], BlockIDs: readonly string[], Priority: boolean = false) {
-		for (let i = 0; i < Positions.size(); i++) {
-			const Position = Positions[i];
-			const Key = Utility.Vector.ToKey(Position);
-			let TargetChunk = this.Level.Chunks.get(Key);
+		const Blocks: { Position: Vector3; State: BlockState }[] = [];
 
-			if (!TargetChunk) {
-				TargetChunk = new Chunk(this.Level, Key);
-				this.Level.Chunks.set(Key, TargetChunk);
-			}
+		Positions.forEach((Positon, Index) =>
+			Blocks.push({
+				Position: Positon,
+				State: this.GetStateFromString(BlockIDs[Index]),
+			}),
+		);
 
-			const Index = Utility.Vector.ToIndex(Position);
-			const State = this.GetStateFromString(BlockIDs[i]);
-			const Prev = TargetChunk.Blocks[Index - 1];
-
-			this.Level.OnStateUpdate(TargetChunk, Prev, State);
-			TargetChunk.Blocks[Index - 1] = State;
-		}
+		this.Level.SetBlocksAt(Blocks, true);
 
 		if ($CLIENT) this.IsDirty = true;
 		if ($SERVER && !ENV.Shared) Network.Level.WriteGroup.server.FireAllClients(Positions, BlockIDs);
@@ -725,5 +714,10 @@ export default class WorldSingleton extends AirshipSingleton {
 		Shader.SetGlobalVector("_GridCenter", Origin);
 		Shader.SetGlobalVector("_GridSize", new Vector4(this.Resolution, this.Resolution, this.Resolution, 1));
 		Shader.SetGlobalTexture("_DamageTexArray", this.BlockBreakAtlas);
+	}
+
+	private ChunkQueue = new Set<Chunk>();
+	public QueueChunkRebuild(Target: Chunk) {
+		this.ChunkQueue.add(Target);
 	}
 }
