@@ -8,7 +8,9 @@ task.spawn(() => {
 });
 
 task.spawn(() => {
-	while (!Core) {}
+	while (!Core) {
+		task.wait();
+	}
 
 	while (!Core.Client) {
 		task.wait();

@@ -76,7 +76,7 @@ MonoBehaviour:
         tags: []
       decorators: []
       nullable: 0
-      serializedValue: 2
+      serializedValue: 0
       serializedObject: {fileID: 0}
       modified: 1
     - name: TopTexture
@@ -262,9 +262,9 @@ MonoBehaviour:
         tags: []
       decorators: []
       nullable: 0
-      serializedValue: 
+      serializedValue: 1
       serializedObject: {fileID: 0}
-      modified: 0
+      modified: 1
     - name: NoOcclusion
       type: boolean
       objectType: 
@@ -279,6 +279,92 @@ MonoBehaviour:
         text: []
         tags: []
       decorators: []
+      nullable: 0
+      serializedValue: 1
+      serializedObject: {fileID: 0}
+      modified: 1
+    - name: TextureType
+      type: IntEnum
+      objectType: 
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: Code/Core/World/Block/BlockDef@BlockTextureType
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators:
+      - name: ShowIf
+        parameters:
+        - type: string
+          serializedValue: '"ModelType"'
+        - type: number
+          serializedValue: 0
+      nullable: 0
+      serializedValue: 0
+      serializedObject: {fileID: 0}
+      modified: 0
+    - name: SingleTexture
+      type: object
+      objectType: Material
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators:
+      - name: ShowIf
+        parameters:
+        - type: string
+          serializedValue: '"ModelType"'
+        - type: number
+          serializedValue: 0
+      - name: ShowIf
+        parameters:
+        - type: string
+          serializedValue: '"TextureType"'
+        - type: number
+          serializedValue: 0
+      nullable: 0
+      serializedValue: 
+      serializedObject: {fileID: 2100000, guid: 5f05457adf8a6e14a8eb2f7bb0c204ae, type: 2}
+      modified: 0
+    - name: HorizontalTexture
+      type: object
+      objectType: Material
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators:
+      - name: ShowIf
+        parameters:
+        - type: string
+          serializedValue: '"ModelType"'
+        - type: number
+          serializedValue: 0
+      - name: ShowIf
+        parameters:
+        - type: string
+          serializedValue: '"TextureType"'
+        - type: number
+          serializedValue: 1
+        - type: number
+          serializedValue: 2
       nullable: 0
       serializedValue: 
       serializedObject: {fileID: 0}

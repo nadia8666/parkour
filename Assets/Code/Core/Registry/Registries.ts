@@ -1,7 +1,7 @@
-import Blocks from "./Blocks";
 import { Identifier } from "./Identifier";
 
 export class Registry<T> {
+	// biome-ignore lint/suspicious/noConfusingVoidType: <not confusing>
 	private Connections = new Map<Identifier, Set<(Object: T) => void | boolean>>();
 	public Instances = new Map<Identifier, T>();
 
@@ -16,7 +16,7 @@ export class Registry<T> {
 		return Target;
 	}
 
-	public OnRegister(ID: string, Callback: (Object: T) => void | boolean) {
-		this.Connections.getOrInsert(new Identifier(this.Namespace, ID), new Set()).add(Callback);
+	public OnRegister(ID: string, Callback: (Object: T) => undefined | boolean) {
+		this.Connections.getOrInsertComputed(new Identifier(this.Namespace, ID), () => new Set()).add(Callback);
 	}
 }
