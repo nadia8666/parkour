@@ -14,7 +14,7 @@ export const Settings = {
 	FOV: 120,
 	CameraRotationLerp: 15,
 
-	RenderDistance: 4,
+	RenderDistance: 2,
 };
 export type Settings = typeof Settings;
 

@@ -1,6 +1,6 @@
 import { Utility } from "Code/Shared/Utility/Utility";
 import type { BlockState } from "../Block/BlockState";
-import { Chunk } from "./Chunk";
+import { Chunk } from "./Chunk/Chunk";
 
 export class Level {
 	public Chunks = new Map<Vector3, Chunk>();
@@ -28,36 +28,34 @@ export class Level {
 		return this.Chunks.getOrInsert(Key, new Chunk(this, Key)).GetBlockAt(Position, NoAir);
 	}
 
-    /**
-     * writes multiple blockstates in the level
-     * @param Entries array of position and state pairs
-     * @param ForceLoad should the chunks automatically load
-     */
-    public SetBlocksAt(Entries: { Position: Vector3, State: BlockState }[], ForceLoad?: true) {
-        const Grouped = new Map<Vector3, { Position: Vector3, State: BlockState }[]>();
+	/**
+	 * writes multiple blockstates in the level
+	 * @param Entries array of position and state pairs
+	 * @param ForceLoad should the chunks automatically load
+	 */
+	public SetBlocksAt(Entries: { Position: Vector3; State: BlockState }[], ForceLoad?: true) {
+		const Grouped = new Map<Vector3, { Position: Vector3; State: BlockState }[]>();
 
-        for (const Entry of Entries) {
-            const Key = Utility.Vector.ToKey(Entry.Position);
-            if (!Grouped.has(Key)) Grouped.set(Key, []);
-            Grouped.get(Key)!.push(Entry);
-        }
+		for (const Entry of Entries) {
+			const Key = Utility.Vector.ToKey(Entry.Position);
+			if (!Grouped.has(Key)) Grouped.set(Key, []);
+			Grouped.get(Key)!.push(Entry);
+		}
 
-        for (const [Key, ChunkEntries] of Grouped) {
-            const TargetChunk = this.Chunks.getOrInsertComputed(Key, (K: Vector3) => 
-                ForceLoad ? new Chunk(this, K) : (undefined as unknown as Chunk)
-            );
-            TargetChunk?.SetBlocksAt(ChunkEntries);
-        }
-    }
+		for (const [Key, ChunkEntries] of Grouped) {
+			const TargetChunk = this.Chunks.getOrInsertComputed(Key, (K: Vector3) => (ForceLoad ? new Chunk(this, K) : (undefined as unknown as Chunk)));
+			TargetChunk?.SetBlocksAt(ChunkEntries);
+		}
+	}
 
-    /**
-     * gets multiple blockstates at once
-     * @param Positions array of world positions
-     * @param NoAir forces the get to return undefined instead of generating air
-     */
-    public GetBlocksAt(Positions: Vector3[], NoAir?: true): (BlockState | undefined)[] {
-        return Positions.map(Pos => this.GetBlockAt(Pos, NoAir));
-    }
+	/**
+	 * gets multiple blockstates at once
+	 * @param Positions array of world positions
+	 * @param NoAir forces the get to return undefined instead of generating air
+	 */
+	public GetBlocksAt(Positions: Vector3[], NoAir?: true): (BlockState | undefined)[] {
+		return Positions.map((Pos) => this.GetBlockAt(Pos, NoAir));
+	}
 
 	/**
 	 * get chunk at position, does not generate a chunk if missing

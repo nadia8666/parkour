@@ -50,9 +50,21 @@ export namespace Utility {
 		export function FromIndex(Index: number) {
 			return new Vector3(Index % 16, math.floor((Index % 256) / 16), math.floor(Index / 256));
 		}
-
+		
+		export function FromIndexS(Index: number) {
+			return new Vector3(
+				Index & 15,
+				(Index >> 4) & 15,
+				(Index >> 8) & 15,
+			);
+		}
+		
 		export function ToIndex(Vector: Vector3) {
 			return Vector.z * 256 + Vector.y * 16 + Vector.x;
+		}
+
+		export function ToIndexS(Vector: Vector3) {
+			return (Vector.z << 8) | (Vector.y << 4) | Vector.x;
 		}
 
 		export function ToKey(Position: Vector3) {
