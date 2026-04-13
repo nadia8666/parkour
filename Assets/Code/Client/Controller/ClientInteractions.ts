@@ -2,6 +2,7 @@ import { Mouse } from "@Easy/Core/Shared/UserInput";
 import Core from "Code/Core/Core";
 import Blocks from "Code/Core/Registry/Blocks";
 import ENV from "Code/Server/ENV";
+import type InteractableBlockComponent from "Code/Shared/Components/InteractableBlockComponent";
 import { Network } from "Code/Shared/Network";
 import { Provider } from "Code/Shared/Provider";
 import { ItemUtil } from "Code/Shared/Utility/ItemUtil";
@@ -56,10 +57,8 @@ export class ClientInteractions {
 
 				const State = this.Level.Get().GetBlockAt(this.TargetedBlock);
 				if (!ENV.Shared) this.Level.Get().SetBlockAt(this.TargetedBlock, Blocks.Air.NewBlockState(), true);
-				if (!Network.Level.Try.BreakBlock.client.FireServer(this.TargetedBlock, Core().Client.UI.Hotbar.SelectedSlot))
-					this.Level.Get().SetBlockAt(this.TargetedBlock, State, true);
+				if (!Network.Level.Try.BreakBlock.client.FireServer(this.TargetedBlock, Core().Client.UI.Hotbar.SelectedSlot)) this.Level.Get().SetBlockAt(this.TargetedBlock, State, true);
 				// TODO: durability--
-
 			}
 		}
 
@@ -86,13 +85,12 @@ export class ClientInteractions {
 		if (this.Controller.UI.UI.Get().RaycastUI() || this.Controller.UI.UI.Get().AreMenusOpen()) return;
 		if (this.TargetedBlock) {
 			const HeldItem = Core().Client.UI.Hotbar.HeldItem;
-			//TODO: reimplement
-			//const Prefab = this.Controller.World.World.GetPrefabAt(this.TargetedBlock);
+			const Prefab = this.Controller.World.Level.GetPrefabAt(this.TargetedBlock);
 			let TryPlace = true;
-			//if (Prefab) {
-			//	const Interactable = Prefab.GetAirshipComponent<InteractableBlockComponent>(true);
-			//	if (Interactable?.OnUse(this.Controller)) TryPlace = false;
-			//}
+			if (Prefab) {
+				const Interactable = Prefab.GetAirshipComponent<InteractableBlockComponent>(true);
+				if (Interactable?.OnUse(this.Controller)) TryPlace = false;
+			}
 
 			if (TryPlace && HeldItem) {
 				const [_, Index] = ItemUtil.FindItemInInventories(HeldItem);

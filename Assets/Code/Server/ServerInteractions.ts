@@ -4,6 +4,7 @@ import { NetworkUtil } from "@Easy/Core/Shared/Util/NetworkUtil";
 import Core from "Code/Core/Core";
 import Blocks from "Code/Core/Registry/Blocks";
 import type DroppedItemEntityComponent from "Code/Shared/Components/DroppedItemEntityComponent";
+import type InteractableBlockComponent from "Code/Shared/Components/InteractableBlockComponent";
 import { Network } from "Code/Shared/Network";
 import type RecipeObject from "Code/Shared/Object/RecipeObject";
 import type { RecipeMidState } from "Code/Shared/Object/RecipeObject";
@@ -31,10 +32,8 @@ export class ServerInteractions {
 			ItemUtil.DropItem(Item, Amount, Character, () => delete Data.Inventories[Slot].Content[Index]);
 		});
 
-		Network.Generic.DropItemFromBlockContainer.server.OnClientEvent((_Player, _BlockPos, _Index, _Amount) => {
-			// TODO: reimplement
-			/*
-			const Prefab = Core().World.World.GetPrefabAt(BlockPos);
+		Network.Generic.DropItemFromBlockContainer.server.OnClientEvent((Player, BlockPos, Index, Amount) => {
+			const Prefab = Core().World.Level.GetPrefabAt(BlockPos);
 			if (!Prefab) return;
 
 			const Inventory = Prefab.GetAirshipComponent<InteractableBlockComponent>()?.Container?.GetInventory();
@@ -47,7 +46,6 @@ export class ServerInteractions {
 			if (!Character) return;
 
 			ItemUtil.DropItem(Item, Amount, Character, () => delete Inventory.Content[Index]);
-			*/
 		});
 
 		Network.Generic.GetDroppedItemData.server.SetCallback((_Player, NetworkID) => {
@@ -142,8 +140,7 @@ export class ServerInteractions {
 			PickupDelay: 0.5,
 		});
 
-		if (Core().World.GetBlockAt(Pos.add(Vector3.up)) === "parkour:ShortGrass")
-			Core().World.WriteBlockAt(Pos.add(Vector3.up), Blocks.Air.Identifier.AsString());
+		if (Core().World.GetBlockAt(Pos.add(Vector3.up)) === "parkour:ShortGrass") Core().World.WriteBlockAt(Pos.add(Vector3.up), Blocks.Air.Identifier.AsString());
 
 		return true;
 	}

@@ -222,23 +222,5 @@ MonoBehaviour:
       serializedValue: 10
       serializedObject: {fileID: 0}
       modified: 1
-    - name: HasInitialized
-      type: boolean
-      objectType: 
-      items:
-        type: 
-        objectType: 
-        serializedItems: []
-        objectRefs: []
-      refPath: 
-      fileRef: 
-      jsDocs:
-        text: []
-        tags: []
-      decorators: []
-      nullable: 0
-      serializedValue: 0
-      serializedObject: {fileID: 0}
-      modified: 0
     displayIcon: {fileID: 0}
     displayName: 

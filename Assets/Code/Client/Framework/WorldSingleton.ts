@@ -9,10 +9,13 @@ import type { Chunk } from "Code/Core/World/Level/Chunk/Chunk";
 import { Level } from "Code/Core/World/Level/Level";
 import ENV from "Code/Server/ENV";
 import { SettingsService } from "Code/Server/SettingsService";
+import type InteractableBlockComponent from "Code/Shared/Components/InteractableBlockComponent";
+import GearRegistrySingleton, { type GearRegistryKey } from "Code/Shared/GearRegistry";
 import { Network } from "Code/Shared/Network";
+import GearObject from "Code/Shared/Object/GearObject";
 import type StructureObject from "Code/Shared/Object/StructureObject";
 import { RandomChance, StructureRotationType } from "Code/Shared/Object/StructureObject";
-import { type Inventory, type PlayerInfoGetter, World } from "Code/Shared/Types";
+import { type Inventory, ItemTypes, type PlayerInfoGetter, World } from "Code/Shared/Types";
 import { NoiseHandler } from "Code/Shared/Utility/Noise";
 import { Utility } from "Code/Shared/Utility/Utility";
 import { DualLink } from "@inkyaker/DualLink/Code";
@@ -489,39 +492,36 @@ export default class WorldSingleton extends AirshipSingleton {
 			const Surface = this.ChunkManager.GetTerrainHeight(Cont, Det);
 			Config.SpawnPos = new Vector3(0, Surface + 4, 0);
 
-			//TODO: reimplement once world renderer is finished
-			/*
 			if (ENV.Runtime === "DEV") {
-				task.wait(1);
 				const Pos = new Vector3(0, Surface + 15, 0);
-				this.WriteBlockAt(Pos, this.ChunkManager.GetBlock("WoodenChest"), true);
-				while (!(this.Level as any).GetPrefabAt(Pos)) task.wait();
-				const Block = (this.Level as any).GetPrefabAt(Pos).GetAirshipComponent<InteractableBlockComponent>(true)!;
-				task.wait(0.1);
-				let Elements = 0;
-				for (const [GearID, Gear] of pairs(GearRegistrySingleton.Get())) {
-					if (Gear instanceof GearObject) {
-						for (const Level of $range(1, Gear.MaxLevel)) {
-							const ID = `Debug${GearID}${Level}`;
-							Elements++;
-							Block.Container!.GetInventory().Content[Elements] = {
-								Type: ItemTypes.Gear,
-								Key: GearID as GearRegistryKey,
-								Level: Level,
-								Amount: 1,
-								ObtainedTime: 0,
-								UID: ID,
-								Temporary: true,
-								Attributes: {},
-							};
+				const Prefab = this.WriteBlockAt(Pos, this.ChunkManager.GetBlock("WoodenChest"));
+
+				if (Prefab) {
+					const Block = Prefab.GetAirshipComponent<InteractableBlockComponent>(true)!;
+					while (!Block.Container || !Block.Container.Setup) task.wait();
+					let Elements = 0;
+					
+					for (const [GearID, Gear] of pairs(GearRegistrySingleton.Get())) {
+						if (Gear instanceof GearObject) {
+							for (const Level of $range(1, Gear.MaxLevel)) {
+								const ID = `Debug${GearID}${Level}`;
+								Elements++;
+								Block.Container.GetInventory().Content[Elements] = {
+									Type: ItemTypes.Gear,
+									Key: GearID as GearRegistryKey,
+									Level: Level,
+									Amount: 1,
+									ObtainedTime: 0,
+									UID: ID,
+									Temporary: true,
+									Attributes: {},
+								};
+							}
 						}
 					}
+					Block.Container.GetInventory().Size = Elements;
 				}
-				Block.Container!.GetInventory().Size = Elements;
-
-				warn("Debug chest spawned!");
 			}
-			*/
 
 			this.WorldReady = true;
 		}
@@ -664,10 +664,10 @@ export default class WorldSingleton extends AirshipSingleton {
 	}
 
 	public WriteBlockAt(Position: Vector3, BlockID: string) {
-		this.Level.SetBlockAt(Position, this.GetStateFromString(BlockID), true);
-
 		if ($CLIENT) this.IsDirty = true;
 		if ($SERVER && !ENV.Shared) Network.Level.WriteVoxel.server.FireAllClients(Position, BlockID);
+
+		return this.Level.SetBlockAt(Position, this.GetStateFromString(BlockID), true);
 	}
 
 	public WriteBlockGroupAt(Positions: Vector3[], BlockIDs: readonly string[]) {

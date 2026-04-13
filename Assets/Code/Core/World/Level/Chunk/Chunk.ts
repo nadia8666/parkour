@@ -354,6 +354,7 @@ export class Chunk {
 	private DamageRenderer;
 	private CollisionRenderer;
 	public DamagedBlocks = new Set<number>();
+	public Prefabs: GameObject[] = [];
 
 	constructor(
 		public Level: Level,
@@ -369,6 +370,9 @@ export class Chunk {
 
 		Utility.Vector.GetAdjacent(this.Key).forEach((Key) => Level.Chunks.get(Key)?.MarkDirty());
 		this.MarkDirty();
+
+		if (!this.Blocks.isEmpty()) {
+		}
 	}
 
 	public MarkDirty(Flag?: ("Collision" | "Visual")[]) {
@@ -404,7 +408,7 @@ export class Chunk {
 	 * gets the blockstate at a position
 	 * @param Position world pos
 	 * @param NoAir forces the get to return undefined instead of generating air
-	 * @returns target blockstate, CAN be undefind is NoAir is true
+	 * @returns target blockstate, CAN be undefined is NoAir is true
 	 */
 	public GetBlockAt(Position: Vector3, NoAir?: true) {
 		const Object = this.Blocks[Utility.Vector.ToIndexS(this.ToLocalPos(Position)) - 1];
@@ -412,14 +416,25 @@ export class Chunk {
 	}
 
 	/**
+	 * get prefab at position
+	 * @param Position world pos
+	 * @returns found prefab gameobject, can be undefined
+	 */
+	public GetPrefabAt(Position: Vector3) {
+		return this.Prefabs[Utility.Vector.ToIndexS(this.ToLocalPos(Position)) - 1];
+	}
+
+	/**
 	 * writes a blockstate in the level
 	 * @param Position world pos
 	 * @param State target blockstate
+	 * @returns prefab gameobject if applicable
 	 */
 	public SetBlockAt(Position: Vector3, State: BlockState) {
 		const LocalPos = this.ToLocalPos(Position);
 		const Index = Utility.Vector.ToIndexS(LocalPos);
-		this.Level.OnStateUpdate(this, this.Blocks[Index - 1], State);
+
+		const Prefab = this.OnStateUpdate(this.Blocks[Index - 1], State, Position);
 		this.Blocks[Index - 1] = State;
 
 		if (LocalPos.x === 0 || LocalPos.z === 0 || LocalPos.y === 0 || LocalPos.x === 15 || LocalPos.z === 15 || LocalPos.y === 15)
@@ -429,6 +444,8 @@ export class Chunk {
 			});
 
 		this.MarkDirty();
+
+		return Prefab;
 	}
 
 	/**
@@ -442,7 +459,7 @@ export class Chunk {
 			const Index = Utility.Vector.ToIndexS(LocalPos);
 			const Prev = this.Blocks[Index - 1];
 
-			this.Level.OnStateUpdate(this, Prev, State);
+			this.OnStateUpdate(Prev, State, Position);
 			this.Blocks[Index - 1] = State;
 
 			if (LocalPos.x === 0 || LocalPos.z === 0 || LocalPos.y === 0 || LocalPos.x === 15 || LocalPos.z === 15 || LocalPos.y === 15) LoadAdj.add(Position);
@@ -462,6 +479,34 @@ export class Chunk {
 		AdjChunks.forEach((Chunk) => Chunk.MarkDirty(["Visual"]));
 
 		this.MarkDirty();
+	}
+
+	/**
+	 * runs a blockstate update
+	 * @param LastState last state (undefined if from chunk load)
+	 * @param NewState new state
+	 * @param Position world pos
+	 */
+	public OnStateUpdate(LastState: BlockState | undefined, NewState: BlockState, Position: Vector3) {
+		let Prefab: GameObject | undefined;
+		if (LastState && LastState.Block.Definition.ModelType === BlockModel.Prefab) {
+			const Prefab = this.Prefabs[Utility.Vector.ToIndexS(this.ToLocalPos(Position)) - 1];
+			if (Prefab) Destroy(Prefab);
+
+			delete this.Prefabs[Utility.Vector.ToIndexS(this.ToLocalPos(Position)) - 1];
+		}
+
+		if (NewState.Block.Definition.ModelType === BlockModel.Prefab) {
+			Prefab = Instantiate(NewState.Block.Definition.Prefab);
+			Prefab.transform.SetParent(this.GameObject.transform);
+			Prefab.transform.localPosition = this.ToLocalPos(Position).add(Vector3.one.div(2));
+
+			this.Prefabs[Utility.Vector.ToIndexS(this.ToLocalPos(Position)) - 1] = Prefab;
+		}
+
+		this.Level.OnStateUpdate(this, LastState, NewState, Position);
+
+		return Prefab
 	}
 
 	/**

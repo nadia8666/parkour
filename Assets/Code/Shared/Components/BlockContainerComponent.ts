@@ -10,7 +10,7 @@ export default class BlockContainerComponent extends AirshipBehaviour {
 	@NonSerialized() public ID: string;
 	private Link: DualLink<Inventory>;
 	private Inventory: Inventory;
-	private Setup = false;
+	public Setup = false;
 
 	override Start() {
 		this.Link = new DualLink<Inventory>(
