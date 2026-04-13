@@ -616,29 +616,6 @@
 			"extends": [],
 			"singleton": true
 		},
-		"ViewmodelComponent": {
-			"component": true,
-			"type": "AirshipBehaviour",
-			"filePath": "Code\\Client\\Controller\\Animation\\ViewmodelComponent.lua",
-			"extends": [],
-			"singleton": false
-		},
-		"AnimationController": {
-			"component": true,
-			"type": "AirshipBehaviour",
-			"filePath": "Code\\Client\\Controller\\Animation\\AnimationController.lua",
-			"extends": [],
-			"singleton": true
-		},
-		"DroppedItemEntityComponent": {
-			"component": true,
-			"type": "AirshipBehaviour",
-			"filePath": "Code\\Shared\\Components\\DroppedItemEntityComponent.lua",
-			"extends": [
-				"EntityComponent"
-			],
-			"singleton": false
-		},
 		"SlotComponent": {
 			"component": true,
 			"type": "AirshipBehaviour",
@@ -658,6 +635,15 @@
 			"type": "AirshipBehaviour",
 			"filePath": "Code\\Shared\\Components\\InteractableBlockComponent.lua",
 			"extends": [],
+			"singleton": false
+		},
+		"DroppedItemEntityComponent": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "Code\\Shared\\Components\\DroppedItemEntityComponent.lua",
+			"extends": [
+				"EntityComponent"
+			],
 			"singleton": false
 		},
 		"ServerService": {
@@ -680,6 +666,20 @@
 			"filePath": "Code\\Shared\\Components\\BlockContainerComponent.lua",
 			"extends": [],
 			"singleton": false
+		},
+		"ViewmodelComponent": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "Code\\Client\\Controller\\Animation\\ViewmodelComponent.lua",
+			"extends": [],
+			"singleton": false
+		},
+		"AnimationController": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "Code\\Client\\Controller\\Animation\\AnimationController.lua",
+			"extends": [],
+			"singleton": true
 		},
 		"GearController": {
 			"component": true,
@@ -1159,17 +1159,17 @@
 			"extends": [],
 			"singleton": false
 		},
-		"GenericTriggerComponent": {
-			"component": true,
-			"type": "AirshipBehaviour",
-			"filePath": "Code\\Client\\Components\\Collision\\GenericTriggerComponent.lua",
-			"extends": [],
-			"singleton": false
-		},
 		"EntityComponent": {
 			"component": true,
 			"type": "AirshipBehaviour",
 			"filePath": "Code\\Shared\\Components\\EntityComponent.lua",
+			"extends": [],
+			"singleton": false
+		},
+		"GenericTriggerComponent": {
+			"component": true,
+			"type": "AirshipBehaviour",
+			"filePath": "Code\\Client\\Components\\Collision\\GenericTriggerComponent.lua",
 			"extends": [],
 			"singleton": false
 		},
@@ -2141,38 +2141,6 @@
 			"inherits": []
 		},
 		{
-			"name": "ViewmodelComponent",
-			"id": "Code/Client/Controller/Animation/ViewmodelComponent@ViewmodelComponent",
-			"file": "Code/Client/Controller/Animation/ViewmodelComponent.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "AnimationController",
-			"id": "Code/Client/Controller/Animation/AnimationController@AnimationController",
-			"file": "Code/Client/Controller/Animation/AnimationController.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "DroppedItemEntityComponent",
-			"id": "Code/Shared/Components/DroppedItemEntityComponent@DroppedItemEntityComponent",
-			"file": "Code/Shared/Components/DroppedItemEntityComponent.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": [
-				"Code/Shared/Components/EntityComponent@EntityComponent"
-			]
-		},
-		{
 			"name": "SlotComponent",
 			"id": "Code/Client/UI/Drag/SlotComponent@SlotComponent",
 			"file": "Code/Client/UI/Drag/SlotComponent.ts",
@@ -2193,14 +2161,16 @@
 			"inherits": []
 		},
 		{
-			"name": "InteractableBlockComponent",
-			"id": "Code/Shared/Components/InteractableBlockComponent@InteractableBlockComponent",
-			"file": "Code/Shared/Components/InteractableBlockComponent.ts",
+			"name": "DroppedItemEntityComponent",
+			"id": "Code/Shared/Components/DroppedItemEntityComponent@DroppedItemEntityComponent",
+			"file": "Code/Shared/Components/DroppedItemEntityComponent.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"
 			],
-			"inherits": []
+			"inherits": [
+				"Code/Shared/Components/EntityComponent@EntityComponent"
+			]
 		},
 		{
 			"name": "ServerService",
@@ -2223,9 +2193,19 @@
 			"inherits": []
 		},
 		{
-			"name": "BlockContainerComponent",
-			"id": "Code/Shared/Components/BlockContainerComponent@BlockContainerComponent",
-			"file": "Code/Shared/Components/BlockContainerComponent.ts",
+			"name": "ViewmodelComponent",
+			"id": "Code/Client/Controller/Animation/ViewmodelComponent@ViewmodelComponent",
+			"file": "Code/Client/Controller/Animation/ViewmodelComponent.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "AnimationController",
+			"id": "Code/Client/Controller/Animation/AnimationController@AnimationController",
+			"file": "Code/Client/Controller/Animation/AnimationController.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"
@@ -2955,10 +2935,10 @@
 			"inherits": []
 		},
 		{
-			"name": "GenericTriggerComponent",
-			"id": "Code/Client/Components/Collision/GenericTriggerComponent@GenericTriggerComponent",
-			"file": "Code/Client/Components/Collision/GenericTriggerComponent.ts",
-			"declarationType": "AirshipBehaviour",
+			"name": "BlockDef",
+			"id": "Code/Core/World/Block/BlockDef@BlockDef",
+			"file": "Code/Core/World/Block/BlockDef.ts",
+			"declarationType": "AirshipScriptableObject",
 			"modifiers": [
 				"default"
 			],
@@ -2968,6 +2948,16 @@
 			"name": "EntityComponent",
 			"id": "Code/Shared/Components/EntityComponent@EntityComponent",
 			"file": "Code/Shared/Components/EntityComponent.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "GenericTriggerComponent",
+			"id": "Code/Client/Components/Collision/GenericTriggerComponent@GenericTriggerComponent",
+			"file": "Code/Client/Components/Collision/GenericTriggerComponent.ts",
 			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"
@@ -3035,10 +3025,20 @@
 			"inherits": []
 		},
 		{
-			"name": "BlockDef",
-			"id": "Code/Core/World/Block/BlockDef@BlockDef",
-			"file": "Code/Core/World/Block/BlockDef.ts",
-			"declarationType": "AirshipScriptableObject",
+			"name": "InteractableBlockComponent",
+			"id": "Code/Shared/Components/InteractableBlockComponent@InteractableBlockComponent",
+			"file": "Code/Shared/Components/InteractableBlockComponent.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "BlockContainerComponent",
+			"id": "Code/Shared/Components/BlockContainerComponent@BlockContainerComponent",
+			"file": "Code/Shared/Components/BlockContainerComponent.ts",
+			"declarationType": "AirshipBehaviour",
 			"modifiers": [
 				"default"
 			],
@@ -3079,22 +3079,23 @@
 			"typescript:Code/Client/ClientController@ClientController": "Client/ClientController@ClientController",
 			"typescript:Code/Core/CoreSingleton@_CoreSingleton": "Core/CoreSingleton@_CoreSingleton",
 			"typescript:Code/Core/World/Level/Chunk/Chunk@ChunkMeshRenderer": "Core/World/Level/Chunk/Chunk@ChunkMeshRenderer",
+			"typescript:Code/Core/World/Level/Chunk/Chunk@ChunkDamageRenderer": "Core/World/Level/Chunk/Chunk@ChunkDamageRenderer",
 			"typescript:Code/Core/World/Level/Chunk/Chunk@ChunkCollisionRenderer": "Core/World/Level/Chunk/Chunk@ChunkCollisionRenderer",
 			"typescript:Code/Core/World/Level/Chunk/Chunk@Chunk": "Core/World/Level/Chunk/Chunk@Chunk",
 			"typescript:Code/Core/World/Level/Level@Level": "Core/World/Level/Level@Level",
-			"typescript:Code/Client/Controller/Animation/ViewmodelComponent@ViewmodelComponent": "Client/Controller/Animation/ViewmodelComponent@ViewmodelComponent",
-			"typescript:Code/Client/Controller/Animation/AnimationController@AnimationController": "Client/Controller/Animation/AnimationController@AnimationController",
-			"typescript:Code/Shared/Components/DroppedItemEntityComponent@DroppedItemEntityComponent": "Shared/Components/DroppedItemEntityComponent@DroppedItemEntityComponent",
 			"typescript:Code/Shared/Utility/ItemUtil@ItemUtil.InventoryOutputData": "Shared/Utility/ItemUtil@ItemUtil.InventoryOutputData",
 			"typescript:Code/Client/UI/Drag/SlotComponent@SlotComponent": "Client/UI/Drag/SlotComponent@SlotComponent",
 			"typescript:Code/Client/UI/Modules/ContainerInventory@ContainerInventory": "Client/UI/Modules/ContainerInventory@ContainerInventory",
 			"typescript:Code/Client/UI/UIController@UIController": "Client/UI/UIController@UIController",
 			"typescript:Code/Shared/Components/InteractableBlockComponent@InteractableBlockComponent": "Shared/Components/InteractableBlockComponent@InteractableBlockComponent",
+			"typescript:Code/Shared/Components/DroppedItemEntityComponent@DroppedItemEntityComponent": "Shared/Components/DroppedItemEntityComponent@DroppedItemEntityComponent",
 			"typescript:Code/Server/ServerInteractions@ServerInteractions": "Server/ServerInteractions@ServerInteractions",
 			"typescript:Code/Server/ServerService@ServerService": "Server/ServerService@ServerService",
 			"typescript:Code/Client/UI/Modules/Hotbar@Hotbar": "Client/UI/Modules/Hotbar@Hotbar",
 			"typescript:Code/Client/UI/Drag/DragController@DragController": "Client/UI/Drag/DragController@DragController",
 			"typescript:Code/Shared/Components/BlockContainerComponent@BlockContainerComponent": "Shared/Components/BlockContainerComponent@BlockContainerComponent",
+			"typescript:Code/Client/Controller/Animation/ViewmodelComponent@ViewmodelComponent": "Client/Controller/Animation/ViewmodelComponent@ViewmodelComponent",
+			"typescript:Code/Client/Controller/Animation/AnimationController@AnimationController": "Client/Controller/Animation/AnimationController@AnimationController",
 			"typescript:Code/Client/Controller/Gear/GearController@GearController": "Client/Controller/Gear/GearController@GearController",
 			"typescript:Code/Shared/Object/RecipeObject@RecipeObject": "Shared/Object/RecipeObject@RecipeObject",
 			"typescript:Code/Server/Data/DataService@DataService": "Server/Data/DataService@DataService",
@@ -3108,23 +3109,22 @@
 			"typescript:Code/Shared/Object/ItemObject@ItemObject": "Shared/Object/ItemObject@ItemObject",
 			"typescript:Code/Server/Modules/Spawner@CharacterSpawner": "Server/Modules/Spawner@CharacterSpawner",
 			"typescript:Code/Core/Registry/Blocks@Blocks": "Core/Registry/Blocks@Blocks",
-			"typescript:Code/Core/Registry/Registries@Registry": "Core/Registry/Registries@Registry",
 			"typescript:Code/Client/Controller/Modules/Zipline/Ziplines@Ziplines": "Client/Controller/Modules/Zipline/Ziplines@Ziplines",
 			"typescript:Code/Core/Registry/Identifier@Identifier": "Core/Registry/Identifier@Identifier",
 			"typescript:Code/Core/World/Block/Block@Block": "Core/World/Block/Block@Block",
 			"typescript:Code/Core/World/Block/BlockState@BlockState": "Core/World/Block/BlockState@BlockState",
+			"typescript:Code/Core/Registry/Registries@Registry": "Core/Registry/Registries@Registry",
 			"typescript:Code/Core/World/Block/BlockDef@BlockDef": "Core/World/Block/BlockDef@BlockDef",
+			"typescript:Code/Shared/Utility/Noise@NoiseHandler": "Shared/Utility/Noise@NoiseHandler",
+			"typescript:Code/Shared/Components/EntityComponent@EntityComponent": "Shared/Components/EntityComponent@EntityComponent",
 			"typescript:Code/Client/Components/Collision/GenericTriggerComponent@GenericTriggerComponent": "Client/Components/Collision/GenericTriggerComponent@GenericTriggerComponent",
 			"typescript:Code/Shared/Provider@Provider": "Shared/Provider@Provider",
-			"typescript:Code/Shared/Components/EntityComponent@EntityComponent": "Shared/Components/EntityComponent@EntityComponent",
 			"typescript:Code/Client/Controller/Modules/Ladder/LadderComponent@LadderComponent": "Client/Controller/Modules/Ladder/LadderComponent@LadderComponent",
-			"typescript:Code/Shared/Utility/Noise@NoiseHandler": "Shared/Utility/Noise@NoiseHandler",
 			"typescript:Code/Shared/Object/TimeTrialObject@TimeTrialObject": "Shared/Object/TimeTrialObject@TimeTrialObject",
 			"typescript:Code/Client/Controller/Modules/TimeTrials/TimeTrialComponent@TimeTrialComponent": "Client/Controller/Modules/TimeTrials/TimeTrialComponent@TimeTrialComponent",
 			"typescript:Code/Client/Controller/Modules/Zipline/ZiplineComponent@ZiplineComponent": "Client/Controller/Modules/Zipline/ZiplineComponent@ZiplineComponent",
 			"typescript:Code/Shared/Object/SoundBankObject@SoundBankObject": "Shared/Object/SoundBankObject@SoundBankObject",
-			"typescript:Code/Server/test@testcomponent": "Server/test@testcomponent",
-			"typescript:Code/Core/World/Level/Chunk/Chunk@ChunkDamageRenderer": "Core/World/Level/Chunk/Chunk@ChunkDamageRenderer"
+			"typescript:Code/Server/test@testcomponent": "Server/test@testcomponent"
 		}
 	}
 }

@@ -35,27 +35,27 @@ export namespace ModelBuilder {
 						const TargetMesh = Filter.mesh;
 						TargetMesh.subMeshCount = 6;
 
-						const verts: Vector3[] = [];
-						const uvs: Vector2[] = [];
+						const Verts: Vector3[] = [];
+						const UVs: Vector2[] = [];
 
 						const addFace = (p0: Vector3, p1: Vector3, p2: Vector3, p3: Vector3) => {
-							verts.push(p0, p1, p2, p3);
-							uvs.push(new Vector2(0, 0), new Vector2(0, 1), new Vector2(1, 1), new Vector2(1, 0));
+							Verts.push(p0, p1, p2, p3);
+							UVs.push(new Vector2(0, 0), new Vector2(0, 1), new Vector2(1, 1), new Vector2(1, 0));
 						};
 
 						addFace(new Vector3(-0.5, 0.5, -0.5), new Vector3(-0.5, 0.5, 0.5), new Vector3(0.5, 0.5, 0.5), new Vector3(0.5, 0.5, -0.5));
 						addFace(new Vector3(-0.5, -0.5, 0.5), new Vector3(-0.5, -0.5, -0.5), new Vector3(0.5, -0.5, -0.5), new Vector3(0.5, -0.5, 0.5));
 						addFace(new Vector3(0.5, -0.5, 0.5), new Vector3(0.5, 0.5, 0.5), new Vector3(-0.5, 0.5, 0.5), new Vector3(-0.5, -0.5, 0.5));
-						addFace(new Vector3(0.5, -0.5, 0.5), new Vector3(0.5, 0.5, 0.5), new Vector3(0.5, 0.5, -0.5), new Vector3(0.5, -0.5, -0.5));
+						addFace(new Vector3(0.5, -0.5, -0.5), new Vector3(0.5, 0.5, -0.5), new Vector3(0.5, 0.5, 0.5), new Vector3(0.5, -0.5, 0.5));
 						addFace(new Vector3(-0.5, -0.5, -0.5), new Vector3(-0.5, 0.5, -0.5), new Vector3(0.5, 0.5, -0.5), new Vector3(0.5, -0.5, -0.5));
-						addFace(new Vector3(-0.5, -0.5, -0.5), new Vector3(-0.5, 0.5, -0.5), new Vector3(-0.5, 0.5, 0.5), new Vector3(-0.5, -0.5, 0.5));
+						addFace(new Vector3(-0.5, -0.5, 0.5), new Vector3(-0.5, 0.5, 0.5), new Vector3(-0.5, 0.5, -0.5), new Vector3(-0.5, -0.5, -0.5));
 
-						TargetMesh.SetVertices(verts);
-						TargetMesh.SetUVs(0, uvs);
+						TargetMesh.SetVertices(Verts);
+						TargetMesh.SetUVs(0, UVs);
 
-						for (let i = 0; i < 6; i++) {
-							const base = i * 4;
-							TargetMesh.SetTriangles([base, base + 1, base + 2, base, base + 2, base + 3], i);
+						for (let Index = 0; Index < 6; Index++) {
+							const Base = Index * 4;
+							TargetMesh.SetTriangles([Base, Base + 1, Base + 2, Base, Base + 2, Base + 3], Index);
 						}
 
 						TargetMesh.RecalculateNormals();

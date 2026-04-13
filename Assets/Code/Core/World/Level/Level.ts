@@ -1,3 +1,4 @@
+import Blocks from "Code/Core/Registry/Blocks";
 import { Utility } from "Code/Shared/Utility/Utility";
 import type { BlockState } from "../Block/BlockState";
 import { Chunk } from "./Chunk/Chunk";
@@ -10,11 +11,12 @@ export class Level {
 	 * @param Position world pos
 	 * @param State target blockstate
 	 * @param LoadChunk should the chunk automatically load (will not execute set if undefined)
+	 * @returns prefab gameobject if applicable
 	 */
 	public SetBlockAt(Position: Vector3, State: BlockState, LoadChunk?: true) {
 		const Key = Utility.Vector.ToKey(Position);
 		const TargetChunk = this.Chunks.getOrInsertComputed(Key, (Key: Vector3) => (LoadChunk ? new Chunk(this, Key) : (undefined as unknown as Chunk)));
-		TargetChunk?.SetBlockAt(Position, State);
+		return TargetChunk?.SetBlockAt(Position, State);
 	}
 
 	/**
@@ -35,6 +37,16 @@ export class Level {
 	public GetBlockAt(Position: Vector3, NoAir?: true) {
 		const Key = Utility.Vector.ToKey(Position);
 		return this.Chunks.getOrInsertComputed(Key, () => new Chunk(this, Key)).GetBlockAt(Position, NoAir);
+	}
+
+	/**
+	 * get prefab at position
+	 * @param Position world pos
+	 * @returns found prefab gameobject, can be undefined
+	 */
+	public GetPrefabAt(Position: Vector3) {
+		const Key = Utility.Vector.ToKey(Position);
+		return this.Chunks.getOrInsertComputed(Key, () => new Chunk(this, Key, new Array(4096, Blocks.Air.NewBlockState()))).GetPrefabAt(Position);
 	}
 
 	/**
@@ -78,7 +90,7 @@ export class Level {
 	}
 
 	// last state coming from an unloaded chunk can be undefined instead of air
-	public OnStateUpdate(_Chunk: Chunk, _LastState: BlockState | undefined, _NewState: BlockState) {}
+	public OnStateUpdate(_Chunk: Chunk, _LastState: BlockState | undefined, _NewState: BlockState, _Position: Vector3) {}
 
 	/**
 	 *
