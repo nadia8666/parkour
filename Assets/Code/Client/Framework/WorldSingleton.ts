@@ -9,13 +9,10 @@ import type { Chunk } from "Code/Core/World/Level/Chunk/Chunk";
 import { Level } from "Code/Core/World/Level/Level";
 import ENV from "Code/Server/ENV";
 import { SettingsService } from "Code/Server/SettingsService";
-import type InteractableBlockComponent from "Code/Shared/Components/InteractableBlockComponent";
-import GearRegistrySingleton, { type GearRegistryKey } from "Code/Shared/GearRegistry";
 import { Network } from "Code/Shared/Network";
-import GearObject from "Code/Shared/Object/GearObject";
 import type StructureObject from "Code/Shared/Object/StructureObject";
 import { RandomChance, StructureRotationType } from "Code/Shared/Object/StructureObject";
-import { type Inventory, ItemTypes, type PlayerInfoGetter, World } from "Code/Shared/Types";
+import { type Inventory, type PlayerInfoGetter, World } from "Code/Shared/Types";
 import { NoiseHandler } from "Code/Shared/Utility/Noise";
 import { Utility } from "Code/Shared/Utility/Utility";
 import { DualLink } from "@inkyaker/DualLink/Code";
@@ -223,7 +220,7 @@ class ChunkManager {
 				}
 
 				if (Positions.size() > 0) {
-					instance().WriteBlockGroupAt(Positions, Blocks, Priority);
+					instance().WriteBlockGroupAt(Positions, Blocks);
 				}
 
 				for (const Pass of StructurePass) {
@@ -291,7 +288,7 @@ class ChunkManager {
 			}
 
 			if (Positions.size() > 0) {
-				instance().WriteBlockGroupAt(Positions, Blocks, false);
+				instance().WriteBlockGroupAt(Positions, Blocks);
 				break;
 			}
 		}
@@ -389,10 +386,10 @@ export default class WorldSingleton extends AirshipSingleton {
 
 			let LoadedChunks = 0;
 			Network.Level.WriteGroup.client.OnServerEvent((PosArr, BlocksArr) => {
-				this.WriteBlockGroupAt(PosArr, BlocksArr, false);
+				this.WriteBlockGroupAt(PosArr, BlocksArr);
 				LoadedChunks++;
 			});
-			Network.Level.WriteVoxel.client.OnServerEvent((Pos, Block) => this.WriteBlockAt(Pos, Block, true));
+			Network.Level.WriteVoxel.client.OnServerEvent((Pos, Block) => this.WriteBlockAt(Pos, Block));
 
 			this.LightingTexture = new Texture3D(this.Resolution, this.Resolution, this.Resolution, TextureFormat.R8, false, true);
 			const Pixels: Color[] = [];
@@ -450,8 +447,8 @@ export default class WorldSingleton extends AirshipSingleton {
 
 			this.Noise = new NoiseHandler(Config.Seed);
 			let [ChunksWritten, MaxChunks] = [0, 0];
-			for (const ChunkX of $range(-4, 4)) {
-				for (const ChunkZ of $range(-4, 4)) {
+			for (const ChunkX of $range(-0, 1)) {
+				for (const ChunkZ of $range(-0, 1)) {
 					MaxChunks += 2;
 					const Origin = new Vector3(ChunkX, 0, ChunkZ).mul(16);
 
@@ -555,10 +552,7 @@ export default class WorldSingleton extends AirshipSingleton {
 		for (const [Chunk] of pairs(this.ChunkQueue)) {
 			this.ChunkQueue.delete(Chunk);
 
-			task.spawn(() => {
-				Chunk.RebuildCollision();
-				if ($CLIENT) Chunk.RebuildMesh();
-			});
+			task.spawn(() => Chunk.Rebuild());
 		}
 	}
 
@@ -570,7 +564,7 @@ export default class WorldSingleton extends AirshipSingleton {
 
 			if (os.clock() - this.LastUpdate <= 0.25) return;
 			this.LastUpdate = os.clock();
-			if (true) return; // TODO: remove
+
 			Airship.Players.GetPlayers().forEach((Player) => {
 				task.spawn(() => {
 					const Character = Core().Server.CharacterMap.get(Player);
@@ -669,14 +663,14 @@ export default class WorldSingleton extends AirshipSingleton {
 		return `parkour:${Def.RegistryID}`;
 	}
 
-	public WriteBlockAt(Position: Vector3, BlockID: string, Priority: boolean = false) {
+	public WriteBlockAt(Position: Vector3, BlockID: string) {
 		this.Level.SetBlockAt(Position, this.GetStateFromString(BlockID), true);
 
 		if ($CLIENT) this.IsDirty = true;
 		if ($SERVER && !ENV.Shared) Network.Level.WriteVoxel.server.FireAllClients(Position, BlockID);
 	}
 
-	public WriteBlockGroupAt(Positions: Vector3[], BlockIDs: readonly string[], Priority: boolean = false) {
+	public WriteBlockGroupAt(Positions: Vector3[], BlockIDs: readonly string[]) {
 		const Blocks: { Position: Vector3; State: BlockState }[] = [];
 
 		Positions.forEach((Positon, Index) =>

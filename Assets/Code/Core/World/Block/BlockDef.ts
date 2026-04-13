@@ -39,15 +39,19 @@ export default class BlockDef extends AirshipScriptableObject {
 			case Vector3.down:
 				return this.BottomTexture ?? this.SingleTexture;
 			case Vector3.forward:
-				return this.NorthTexture ?? this.SingleTexture;
+				return this.HorizontalTexture ?? this.NorthTexture ?? this.SingleTexture;
 			case Vector3.right:
-				return this.EastTexture ?? this.SingleTexture;
+				return this.HorizontalTexture ?? this.EastTexture ?? this.SingleTexture;
 			case Vector3.back:
-				return this.SouthTexture ?? this.SingleTexture;
+				return this.HorizontalTexture ?? this.SouthTexture ?? this.SingleTexture;
 			case Vector3.left:
-				return this.WestTexture ?? this.SingleTexture;
+				return this.HorizontalTexture ?? this.WestTexture ?? this.SingleTexture;
 			default:
 				return this.SingleTexture;
 		}
+	}
+
+	public IsTransparent() {
+		return this.NoOcclusion || this.ModelType !== BlockModel.Box;
 	}
 }

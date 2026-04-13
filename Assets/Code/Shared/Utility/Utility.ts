@@ -50,7 +50,7 @@ export namespace Utility {
 		export function FromIndex(Index: number) {
 			return new Vector3(Index % 16, math.floor((Index % 256) / 16), math.floor(Index / 256));
 		}
-		
+
 		export function FromIndexS(Index: number) {
 			return new Vector3(
 				Index & 15,
@@ -77,6 +77,17 @@ export namespace Utility {
 
 		export function FromKey(ChunkKey: Vector3) {
 			return ChunkKey.mul(16);
+		}
+
+		export function GetAdjacent(Position:Vector3) {
+			return [
+				Position.add(Vector3.up),
+				Position.add(Vector3.down),
+				Position.add(Vector3.forward),
+				Position.add(Vector3.right),
+				Position.add(Vector3.back),
+				Position.add(Vector3.left),
+			]
 		}
 	}
 }

@@ -4,7 +4,6 @@ import { NetworkUtil } from "@Easy/Core/Shared/Util/NetworkUtil";
 import Core from "Code/Core/Core";
 import Blocks from "Code/Core/Registry/Blocks";
 import type DroppedItemEntityComponent from "Code/Shared/Components/DroppedItemEntityComponent";
-import type InteractableBlockComponent from "Code/Shared/Components/InteractableBlockComponent";
 import { Network } from "Code/Shared/Network";
 import type RecipeObject from "Code/Shared/Object/RecipeObject";
 import type { RecipeMidState } from "Code/Shared/Object/RecipeObject";
@@ -32,7 +31,7 @@ export class ServerInteractions {
 			ItemUtil.DropItem(Item, Amount, Character, () => delete Data.Inventories[Slot].Content[Index]);
 		});
 
-		Network.Generic.DropItemFromBlockContainer.server.OnClientEvent((Player, BlockPos, Index, Amount) => {
+		Network.Generic.DropItemFromBlockContainer.server.OnClientEvent((_Player, _BlockPos, _Index, _Amount) => {
 			// TODO: reimplement
 			/*
 			const Prefab = Core().World.World.GetPrefabAt(BlockPos);
@@ -131,27 +130,27 @@ export class ServerInteractions {
 		const NewItem: BlockItem = {
 			Type: ItemTypes.Block,
 			ObtainedTime: os.clock(),
-			Key: State.Block.Definition.RegistryID,
+			Key: State.Block.Identifier.Path,
 			UID: Guid.NewGuid().ToString(),
 			Amount: 1,
 			BlockID: State.Block.Identifier.AsString(),
 			Attributes: {},
 		};
 
-		Core().World.WriteBlockAt(Pos, Blocks.Air.Identifier.AsString(), true);
+		Core().World.WriteBlockAt(Pos, Blocks.Air.Identifier.AsString());
 		ItemUtil.SpawnDroppedItem(Pos.add(Vector3.one.mul(0.5)), ItemUtil.GetDroppedItemVelocity(), NewItem, {
 			PickupDelay: 0.5,
 		});
 
-		if (Core().World.GetBlockAt(Pos.add(Vector3.up)) === Core().World.GetBlockID("ShortGrass"))
-			Core().World.WriteBlockAt(Pos.add(Vector3.up), Blocks.Air.Identifier.AsString(), true);
+		if (Core().World.GetBlockAt(Pos.add(Vector3.up)) === "parkour:ShortGrass")
+			Core().World.WriteBlockAt(Pos.add(Vector3.up), Blocks.Air.Identifier.AsString());
 
 		return true;
 	}
 
 	public TryPlaceBlock(Player: Player, Pos: Vector3, Index: number) {
 		const BlockID = Core().World.GetBlockAt(Pos);
-		if (![0, Core().World.GetBlockID("ShortGrass")].includes(BlockID)) return false;
+		if (!["parkour:Air", "parkour:ShortGrass"].includes(BlockID)) return false;
 
 		const Data = this.Server.DataService.GetPlayerData(this.Server.DataService.Key(Player));
 		const Item = Data.Inventories.Hotbar.Content[Index];
@@ -160,7 +159,7 @@ export class ServerInteractions {
 		Item.Amount--;
 		if (Item.Amount <= 0) delete Data.Inventories.Hotbar.Content[Index];
 
-		Core().World.WriteBlockAt(Pos, Item.BlockID, true);
+		Core().World.WriteBlockAt(Pos, Item.BlockID);
 
 		return true;
 	}

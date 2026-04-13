@@ -2955,16 +2955,6 @@
 			"inherits": []
 		},
 		{
-			"name": "BlockDef",
-			"id": "Code/Core/World/Block/BlockDef@BlockDef",
-			"file": "Code/Core/World/Block/BlockDef.ts",
-			"declarationType": "AirshipScriptableObject",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
 			"name": "GenericTriggerComponent",
 			"id": "Code/Client/Components/Collision/GenericTriggerComponent@GenericTriggerComponent",
 			"file": "Code/Client/Components/Collision/GenericTriggerComponent.ts",
@@ -3039,6 +3029,16 @@
 			"id": "Code/Server/test@testcomponent",
 			"file": "Code/Server/test.ts",
 			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "BlockDef",
+			"id": "Code/Core/World/Block/BlockDef@BlockDef",
+			"file": "Code/Core/World/Block/BlockDef.ts",
+			"declarationType": "AirshipScriptableObject",
 			"modifiers": [
 				"default"
 			],
@@ -3123,7 +3123,8 @@
 			"typescript:Code/Client/Controller/Modules/TimeTrials/TimeTrialComponent@TimeTrialComponent": "Client/Controller/Modules/TimeTrials/TimeTrialComponent@TimeTrialComponent",
 			"typescript:Code/Client/Controller/Modules/Zipline/ZiplineComponent@ZiplineComponent": "Client/Controller/Modules/Zipline/ZiplineComponent@ZiplineComponent",
 			"typescript:Code/Shared/Object/SoundBankObject@SoundBankObject": "Shared/Object/SoundBankObject@SoundBankObject",
-			"typescript:Code/Server/test@testcomponent": "Server/test@testcomponent"
+			"typescript:Code/Server/test@testcomponent": "Server/test@testcomponent",
+			"typescript:Code/Core/World/Level/Chunk/Chunk@ChunkDamageRenderer": "Core/World/Level/Chunk/Chunk@ChunkDamageRenderer"
 		}
 	}
 }

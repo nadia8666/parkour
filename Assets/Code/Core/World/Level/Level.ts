@@ -9,23 +9,32 @@ export class Level {
 	 * writes a blockstate in the level
 	 * @param Position world pos
 	 * @param State target blockstate
-	 * @param ForceLoad should the chunk automatically load (will not execute set if undefined)
+	 * @param LoadChunk should the chunk automatically load (will not execute set if undefined)
 	 */
-	public SetBlockAt(Position: Vector3, State: BlockState, ForceLoad?: true) {
+	public SetBlockAt(Position: Vector3, State: BlockState, LoadChunk?: true) {
 		const Key = Utility.Vector.ToKey(Position);
-		const TargetChunk = this.Chunks.getOrInsertComputed(Key, (Key: Vector3) => (ForceLoad ? new Chunk(this, Key) : (undefined as unknown as Chunk)));
+		const TargetChunk = this.Chunks.getOrInsertComputed(Key, (Key: Vector3) => (LoadChunk ? new Chunk(this, Key) : (undefined as unknown as Chunk)));
 		TargetChunk?.SetBlockAt(Position, State);
+	}
+
+	/**
+	 * sets block state damage for a blockpos
+	 * @param Position world pos
+	 * @param Damage damage as a float [0, 1]
+	 */
+	public SetBlockDamageAt(Position: Vector3, Damage: number) {
+		this.GetChunkAt(Position)?.SetBlockDamageAt(Position, Damage);
 	}
 
 	/**
 	 * gets the blockstate at a position
 	 * @param Position world pos
 	 * @param NoAir forces the get to return undefined instead of generating air
-	 * @returns target blockstate
+	 * @returns target blockstate, CAN be undefind is NoAir is true
 	 */
 	public GetBlockAt(Position: Vector3, NoAir?: true) {
 		const Key = Utility.Vector.ToKey(Position);
-		return this.Chunks.getOrInsert(Key, new Chunk(this, Key)).GetBlockAt(Position, NoAir);
+		return this.Chunks.getOrInsertComputed(Key, () => new Chunk(this, Key)).GetBlockAt(Position, NoAir);
 	}
 
 	/**
@@ -52,8 +61,9 @@ export class Level {
 	 * gets multiple blockstates at once
 	 * @param Positions array of world positions
 	 * @param NoAir forces the get to return undefined instead of generating air
+	 * @returns blocks, CAN be undefind is NoAir is true
 	 */
-	public GetBlocksAt(Positions: Vector3[], NoAir?: true): (BlockState | undefined)[] {
+	public GetBlocksAt(Positions: Vector3[], NoAir?: true) {
 		return Positions.map((Pos) => this.GetBlockAt(Pos, NoAir));
 	}
 
@@ -68,7 +78,7 @@ export class Level {
 	}
 
 	// last state coming from an unloaded chunk can be undefined instead of air
-	public OnStateUpdate(Chunk: Chunk, LastState: BlockState | undefined, NewState: BlockState) {}
+	public OnStateUpdate(_Chunk: Chunk, _LastState: BlockState | undefined, _NewState: BlockState) {}
 
 	/**
 	 *

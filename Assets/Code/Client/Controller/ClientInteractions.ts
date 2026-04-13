@@ -1,7 +1,7 @@
 import { Mouse } from "@Easy/Core/Shared/UserInput";
 import Core from "Code/Core/Core";
+import Blocks from "Code/Core/Registry/Blocks";
 import ENV from "Code/Server/ENV";
-import type InteractableBlockComponent from "Code/Shared/Components/InteractableBlockComponent";
 import { Network } from "Code/Shared/Network";
 import { Provider } from "Code/Shared/Provider";
 import { ItemUtil } from "Code/Shared/Utility/ItemUtil";
@@ -10,7 +10,6 @@ import SlotComponent from "../UI/Drag/SlotComponent";
 import type ClientComponent from "./ClientComponent";
 import { Actions } from "./ClientInput";
 import { Raycast } from "./Moveset/Base";
-import Blocks from "Code/Core/Registry/Blocks";
 
 export class ClientInteractions {
 	public BlockCursor: GameObject;
@@ -18,7 +17,7 @@ export class ClientInteractions {
 	public BreakProgress = 0;
 	public BreakingBlock = false;
 	public TargetNormal: Vector3 = Vector3.forward;
-	public World = new Provider(() => Core().World.Level);
+	public Level = new Provider(() => Core().World.Level);
 	constructor(private Controller: ClientComponent) {}
 
 	public OnEnable() {
@@ -43,10 +42,9 @@ export class ClientInteractions {
 			this.TargetNormal = Cast.Normal;
 		} else this.TargetedBlock = undefined;
 
-		// TODO: reimplement commented out parts
 		if (LastPos !== this.TargetedBlock) {
 			this.ResetBreakState();
-			//if (LastPos) this.World.Get().DamageVoxelAt(LastPos, 0, true);
+			if (LastPos) this.Level.Get().SetBlockDamageAt(LastPos, 0);
 		}
 
 		const Progress = this.BreakProgress;
@@ -54,15 +52,18 @@ export class ClientInteractions {
 			this.BreakProgress += DeltaTime * 2; // TODO: held item attributes (break speed) & block attributes (required tool for break)
 
 			if (this.BreakProgress >= 1) {
-				const BlockID = this.World.Get().GetBlockAt(this.TargetedBlock);
-				if (!ENV.Shared) this.World.Get().SetBlockAt(this.TargetedBlock, Blocks.Air.NewBlockState(), true);
+				this.BreakProgress = 0;
+
+				const State = this.Level.Get().GetBlockAt(this.TargetedBlock);
+				if (!ENV.Shared) this.Level.Get().SetBlockAt(this.TargetedBlock, Blocks.Air.NewBlockState(), true);
 				if (!Network.Level.Try.BreakBlock.client.FireServer(this.TargetedBlock, Core().Client.UI.Hotbar.SelectedSlot))
-					this.World.Get().SetBlockAt(this.TargetedBlock, BlockID, true);
+					this.Level.Get().SetBlockAt(this.TargetedBlock, State, true);
 				// TODO: durability--
+
 			}
 		}
 
-		//if (this.BreakProgress !== Progress && this.TargetedBlock) this.World.Get().DamageVoxelAt(this.TargetedBlock, math.min(this.BreakProgress, 1), true);
+		if (this.BreakProgress !== Progress && this.TargetedBlock) this.Level.Get().SetBlockDamageAt(this.TargetedBlock, math.min(this.BreakProgress, 1));
 
 		this.BlockCursor.SetActive(Cast.Hit);
 	}
@@ -96,10 +97,10 @@ export class ClientInteractions {
 			if (TryPlace && HeldItem) {
 				const [_, Index] = ItemUtil.FindItemInInventories(HeldItem);
 				const BlockPos = this.TargetedBlock.add(this.TargetNormal);
-				const BlockID = this.World.Get().GetBlockAt(BlockPos);
-				if (!ENV.Shared) this.World.Get().SetBlockAt(BlockPos, Blocks.Air.NewBlockState(), true);
+				const BlockID = this.Level.Get().GetBlockAt(BlockPos);
+				if (!ENV.Shared) this.Level.Get().SetBlockAt(BlockPos, Blocks.Air.NewBlockState(), true);
 
-				if (!Network.Level.Try.PlaceBlock.client.FireServer(BlockPos, Index!)) this.World.Get().SetBlockAt(BlockPos, BlockID, true);
+				if (!Network.Level.Try.PlaceBlock.client.FireServer(BlockPos, Index!)) this.Level.Get().SetBlockAt(BlockPos, BlockID, true);
 			}
 		}
 	}
@@ -125,7 +126,6 @@ export class ClientInteractions {
 
 	public ResetBreakState() {
 		this.BreakProgress = 0;
-		// TODO: reimplement
-		//if (this.TargetedBlock) this.World.Get().DamageVoxelAt(this.TargetedBlock, 0, true);
+		if (this.TargetedBlock) this.Level.Get().SetBlockDamageAt(this.TargetedBlock, 0);
 	}
 }
