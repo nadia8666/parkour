@@ -538,6 +538,7 @@ export class Chunk {
 		}
 
 		this.Level.OnStateUpdate(this, LastState, NewState, Position);
+		this.SetBlockDamageAt(Position, 0);
 
 		return Prefab;
 	}
@@ -550,15 +551,15 @@ export class Chunk {
 	public SetBlockDamageAt(Position: Vector3, Damage: number) {
 		const Index = Utility.Vector.ToIndexS(this.ToLocalPos(Position));
 		const State = this.Blocks[Index - 1];
+		let PrevDamage;
 		if (State) {
-			const PrevDamage = State.Damage;
+			PrevDamage = State.Damage;
 			State.Damage = Damage;
-
-			if (Damage > 0) this.DamagedBlocks.add(Index);
-			else this.DamagedBlocks.delete(Index);
-
-			if ($CLIENT && PrevDamage !== Damage) this.DamageRenderer.Rebuild();
 		}
+		if (Damage > 0) this.DamagedBlocks.add(Index);
+		else this.DamagedBlocks.delete(Index);
+
+		if ($CLIENT && (!State || PrevDamage !== Damage)) this.DamageRenderer.Rebuild();
 	}
 
 	/**
