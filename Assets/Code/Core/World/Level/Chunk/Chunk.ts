@@ -382,7 +382,7 @@ export class Chunk {
 	public GameObject;
 	public DamagedBlocks = new Set<number>();
 	public Prefabs: GameObject[] = [];
-	
+
 	private MeshRenderer;
 	private DamageRenderer;
 	private CollisionRenderer;
@@ -578,6 +578,8 @@ export class Chunk {
 		if (this.IsDestroying) return;
 		this.IsDestroying = true;
 		this.Level.Chunks.delete(this.Key);
+
+		Utility.Vector.GetAdjacent(this.Key).forEach((Key) => this.Level.Chunks.get(Key)?.MarkDirty());
 
 		task.spawn(() => {
 			while (this.IsGenerating) task.wait();

@@ -373,6 +373,8 @@ export default class WorldSingleton extends AirshipSingleton {
 
 	public Start() {
 		if ($CLIENT) {
+			Network.Level.UnloadChunk.client.OnServerEvent((ChunkKey) => this.Level.UnloadChunk(ChunkKey));
+			
 			Network.Sync.SetSeed.client.OnServerEvent((Seed) => {
 				math.randomseed(Seed);
 				Config.Seed = Seed;
@@ -662,7 +664,7 @@ export default class WorldSingleton extends AirshipSingleton {
 						break;
 					}
 				}
-				
+
 				if (Loaded) {
 					this.ChunkManager.ToDeload.delete(ChunkKey);
 				} else if (os.clock() - QueueTime >= 15) {
@@ -681,6 +683,7 @@ export default class WorldSingleton extends AirshipSingleton {
 					}
 
 					this.Level.UnloadChunk(ChunkKey);
+					Network.Level.UnloadChunk.server.FireAllClients(ChunkKey);
 				}
 			});
 
