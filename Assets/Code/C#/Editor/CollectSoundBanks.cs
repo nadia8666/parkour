@@ -1,5 +1,8 @@
+using Luau;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 [CustomAirshipEditor("SoundController")]
 public class SoundControllerEditor : AirshipEditor
@@ -13,10 +16,32 @@ public class SoundControllerEditor : AirshipEditor
         {
             GenerateBanks(serializedObject.FindAirshipProperty("SoundBanks"));
             serializedObject.ApplyModifiedProperties();
+            Debug.Log("Populated sound banks!");
         }
     }
 
-    [MenuItem("Parkour/Generate Sound Bank List")]
+    [MenuItem("Parkour/Populate Sound Bank List")]
+    private static void GenerateBanksMenu()
+    {
+        AirshipType soundController = AirshipType.GetType("SoundController");
+        foreach (GameObject obj in SceneManager.GetActiveScene().GetRootGameObjects())
+        {
+            if (obj.name == "Singletons")
+            {
+                foreach (AirshipComponent component in obj.transform.Find("Controllers").GetComponents<AirshipComponent>())
+                {
+                    if (component.GetAirshipType() == soundController)
+                    {
+                        AirshipSerializedObject so = new AirshipSerializedObject(component);
+                        GenerateBanks(so.FindAirshipProperty("SoundBanks"));
+                        so.ApplyModifiedProperties();
+                        Debug.Log("Populated sound banks!");
+                    }
+                }
+            }
+        }
+    }
+
     public static void GenerateBanks(AirshipSerializedProperty property)
     {
         string[] guids = AssetDatabase.FindAssets("t:ScriptableObject", new[] { "Assets/Resources/Sounds/Banks" });
@@ -28,7 +53,7 @@ public class SoundControllerEditor : AirshipEditor
             string path = AssetDatabase.GUIDToAssetPath(guids[i]);
             AirshipScriptableObject so = AssetDatabase.LoadAssetAtPath<AirshipScriptableObject>(path);
 
-            var arrayVal = property.array.PushElement();
+            AirshipSerializedArrayValue arrayVal = property.array.PushElement();
             arrayVal.objectReferenceValue = so;
         }
     }
