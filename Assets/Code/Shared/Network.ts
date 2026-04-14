@@ -16,6 +16,7 @@ export namespace Network {
 		WriteGroup: new NetworkSignal<[Vector3[], readonly string[]]>("Network/Level/WriteGroup"),
 		WriteChunk: new NetworkSignal<[Vector3, string[]]>("Network/Level/WriteChunk"),
 		WriteVoxel: new NetworkSignal<[Vector3, string]>("Network/Level/WriteVoxel"),
+		UnloadChunk: new NetworkSignal<[Vector3]>("Network/Level/UnloadChunk"),
 		GetInitialContainerInventory: new NetworkFunction<string, Inventory>("Network/Level/GetInitialContainerInventory"),
 
 		Try: {
