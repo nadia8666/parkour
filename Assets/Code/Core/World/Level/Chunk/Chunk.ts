@@ -372,16 +372,20 @@ export class ChunkCollisionRenderer {
 
 export class Chunk {
 	public IsDirty = false;
+	private IsGenerating = false;
+	public IsDestroying = false;
 	public DirtyFlag = {
 		Collision: false,
 		Visual: false,
 	};
+
 	public GameObject;
+	public DamagedBlocks = new Set<number>();
+	public Prefabs: GameObject[] = [];
+	
 	private MeshRenderer;
 	private DamageRenderer;
 	private CollisionRenderer;
-	public DamagedBlocks = new Set<number>();
-	public Prefabs: GameObject[] = [];
 
 	constructor(
 		public Level: Level,
@@ -397,12 +401,11 @@ export class Chunk {
 
 		Utility.Vector.GetAdjacent(this.Key).forEach((Key) => Level.Chunks.get(Key)?.MarkDirty());
 		this.MarkDirty();
-
-		if (!this.Blocks.isEmpty()) {
-		}
 	}
 
 	public MarkDirty(Flag?: ("Collision" | "Visual")[]) {
+		if (this.IsDestroying) return;
+
 		if (Flag) {
 			this.DirtyFlag.Collision = this.DirtyFlag.Collision || Flag.includes("Collision");
 			this.DirtyFlag.Visual = this.DirtyFlag.Visual || Flag.includes("Visual");
@@ -417,8 +420,8 @@ export class Chunk {
 	}
 
 	public Rebuild() {
-		if (!this.IsDirty) return;
-		this.IsDirty = false;
+		if (!this.IsDirty || this.IsGenerating || this.IsDestroying) return;
+		this.IsGenerating = true;
 
 		if (this.DirtyFlag.Collision) {
 			this.CollisionRenderer.Rebuild();
@@ -429,6 +432,9 @@ export class Chunk {
 			this.MeshRenderer.Rebuild();
 			this.DirtyFlag.Visual = false;
 		}
+
+		this.IsGenerating = false;
+		this.IsDirty = false;
 	}
 
 	/**
@@ -565,11 +571,20 @@ export class Chunk {
 		return Positions.map((Pos) => this.GetBlockAt(Pos, NoAir));
 	}
 
-	// TODO: IMPLEMENT
 	/**
-	 * UNFINISHED
+	 * destroy and unload the target chunk, removes chunk from level
 	 */
-	public Unload() {}
+	public Unload() {
+		if (this.IsDestroying) return;
+		this.IsDestroying = true;
+		this.Level.Chunks.delete(this.Key);
+
+		task.spawn(() => {
+			while (this.IsGenerating) task.wait();
+
+			Destroy(this.GameObject);
+		});
+	}
 
 	/**
 	 * UNFINISHED

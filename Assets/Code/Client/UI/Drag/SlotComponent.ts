@@ -164,6 +164,8 @@ export default class SlotComponent extends AirshipBehaviour {
 
 			if (TargetIsLoadout) if (!ContentAsGear || Target.PlayerInventory !== ContentAsGear.Slot) return;
 
+			if (TargetInventory === MyInventory && Target.SlotID === this.SlotID) return;
+
 			if (ItemUtil.ItemMatches(MyContents, TargetContents)) {
 				TargetInventory.Content[Target.SlotID] = Utility.DeepCopyWithOverrides(TargetContents, { ObtainedTime: os.clock(), Amount: TargetContents.Amount + MyContents.Amount });
 				delete MyInventory.Content[this.SlotID];

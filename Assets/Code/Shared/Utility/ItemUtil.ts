@@ -66,6 +66,7 @@ export namespace ItemUtil {
 	}
 
 	export function ItemMatches(ComparedItem: AnyItem, Item: AnyItem) {
+		if (!(ComparedItem && Item)) return false;
 		if (ComparedItem.Type !== Item.Type) return false;
 		if (ComparedItem.Temporary !== Item.Temporary) return false;
 		if (ComparedItem.Key !== Item.Key) return false;

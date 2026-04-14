@@ -46,7 +46,7 @@ export class Level {
 	 */
 	public GetPrefabAt(Position: Vector3) {
 		const Key = Utility.Vector.ToKey(Position);
-		return this.Chunks.getOrInsertComputed(Key, () => new Chunk(this, Key, new Array(4096, Blocks.Air.NewBlockState()))).GetPrefabAt(Position);
+		return this.Chunks.getOrInsertComputed(Key, () => new Chunk(this, Key)).GetPrefabAt(Position);
 	}
 
 	/**
@@ -93,8 +93,8 @@ export class Level {
 	public OnStateUpdate(_Chunk: Chunk, _LastState: BlockState | undefined, _NewState: BlockState, _Position: Vector3) {}
 
 	/**
-	 *
-	 * @param ChunkKey
+	 * unloads (deletes) target chunk
+	 * @param ChunkKey chunk key
 	 */
 	public UnloadChunk(ChunkKey: Vector3) {
 		const Chunk = this.Chunks.get(ChunkKey);
