@@ -55,7 +55,7 @@ Shader "Unlit/BlockBreakOverlayShader"
             float _VerticalOffset;
 
             CBUFFER_START(UnityPerMaterial)
-                float4 _BaseMap_ST;
+                float4 _DamageTexArray_ST;
             CBUFFER_END
 
             Varyings vert(Attributes input)
@@ -77,11 +77,11 @@ Shader "Unlit/BlockBreakOverlayShader"
                 float3 blend = abs(localNormal);
                 blend /= (blend.x + blend.y + blend.z);
 
-                float2 uvX = triplanarPos.zy * _BaseMap_ST.xy + _BaseMap_ST.zw;
-                float2 uvY = triplanarPos.xz * _BaseMap_ST.xy + _BaseMap_ST.zw;
-                float2 uvZ = triplanarPos.xy * _BaseMap_ST.xy + _BaseMap_ST.zw;
+                float2 uvX = triplanarPos.zy * _DamageTexArray_ST.xy + _DamageTexArray_ST.zw;
+                float2 uvY = triplanarPos.xz * _DamageTexArray_ST.xy + _DamageTexArray_ST.zw;
+                float2 uvZ = triplanarPos.xy * _DamageTexArray_ST.xy + _DamageTexArray_ST.zw;
 
-                float damageIndex = input.damageUV.x * 6;
+                float damageIndex = input.damageUV.x;
                 
                 float4 damageTex = SAMPLE_TEXTURE2D_ARRAY(_DamageTexArray, sampler_DamageTexArray, uvX, damageIndex) * blend.x +
                                    SAMPLE_TEXTURE2D_ARRAY(_DamageTexArray, sampler_DamageTexArray, uvY, damageIndex) * blend.y +

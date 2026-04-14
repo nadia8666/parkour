@@ -214,56 +214,83 @@ export class ChunkDamageRenderer {
 		Obj.transform.localPosition = Vector3.zero;
 
 		this.Filter = Obj.AddComponent<MeshFilter>();
-		this.Renderer = Obj.AddComponent<MeshRenderer>();
 		this.Mesh = this.Filter.mesh;
+		this.Renderer = Obj.AddComponent<MeshRenderer>();
 		this.Renderer.material = Asset.LoadAsset("Assets/Resources/Materials/BlockDamage.mat");
 	}
 
 	public Rebuild() {
-		const Vertices: Vector3[] = [];
-		const UVs: Vector2[] = [];
+		const Verts: Vector3[] = [];
+		const DamageUVs: Vector2[] = [];
 		const Triangles: number[] = [];
-		const Normals: Vector3[] = [];
-		const Blocks = this.Chunk.Blocks;
-		const Level = this.Chunk.Level;
+		let Offset = 0;
+
+		const AddFace = (p0: Vector3, p1: Vector3, p2: Vector3, p3: Vector3, Damage: number) => {
+			Verts.push(p0.add(Vector3.one.div(2)), p1.add(Vector3.one.div(2)), p2.add(Vector3.one.div(2)), p3.add(Vector3.one.div(2)));
+			DamageUVs.push(
+				new Vector2(math.floor(Damage * 6), 0),
+				new Vector2(math.floor(Damage * 6), 0),
+				new Vector2(math.floor(Damage * 6), 0),
+				new Vector2(math.floor(Damage * 6), 0),
+			);
+			Triangles.push(Offset, Offset + 1, Offset + 2, Offset, Offset + 2, Offset + 3);
+			Offset += 4;
+		};
 
 		for (const Index of this.Chunk.DamagedBlocks) {
-			const State = Blocks[Index - 1];
-			if (!State || State.Damage <= 0) continue;
-
+			const State = this.Chunk.Blocks[Index - 1];
 			const LocalPos = Utility.Vector.FromIndexS(Index);
-			const WorldPos = this.Chunk.FromLocalPos(LocalPos);
 
-			for (const Axis of Utility.Vector.GetAdjacent(Vector3.zero)) {
-				const AdjBlock = Level.GetBlockAt(WorldPos.add(Axis));
-				if (!AdjBlock || AdjBlock.Block.Definition.IsTransparent()) {
-					const VCount = Vertices.size();
-					let Tangent = Vector3.up;
-					if (math.abs(Axis.y) > 0.9) Tangent = Vector3.forward;
-					const Tangent2 = Vector3.Cross(Axis, Tangent);
-
-					Vertices.push(
-						LocalPos.add(Axis.mul(0.5)).add(Tangent.mul(-0.5)).add(Tangent2.mul(-0.5)),
-						LocalPos.add(Axis.mul(0.5)).add(Tangent.mul(0.5)).add(Tangent2.mul(-0.5)),
-						LocalPos.add(Axis.mul(0.5)).add(Tangent.mul(0.5)).add(Tangent2.mul(0.5)),
-						LocalPos.add(Axis.mul(0.5)).add(Tangent.mul(-0.5)).add(Tangent2.mul(0.5)),
-					);
-
-					const DmgUV = new Vector2(State.Damage, 0);
-					UVs.push(DmgUV, DmgUV, DmgUV, DmgUV);
-					Normals.push(Axis, Axis, Axis, Axis);
-					Triangles.push(VCount, VCount + 1, VCount + 2, VCount, VCount + 2, VCount + 3);
-				}
-			}
+			AddFace(
+				new Vector3(-0.5, 0.5, -0.5).add(LocalPos),
+				new Vector3(-0.5, 0.5, 0.5).add(LocalPos),
+				new Vector3(0.5, 0.5, 0.5).add(LocalPos),
+				new Vector3(0.5, 0.5, -0.5).add(LocalPos),
+				State.Damage,
+			);
+			AddFace(
+				new Vector3(-0.5, -0.5, 0.5).add(LocalPos),
+				new Vector3(-0.5, -0.5, -0.5).add(LocalPos),
+				new Vector3(0.5, -0.5, -0.5).add(LocalPos),
+				new Vector3(0.5, -0.5, 0.5).add(LocalPos),
+				State.Damage,
+			);
+			AddFace(
+				new Vector3(0.5, -0.5, 0.5).add(LocalPos),
+				new Vector3(0.5, 0.5, 0.5).add(LocalPos),
+				new Vector3(-0.5, 0.5, 0.5).add(LocalPos),
+				new Vector3(-0.5, -0.5, 0.5).add(LocalPos),
+				State.Damage,
+			);
+			AddFace(
+				new Vector3(0.5, -0.5, -0.5).add(LocalPos),
+				new Vector3(0.5, 0.5, -0.5).add(LocalPos),
+				new Vector3(0.5, 0.5, 0.5).add(LocalPos),
+				new Vector3(0.5, -0.5, 0.5).add(LocalPos),
+				State.Damage,
+			);
+			AddFace(
+				new Vector3(-0.5, -0.5, -0.5).add(LocalPos),
+				new Vector3(-0.5, 0.5, -0.5).add(LocalPos),
+				new Vector3(0.5, 0.5, -0.5).add(LocalPos),
+				new Vector3(0.5, -0.5, -0.5).add(LocalPos),
+				State.Damage,
+			);
+			AddFace(
+				new Vector3(-0.5, -0.5, 0.5).add(LocalPos),
+				new Vector3(-0.5, 0.5, 0.5).add(LocalPos),
+				new Vector3(-0.5, 0.5, -0.5).add(LocalPos),
+				new Vector3(-0.5, -0.5, -0.5).add(LocalPos),
+				State.Damage,
+			);
 		}
 
-		this.Mesh.Clear();
-		if (Vertices.size() > 0) {
-			this.Mesh.SetVertices(Vertices);
-			this.Mesh.SetNormals(Normals);
-			this.Mesh.SetUVs(1, UVs);
-			this.Mesh.SetTriangles(Triangles, 0);
-		}
+		const TargetMesh = this.Mesh;
+		TargetMesh.Clear();
+		TargetMesh.SetVertices(Verts);
+		TargetMesh.SetUVs(1, DamageUVs);
+		TargetMesh.SetTriangles(Triangles, 0);
+		TargetMesh.RecalculateNormals();
 	}
 }
 
@@ -506,7 +533,7 @@ export class Chunk {
 
 		this.Level.OnStateUpdate(this, LastState, NewState, Position);
 
-		return Prefab
+		return Prefab;
 	}
 
 	/**
