@@ -2111,6 +2111,16 @@
 			"inherits": []
 		},
 		{
+			"name": "WorldSingleton",
+			"id": "Code/Client/Framework/WorldSingleton@WorldSingleton",
+			"file": "Code/Client/Framework/WorldSingleton.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
 			"name": "ClientComponent",
 			"id": "Code/Client/Controller/ClientComponent@ClientComponent",
 			"file": "Code/Client/Controller/ClientComponent.ts",
@@ -2171,6 +2181,26 @@
 			"inherits": [
 				"Code/Shared/Components/EntityComponent@EntityComponent"
 			]
+		},
+		{
+			"name": "SlotComponent",
+			"id": "Code/Client/UI/Drag/SlotComponent@SlotComponent",
+			"file": "Code/Client/UI/Drag/SlotComponent.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
+		},
+		{
+			"name": "UIController",
+			"id": "Code/Client/UI/UIController@UIController",
+			"file": "Code/Client/UI/UIController.ts",
+			"declarationType": "AirshipBehaviour",
+			"modifiers": [
+				"default"
+			],
+			"inherits": []
 		},
 		{
 			"name": "InteractableBlockComponent",
@@ -3023,36 +3053,6 @@
 				"default"
 			],
 			"inherits": []
-		},
-		{
-			"name": "SlotComponent",
-			"id": "Code/Client/UI/Drag/SlotComponent@SlotComponent",
-			"file": "Code/Client/UI/Drag/SlotComponent.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "UIController",
-			"id": "Code/Client/UI/UIController@UIController",
-			"file": "Code/Client/UI/UIController.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
-		},
-		{
-			"name": "WorldSingleton",
-			"id": "Code/Client/Framework/WorldSingleton@WorldSingleton",
-			"file": "Code/Client/Framework/WorldSingleton.ts",
-			"declarationType": "AirshipBehaviour",
-			"modifiers": [
-				"default"
-			],
-			"inherits": []
 		}
 	],
 	"flamework": {
@@ -3098,6 +3098,7 @@
 			"typescript:Code/Shared/Components/BlockContainerComponent@BlockContainerComponent": "Shared/Components/BlockContainerComponent@BlockContainerComponent",
 			"typescript:Code/Client/Controller/Gear/GearController@GearController": "Client/Controller/Gear/GearController@GearController",
 			"typescript:Code/Shared/Object/RecipeObject@RecipeObject": "Shared/Object/RecipeObject@RecipeObject",
+			"typescript:Code/Core/Registry/Recipes@Recipes": "Core/Registry/Recipes@Recipes",
 			"typescript:Code/Server/Data/DataService@DataService": "Server/Data/DataService@DataService",
 			"typescript:Code/Client/Controller/Modules/TimeTrials/TimeTrials@TimeTrials": "Client/Controller/Modules/TimeTrials/TimeTrials@TimeTrials",
 			"typescript:Code/Client/Controller/SoundController@SoundController": "Client/Controller/SoundController@SoundController",
@@ -3106,6 +3107,7 @@
 			"typescript:Code/Shared/GearRegistry@GearRegistrySingleton": "Shared/GearRegistry@GearRegistrySingleton",
 			"typescript:Code/Client/Components/TooltipComponent@TooltipComponent": "Client/Components/TooltipComponent@TooltipComponent",
 			"typescript:Code/Shared/Object/StructureObject@StructureObject": "Shared/Object/StructureObject@StructureObject",
+			"typescript:Code/Core/Registry/Structures@Structures": "Core/Registry/Structures@Structures",
 			"typescript:Code/Shared/Object/ItemObject@ItemObject": "Shared/Object/ItemObject@ItemObject",
 			"typescript:Code/Server/Modules/Spawner@CharacterSpawner": "Server/Modules/Spawner@CharacterSpawner",
 			"typescript:Code/Core/Registry/Blocks@Blocks": "Core/Registry/Blocks@Blocks",
@@ -3124,11 +3126,7 @@
 			"typescript:Code/Client/Controller/Modules/TimeTrials/TimeTrialComponent@TimeTrialComponent": "Client/Controller/Modules/TimeTrials/TimeTrialComponent@TimeTrialComponent",
 			"typescript:Code/Client/Controller/Modules/Zipline/ZiplineComponent@ZiplineComponent": "Client/Controller/Modules/Zipline/ZiplineComponent@ZiplineComponent",
 			"typescript:Code/Shared/Object/SoundBankObject@SoundBankObject": "Shared/Object/SoundBankObject@SoundBankObject",
-			"typescript:Code/Server/test@testcomponent": "Server/test@testcomponent",
-			"typescript:Code/Core/Registry/Recipes@Blocks": "Core/Registry/Recipes@Blocks",
-			"typescript:Code/Core/Registry/Recipes@Recipes": "Core/Registry/Recipes@Recipes",
-			"typescript:Code/Core/Registry/Structures@Recipes": "Core/Registry/Structures@Recipes",
-			"typescript:Code/Core/Registry/Structures@Structures": "Core/Registry/Structures@Structures"
+			"typescript:Code/Server/test@testcomponent": "Server/test@testcomponent"
 		}
 	}
 }
