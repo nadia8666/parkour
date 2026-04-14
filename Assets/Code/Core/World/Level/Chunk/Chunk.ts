@@ -551,7 +551,7 @@ export class Chunk {
 	public SetBlockDamageAt(Position: Vector3, Damage: number) {
 		const Index = Utility.Vector.ToIndexS(this.ToLocalPos(Position));
 		const State = this.Blocks[Index - 1];
-		let PrevDamage;
+		let PrevDamage: number|undefined;
 		if (State) {
 			PrevDamage = State.Damage;
 			State.Damage = Damage;
