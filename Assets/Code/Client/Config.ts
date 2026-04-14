@@ -69,7 +69,7 @@ const Config = {
 	PlayerRadius: 0.5,
 	PlayerHeight: 2,
 
-	InteractionReach: 3.5,
+	InteractionReach: 4.5,
 	MaxStackSize: 128,
 
 	RunMaxSpeed: 15,
