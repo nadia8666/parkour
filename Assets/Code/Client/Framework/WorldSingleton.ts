@@ -3,9 +3,10 @@ import { Asset } from "@Easy/Core/Shared/Asset";
 import Core from "Code/Core/Core";
 import Blocks from "Code/Core/Registry/Blocks";
 import { Identifier } from "Code/Core/Registry/Identifier";
+import Structures from "Code/Core/Registry/Structures";
 import type BlockDef from "Code/Core/World/Block/BlockDef";
 import type { BlockState } from "Code/Core/World/Block/BlockState";
-import type { Chunk } from "Code/Core/World/Level/Chunk/Chunk";
+import { Chunk } from "Code/Core/World/Level/Chunk/Chunk";
 import { Level } from "Code/Core/World/Level/Level";
 import ENV from "Code/Server/ENV";
 import { SettingsService } from "Code/Server/SettingsService";
@@ -31,7 +32,7 @@ type ChunkTask = {
 };
 
 const StructuresRegistry: { [Index: string]: StructureObject } = {};
-(Asset.LoadAll("Assets/Resources/Structures") as StructureObject[]).forEach((Structure) => (StructuresRegistry[Structure.Name] = Structure));
+Structures.Registry.Instances.forEach((Structure) => (StructuresRegistry[Structure.Name] = Structure));
 
 class ChunkManager {
 	public readonly ChunkSize = 16;
@@ -39,7 +40,7 @@ class ChunkManager {
 	public readonly SurfaceLoadedChunks = new Set<Vector3>();
 
 	private readonly TaskQueue: ChunkTask[] = [];
-	private readonly ModifiedBlocks = new Map<Vector3, number>();
+	public readonly ModifiedBlocks = new Map<Vector3, number>();
 
 	public ToKey(Position: Vector3) {
 		return new Vector3(
@@ -297,20 +298,12 @@ class ChunkManager {
 		}
 	}
 
+	public ToDeload = new Map<Vector3, number>();
 	public UnloadChunk(ChunkKey: Vector3) {
-		this.LoadedChunks.delete(ChunkKey);
-		this.SurfaceLoadedChunks.delete(ChunkKey.WithY(0));
+		if (math.abs(ChunkKey.x) < 5 || math.abs(ChunkKey.z) < 5) return;
+		if (this.ToDeload.get(ChunkKey)) return;
 
-		const Origin = this.FromKey(ChunkKey);
-		for (let x = 0; x < 16; x++) {
-			for (let y = 0; y < 16; y++) {
-				for (let z = 0; z < 16; z++) {
-					this.ModifiedBlocks.delete(Origin.add(new Vector3(x, y, z)));
-				}
-			}
-		}
-
-		instance().Level.UnloadChunk(ChunkKey);
+		this.ToDeload.set(ChunkKey, os.clock());
 	}
 
 	private TryPropagate(
@@ -390,6 +383,16 @@ export default class WorldSingleton extends AirshipSingleton {
 			let LoadedChunks = 0;
 			Network.Level.WriteGroup.client.OnServerEvent((PosArr, BlocksArr) => {
 				this.WriteBlockGroupAt(PosArr, BlocksArr);
+			});
+			Network.Level.WriteChunk.client.OnServerEvent((Key, BlockIDs) => {
+				this.Level.Chunks.set(
+					Key,
+					new Chunk(
+						this.Level,
+						Key,
+						BlockIDs.map((ID) => this.GetStateFromString(ID)),
+					),
+				);
 				LoadedChunks++;
 			});
 			Network.Level.WriteVoxel.client.OnServerEvent((Pos, Block) => this.WriteBlockAt(Pos, Block));
@@ -419,12 +422,17 @@ export default class WorldSingleton extends AirshipSingleton {
 				while (!this.WorldReady) task.wait();
 
 				let Iterations = 0;
-				for (const [Chunk] of pairs(this.ChunkManager.LoadedChunks)) {
+				for (const [Key] of pairs(this.ChunkManager.LoadedChunks)) {
 					if (!Player) return;
 					task.spawn(() => {
-						const PositionArray = this.ChunkManager.ExpandCube(this.ChunkManager.FromKey(Chunk), 15);
-						const BlocksArray = PositionArray.map((pos) => this.GetBlockAt(pos));
-						Network.Level.WriteGroup.server.FireClient(Player, PositionArray, BlocksArray);
+						const Chunk = this.Level.Chunks.get(Key);
+						if (Chunk) {
+							Network.Level.WriteChunk.server.FireClient(
+								Player,
+								Key,
+								Chunk.Blocks.map((State) => State.Block.Identifier.AsString()),
+							);
+						}
 					});
 
 					Iterations++;
@@ -500,7 +508,7 @@ export default class WorldSingleton extends AirshipSingleton {
 					const Block = Prefab.GetAirshipComponent<InteractableBlockComponent>(true)!;
 					while (!Block.Container || !Block.Container.Setup) task.wait();
 					let Elements = 0;
-					
+
 					for (const [GearID, Gear] of pairs(GearRegistrySingleton.Get())) {
 						if (Gear instanceof GearObject) {
 							for (const Level of $range(1, Gear.MaxLevel)) {
@@ -552,6 +560,8 @@ export default class WorldSingleton extends AirshipSingleton {
 		for (const [Chunk] of pairs(this.ChunkQueue)) {
 			this.ChunkQueue.delete(Chunk);
 
+			if (!Chunk || Chunk.IsDestroying) continue;
+
 			task.spawn(() => Chunk.Rebuild());
 		}
 	}
@@ -565,6 +575,7 @@ export default class WorldSingleton extends AirshipSingleton {
 			if (os.clock() - this.LastUpdate <= 0.25) return;
 			this.LastUpdate = os.clock();
 
+			const PlayerHash = new Map<Vector3, number>();
 			Airship.Players.GetPlayers().forEach((Player) => {
 				task.spawn(() => {
 					const Character = Core().Server.CharacterMap.get(Player);
@@ -576,6 +587,7 @@ export default class WorldSingleton extends AirshipSingleton {
 						};
 						Profiler.BeginSample("WorldSingleton/GetNoise");
 						const RenderDistance = SettingsService.Settings.GetSetting("RenderDistance", Player);
+						PlayerHash.set(Chunk.ToKey(Character.transform.position), RenderDistance);
 						const AboveGround =
 							Position.y + 8 >=
 							this.ChunkManager.GetTerrainHeight(
@@ -584,43 +596,46 @@ export default class WorldSingleton extends AirshipSingleton {
 							);
 						Profiler.EndSample();
 
-						const Keys = this.ChunkManager.ExpandCube(this.ChunkManager.ToKey(Position).sub(Vector3.one.mul(RenderDistance / 2)), RenderDistance);
+						const TrueSurfaceHeight = this.Noise.Get2DFBM(Position.x, Position.z, 1, 0.0004, 3, 0.5, 2);
 
+						const Keys = this.ChunkManager.ExpandCube(this.ChunkManager.ToKey(Position).sub(Vector3.one.mul(RenderDistance / 2)), RenderDistance);
 						for (const [_, Key] of pairs(Keys)) {
 							if (AboveGround) {
-								if (!this.ChunkManager.SurfaceLoadedChunks.has(Key.WithY(0))) {
-									this.ChunkManager.SurfaceLoadedChunks.add(Key.WithY(0));
+								if (Position.y < TrueSurfaceHeight + RenderDistance * 16) {
+									if (!this.ChunkManager.SurfaceLoadedChunks.has(Key.WithY(0))) {
+										this.ChunkManager.SurfaceLoadedChunks.add(Key.WithY(0));
 
-									const Origin = Key.WithY(0).mul(16);
-									Profiler.BeginSample("WorldSingleton/OtherNoise");
-									const ContinentalBuffer = this.Noise.Get2DFBMBatch(Origin.x, Origin.z, 16, 16, new Array(256), 1, 0.0004, 3, 0.5, 2);
-									const DetailBuffer = this.Noise.Get2DFBMBatch(Origin.x, Origin.z, 16, 16, new Array(256), 2, 0.01, 4, 0.5, 2);
-									Profiler.EndSample();
+										const Origin = Key.WithY(0).mul(16);
+										Profiler.BeginSample("WorldSingleton/OtherNoise");
+										const ContinentalBuffer = this.Noise.Get2DFBMBatch(Origin.x, Origin.z, 16, 16, new Array(256), 1, 0.0004, 3, 0.5, 2);
+										const DetailBuffer = this.Noise.Get2DFBMBatch(Origin.x, Origin.z, 16, 16, new Array(256), 2, 0.01, 4, 0.5, 2);
+										Profiler.EndSample();
 
-									let IterationCount = 0;
-									for (const x of $range(0, this.ChunkManager.ChunkSize - 1)) {
-										for (const z of $range(0, this.ChunkManager.ChunkSize - 1)) {
-											const WorldX = Origin.x + x;
-											const WorldZ = Origin.z + z;
+										let IterationCount = 0;
+										for (const x of $range(0, this.ChunkManager.ChunkSize - 1)) {
+											for (const z of $range(0, this.ChunkManager.ChunkSize - 1)) {
+												const WorldX = Origin.x + x;
+												const WorldZ = Origin.z + z;
 
-											Profiler.BeginSample("WorldSingleton/GetHeight");
-											const Continental = ContinentalBuffer[z * 16 + x];
-											const Detail = DetailBuffer[z * 16 + x];
-											const SurfaceY = this.ChunkManager.GetTerrainHeight(Continental, Detail);
+												Profiler.BeginSample("WorldSingleton/GetHeight");
+												const Continental = ContinentalBuffer[z * 16 + x];
+												const Detail = DetailBuffer[z * 16 + x];
+												const SurfaceY = this.ChunkManager.GetTerrainHeight(Continental, Detail);
 
-											const TopChunk = this.ChunkManager.ToKey(new Vector3(WorldX, SurfaceY, WorldZ));
-											const BottomChunk = TopChunk.sub(Vector3.up);
-											Profiler.EndSample();
+												const TopChunk = this.ChunkManager.ToKey(new Vector3(WorldX, SurfaceY, WorldZ));
+												const BottomChunk = TopChunk.sub(Vector3.up);
+												Profiler.EndSample();
 
-											Profiler.BeginSample("WorldSingleton/GenChunks");
-											this.ChunkManager.GenerateChunk(TopChunk, DetailBuffer, ContinentalBuffer, false, LinkedPlayer);
-											this.ChunkManager.GenerateChunk(BottomChunk, DetailBuffer, ContinentalBuffer, false, LinkedPlayer);
-											Profiler.EndSample();
+												Profiler.BeginSample("WorldSingleton/GenChunks");
+												this.ChunkManager.GenerateChunk(TopChunk, DetailBuffer, ContinentalBuffer, false, LinkedPlayer);
+												this.ChunkManager.GenerateChunk(BottomChunk, DetailBuffer, ContinentalBuffer, false, LinkedPlayer);
+												Profiler.EndSample();
 
-											IterationCount++;
-											if (IterationCount >= 16) {
-												IterationCount = 0;
-												task.wait();
+												IterationCount++;
+												if (IterationCount >= 16) {
+													IterationCount = 0;
+													task.wait();
+												}
 											}
 										}
 									}
@@ -638,6 +653,48 @@ export default class WorldSingleton extends AirshipSingleton {
 					}
 				});
 			});
+
+			this.ChunkManager.ToDeload.forEach((QueueTime, ChunkKey) => {
+				let Loaded = false;
+				for (const [PlayerKey, RenderDistance] of PlayerHash) {
+					if (PlayerKey.sub(ChunkKey).magnitude <= RenderDistance) {
+						Loaded = true;
+						break;
+					}
+				}
+
+				if (Loaded) {
+					this.ChunkManager.ToDeload.delete(ChunkKey);
+				} else if (os.clock() - QueueTime >= 15) {
+					this.ChunkManager.ToDeload.delete(ChunkKey);
+
+					this.ChunkManager.LoadedChunks.delete(ChunkKey);
+					this.ChunkManager.SurfaceLoadedChunks.delete(ChunkKey.WithY(0));
+
+					const Origin = this.ChunkManager.FromKey(ChunkKey);
+					for (let x = 0; x < 16; x++) {
+						for (let y = 0; y < 16; y++) {
+							for (let z = 0; z < 16; z++) {
+								this.ChunkManager.ModifiedBlocks.delete(Origin.add(new Vector3(x, y, z)));
+							}
+						}
+					}
+
+					this.Level.UnloadChunk(ChunkKey);
+				}
+			});
+
+			for (const [Key] of this.Level.Chunks) {
+				let Loaded = false;
+				for (const [PlayerKey, RenderDistance] of PlayerHash) {
+					if (PlayerKey.sub(Key).magnitude <= RenderDistance) {
+						Loaded = true;
+						break;
+					}
+				}
+
+				if (!Loaded) this.ChunkManager.UnloadChunk(Key);
+			}
 		}
 	}
 

@@ -4,6 +4,7 @@ import { Binding } from "@Easy/Core/Shared/Input/Binding";
 import { Mouse } from "@Easy/Core/Shared/UserInput";
 import { Bin } from "@Easy/Core/Shared/Util/Bin";
 import Core from "Code/Core/Core";
+import Recipes from "Code/Core/Registry/Recipes";
 import { Network } from "Code/Shared/Network";
 import type RecipeObject from "Code/Shared/Object/RecipeObject";
 import { type AnyItem, ItemTypes } from "Code/Shared/Types";
@@ -117,9 +118,7 @@ export default class UIController extends AirshipSingleton {
 		this.PlayerInventoriesTabButton.onClick.Connect(() => FocusUI(this.PlayerInventoriesTabButton, this.PlayerInventoriesTab));
 		FocusUI(this.PlayerInventoriesTabButton, this.PlayerInventoriesTab);
 
-		// TODO: refactor
-		const Recipes = Asset.LoadAll("Assets/Resources/Recipes", true) as RecipeObject[];
-		Recipes.forEach((Recipe) => {
+		Recipes.Registry.Instances.forEach((Recipe) => {
 			const ItemSlot = Instantiate(this.Hotbar.SlotTemplate);
 			ItemSlot.transform.SetParent(this.CraftingContainer.transform, false);
 
