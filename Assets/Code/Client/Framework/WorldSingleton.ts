@@ -300,7 +300,7 @@ class ChunkManager {
 
 	public ToDeload = new Map<Vector3, number>();
 	public UnloadChunk(ChunkKey: Vector3) {
-		if (math.abs(ChunkKey.x) < 5 || math.abs(ChunkKey.z) < 5) return;
+		if (ChunkKey.WithY(0).magnitude < 4) return;
 		if (this.ToDeload.get(ChunkKey)) return;
 
 		this.ToDeload.set(ChunkKey, os.clock());
@@ -662,7 +662,7 @@ export default class WorldSingleton extends AirshipSingleton {
 						break;
 					}
 				}
-
+				
 				if (Loaded) {
 					this.ChunkManager.ToDeload.delete(ChunkKey);
 				} else if (os.clock() - QueueTime >= 15) {
