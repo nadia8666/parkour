@@ -34,7 +34,6 @@ Shader "Unlit/VoxelWorldTransparentShader"
             {
                 float4 positionOS : POSITION;
                 float3 normalOS   : NORMAL;
-                float2 damageUV   : TEXCOORD1; 
             };
 
             struct Varyings
@@ -44,15 +43,12 @@ Shader "Unlit/VoxelWorldTransparentShader"
                 float3 positionOS : TEXCOORD3;
                 float3 normalWS   : TEXCOORD1;
                 float3 normalOS   : TEXCOORD4;
-                float2 damageUV   : TEXCOORD5;
             };
 
             TEXTURE2D(_BaseMap);
             SAMPLER(sampler_BaseMap);
             TEXTURE3D(_Lightmap);
             SAMPLER(sampler_Lightmap);
-            TEXTURE2D_ARRAY(_DamageTexArray);
-            SAMPLER(sampler_DamageTexArray);
 
             float4 _GridCenter;
             float4 _GridSize;
@@ -70,7 +66,6 @@ Shader "Unlit/VoxelWorldTransparentShader"
                 output.positionOS = input.positionOS.xyz;
                 output.normalOS = input.normalOS;
                 output.normalWS = TransformObjectToWorldNormal(input.normalOS);
-                output.damageUV = input.damageUV;
                 return output;
             }
 
@@ -88,14 +83,6 @@ Shader "Unlit/VoxelWorldTransparentShader"
                 float4 triplanar = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, uvX) * blend.x +
                                 SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, uvY) * blend.y +
                                 SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, uvZ) * blend.z;
-
-                float damageIndex = input.damageUV.x * 6;
-                
-                float4 damageTex = SAMPLE_TEXTURE2D_ARRAY(_DamageTexArray, sampler_DamageTexArray, uvX, damageIndex) * blend.x +
-                                SAMPLE_TEXTURE2D_ARRAY(_DamageTexArray, sampler_DamageTexArray, uvY, damageIndex) * blend.y +
-                                SAMPLE_TEXTURE2D_ARRAY(_DamageTexArray, sampler_DamageTexArray, uvZ, damageIndex) * blend.z;
-
-                triplanar.rgb = lerp(triplanar.rgb, damageTex.rgb, damageTex.a);
 
                 float3 normalWS = normalize(input.normalWS);
                 float3 adjustedPos = input.positionWS + (normalWS * 0.5);
