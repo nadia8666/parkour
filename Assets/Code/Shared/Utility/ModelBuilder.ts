@@ -4,7 +4,7 @@ import { BlockModel } from "Code/Core/World/Block/BlockDef";
 import { type AnyItem, ItemTypes } from "../Types";
 
 export namespace ModelBuilder {
-	export enum ModelBuilderType {
+	export enum ModelBuilderReturnType {
 		None,
 		ItemMesh,
 		VoxelBlock,
@@ -69,11 +69,11 @@ export namespace ModelBuilder {
 							Definition.GetTextureFor(Vector3.left),
 						];
 
-						return $tuple(ModelBuilderType.VoxelBlock, Object, Filter, Renderer);
+						return $tuple(ModelBuilderReturnType.VoxelBlock, Object, Filter, Renderer);
 					}
 
 					case BlockModel.Prefab:
-						return $tuple(ModelBuilderType.VoxelPrefab, Instantiate(Definition.Prefab), undefined, undefined);
+						return $tuple(ModelBuilderReturnType.VoxelPrefab, Instantiate(Definition.Prefab), undefined, undefined);
 
 					default:
 						break;
@@ -93,9 +93,9 @@ export namespace ModelBuilder {
 
 			if (Material) Renderer.SetMaterial(0, Material);
 
-			return $tuple(ModelBuilderType.ItemMesh, ItemObject, Filter, Renderer);
+			return $tuple(ModelBuilderReturnType.ItemMesh, ItemObject, Filter, Renderer);
 		}
 
-		return $tuple(ModelBuilderType.None, undefined, undefined, undefined);
+		return $tuple(ModelBuilderReturnType.None, undefined, undefined, undefined);
 	}
 }

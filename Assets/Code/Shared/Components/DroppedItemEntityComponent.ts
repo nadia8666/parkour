@@ -33,19 +33,19 @@ export default class DroppedItemEntityComponent extends EntityComponent {
 		const [Type, Item] = ModelBuilder.BuildItemModel(this.Item);
 
 		if (!Item) return;
-		if ([ModelBuilder.ModelBuilderType.ItemMesh, ModelBuilder.ModelBuilderType.VoxelBlock, ModelBuilder.ModelBuilderType.VoxelPrefab].includes(Type)) {
+		if ([ModelBuilder.ModelBuilderReturnType.ItemMesh, ModelBuilder.ModelBuilderReturnType.VoxelBlock, ModelBuilder.ModelBuilderReturnType.VoxelPrefab].includes(Type)) {
 			Item.transform.SetParent(this.ModelContainer, false);
 			Item.transform.localPosition = Vector3.zero;
 			Item.transform.localScale = Vector3.one.mul(0.4);
 			Item.SetLayerRecursive(27);
 
-			if (Type === ModelBuilder.ModelBuilderType.VoxelBlock) {
+			if (Type === ModelBuilder.ModelBuilderReturnType.VoxelBlock) {
 				const Block = new MaterialPropertyBlock();
 				Block.SetFloat("_VerticalOffset", 0.5);
 				Item.GetComponent<MeshRenderer>()!.SetPropertyBlock(Block);
 			}
 
-			if (Type === ModelBuilder.ModelBuilderType.VoxelPrefab) {
+			if (Type === ModelBuilder.ModelBuilderReturnType.VoxelPrefab) {
 				const Interactable = Item.GetAirshipComponent<InteractableBlockComponent>();
 				if (Interactable) Interactable.enabled = false;
 			}

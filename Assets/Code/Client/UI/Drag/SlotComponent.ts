@@ -98,15 +98,15 @@ export default class SlotComponent extends AirshipBehaviour {
 			if (Item) {
 				Item.transform.SetParent(this.transform, false);
 				Item.transform.localPosition = new Vector3(0.363, 0.666, -10);
-				Item.transform.localScale = [ModelBuilder.ModelBuilderType.VoxelBlock, ModelBuilder.ModelBuilderType.VoxelPrefab].includes(Type)
+				Item.transform.localScale = [ModelBuilder.ModelBuilderReturnType.VoxelBlock, ModelBuilder.ModelBuilderReturnType.VoxelPrefab].includes(Type)
 					? Vector3.one.mul(37.5)
 					: Vector3.one.mul(74.75);
 				Item.SetLayerRecursive(5);
 
-				if ([ModelBuilder.ModelBuilderType.VoxelBlock, ModelBuilder.ModelBuilderType.VoxelPrefab].includes(Type)) {
+				if ([ModelBuilder.ModelBuilderReturnType.VoxelBlock, ModelBuilder.ModelBuilderReturnType.VoxelPrefab].includes(Type)) {
 					Item.transform.localRotation = Quaternion.Euler(25, 45, 0);
 
-					if (Type === ModelBuilder.ModelBuilderType.VoxelPrefab) {
+					if (Type === ModelBuilder.ModelBuilderReturnType.VoxelPrefab) {
 						const Interactable = Item.GetAirshipComponent<InteractableBlockComponent>();
 						if (Interactable) Interactable.enabled = false;
 					} else {
