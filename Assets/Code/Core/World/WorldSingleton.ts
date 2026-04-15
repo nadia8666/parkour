@@ -1,4 +1,5 @@
 import { Airship } from "@Easy/Core/Shared/Airship";
+import { Game } from "@Easy/Core/Shared/Game";
 import Core from "Code/Core/Core";
 import Blocks from "Code/Core/Registry/Blocks";
 import { Identifier } from "Code/Core/Registry/Identifier";
@@ -451,8 +452,8 @@ export default class WorldSingleton extends AirshipSingleton {
 
 			this.Noise = new NoiseHandler(Config.Seed);
 			let [ChunksWritten, MaxChunks] = [0, 0];
-			for (const ChunkX of $range(-4, 4)) {
-				for (const ChunkZ of $range(-4, 4)) {
+			for (const ChunkX of $range(-(Game.IsEditor() ? 2 : 4), Game.IsEditor() ? 2 : 4)) {
+				for (const ChunkZ of $range(-(Game.IsEditor() ? 2 : 4), Game.IsEditor() ? 2 : 4)) {
 					const Origin = new Vector3(ChunkX, 0, ChunkZ).mul(16);
 
 					const ContinentalBuffer = this.Noise.Get2DFBMBatch(Origin.x, Origin.z, 16, 16, new Array(256), 1, 0.0004, 3, 0.5, 2);
