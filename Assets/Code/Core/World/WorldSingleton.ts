@@ -760,7 +760,7 @@ export default class WorldSingleton extends AirshipSingleton {
 		}
 
 		if ($CLIENT) this.IsDirty = true;
-		if ($SERVER && !ENV.Shared && !Existed) Network.Level.WriteChunk.server.FireAllClients(ChunkKey, Blocks, false);
+		if (Game.IsServer() && !ENV.Shared && !Existed) Network.Level.WriteChunk.server.FireAllClients(ChunkKey, Blocks, false);
 	}
 
 	public GetBlockAt(Position: Vector3): string {
