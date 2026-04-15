@@ -84,10 +84,10 @@ export class ChunkMeshRenderer {
 	public ProcessAxis(
 		Axis: Vector3,
 		Blocks: BlockState[],
-		AdjChunk: Chunk | undefined,
-		MaskMat: (Material | undefined)[],
-		MaskBlock: (Block | undefined)[],
-		MaskDamage: (number | undefined)[],
+		AdjacentChunk: Chunk | undefined,
+		MaterialMask: (Material | undefined)[],
+		BlockMask: (Block | undefined)[],
+		DamageMask: (number | undefined)[],
 		EmitQuad: (Mat: Material, V1: Vector3, V2: Vector3, V3: Vector3, V4: Vector3, N: Vector3, W: number, H: number, Reversed: boolean, Damage: number) => void,
 	) {
 		let D = 0;
@@ -125,24 +125,24 @@ export class ChunkMeshRenderer {
 
 					if (!Blk || Blk.Definition.ModelType !== BlockModel.Box) continue;
 
-					let AdjBlock: Block | undefined;
+					let AdjState: Block | undefined;
 
 					if ((Sign > 0 && W === 15) || (Sign < 0 && W === 0)) {
-						if (AdjChunk) {
-							const AdjC = [X, Y, Z];
-							AdjC[D] = Sign > 0 ? 0 : 15;
-							AdjBlock = AdjChunk.Blocks[GetIndex(AdjC[0], AdjC[1], AdjC[2])]?.Block;
+						if (AdjacentChunk) {
+							const AdjChunk = [X, Y, Z];
+							AdjChunk[D] = Sign > 0 ? 0 : 15;
+							AdjState = AdjacentChunk.Blocks[GetIndex(AdjChunk[0], AdjChunk[1], AdjChunk[2])]?.Block;
 						}
 					} else {
-						const NextC = [X, Y, Z];
-						NextC[D] = W + Sign;
-						AdjBlock = Blocks[GetIndex(NextC[0], NextC[1], NextC[2])]?.Block;
+						const NextChunk = [X, Y, Z];
+						NextChunk[D] = W + Sign;
+						AdjState = Blocks[GetIndex(NextChunk[0], NextChunk[1], NextChunk[2])]?.Block;
 					}
 
-					if (!AdjBlock || AdjBlock.Definition.IsTransparent()) {
-						MaskMat[(J << 4) | I] = Blk.Definition.GetTextureFor(Axis);
-						MaskBlock[(J << 4) | I] = Blk;
-						MaskDamage[(J << 4) | I] = State.Damage || 0;
+					if (!AdjState || AdjState.Definition.IsTransparent(State)) {
+						MaterialMask[(J << 4) | I] = Blk.Definition.GetTextureFor(Axis);
+						BlockMask[(J << 4) | I] = Blk;
+						DamageMask[(J << 4) | I] = State.Damage || 0;
 					}
 				}
 			}
@@ -150,13 +150,13 @@ export class ChunkMeshRenderer {
 			for (let J = 0; J < 16; J++) {
 				for (let I = 0; I < 16; ) {
 					const Idx = (J << 4) | I;
-					const Mat = MaskMat[Idx];
-					const Blk = MaskBlock[Idx];
-					const Dmg = MaskDamage[Idx];
+					const Mat = MaterialMask[Idx];
+					const Blk = BlockMask[Idx];
+					const Dmg = DamageMask[Idx];
 
 					if (Mat && Blk && Dmg !== undefined) {
 						let Width = 1;
-						while (I + Width < 16 && MaskMat[(J << 4) | (I + Width)] === Mat && MaskBlock[(J << 4) | (I + Width)] === Blk && MaskDamage[(J << 4) | (I + Width)] === Dmg) {
+						while (I + Width < 16 && MaterialMask[(J << 4) | (I + Width)] === Mat && BlockMask[(J << 4) | (I + Width)] === Blk && DamageMask[(J << 4) | (I + Width)] === Dmg) {
 							Width++;
 						}
 
@@ -165,7 +165,7 @@ export class ChunkMeshRenderer {
 						while (J + Height < 16) {
 							for (let K = 0; K < Width; K++) {
 								const CIdx = ((J + Height) << 4) | (I + K);
-								if (MaskMat[CIdx] !== Mat || MaskBlock[CIdx] !== Blk || MaskDamage[CIdx] !== Dmg) {
+								if (MaterialMask[CIdx] !== Mat || BlockMask[CIdx] !== Blk || DamageMask[CIdx] !== Dmg) {
 									Done = true;
 									break;
 								}
@@ -196,9 +196,9 @@ export class ChunkMeshRenderer {
 						for (let L = 0; L < Height; L++) {
 							for (let K = 0; K < Width; K++) {
 								const Clr = ((J + L) << 4) | (I + K);
-								MaskMat[Clr] = undefined;
-								MaskBlock[Clr] = undefined;
-								MaskDamage[Clr] = undefined;
+								MaterialMask[Clr] = undefined;
+								BlockMask[Clr] = undefined;
+								DamageMask[Clr] = undefined;
 							}
 						}
 						I += Width;
@@ -412,10 +412,10 @@ export class Chunk {
 		this.DamageRenderer = new ChunkDamageRenderer(this);
 
 		Utility.Vector.GetAdjacent(this.Key).forEach((Key) => Level.Chunks.get(Key)?.MarkDirty());
-		this.MarkDirty();
+		this.MarkDirty(undefined, true);
 	}
 
-	public MarkDirty(Flag?: ("Collision" | "Visual")[]) {
+	public MarkDirty(Flag?: ("Collision" | "Visual")[], Immediate?: boolean) {
 		if (this.IsDestroying) return;
 
 		if (Flag) {
@@ -428,7 +428,8 @@ export class Chunk {
 		if (this.IsDirty) return;
 		this.IsDirty = true;
 
-		task.spawn(() => Core().World.QueueChunkRebuild(this));
+		if (Immediate) this.Rebuild();
+		else task.spawn(() => Core().World.QueueChunkRebuild(this));
 	}
 
 	public Rebuild() {

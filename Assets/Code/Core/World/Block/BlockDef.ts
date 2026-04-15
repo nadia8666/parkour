@@ -1,3 +1,5 @@
+import type { BlockState } from "./BlockState";
+
 export enum BlockModel {
 	Box,
 	Prefab,
@@ -32,7 +34,8 @@ export default class BlockDef extends AirshipScriptableObject {
 	@ShowIf("ModelType", BlockModel.Mesh) public Mesh: Mesh;
 
 	public NoCollide: boolean;
-	public NoOcclusion: boolean;
+	public NoSelfOcclusion: boolean;
+	public NoOtherOcclusion: boolean;
 
 	public GetTextureFor(Axis: Vector3) {
 		switch (Axis) {
@@ -53,7 +56,11 @@ export default class BlockDef extends AirshipScriptableObject {
 		}
 	}
 
-	public IsTransparent() {
-		return this.NoOcclusion || this.ModelType !== BlockModel.Box;
+	public IsTransparent(ComparisonBlock?: BlockState) {
+		return (
+			(ComparisonBlock ? this.NoOtherOcclusion && ComparisonBlock.Block.Definition.RegistryID !== this.RegistryID : false) ||
+			this.NoSelfOcclusion ||
+			this.ModelType !== BlockModel.Box
+		);
 	}
 }
