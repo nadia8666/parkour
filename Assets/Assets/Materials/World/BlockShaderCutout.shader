@@ -9,8 +9,8 @@ Shader "Unlit/VoxelWorldTransparentShader"
         Tags 
         { 
             "RenderPipeline" = "UniversalPipeline"
-            "RenderType" = "Transparent" 
-            "Queue" = "Transparent" 
+            "RenderType" = "TransparentCutout" 
+            "Queue" = "AlphaTest"
         }
 
         Pass
@@ -18,10 +18,9 @@ Shader "Unlit/VoxelWorldTransparentShader"
             Name "ForwardLit"
             Tags { "LightMode" = "UniversalForward" }
 
-            ZWrite Off
+            ZWrite On
             ZTest LEqual
             Cull Back
-            Blend SrcAlpha OneMinusSrcAlpha
 
             HLSLPROGRAM
             #pragma vertex vert
@@ -89,57 +88,8 @@ Shader "Unlit/VoxelWorldTransparentShader"
                 float3 uvw = (adjustedPos - _GridCenter.xyz + (_GridSize.xyz/2)) / _GridSize.xyz;
                 float light = SAMPLE_TEXTURE3D(_Lightmap, sampler_Lightmap, float3(uvw.x, floor(adjustedPos.y)/_GridSize.y, uvw.z)).r;
 
-                return float4(triplanar.rgb * light, triplanar.a);
-            }
-            ENDHLSL
-        }
-
-        Pass
-        {
-            Name "DepthPass"
-            Tags { "LightMode" = "DepthNormals" }
-
-            ZWrite On
-            Cull Back
-
-            HLSLPROGRAM
-            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
-            
-            TEXTURE2D(_BaseMap); SAMPLER(sampler_BaseMap);
-            float4 _BaseMap_ST;
-
-            struct Attributes { 
-                float4 positionOS : POSITION; 
-                float3 normalOS : NORMAL; 
-            };
-            struct Varyings { 
-                float4 positionCS : SV_POSITION; 
-                float3 normalWS : TEXCOORD0; 
-                float3 positionOS : TEXCOORD1;
-            };
-
-            Varyings vert(Attributes input) {
-                Varyings output;
-                output.positionCS = TransformObjectToHClip(input.positionOS.xyz);
-                output.normalWS = TransformObjectToWorldNormal(input.normalOS);
-                output.positionOS = input.positionOS.xyz;
-                return output;
-            }
-
-            float4 frag(Varyings input) : SV_Target {
-                float3 blend = abs(normalize(input.normalWS)); 
-                blend /= (blend.x + blend.y + blend.z);
-                float2 uvX = input.positionOS.zy * _BaseMap_ST.xy + _BaseMap_ST.zw;
-                float2 uvY = input.positionOS.xz * _BaseMap_ST.xy + _BaseMap_ST.zw;
-                float2 uvZ = input.positionOS.xy * _BaseMap_ST.xy + _BaseMap_ST.zw;
-
-                float alpha = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, uvX).a * blend.x +
-                            SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, uvY).a * blend.y +
-                            SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, uvZ).a * blend.z;
-
-                clip(alpha - 0.5); 
-
-                return float4(PackNormalOctRectEncode(normalize(input.normalWS)), 0.0, 1.0);
+                clip(triplanar.a - 0.1);
+                return float4(triplanar.rgb * light, triplanar.a);                  
             }
             ENDHLSL
         }
