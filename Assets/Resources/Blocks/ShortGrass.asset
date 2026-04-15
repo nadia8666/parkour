@@ -76,7 +76,7 @@ MonoBehaviour:
         tags: []
       decorators: []
       nullable: 0
-      serializedValue: 0
+      serializedValue: 3
       serializedObject: {fileID: 0}
       modified: 1
     - name: TopTexture
@@ -369,5 +369,29 @@ MonoBehaviour:
       serializedValue: 
       serializedObject: {fileID: 0}
       modified: 0
+    - name: Mesh
+      type: object
+      objectType: Mesh
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators:
+      - name: ShowIf
+        parameters:
+        - type: string
+          serializedValue: '"ModelType"'
+        - type: number
+          serializedValue: 3
+      nullable: 0
+      serializedValue: 
+      serializedObject: {fileID: 3111262737904118909, guid: a363c67539d088a4e992007e72145e73, type: 3}
+      modified: 1
     displayIcon: {fileID: 0}
     displayName: 

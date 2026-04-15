@@ -2,6 +2,7 @@ export enum BlockModel {
 	Box,
 	Prefab,
 	None,
+	Mesh,
 }
 
 export enum BlockTextureType {
@@ -17,8 +18,8 @@ export default class BlockDef extends AirshipScriptableObject {
 
 	public ModelType: BlockModel;
 
-	@ShowIf("ModelType", BlockModel.Box) public TextureType: BlockTextureType;
-	@ShowIf("ModelType", BlockModel.Box) @ShowIf("TextureType", BlockTextureType.Single) public SingleTexture: Material;
+	@ShowIf("ModelType", BlockModel.Box, BlockModel.Mesh) public TextureType: BlockTextureType;
+	@ShowIf("ModelType", BlockModel.Box, BlockModel.Mesh) @ShowIf("TextureType", BlockTextureType.Single) public SingleTexture: Material;
 	@ShowIf("ModelType", BlockModel.Box) @ShowIf("TextureType", BlockTextureType.All, BlockTextureType.UDH) public TopTexture: Material;
 	@ShowIf("ModelType", BlockModel.Box) @ShowIf("TextureType", BlockTextureType.All, BlockTextureType.UDH) public BottomTexture: Material;
 	@ShowIf("ModelType", BlockModel.Box) @ShowIf("TextureType", BlockTextureType.All, BlockTextureType.UDH) public HorizontalTexture: Material;
@@ -28,6 +29,7 @@ export default class BlockDef extends AirshipScriptableObject {
 	@ShowIf("ModelType", BlockModel.Box) @ShowIf("TextureType", BlockTextureType.All) public WestTexture: Material;
 
 	@ShowIf("ModelType", BlockModel.Prefab) public Prefab: GameObject;
+	@ShowIf("ModelType", BlockModel.Mesh) public Mesh: Mesh;
 
 	public NoCollide: boolean;
 	public NoOcclusion: boolean;
