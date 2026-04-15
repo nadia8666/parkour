@@ -453,7 +453,6 @@ export default class WorldSingleton extends AirshipSingleton {
 			let [ChunksWritten, MaxChunks] = [0, 0];
 			for (const ChunkX of $range(-4, 4)) {
 				for (const ChunkZ of $range(-4, 4)) {
-					MaxChunks += 2;
 					const Origin = new Vector3(ChunkX, 0, ChunkZ).mul(16);
 
 					const ContinentalBuffer = this.Noise.Get2DFBMBatch(Origin.x, Origin.z, 16, 16, new Array(256), 1, 0.0004, 3, 0.5, 2);
@@ -476,11 +475,14 @@ export default class WorldSingleton extends AirshipSingleton {
 					}
 
 					AllChunks.forEach((TopChunk) => {
+						MaxChunks += 2;
 						this.ChunkManager.GenerateChunk(TopChunk, DetailBuffer, ContinentalBuffer, true).andThen((Written) => {
 							if (Written) ChunksWritten++;
+							else MaxChunks--;
 						});
-						this.ChunkManager.GenerateChunk(TopChunk.sub(Vector3.up), DetailBuffer, ContinentalBuffer, true).andThen((Written) => {
+						this.ChunkManager.GenerateChunk(TopChunk.add(Vector3.down), DetailBuffer, ContinentalBuffer, true).andThen((Written) => {
 							if (Written) ChunksWritten++;
+							else MaxChunks--;
 						});
 					});
 				}
@@ -488,7 +490,7 @@ export default class WorldSingleton extends AirshipSingleton {
 
 			while (ChunksWritten < MaxChunks) task.wait();
 
-			print(ChunksWritten, MaxChunks);
+			print(`Generated ${ChunksWritten}/${MaxChunks} chunks`);
 
 			const Cont = this.Noise.Get2DFBM(0, 0, 1, 0.0004, 3, 0.5, 2);
 			const Det = this.Noise.Get2DFBM(0, 0, 2, 0.01, 4, 0.5, 2);
