@@ -8,6 +8,7 @@ import { Network } from "Code/Shared/Network";
 import { type AnyItem, ItemTypes } from "Code/Shared/Types";
 import TooltipComponent from "../Components/TooltipComponent";
 import type ClientComponent from "../Controller/ClientComponent";
+import type { Actions } from "../Controller/ClientInput";
 import type SlotComponent from "./Drag/SlotComponent";
 import { CallbackType } from "./Drag/SlotComponent";
 import { ContainerInventory } from "./Modules/ContainerInventory";
@@ -320,5 +321,16 @@ export default class UIController extends AirshipSingleton {
 		);
 
 		return success ? new Vector3(localPos.x, localPos.y, 0) : Vector3.zero;
+	}
+
+	public ActionPressed(Name: keyof typeof Actions) {
+		if (Name.includes("HotbarSlot")) {
+			const Index = tonumber(Name.sub(11));
+
+			if (Index) {
+				this.Hotbar.SelectedSlot = Index;
+				this.Hotbar.UpdateSelected();
+			}
+		}
 	}
 }

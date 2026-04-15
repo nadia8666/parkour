@@ -68,6 +68,7 @@ export class ClientInteractions {
 	}
 
 	public OnLMBDown() {
+		//if (!Application.isFocused) return;
 		if (this.Controller.UI.UI.Get().RaycastUI() || this.Controller.UI.UI.Get().AreMenusOpen()) return;
 		if (this.TargetedBlock) {
 			this.BreakingBlock = true;
@@ -82,6 +83,7 @@ export class ClientInteractions {
 	}
 
 	public OnRMBDown() {
+		//if (!Application.isFocused) return;
 		if (this.Controller.UI.UI.Get().RaycastUI() || this.Controller.UI.UI.Get().AreMenusOpen()) return;
 		if (this.TargetedBlock) {
 			const HeldItem = Core().Client.UI.Hotbar.HeldItem;

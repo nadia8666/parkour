@@ -43,6 +43,17 @@ export const Actions = {
 
 	DropItem: new InputEntry(Key.X, 1, "AP - Inventory"),
 	DropModifier: new InputEntry(Key.LeftShift, 0, "AP - Inventory"),
+
+	HotbarSlot1: new InputEntry(Key.Digit1, 0, "AP - Hotbar"),
+	HotbarSlot2: new InputEntry(Key.Digit2, 0, "AP - Hotbar"),
+	HotbarSlot3: new InputEntry(Key.Digit3, 0, "AP - Hotbar"),
+	HotbarSlot4: new InputEntry(Key.Digit4, 0, "AP - Hotbar"),
+	HotbarSlot5: new InputEntry(Key.Digit5, 0, "AP - Hotbar"),
+	HotbarSlot6: new InputEntry(Key.Digit6, 0, "AP - Hotbar"),
+	HotbarSlot7: new InputEntry(Key.Digit7, 0, "AP - Hotbar"),
+	HotbarSlot8: new InputEntry(Key.Digit8, 0, "AP - Hotbar"),
+	HotbarSlot9: new InputEntry(Key.Digit9, 0, "AP - Hotbar"),
+	HotbarSlot10: new InputEntry(Key.Digit0, 0, "AP - Hotbar"),
 };
 
 const InverseMap = new Map<Key, (keyof typeof Actions)[]>();
@@ -177,6 +188,7 @@ export class ClientInput {
 		}
 
 		this.Controller.Moveset.Base.ActionPressed(Name, this.Controller);
+		this.Controller.UI.UI.Get().ActionPressed(Name)
 	}
 	private ActionDropped(Name: keyof typeof Actions) {
 		this.Controller.Moveset.Base.ActionDropped(Name, this.Controller);
