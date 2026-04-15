@@ -123,7 +123,7 @@ export class ServerInteractions {
 
 	public TryBreakBlock(_Player: Player, Pos: Vector3, _Index: number) {
 		const State = Core().World.Level.GetBlockAt(Pos);
-		if (!State) return false;
+		if (!State || State.Block.IsAir()) return false;
 
 		const NewItem: BlockItem = {
 			Type: ItemTypes.Block,
@@ -140,7 +140,7 @@ export class ServerInteractions {
 			PickupDelay: 0.5,
 		});
 
-		if (Core().World.GetBlockAt(Pos.add(Vector3.up)) === "parkour:ShortGrass") Core().World.WriteBlockAt(Pos.add(Vector3.up), Blocks.Air.Identifier.AsString());
+		if (Core().World.Level.GetBlockAt(Pos.add(Vector3.up)).IsBlock(Blocks.ShortGrass)) Core().World.WriteBlockAt(Pos.add(Vector3.up), Blocks.Air.Identifier.AsString());
 
 		return true;
 	}

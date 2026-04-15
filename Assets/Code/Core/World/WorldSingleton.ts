@@ -139,6 +139,7 @@ class ChunkManager {
 			resolve(true);
 		});
 
+		const Output = new Map<Vector3, string>();
 		const Action = () => {
 			const Origin = this.FromKey(ChunkKey);
 			const Noise = instance().Noise;
@@ -148,8 +149,6 @@ class ChunkManager {
 			const CaveMap = Noise.GetCaveBatch(Origin.x, Origin.y, Origin.z, 16, 16, 16, new Array(4096), 0.018);
 
 			const ExecutePass = (Step: World.GenerationStep) => {
-				const Positions: Vector3[] = [];
-				const Blocks: string[] = [];
 				const StructurePass: { Position: Vector3; Structures: StructureObject[] }[] = [];
 
 				for (let x = 0; x < 16; x++) {
@@ -208,8 +207,7 @@ class ChunkManager {
 							}
 
 							if (Target !== "" && this.CanModifyBlock(Position, Step)) {
-								Positions.push(Position);
-								Blocks.push(Target);
+								Output.set(new Vector3(x, y, z), Target);
 								this.MarkBlockModified(Position, Step);
 							}
 
@@ -222,18 +220,17 @@ class ChunkManager {
 					}
 				}
 
-				if (Positions.size() > 0) {
-					instance().WriteBlockGroupAt(Positions, Blocks);
-				}
-
 				for (const Pass of StructurePass) {
-					this.ProcessStructures(Pass.Position, Pass.Structures);
+					this.ProcessStructures(Pass.Position, Pass.Structures, (StructureOutput) => {
+						StructureOutput.forEach((v, k) => Output.set(k, v));
+					});
 				}
 			};
 
 			ExecutePass(World.GenerationStep.Terrain);
 			ExecutePass(World.GenerationStep.Ore);
 			ExecutePass(World.GenerationStep.Water);
+			instance().WriteChunk(ChunkKey, Output);
 
 			if (CanExpand) this.TryPropagate(ChunkKey, LinkedPlayer, false, false, false, false, false, false, SurfaceMap, ContinentalMap, false);
 
@@ -246,7 +243,7 @@ class ChunkManager {
 		return Result;
 	}
 
-	private ProcessStructures(Origin: Vector3, ViableStructures: StructureObject[]) {
+	private ProcessStructures(Origin: Vector3, ViableStructures: StructureObject[], AddBlocks: (Output: Map<Vector3, string>) => void) {
 		for (const Structure of ViableStructures) {
 			const ShouldGenerate = (() => {
 				switch (Structure.Name) {
@@ -262,8 +259,7 @@ class ChunkManager {
 			if (!ShouldGenerate) continue;
 
 			const Data = Structure.GetData();
-			const Positions: Vector3[] = [];
-			const Blocks: string[] = [];
+			const Output = new Map<Vector3, string>();
 
 			if (Structure.RotationType === StructureRotationType.YAxis) {
 				const RotationAmount = math.random(0, 3);
@@ -284,22 +280,18 @@ class ChunkManager {
 					const BlockName = Data.blockIDs[Index - 1];
 					if (BlockName === "Air") continue;
 
-					Positions.push(TargetPos);
-					Blocks.push(this.GetBlock(BlockName));
+					Output.set(Position.add(Origin.sub(Utility.Vector.FromKey(Utility.Vector.ToKey(Origin)))), this.GetBlock(BlockName));
 					this.MarkBlockModified(TargetPos, Structure.GetPriority());
 				}
 			}
 
-			if (Positions.size() > 0) {
-				instance().WriteBlockGroupAt(Positions, Blocks);
-				break;
-			}
+			AddBlocks(Output);
 		}
 	}
 
 	public ToDeload = new Map<Vector3, number>();
 	public UnloadChunk(ChunkKey: Vector3) {
-		if (ChunkKey.WithY(0).magnitude < 4) return;
+		if (ChunkKey.magnitude < 4) return;
 		if (this.ToDeload.get(ChunkKey)) return;
 
 		this.ToDeload.set(ChunkKey, os.clock());
@@ -385,18 +377,19 @@ export default class WorldSingleton extends AirshipSingleton {
 			Network.Level.WriteGroup.client.OnServerEvent((PosArr, BlocksArr) => {
 				this.WriteBlockGroupAt(PosArr, BlocksArr);
 			});
-			Network.Level.WriteChunk.client.OnServerEvent((Key, BlockIDs) => {
+			Network.Level.WriteChunk.client.OnServerEvent((Key, BlockIDs, Immediate) => {
 				this.Level.Chunks.set(
 					Key,
 					new Chunk(
 						this.Level,
 						Key,
 						BlockIDs.map((ID) => this.GetStateFromString(ID)),
+						Immediate,
 					),
 				);
-				LoadedChunks++;
+				if (Immediate) LoadedChunks++;
 			});
-			Network.Level.WriteVoxel.client.OnServerEvent((Pos, Block) => this.WriteBlockAt(Pos, Block));
+			Network.Level.WriteBlock.client.OnServerEvent((Pos, Block) => this.WriteBlockAt(Pos, Block));
 
 			this.LightingTexture = new Texture3D(this.Resolution, this.Resolution, this.Resolution, TextureFormat.R8, false, true);
 			const Pixels: Color[] = [];
@@ -409,7 +402,7 @@ export default class WorldSingleton extends AirshipSingleton {
 			this.LightingTexture.mipMapBias = 0;
 			this.LightingTexture.Apply();
 
-			Network.Level.GetInitialChunks.client.FireServer();
+			if (!ENV.Shared) Network.Level.GetInitialChunks.client.FireServer();
 			Network.Level.SetLoadedStatus.client.OnServerEvent((NumChunks) => {
 				while (LoadedChunks < NumChunks) task.wait();
 				this.WorldReady = true;
@@ -425,19 +418,18 @@ export default class WorldSingleton extends AirshipSingleton {
 				let Iterations = 0;
 				for (const [Key] of pairs(this.ChunkManager.LoadedChunks)) {
 					if (!Player) return;
-					task.spawn(() => {
-						const Chunk = this.Level.Chunks.get(Key);
-						if (Chunk) {
-							Network.Level.WriteChunk.server.FireClient(
-								Player,
-								Key,
-								Chunk.Blocks.map((State) => State.Block.Identifier.AsString()),
-							);
-						}
-					});
+					const Chunk = this.Level.Chunks.get(Key);
+					if (Chunk) {
+						Network.Level.WriteChunk.server.FireClient(
+							Player,
+							Key,
+							Chunk.Blocks.map((State) => State.Block.Identifier.AsString()),
+							true,
+						);
+					}
 
 					Iterations++;
-					if (Iterations % 5 === 0) task.wait();
+					if (Iterations % 20 === 0) task.wait();
 				}
 
 				Network.Level.SetLoadedStatus.server.FireClient(Player, Iterations);
@@ -459,8 +451,8 @@ export default class WorldSingleton extends AirshipSingleton {
 
 			this.Noise = new NoiseHandler(Config.Seed);
 			let [ChunksWritten, MaxChunks] = [0, 0];
-			for (const ChunkX of $range(-0, 1)) {
-				for (const ChunkZ of $range(-0, 1)) {
+			for (const ChunkX of $range(-4, 4)) {
+				for (const ChunkZ of $range(-4, 4)) {
 					MaxChunks += 2;
 					const Origin = new Vector3(ChunkX, 0, ChunkZ).mul(16);
 
@@ -495,6 +487,8 @@ export default class WorldSingleton extends AirshipSingleton {
 			}
 
 			while (ChunksWritten < MaxChunks) task.wait();
+
+			print(ChunksWritten, MaxChunks);
 
 			const Cont = this.Noise.Get2DFBM(0, 0, 1, 0.0004, 3, 0.5, 2);
 			const Det = this.Noise.Get2DFBM(0, 0, 2, 0.01, 4, 0.5, 2);
@@ -558,12 +552,15 @@ export default class WorldSingleton extends AirshipSingleton {
 			}
 		}
 
-		for (const [Chunk] of pairs(this.ChunkQueue)) {
+		const Key = Utility.Vector.ToKey(this.ActorPosition ?? Vector3.zero);
+		const Chunks = Utility.SetToArray(this.ChunkQueue);
+		Chunks.sort((a, b) => b.Key.sub(Key).magnitude < a.Key.sub(Key).magnitude);
+
+		const Chunk = Chunks.pop();
+		if (Chunk) {
 			this.ChunkQueue.delete(Chunk);
 
-			if (!Chunk || Chunk.IsDestroying) continue;
-
-			task.spawn(() => Chunk.Rebuild());
+			if (!Chunk.IsDestroying) Chunk.Rebuild();
 		}
 	}
 
@@ -586,7 +583,7 @@ export default class WorldSingleton extends AirshipSingleton {
 						const LinkedPlayer: PlayerInfoGetter = () => {
 							return { Player: Player, Position: Player ? Position : Vector3.zero };
 						};
-						Profiler.BeginSample("WorldSingleton/GetNoise");
+
 						const RenderDistance = SettingsService.Settings.GetSetting("RenderDistance", Player);
 						PlayerHash.set(Chunk.ToKey(Character.transform.position), RenderDistance);
 						const AboveGround =
@@ -595,7 +592,6 @@ export default class WorldSingleton extends AirshipSingleton {
 								this.Noise.Get2DFBM(Position.x, Position.z, 1, 0.0004, 3, 0.5, 2),
 								this.Noise.Get2DFBM(Position.x, Position.z, 2, 0.01, 4, 0.5, 2),
 							);
-						Profiler.EndSample();
 
 						const TrueSurfaceHeight = this.Noise.Get2DFBM(Position.x, Position.z, 1, 0.0004, 3, 0.5, 2);
 
@@ -607,10 +603,8 @@ export default class WorldSingleton extends AirshipSingleton {
 										this.ChunkManager.SurfaceLoadedChunks.add(Key.WithY(0));
 
 										const Origin = Key.WithY(0).mul(16);
-										Profiler.BeginSample("WorldSingleton/OtherNoise");
 										const ContinentalBuffer = this.Noise.Get2DFBMBatch(Origin.x, Origin.z, 16, 16, new Array(256), 1, 0.0004, 3, 0.5, 2);
 										const DetailBuffer = this.Noise.Get2DFBMBatch(Origin.x, Origin.z, 16, 16, new Array(256), 2, 0.01, 4, 0.5, 2);
-										Profiler.EndSample();
 
 										let IterationCount = 0;
 										for (const x of $range(0, this.ChunkManager.ChunkSize - 1)) {
@@ -618,19 +612,15 @@ export default class WorldSingleton extends AirshipSingleton {
 												const WorldX = Origin.x + x;
 												const WorldZ = Origin.z + z;
 
-												Profiler.BeginSample("WorldSingleton/GetHeight");
 												const Continental = ContinentalBuffer[z * 16 + x];
 												const Detail = DetailBuffer[z * 16 + x];
 												const SurfaceY = this.ChunkManager.GetTerrainHeight(Continental, Detail);
 
 												const TopChunk = this.ChunkManager.ToKey(new Vector3(WorldX, SurfaceY, WorldZ));
 												const BottomChunk = TopChunk.sub(Vector3.up);
-												Profiler.EndSample();
 
-												Profiler.BeginSample("WorldSingleton/GenChunks");
 												this.ChunkManager.GenerateChunk(TopChunk, DetailBuffer, ContinentalBuffer, false, LinkedPlayer);
 												this.ChunkManager.GenerateChunk(BottomChunk, DetailBuffer, ContinentalBuffer, false, LinkedPlayer);
-												Profiler.EndSample();
 
 												IterationCount++;
 												if (IterationCount >= 16) {
@@ -643,10 +633,8 @@ export default class WorldSingleton extends AirshipSingleton {
 								}
 							} else {
 								const Origin = Key.mul(16);
-								Profiler.BeginSample("WorldSingleton/OtherNoise");
 								const ContinentalBuffer = this.Noise.Get2DFBMBatch(Origin.x, Origin.z, 16, 16, new Array(256), 1, 0.0004, 3, 0.5, 2);
 								const DetailBuffer = this.Noise.Get2DFBMBatch(Origin.x, Origin.z, 16, 16, new Array(256), 2, 0.01, 4, 0.5, 2);
-								Profiler.EndSample();
 
 								this.ChunkManager.GenerateChunk(Key, DetailBuffer, ContinentalBuffer, false, LinkedPlayer, true);
 							}
@@ -700,7 +688,7 @@ export default class WorldSingleton extends AirshipSingleton {
 		}
 	}
 
-	private GetStateFromString(BlockID: string): BlockState {
+	private GetStateFromString(BlockID: string) {
 		const ID = Identifier.Parse(BlockID);
 		for (const [Key, Block] of Blocks.Registry.Instances) {
 			if (Key.AsString() === ID.AsString()) {
@@ -724,7 +712,7 @@ export default class WorldSingleton extends AirshipSingleton {
 
 	public WriteBlockAt(Position: Vector3, BlockID: string) {
 		if ($CLIENT) this.IsDirty = true;
-		if ($SERVER && !ENV.Shared) Network.Level.WriteVoxel.server.FireAllClients(Position, BlockID);
+		if ($SERVER && !ENV.Shared) Network.Level.WriteBlock.server.FireAllClients(Position, BlockID);
 
 		return this.Level.SetBlockAt(Position, this.GetStateFromString(BlockID), true);
 	}
@@ -743,6 +731,33 @@ export default class WorldSingleton extends AirshipSingleton {
 
 		if ($CLIENT) this.IsDirty = true;
 		if ($SERVER && !ENV.Shared) Network.Level.WriteGroup.server.FireAllClients(Positions, BlockIDs);
+	}
+
+	/**
+	 * this function will NOT gracefully handle overriding existing chunks. be weary.
+	 * @param ChunkKey chunk key
+	 * @param Output block output map {[local pos]: blockid}
+	 */
+	public WriteChunk(ChunkKey: Vector3, Output: Map<Vector3, string>) {
+		const Blocks = new Array<string>(4096, "parkour:Air");
+		Output.forEach((Block, Pos) => (Blocks[Utility.Vector.ToIndexS(Pos) - 1] = Block));
+
+		let Existed = true;
+		this.Level.Chunks.getOrInsertComputed(ChunkKey, () => {
+			Existed = false;
+			return new Chunk(
+				this.Level,
+				ChunkKey,
+				Blocks.map((ID) => this.GetStateFromString(ID)),
+			);
+		});
+
+		if (Existed) {
+			warn(`INVALIDLY WROTE CHUNK! ${debug.traceback()}`);
+		}
+
+		if ($CLIENT) this.IsDirty = true;
+		if ($SERVER && !ENV.Shared && !Existed) Network.Level.WriteChunk.server.FireAllClients(ChunkKey, Blocks, false);
 	}
 
 	public GetBlockAt(Position: Vector3): string {

@@ -1,12 +1,10 @@
 import { Airship } from "@Easy/Core/Shared/Airship";
-import { Asset } from "@Easy/Core/Shared/Asset";
 import { Binding } from "@Easy/Core/Shared/Input/Binding";
 import { Mouse } from "@Easy/Core/Shared/UserInput";
 import { Bin } from "@Easy/Core/Shared/Util/Bin";
 import Core from "Code/Core/Core";
 import Recipes from "Code/Core/Registry/Recipes";
 import { Network } from "Code/Shared/Network";
-import type RecipeObject from "Code/Shared/Object/RecipeObject";
 import { type AnyItem, ItemTypes } from "Code/Shared/Types";
 import TooltipComponent from "../Components/TooltipComponent";
 import type ClientComponent from "../Controller/ClientComponent";

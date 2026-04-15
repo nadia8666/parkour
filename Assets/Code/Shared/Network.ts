@@ -14,8 +14,8 @@ export namespace Network {
 		GetInitialChunks: new NetworkSignal<void>("Network/Level/GetInitialChunks"),
 		SetLoadedStatus: new NetworkSignal<number>("Network/Level/SetLoadedStatus"),
 		WriteGroup: new NetworkSignal<[Vector3[], readonly string[]]>("Network/Level/WriteGroup"),
-		WriteChunk: new NetworkSignal<[Vector3, string[]]>("Network/Level/WriteChunk"),
-		WriteVoxel: new NetworkSignal<[Vector3, string]>("Network/Level/WriteVoxel"),
+		WriteChunk: new NetworkSignal<[Vector3, string[], boolean]>("Network/Level/WriteChunk"),
+		WriteBlock: new NetworkSignal<[Vector3, string]>("Network/Level/WriteBlock"),
 		UnloadChunk: new NetworkSignal<[Vector3]>("Network/Level/UnloadChunk"),
 		GetInitialContainerInventory: new NetworkFunction<string, Inventory>("Network/Level/GetInitialContainerInventory"),
 

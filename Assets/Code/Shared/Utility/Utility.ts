@@ -52,13 +52,9 @@ export namespace Utility {
 		}
 
 		export function FromIndexS(Index: number) {
-			return new Vector3(
-				Index & 15,
-				(Index >> 4) & 15,
-				(Index >> 8) & 15,
-			);
+			return new Vector3(Index & 15, (Index >> 4) & 15, (Index >> 8) & 15);
 		}
-		
+
 		export function ToIndex(Vector: Vector3) {
 			return Vector.z * 256 + Vector.y * 16 + Vector.x;
 		}
@@ -79,7 +75,7 @@ export namespace Utility {
 			return ChunkKey.mul(16);
 		}
 
-		export function GetAdjacent(Position:Vector3) {
+		export function GetAdjacent(Position: Vector3) {
 			return [
 				Position.add(Vector3.up),
 				Position.add(Vector3.down),
@@ -87,7 +83,14 @@ export namespace Utility {
 				Position.add(Vector3.right),
 				Position.add(Vector3.back),
 				Position.add(Vector3.left),
-			]
+			];
 		}
+	}
+
+	export function SetToArray<T extends defined>(Input: Set<T>) {
+		const Output = new Array<T>();
+		for (const Value of Input) Output.push(Value);
+
+		return Output;
 	}
 }

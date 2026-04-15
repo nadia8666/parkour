@@ -16,13 +16,13 @@ export class ChunkMeshRenderer {
 
 	constructor(private Chunk: Chunk) {
 		this.Filter = Chunk.GameObject.AddComponent<MeshFilter>();
-		this.Mesh = this.Filter.mesh;
+		this.Mesh = new Mesh();
+		this.Filter.mesh = this.Mesh;
 		this.Renderer = Chunk.GameObject.AddComponent<MeshRenderer>();
 	}
 
 	public Rebuild() {
-		const Mesh = this.Mesh;
-		Mesh.Clear();
+		this.Mesh.Clear();
 
 		const Blocks = this.Chunk.Blocks;
 		const Level = this.Chunk.Level;
@@ -64,17 +64,17 @@ export class ChunkMeshRenderer {
 			}
 		});
 
-		Mesh.SetVertices(Vertices);
-		Mesh.SetNormals(Normals);
-		Mesh.SetUVs(0, UVs);
+		this.Mesh.SetVertices(Vertices);
+		this.Mesh.SetNormals(Normals);
+		this.Mesh.SetUVs(0, UVs);
 
 		const MaterialsArray: Material[] = [];
-		Mesh.subMeshCount = MaterialTriangles.size();
+		this.Mesh.subMeshCount = MaterialTriangles.size();
 
 		let SubmeshIndex = 0;
 		for (const [Mat, Tris] of MaterialTriangles) {
 			MaterialsArray.push(Mat);
-			Mesh.SetTriangles(Tris, SubmeshIndex);
+			this.Mesh.SetTriangles(Tris, SubmeshIndex);
 			SubmeshIndex++;
 		}
 
@@ -142,7 +142,7 @@ export class ChunkMeshRenderer {
 					if (!AdjState || AdjState.Definition.IsTransparent(State)) {
 						MaterialMask[(J << 4) | I] = Blk.Definition.GetTextureFor(Axis);
 						BlockMask[(J << 4) | I] = Blk;
-						DamageMask[(J << 4) | I] = State.Damage || 0;
+						DamageMask[(J << 4) | I] = State?.Damage || 0;
 					}
 				}
 			}
@@ -222,7 +222,8 @@ export class ChunkDamageRenderer {
 		Obj.transform.localPosition = Vector3.zero;
 
 		this.Filter = Obj.AddComponent<MeshFilter>();
-		this.Mesh = this.Filter.mesh;
+		this.Mesh = new Mesh();
+		this.Filter.mesh = this.Mesh;
 		this.Renderer = Obj.AddComponent<MeshRenderer>();
 		this.Renderer.material = Asset.LoadAsset("Assets/Resources/Materials/BlockDamage.mat");
 	}
@@ -403,6 +404,7 @@ export class Chunk {
 		public Level: Level,
 		public Key: Vector3,
 		public Blocks: BlockState[] = [],
+		Immediate?: boolean,
 	) {
 		this.GameObject = GameObject.Create(`Chunk${this.Key}`);
 		this.GameObject.transform.position = Utility.Vector.FromKey(this.Key);
@@ -412,7 +414,7 @@ export class Chunk {
 		this.DamageRenderer = new ChunkDamageRenderer(this);
 
 		Utility.Vector.GetAdjacent(this.Key).forEach((Key) => Level.Chunks.get(Key)?.MarkDirty());
-		this.MarkDirty(undefined, true);
+		this.MarkDirty(undefined, Immediate);
 	}
 
 	public MarkDirty(Flag?: ("Collision" | "Visual")[], Immediate?: boolean) {
@@ -429,7 +431,7 @@ export class Chunk {
 		this.IsDirty = true;
 
 		if (Immediate) this.Rebuild();
-		else task.spawn(() => Core().World.QueueChunkRebuild(this));
+		else Core().World.QueueChunkRebuild(this);
 	}
 
 	public Rebuild() {
@@ -438,14 +440,14 @@ export class Chunk {
 
 		if (this.DirtyFlag.Collision) {
 			this.CollisionRenderer.Rebuild();
-			this.DirtyFlag.Collision = false;
 		}
 
 		if ($CLIENT && this.DirtyFlag.Visual) {
 			this.MeshRenderer.Rebuild();
-			this.DirtyFlag.Visual = false;
 		}
 
+		this.DirtyFlag.Collision = false;
+		this.DirtyFlag.Visual = false;
 		this.IsGenerating = false;
 		this.IsDirty = false;
 	}
@@ -486,10 +488,10 @@ export class Chunk {
 		if (LocalPos.x === 0 || LocalPos.z === 0 || LocalPos.y === 0 || LocalPos.x === 15 || LocalPos.z === 15 || LocalPos.y === 15)
 			Utility.Vector.GetAdjacent(Position).forEach((Pos) => {
 				const Key = Chunk.ToKey(Pos);
-				if (Key !== this.Key) this.Level.Chunks.get(Key)?.MarkDirty(["Visual"]);
+				if (Key !== this.Key) this.Level.Chunks.get(Key)?.MarkDirty(["Visual"], true);
 			});
 
-		this.MarkDirty();
+		this.MarkDirty(undefined, true);
 
 		return Prefab;
 	}
@@ -522,9 +524,9 @@ export class Chunk {
 			}),
 		);
 
-		AdjChunks.forEach((Chunk) => Chunk.MarkDirty(["Visual"]));
+		AdjChunks.forEach((Chunk) => Chunk.MarkDirty(["Visual"], true));
 
-		this.MarkDirty();
+		this.MarkDirty(undefined, true);
 	}
 
 	/**

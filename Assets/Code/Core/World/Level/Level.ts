@@ -1,4 +1,3 @@
-import Blocks from "Code/Core/Registry/Blocks";
 import { Utility } from "Code/Shared/Utility/Utility";
 import type { BlockState } from "../Block/BlockState";
 import { Chunk } from "./Chunk/Chunk";
