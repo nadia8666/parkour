@@ -1,5 +1,4 @@
 import { Airship } from "@Easy/Core/Shared/Airship";
-import { Asset } from "@Easy/Core/Shared/Asset";
 import Core from "Code/Core/Core";
 import Blocks from "Code/Core/Registry/Blocks";
 import { Identifier } from "Code/Core/Registry/Identifier";
@@ -20,8 +19,8 @@ import { type Inventory, ItemTypes, type PlayerInfoGetter, World } from "Code/Sh
 import { NoiseHandler } from "Code/Shared/Utility/Noise";
 import { Utility } from "Code/Shared/Utility/Utility";
 import { DualLink } from "@inkyaker/DualLink/Code";
-import Config from "../Config";
-import { Settings } from "./SettingsController";
+import Config from "../../Client/Config";
+import { Settings } from "../../Client/Framework/SettingsController";
 
 const instance = () => Core().World;
 
@@ -374,7 +373,7 @@ export default class WorldSingleton extends AirshipSingleton {
 	public Start() {
 		if ($CLIENT) {
 			Network.Level.UnloadChunk.client.OnServerEvent((ChunkKey) => this.Level.UnloadChunk(ChunkKey));
-			
+
 			Network.Sync.SetSeed.client.OnServerEvent((Seed) => {
 				math.randomseed(Seed);
 				Config.Seed = Seed;

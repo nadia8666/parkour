@@ -280,7 +280,7 @@ MonoBehaviour:
         tags: []
       decorators: []
       nullable: 0
-      serializedValue: 1
+      serializedValue: 0
       serializedObject: {fileID: 0}
       modified: 1
     - name: TextureType
@@ -365,6 +365,30 @@ MonoBehaviour:
           serializedValue: 1
         - type: number
           serializedValue: 2
+      nullable: 0
+      serializedValue: 
+      serializedObject: {fileID: 0}
+      modified: 0
+    - name: Mesh
+      type: object
+      objectType: Mesh
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators:
+      - name: ShowIf
+        parameters:
+        - type: string
+          serializedValue: '"ModelType"'
+        - type: number
+          serializedValue: 3
       nullable: 0
       serializedValue: 
       serializedObject: {fileID: 0}

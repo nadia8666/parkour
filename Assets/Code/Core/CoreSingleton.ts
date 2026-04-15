@@ -1,4 +1,4 @@
-import type WorldSingleton from "Code/Client/Framework/WorldSingleton";
+import type WorldSingleton from "Code/Core/World/WorldSingleton";
 import type ClientController from "../Client/ClientController";
 import type ServerService from "../Server/ServerService";
 import type GearRegistrySingleton from "../Shared/GearRegistry";
