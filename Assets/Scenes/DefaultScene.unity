@@ -397,7 +397,7 @@ MonoBehaviour:
         serializedItems: []
         objectRefs: []
       refPath: 
-      fileRef: Code/Client/Framework/WorldSingleton.ts
+      fileRef: Code/Core/World/WorldSingleton.ts
       jsDocs:
         text: []
         tags: []
@@ -421,8 +421,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   guid: 89f1a2fe-8315-43e5-b614-a721bf49248d
-  script: {fileID: -2120360863041505001, guid: 96addc2463f0f4b4fa5d4a12ad32d45f, type: 3}
-  scriptPath: Assets/Code/Client/Framework/WorldSingleton.lua
+  script: {fileID: -1111657199811174368, guid: a18e8629047f8644fab6c8ce8cd95397, type: 3}
+  scriptPath: Assets/Code/Core/World/WorldSingleton.lua
   forceContext: 0
   metadata:
     name: WorldSingleton
