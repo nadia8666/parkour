@@ -7,6 +7,8 @@ import { BlockModel } from "../../Block/BlockDef";
 import type { BlockState } from "../../Block/BlockState";
 import type { Level } from "../Level";
 
+const Half = Vector3.one.div(2);
+
 export class ChunkMeshRenderer {
 	public Filter;
 	public Renderer;
@@ -42,12 +44,7 @@ export class ChunkMeshRenderer {
 			}
 			Normals.push(N, N, N, N);
 
-			let Tris = MaterialTriangles.get(Mat);
-			if (!Tris) {
-				Tris = [];
-				MaterialTriangles.set(Mat, Tris);
-			}
-			Tris.push(Verts, Verts + 1, Verts + 2, Verts, Verts + 2, Verts + 3);
+			MaterialTriangles.getOrInsertComputed(Mat, () => []).push(Verts, Verts + 1, Verts + 2, Verts, Verts + 2, Verts + 3);
 		};
 
 		const MaskMat: (Material | undefined)[] = [];
@@ -55,6 +52,17 @@ export class ChunkMeshRenderer {
 		const MaskDamage: (number | undefined)[] = [];
 
 		Utility.Vector.GetAdjacent(Vector3.zero).forEach((Vec) => this.ProcessAxis(Vec, Blocks, Level.Chunks.get(ChunkKey.add(Vec)), MaskMat, MaskBlock, MaskDamage, MakeQuad));
+
+		this.Chunk.ExtraData.MeshTypes.forEach(([Material, Positions], Mesh) => {
+			const Tris = MaterialTriangles.getOrInsertComputed(Material, () => []);
+			for (const Pos of Positions) {
+				const VertexOffset = Vertices.size();
+				Mesh.vertices.map((vert) => vert.add(Pos).add(Half)).forEach((x) => Vertices.push(x));
+				Mesh.normals.forEach((x) => Normals.push(x));
+				Mesh.uv.forEach((x) => UVs.push(x));
+				Mesh.triangles.forEach((index) => Tris.push(index + VertexOffset));
+			}
+		});
 
 		Mesh.SetVertices(Vertices);
 		Mesh.SetNormals(Normals);
@@ -226,7 +234,7 @@ export class ChunkDamageRenderer {
 		let Offset = 0;
 
 		const AddFace = (p0: Vector3, p1: Vector3, p2: Vector3, p3: Vector3, Damage: number) => {
-			Verts.push(p0.add(Vector3.one.div(2)), p1.add(Vector3.one.div(2)), p2.add(Vector3.one.div(2)), p3.add(Vector3.one.div(2)));
+			Verts.push(p0.add(Half), p1.add(Half), p2.add(Half), p3.add(Half));
 			DamageUVs.push(
 				new Vector2(math.floor(Damage * 6), 0),
 				new Vector2(math.floor(Damage * 6), 0),
@@ -237,7 +245,7 @@ export class ChunkDamageRenderer {
 			Offset += 4;
 		};
 
-		for (const Index of this.Chunk.DamagedBlocks) {
+		for (const Index of this.Chunk.ExtraData.DamagedBlocks) {
 			const State = this.Chunk.Blocks[Index - 1];
 			const LocalPos = Utility.Vector.FromIndexS(Index);
 
@@ -362,12 +370,18 @@ export class ChunkCollisionRenderer {
 						this.ColliderComponents.push(Collider);
 
 						Collider.size = new Vector3(Width, Height, Depth);
-						Collider.center = new Vector3(x + (Width - 1) / 2, y + (Height - 1) / 2, z + (Depth - 1) / 2).add(Vector3.one.div(2));
+						Collider.center = new Vector3(x + (Width - 1) / 2, y + (Height - 1) / 2, z + (Depth - 1) / 2).add(Half);
 					});
 				}
 			}
 		}
 	}
+}
+
+export class ChunkExtraDataHandler {
+	public Prefabs: GameObject[] = [];
+	public MeshTypes = new Map<Mesh, [Material, Set<Vector3>]>();
+	public DamagedBlocks = new Set<number>();
 }
 
 export class Chunk {
@@ -380,12 +394,10 @@ export class Chunk {
 	};
 
 	public GameObject;
-	public DamagedBlocks = new Set<number>();
-	public Prefabs: GameObject[] = [];
-
 	private MeshRenderer;
 	private DamageRenderer;
 	private CollisionRenderer;
+	public ExtraData = new ChunkExtraDataHandler();
 
 	constructor(
 		public Level: Level,
@@ -454,7 +466,7 @@ export class Chunk {
 	 * @returns found prefab gameobject, can be undefined
 	 */
 	public GetPrefabAt(Position: Vector3) {
-		return this.Prefabs[Utility.Vector.ToIndexS(this.ToLocalPos(Position)) - 1];
+		return this.ExtraData.Prefabs[Utility.Vector.ToIndexS(this.ToLocalPos(Position)) - 1];
 	}
 
 	/**
@@ -522,19 +534,34 @@ export class Chunk {
 	 */
 	public OnStateUpdate(LastState: BlockState | undefined, NewState: BlockState, Position: Vector3) {
 		let Prefab: GameObject | undefined;
+		const LocalPos = this.ToLocalPos(Position);
 		if (LastState && LastState.Block.Definition.ModelType === BlockModel.Prefab) {
-			const Prefab = this.Prefabs[Utility.Vector.ToIndexS(this.ToLocalPos(Position)) - 1];
+			const Prefab = this.ExtraData.Prefabs[Utility.Vector.ToIndexS(LocalPos) - 1];
 			if (Prefab) Destroy(Prefab);
 
-			delete this.Prefabs[Utility.Vector.ToIndexS(this.ToLocalPos(Position)) - 1];
+			delete this.ExtraData.Prefabs[Utility.Vector.ToIndexS(LocalPos) - 1];
+		}
+
+		if (LastState && LastState.Block.Definition.ModelType === BlockModel.Mesh) {
+			const Data = this.ExtraData.MeshTypes.get(LastState.Block.Definition.Mesh);
+			if (Data) {
+				Data[1].delete(LocalPos);
+				if (Data[1].isEmpty()) this.ExtraData.MeshTypes.delete(LastState.Block.Definition.Mesh);
+			}
 		}
 
 		if (NewState.Block.Definition.ModelType === BlockModel.Prefab) {
 			Prefab = Instantiate(NewState.Block.Definition.Prefab);
 			Prefab.transform.SetParent(this.GameObject.transform);
-			Prefab.transform.localPosition = this.ToLocalPos(Position).add(Vector3.one.div(2));
+			Prefab.transform.localPosition = LocalPos.add(Half);
 
-			this.Prefabs[Utility.Vector.ToIndexS(this.ToLocalPos(Position)) - 1] = Prefab;
+			this.ExtraData.Prefabs[Utility.Vector.ToIndexS(LocalPos) - 1] = Prefab;
+		}
+
+		if (NewState.Block.Definition.ModelType === BlockModel.Mesh) {
+			const Mesh = Instantiate(NewState.Block.Definition.Mesh);
+
+			this.ExtraData.MeshTypes.getOrInsertComputed(Mesh, () => [NewState.Block.Definition.SingleTexture, new Set<Vector3>()])[1].add(LocalPos);
 		}
 
 		this.Level.OnStateUpdate(this, LastState, NewState, Position);
@@ -551,13 +578,13 @@ export class Chunk {
 	public SetBlockDamageAt(Position: Vector3, Damage: number) {
 		const Index = Utility.Vector.ToIndexS(this.ToLocalPos(Position));
 		const State = this.Blocks[Index - 1];
-		let PrevDamage: number|undefined;
+		let PrevDamage: number | undefined;
 		if (State) {
 			PrevDamage = State.Damage;
 			State.Damage = Damage;
 		}
-		if (Damage > 0) this.DamagedBlocks.add(Index);
-		else this.DamagedBlocks.delete(Index);
+		if (Damage > 0) this.ExtraData.DamagedBlocks.add(Index);
+		else this.ExtraData.DamagedBlocks.delete(Index);
 
 		if ($CLIENT && (!State || PrevDamage !== Damage)) this.DamageRenderer.Rebuild();
 	}
