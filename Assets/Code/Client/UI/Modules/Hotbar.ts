@@ -35,7 +35,7 @@ export class Hotbar {
 	}
 
 	public Inventory = new Provider(() => Core().Client.Data.GetLink().Data.Inventories.Hotbar);
-	private Contents: GameObject[] = [];
+	public Contents: GameObject[] = [];
 	public SelectedSlot = 1;
 	public HeldItem?: AnyItem;
 

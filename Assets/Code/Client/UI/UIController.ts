@@ -328,8 +328,17 @@ export default class UIController extends AirshipSingleton {
 			const Index = tonumber(Name.sub(11));
 
 			if (Index) {
-				this.Hotbar.SelectedSlot = Index;
-				this.Hotbar.UpdateSelected();
+				if (this.AreMenusOpen()) {
+					const HoveringSlot = this.RaycastUI()?.GetAirshipComponent<SlotComponent>();
+					const HotbarSlot = this.Hotbar.Contents[Index - 1]?.GetAirshipComponent<SlotComponent>();
+					if (HoveringSlot && HotbarSlot) {
+						if (HotbarSlot.SlotContents) HotbarSlot.DraggedOnto(HoveringSlot);
+						else HoveringSlot.DraggedOnto(HotbarSlot);
+					}
+				} else {
+					this.Hotbar.SelectedSlot = Index;
+					this.Hotbar.UpdateSelected();
+				}
 			}
 		}
 	}

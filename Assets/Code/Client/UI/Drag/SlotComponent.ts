@@ -159,6 +159,7 @@ export default class SlotComponent extends AirshipBehaviour {
 			if (!(TargetInventory && MyInventory)) return;
 
 			const [TargetContents, MyContents] = [TargetInventory.Content[Target.SlotID], MyInventory.Content[this.SlotID]];
+			if (!MyContents) return;
 			const TargetIsLoadout = Target.CallbackType === CallbackType.Loadout;
 			const ContentAsGear = Core().Gear.GearFromKey(MyContents.Key);
 
