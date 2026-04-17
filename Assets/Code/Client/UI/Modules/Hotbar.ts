@@ -12,7 +12,7 @@ export class Hotbar {
 	) {
 		let LastScrolled = os.clock();
 		Mouse.onScrolled.Connect((Event) => {
-			if (/*!Application.isFocused ||*/ Core().Client.UI.AreMenusOpen()) return;
+			if (!Application.isFocused || Core().Client.UI.AreMenusOpen()) return;
 			if (os.clock() - LastScrolled <= 0.001) return;
 			LastScrolled = os.clock();
 

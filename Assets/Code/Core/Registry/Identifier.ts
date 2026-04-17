@@ -1,3 +1,5 @@
+import type { Resource } from "Code/Shared/Types";
+
 export class Identifier {
 	constructor(
 		public Namespace: string,
@@ -14,10 +16,10 @@ export class Identifier {
 	}
 
 	public IsEquals(Other: Identifier | string) {
-		return this.AsString() === (Other instanceof Identifier ? Other.AsString() : Other);
+		return this.AsResource() === (Other instanceof Identifier ? Other.AsResource() : Other);
 	}
 
-	public AsString() {
-		return `${this.Namespace}:${this.Path}`;
+	public AsResource() {
+		return `${this.Namespace}:${this.Path}` as Resource;
 	}
 }

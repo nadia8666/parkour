@@ -10,6 +10,10 @@
 				"noAssignInExpressions": "off",
 				"useIterableCallbackReturn": "off",
 				"noShadowRestrictedNames": "off"
+			},
+			"complexity": {
+				"noBannedTypes": "off",
+				"noStaticOnlyClass": "off"
 			}
 		}
 	},
@@ -17,6 +21,6 @@
 		"lineWidth": 180
 	},
 	"files": {
-		"includes": ["Assets/Code/**/*.ts"]
+		"includes": ["./Assets/Code/**/*.ts", "./Assets/AirshipPackages/@inkyaker/**/*.ts"]
 	}
 }

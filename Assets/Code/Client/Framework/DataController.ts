@@ -9,7 +9,7 @@ let InitialLink: DualLink<DataFormat>;
 task.spawn(() => {
 	Game.WaitForLocalPlayerLoaded();
 
-	InitialLink = new DualLink(Core().Server.DataService.Key(Game.localPlayer), Network.Data.GetInitialData.client.FireServer());
+	InitialLink = new DualLink(Core().Server.DataService.Key(Game.localPlayer), Network.Sync.GetInitialData.client.FireServer());
 });
 export default class DataController extends AirshipSingleton {
 	public GetLink(KnownLoaded?: true) {

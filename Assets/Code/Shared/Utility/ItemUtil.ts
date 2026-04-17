@@ -87,7 +87,6 @@ export namespace ItemUtil {
 		const OutputData = new InventoryOutputData(Item);
 
 		function CheckInventory(Name: string) {
-			// Match pass
 			for (const Index of $range(1, Inventories[Name].Size)) {
 				const Content = Inventories[Name].Content[Index];
 
@@ -105,7 +104,6 @@ export namespace ItemUtil {
 				}
 			}
 
-			// Empty pass
 			for (const Index of $range(1, Inventories[Name].Size)) {
 				const Content = Inventories[Name].Content[Index];
 

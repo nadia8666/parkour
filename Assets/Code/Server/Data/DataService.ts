@@ -111,7 +111,7 @@ export default class DataService extends AirshipSingleton {
 
 	@Server()
 	override Start() {
-		Network.Data.GetInitialData.server.SetCallback((Player) => {
+		Network.Sync.GetInitialData.server.SetCallback((Player) => {
 			return this.WaitForPlayerData(this.Key(Player)) as DataFormat;
 		});
 

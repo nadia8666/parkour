@@ -2,7 +2,6 @@ import { Asset } from "@Easy/Core/Shared/Asset";
 import type { Player } from "@Easy/Core/Shared/Player/Player";
 import { NetworkUtil } from "@Easy/Core/Shared/Util/NetworkUtil";
 import Core from "Code/Core/Core";
-import Blocks from "Code/Core/Registry/Blocks";
 import type DroppedItemEntityComponent from "Code/Shared/Components/DroppedItemEntityComponent";
 import type InteractableBlockComponent from "Code/Shared/Components/InteractableBlockComponent";
 import { Network } from "Code/Shared/Network";
@@ -131,23 +130,23 @@ export class ServerInteractions {
 			Key: State.Block.Identifier.Path,
 			UID: Guid.NewGuid().ToString(),
 			Amount: 1,
-			BlockID: State.Block.Identifier.AsString(),
+			BlockID: State.Block.Identifier.AsResource(),
 			Attributes: {},
 		};
 
-		Core().World.WriteBlockAt(Pos, Blocks.Air.Identifier.AsString());
+		//Core().World.WriteBlockAt(Pos, Blocks.Air.Identifier.AsString());
 		ItemUtil.SpawnDroppedItem(Pos.add(Vector3.one.mul(0.5)), ItemUtil.GetDroppedItemVelocity(), NewItem, {
 			PickupDelay: 0.5,
 		});
 
-		if (Core().World.Level.GetBlockAt(Pos.add(Vector3.up)).IsBlock(Blocks.ShortGrass)) Core().World.WriteBlockAt(Pos.add(Vector3.up), Blocks.Air.Identifier.AsString());
+		//if (Core().World.Level.GetBlockAt(Pos.add(Vector3.up)).IsBlock(Blocks.ShortGrass)) Core().World.WriteBlockAt(Pos.add(Vector3.up), Blocks.Air.Identifier.AsString());
 
 		return true;
 	}
 
 	public TryPlaceBlock(Player: Player, Pos: Vector3, Index: number) {
-		const BlockID = Core().World.GetBlockAt(Pos);
-		if (!["parkour:Air", "parkour:ShortGrass"].includes(BlockID)) return false;
+		//const BlockID = Core().World.GetBlockAt(Pos);
+		//if (!["parkour:Air", "parkour:ShortGrass"].includes(BlockID)) return false;
 
 		const Data = this.Server.DataService.GetPlayerData(this.Server.DataService.Key(Player));
 		const Item = Data.Inventories.Hotbar.Content[Index];
@@ -156,7 +155,7 @@ export class ServerInteractions {
 		Item.Amount--;
 		if (Item.Amount <= 0) delete Data.Inventories.Hotbar.Content[Index];
 
-		Core().World.WriteBlockAt(Pos, Item.BlockID);
+		//Core().World.WriteBlockAt(Pos, Item.BlockID);
 
 		return true;
 	}

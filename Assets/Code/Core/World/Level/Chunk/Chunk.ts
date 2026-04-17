@@ -6,6 +6,7 @@ import type { Block } from "../../Block/Block";
 import { BlockModel } from "../../Block/BlockDef";
 import type { BlockState } from "../../Block/BlockState";
 import type { Level } from "../Level";
+import { ChunkPos } from "Code/Shared/Types";
 
 const Half = Vector3.one.div(2);
 
@@ -402,7 +403,7 @@ export class Chunk {
 
 	constructor(
 		public Level: Level,
-		public Key: Vector3,
+		public Key: ChunkPos,
 		public Blocks: BlockState[] = [],
 		Immediate?: boolean,
 	) {
@@ -630,10 +631,10 @@ export class Chunk {
 	public Deserialize() {}
 
 	public static ToKey(Position: Vector3) {
-		return Utility.Vector.ToKey(Position);
+		return Utility.Vector.ToKey(Position) as ChunkPos;
 	}
 
-	public static FromKey(ChunkKey: Vector3) {
+	public static FromKey(ChunkKey: ChunkPos) {
 		return Utility.Vector.FromKey(ChunkKey);
 	}
 

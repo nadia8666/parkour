@@ -5,10 +5,10 @@ export class BlockState {
 	constructor(public Block: Block) {}
 
 	public Is(OtherState: BlockState) {
-		return OtherState.Block.Identifier.AsString() === this.Block.Identifier.AsString();
+		return OtherState.Block.Identifier.AsResource() === this.Block.Identifier.AsResource();
 	}
 
 	public IsBlock(OtherState: Block) {
-		return OtherState.Identifier.AsString() === this.Block.Identifier.AsString();
+		return OtherState.Identifier.AsResource() === this.Block.Identifier.AsResource();
 	}
 }

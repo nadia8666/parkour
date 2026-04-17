@@ -31,7 +31,7 @@ export interface GearItem extends BaseItemInfo<ItemTypes.Gear> {
 }
 
 export interface BlockItem extends BaseItemInfo<ItemTypes.Block> {
-	BlockID: string;
+	BlockID: Resource;
 }
 
 export type AnyItem = GearItem | BlockItem | BaseItemInfo<ItemTypes.Item>;
@@ -108,3 +108,7 @@ export type PlayerInfoGetter = () => {
 	Player: Player;
 	Position: Vector3;
 };
+
+export interface ChunkPos extends Vector3 {} // chunk key
+export interface BlockPos extends Vector3 {} // local pos from 0-15
+export interface Resource extends String {} // namespace:string

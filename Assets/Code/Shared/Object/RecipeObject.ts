@@ -44,7 +44,7 @@ export default class RecipeObject extends AirshipScriptableObject {
 			return {
 				...BaseItem,
 				Type: ItemTypes.Block,
-				BlockID: Core().World.GetBlockID(Name),
+				BlockID: Name,
 			};
 		} else {
 			return {

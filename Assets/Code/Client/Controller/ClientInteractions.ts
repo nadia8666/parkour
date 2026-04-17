@@ -68,7 +68,7 @@ export class ClientInteractions {
 	}
 
 	public OnLMBDown() {
-		//if (!Application.isFocused) return;
+		if (!Application.isFocused) return;
 		if (this.Controller.UI.UI.Get().RaycastUI() || this.Controller.UI.UI.Get().AreMenusOpen()) return;
 		if (this.TargetedBlock) {
 			this.BreakingBlock = true;
@@ -83,7 +83,7 @@ export class ClientInteractions {
 	}
 
 	public OnRMBDown() {
-		//if (!Application.isFocused) return;
+		if (!Application.isFocused) return;
 		if (this.Controller.UI.UI.Get().RaycastUI() || this.Controller.UI.UI.Get().AreMenusOpen()) return;
 		if (this.TargetedBlock) {
 			const HeldItem = Core().Client.UI.Hotbar.HeldItem;
@@ -97,10 +97,10 @@ export class ClientInteractions {
 			if (TryPlace && HeldItem) {
 				const [_, Index] = ItemUtil.FindItemInInventories(HeldItem);
 				const BlockPos = this.TargetedBlock.add(this.TargetNormal);
-				const BlockID = this.Level.Get().GetBlockAt(BlockPos);
+				const State = this.Level.Get().GetBlockAt(BlockPos);
 				if (!ENV.Shared) this.Level.Get().SetBlockAt(BlockPos, Blocks.Air.NewBlockState(), true);
 
-				if (!Network.Level.Try.PlaceBlock.client.FireServer(BlockPos, Index!)) this.Level.Get().SetBlockAt(BlockPos, BlockID, true);
+				if (!Network.Level.Try.PlaceBlock.client.FireServer(BlockPos, Index!)) this.Level.Get().SetBlockAt(BlockPos, State, true);
 			}
 		}
 	}

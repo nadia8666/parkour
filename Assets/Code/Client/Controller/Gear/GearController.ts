@@ -1,6 +1,7 @@
 import { deepCopy as DeepCopy } from "@Easy/Core/Shared/Util/ObjectUtils";
 import { WithGear } from "Code/Client/Config";
 import Core from "Code/Core/Core";
+import Blocks from "Code/Core/Registry/Blocks";
 import type { GearRegistryKey } from "Code/Shared/GearRegistry";
 import { type AnyItem, type GearItem, type InventoryKey, ItemTypes } from "Code/Shared/Types";
 import { Utility } from "Code/Shared/Utility/Utility";
@@ -75,11 +76,9 @@ export default class GearController extends AirshipSingleton {
 		if (Item.Type === ItemTypes.Gear) {
 			return Core().Gear[(Item as GearItem).Key].Name;
 		} else {
-			// TEMP
-			if (Item.Type === ItemTypes.Block) {
-				return Core().World.GetDefinitionFromBlock(Item.BlockID).DisplayName;
-			}
-			return Utility.FormatStringForName(Item.Key);
+			if (Item.Type === ItemTypes.Block) 
+				return Blocks.GetDefinitionFromResource(Item.BlockID).DisplayName;
+			return Utility.FormatStringForName(Item.Key); // TODO: give items and gear a fixed registry as well as display names
 		}
 	}
 

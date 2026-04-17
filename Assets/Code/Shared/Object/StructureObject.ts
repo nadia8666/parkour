@@ -1,17 +1,13 @@
-import type { World } from "../Types";
+import type { BlockPos, Resource, World } from "../Types";
 
 export interface StructureData {
-	blockIDs: string[];
+	blockIDs: Resource[];
 	blockPositions: Vector3[];
 }
 
 export enum StructureRotationType {
 	None,
 	YAxis,
-}
-
-export function RandomChance(Max: number) {
-	return math.random(1, Max) === 1;
 }
 
 @CreateAssetMenu("Parkour/New Structure", "Structure.asset")
@@ -29,7 +25,7 @@ export default class StructureObject extends AirshipScriptableObject {
 			return { blockIDs: [], blockPositions: [] };
 		}
 		Data.blockPositions.forEach((Value, Index) => {
-			Data.blockPositions[Index] = new Vector3(Value.x, Value.y, Value.z);
+			Data.blockPositions[Index] = new Vector3(Value.x, Value.y, Value.z) as BlockPos;
 		});
 		return Data;
 	}

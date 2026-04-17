@@ -1,4 +1,5 @@
 import { deepCopy as DeepCopy } from "@Easy/Core/Shared/Util/ObjectUtils";
+import type { BlockPos, ChunkPos } from "../Types";
 
 export namespace Utility {
 	export function DeepCopyWithOverrides<T extends object>(InitialValue: T, Overrides?: Partial<{ [U in keyof T]: T[U] }>) {
@@ -46,20 +47,24 @@ export namespace Utility {
 		return new Vector3(math.floor(Vector.x), math.floor(Vector.y), math.floor(Vector.z));
 	}
 
+	export function RandomChance(Max: number) {
+		return math.random(1, Max) === 1;
+	}
+
 	export namespace Vector {
 		export function FromIndex(Index: number) {
-			return new Vector3(Index % 16, math.floor((Index % 256) / 16), math.floor(Index / 256));
+			return new Vector3(Index % 16, math.floor((Index % 256) / 16), math.floor(Index / 256)) as BlockPos;
 		}
 
 		export function FromIndexS(Index: number) {
-			return new Vector3(Index & 15, (Index >> 4) & 15, (Index >> 8) & 15);
+			return new Vector3(Index & 15, (Index >> 4) & 15, (Index >> 8) & 15) as BlockPos;
 		}
 
 		export function ToIndex(Vector: Vector3) {
 			return Vector.z * 256 + Vector.y * 16 + Vector.x;
 		}
 
-		export function ToIndexS(Vector: Vector3) {
+		export function ToIndexS(Vector: BlockPos) {
 			return (Vector.z << 8) | (Vector.y << 4) | Vector.x;
 		}
 
@@ -68,14 +73,14 @@ export namespace Utility {
 				Position.x >= 0 ? Position.x >> 4 : -(-(Position.x + 1) >> 4) - 1,
 				Position.y >= 0 ? Position.y >> 4 : -(-(Position.y + 1) >> 4) - 1,
 				Position.z >= 0 ? Position.z >> 4 : -(-(Position.z + 1) >> 4) - 1,
-			);
+			) as ChunkPos;
 		}
 
-		export function FromKey(ChunkKey: Vector3) {
+		export function FromKey(ChunkKey: ChunkPos) {
 			return ChunkKey.mul(16);
 		}
 
-		export function GetAdjacent(Position: Vector3) {
+		export function GetAdjacent<T extends Vector3>(Position: T) {
 			return [
 				Position.add(Vector3.up),
 				Position.add(Vector3.down),
@@ -83,7 +88,7 @@ export namespace Utility {
 				Position.add(Vector3.right),
 				Position.add(Vector3.back),
 				Position.add(Vector3.left),
-			];
+			] as T[];
 		}
 	}
 

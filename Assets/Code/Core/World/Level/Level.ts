@@ -1,9 +1,10 @@
 import { Utility } from "Code/Shared/Utility/Utility";
 import type { BlockState } from "../Block/BlockState";
 import { Chunk } from "./Chunk/Chunk";
+import { ChunkPos } from "Code/Shared/Types";
 
 export class Level {
-	public Chunks = new Map<Vector3, Chunk>();
+	public Chunks = new Map<ChunkPos, Chunk>();
 
 	/**
 	 * writes a blockstate in the level
@@ -95,7 +96,7 @@ export class Level {
 	 * unloads (deletes) target chunk
 	 * @param ChunkKey chunk key
 	 */
-	public UnloadChunk(ChunkKey: Vector3) {
+	public UnloadChunk(ChunkKey: ChunkPos) {
 		const Chunk = this.Chunks.get(ChunkKey);
 		Chunk?.Unload();
 

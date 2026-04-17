@@ -1,5 +1,5 @@
 import { Asset } from "@Easy/Core/Shared/Asset";
-import Core from "Code/Core/Core";
+import Blocks from "Code/Core/Registry/Blocks";
 import { BlockModel } from "Code/Core/World/Block/BlockDef";
 import { type AnyItem, ItemTypes } from "../Types";
 
@@ -26,7 +26,7 @@ export namespace ModelBuilder {
 			}
 
 			case ItemTypes.Block: {
-				const Definition = Core().World.GetDefinitionFromBlock(Item.BlockID);
+				const Definition = Blocks.GetDefinitionFromResource(Item.BlockID);
 				switch (Definition.ModelType) {
 					case BlockModel.Box: {
 						const Object = GameObject.Create("VoxelBlock");

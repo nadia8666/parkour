@@ -1,6 +1,7 @@
 import { Airship } from "@Easy/Core/Shared/Airship";
 import { Game } from "@Easy/Core/Shared/Game";
 import { Network } from "Code/Shared/Network";
+import { DualLink } from "@inkyaker/DualLink/Code";
 
 export const Settings = {
 	CameraRotation: true,
@@ -19,8 +20,18 @@ export const Settings = {
 export type Settings = typeof Settings;
 
 export default class SettingsController extends AirshipSingleton {
+	public Settings: Settings;
 	@Client()
 	override Start() {
+		Game.WaitForLocalPlayerLoaded();
+		const SettingsLink = new DualLink(`PlayerSettings${Game.localPlayer.userId}`, Settings, { AutoReplicate: true });
+		SettingsLink.AnyChanged.Connect(() => {
+			for (const [Index, Value] of pairs(SettingsLink.Data)) Settings[Index] = Value as never;
+		});
+		this.Settings = SettingsLink.Data;
+
+		Network.Sync.GetPlayerSettings.client.SetCallback(() => SettingsLink.Data);
+
 		this.AddBool("CameraRotation", "Camera Rotation");
 
 		this.AddBool("StepUpEnabled", "Step Up Enabled");
@@ -36,40 +47,12 @@ export default class SettingsController extends AirshipSingleton {
 	}
 
 	public AddBool(Key: ExtractKeys<typeof Settings, boolean>, DisplayName: string) {
-		Airship.Settings.AddToggle(DisplayName, Settings[Key]);
-		if (!Game.IsEditor()) {
-			let LastUpdated = 0;
-			Airship.Settings.ObserveToggle(DisplayName, (Value) => {
-				Settings[Key] = Value;
-
-				const Tick = os.clock();
-				LastUpdated = Tick;
-
-				task.delay(1, () => {
-					if (LastUpdated === Tick) Network.Data.UpdateSetting.client.FireServer(Key, Value);
-				});
-			});
-
-			Network.Data.UpdateSetting.client.FireServer(Key, Settings[Key]);
-		}
+		Airship.Settings.AddToggle(DisplayName, this.Settings[Key]);
+		if (!Game.IsEditor()) Airship.Settings.ObserveToggle(DisplayName, (Value) => (this.Settings[Key] = Value));
 	}
 
 	public AddSlider(Key: ExtractKeys<typeof Settings, number>, DisplayName: string, MinMax: [number, number], Increment: number) {
-		Airship.Settings.AddSlider(DisplayName, Settings[Key], MinMax[0], MinMax[1], Increment);
-		if (!Game.IsEditor()) {
-			let LastUpdated = 0;
-			Airship.Settings.ObserveSlider(DisplayName, (Value) => {
-				Settings[Key] = Value;
-
-				const Tick = os.clock();
-				LastUpdated = Tick;
-
-				task.delay(1, () => {
-					if (LastUpdated === Tick) Network.Data.UpdateSetting.client.FireServer(Key, Value);
-				});
-			});
-
-			Network.Data.UpdateSetting.client.FireServer(Key, Settings[Key]);
-		}
+		Airship.Settings.AddSlider(DisplayName, this.Settings[Key], MinMax[0], MinMax[1], Increment);
+		if (!Game.IsEditor()) Airship.Settings.ObserveSlider(DisplayName, (Value) => (this.Settings[Key] = Value));
 	}
 }

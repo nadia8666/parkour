@@ -1,6 +1,8 @@
 import { Asset } from "@Easy/Core/Shared/Asset";
+import type { Resource } from "Code/Shared/Types";
 import { Block } from "../World/Block/Block";
 import type BlockDef from "../World/Block/BlockDef";
+import type { BlockState } from "../World/Block/BlockState";
 import { Registry } from "./Registries";
 
 function Get(BlockName: string): BlockDef {
@@ -30,4 +32,22 @@ export default class Blocks {
 	public static Snow = Blocks.Register("Snow");
 	public static ShortGrass = Blocks.Register("ShortGrass");
 	public static WoodenChest = Blocks.Register("WoodenChest");
+
+	public static FromResource(BlockID: Resource) {
+		for (const [Identifier, Block] of Blocks.Registry.Instances) if (Identifier.AsResource() === BlockID) return Block;
+
+		return undefined as unknown as Block;
+	}
+
+	public static ToResource(TargetBlock: Block | BlockState) {
+		return TargetBlock instanceof Block ? TargetBlock.Identifier.AsResource() : TargetBlock.Block.Identifier.AsResource();
+	}
+
+	public static GetDefinition(TargetBlock: Block | BlockState) {
+		return TargetBlock instanceof Block ? TargetBlock.Definition : TargetBlock.Block.Definition;
+	}
+
+	public static GetDefinitionFromResource(BlockID: Resource) {
+		return Blocks.GetDefinition(Blocks.FromResource(BlockID));
+	}
 }
