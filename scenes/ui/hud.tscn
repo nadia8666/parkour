@@ -1,0 +1,30 @@
+[gd_scene format=3 uid="uid://ctlvb2byhsl84"]
+
+[ext_resource type="Script" uid="uid://c3uy2pvma6o6j" path="res://src/UI/UI2D.cs" id="1_0mwgc"]
+
+[node name="Hud" type="Control" unique_id=1679663870 node_paths=PackedStringArray("velocityReadout")]
+layout_mode = 3
+anchor_right = 1.667
+anchor_bottom = 1.667
+offset_right = -1280.6401
+offset_bottom = -720.3601
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_0mwgc")
+velocityReadout = NodePath("VelocityReadout")
+metadata/_custom_type_script = "uid://c3uy2pvma6o6j"
+
+[node name="VelocityReadout" type="Label" parent="." unique_id=1181340748]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -781.87195
+offset_top = -255.0
+offset_right = 781.87195
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_font_sizes/font_size = 60
+text = "0, 0, 0"

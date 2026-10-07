@@ -1,0 +1,34 @@
+[gd_scene format=3 uid="uid://blrasnq4g07q1"]
+
+[ext_resource type="Script" uid="uid://difhqk4rmdfam" path="res://src/Actor/Actor3D.cs" id="1_krsua"]
+[ext_resource type="PackedScene" uid="uid://8qsp5c8occum" path="res://scenes/actor/player_model.tscn" id="2_3et3n"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_4nllc"]
+radius = 0.4
+
+[node name="LocalPlayer" type="CharacterBody3D" unique_id=397332423 node_paths=PackedStringArray("cameraObj", "blendTree")]
+axis_lock_angular_y = true
+floor_constant_speed = true
+floor_max_angle = 1.0471976
+script = ExtResource("1_krsua")
+cameraObj = NodePath("Camera3D")
+blendTree = NodePath("PlayerModel/AnimationTree")
+metadata/_custom_type_script = "uid://difhqk4rmdfam"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=132744879]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CapsuleShape3D_4nllc")
+debug_color = Color(1, 1, 1, 1)
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=777546167]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8, 0)
+top_level = true
+fov = 90.0
+
+[node name="PlayerModel" parent="." unique_id=658158511 instance=ExtResource("2_3et3n")]
+transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 0, 0, 0)
+
+[node name="GeneralSkeleton" parent="PlayerModel/PlayerArmature" parent_id_path=PackedInt32Array(658158511, 550795763) index="0" unique_id=66804427]
+bones/0/position = Vector3(7.274726e-18, -0.003656766, 0.028814873)
+
+[editable path="PlayerModel"]

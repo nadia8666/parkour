@@ -1,7 +1,65 @@
 [gd_scene format=3 uid="uid://xl8sw8138iot"]
 
+[ext_resource type="PackedScene" uid="uid://ctlvb2byhsl84" path="res://scenes/ui/hud.tscn" id="1_cn6jd"]
+
+[sub_resource type="Sky" id="Sky_d0u6y"]
+
+[sub_resource type="Environment" id="Environment_g4v7s"]
+background_mode = 1
+background_color = Color(0.72953326, 0.85084695, 0.89043623, 1)
+sky = SubResource("Sky_d0u6y")
+ssao_enabled = true
+
+[sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_yf5fn"]
+
+[sub_resource type="Compositor" id="Compositor_57qmd"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_5k3un"]
+frequency = 0.2091
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_ukhuu"]
+noise = SubResource("FastNoiseLite_5k3un")
+seamless = true
+seamless_blend_skirt = 1.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_krsua"]
+albedo_color = Color(0.32172796, 0.32172796, 0.32172787, 1)
+albedo_texture = SubResource("NoiseTexture2D_ukhuu")
+metallic = 0.37
+roughness = 0.74
+
 [node name="Node3D" type="Node3D" unique_id=1205056082]
 
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=162392009]
+environment = SubResource("Environment_g4v7s")
+camera_attributes = SubResource("CameraAttributesPractical_yf5fn")
+compositor = SubResource("Compositor_57qmd")
+
 [node name="CSGBox3D" type="CSGBox3D" parent="." unique_id=921264496]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.4388773, 0)
-size = Vector3(40, 1, 40)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.001958847, 0)
+use_collision = true
+size = Vector3(120, 1, 120)
+material = SubResource("StandardMaterial3D_krsua")
+
+[node name="CSGBox3D2" type="CSGBox3D" parent="." unique_id=1140182217]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 66.819275, 0.001958847, 0)
+use_collision = true
+size = Vector3(96.30945, 4.505615, 120)
+material = SubResource("StandardMaterial3D_krsua")
+
+[node name="CSGBox3D4" type="CSGBox3D" parent="." unique_id=1886844864]
+transform = Transform3D(0.9924992, -0.122251175, 0, 0.122251175, 0.9924992, 0, 0, 0, 1, 30.953035, 3.704728, 45.21858)
+use_collision = true
+size = Vector3(101.911865, 4.505615, 8.894531)
+material = SubResource("StandardMaterial3D_krsua")
+
+[node name="CSGBox3D3" type="CSGBox3D" parent="." unique_id=26875042]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 32.691387, 12.202153, 42.96524)
+use_collision = true
+size = Vector3(55.669067, 28.906006, 4.038025)
+material = SubResource("StandardMaterial3D_krsua")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1638133355]
+transform = Transform3D(0.86964816, -0.24683604, 0.4275325, -0.493672, -0.43482414, 0.7531374, 0, -0.8660254, -0.50000006, 9.536743e-07, 6.890601, -3.9152756)
+
+[node name="Hud" parent="." unique_id=2091799518 instance=ExtResource("1_cn6jd")]
