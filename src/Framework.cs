@@ -2,14 +2,9 @@ using Parkour.Core;
 
 namespace Parkour;
 
-public class Framework : ISingleton
+public class Framework(PlayerManager playerManager) : ISingleton
 {
-
-    private readonly PlayerManager _playerManager;
-    public Framework(PlayerManager playerManager)
-    {
-        _playerManager = playerManager;
-    }
+    private readonly PlayerManager _playerManager = playerManager;
 
     public void Initialize()
     {

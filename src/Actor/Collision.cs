@@ -2,13 +2,9 @@ using Godot;
 
 namespace Parkour.Actor;
 
-public class ActorCollision
+public class ActorCollision(Actor3D actor)
 {
-    private Actor3D actor;
-    public ActorCollision(Actor3D actor)
-    {
-        this.actor = actor;
-    }
+    private readonly Actor3D actor = actor;
 
     public void CollideAndSlide()
     {

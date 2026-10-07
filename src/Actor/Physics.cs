@@ -1,56 +1,105 @@
-using System;
 using Godot;
+using Parkour.Lib;
 
 namespace Parkour.Actor;
 
-public class ActorPhysics
+public class ActorPhysics(Actor3D actor)
 {
-    // constants
-    public const float Gravity = 21;
-    public const float GroundDrag = 5f;//25;
-    public const float AirDrag = 1.5f;
+    // world
+    public const float DefaultGravity = 75f * Actor3D.Unit;
+    public float gravity = DefaultGravity;
+    public const float TerminalFall = 210f * Actor3D.Unit;
+    public const float TerminalRise = 500f * Actor3D.Unit;
+    public const float TerminalSpeed = 5000f * Actor3D.Unit;
+
+    // drag
+    public const float GroundDrag = 10f;
+    public const float AirDrag = 0.1f;
+    public const float LandingGrace = 0.1f;
+    public const float LandingRamp = 0.1f;
+
+    // steering
+    public const float GroundSteer = 20f * 0.6f;
+    public const float AirSteer = 20f * 0.25f;
+    public const float OverspeedBand = 0.15f; // steering limiter at high speeds
+
+    // friction
+    public const float GroundFrictionStart = 24f * Actor3D.Unit;
+    public const float GroundFrictionEnd = 200f * Actor3D.Unit;
+    public const float GroundFrictionFalloff = 4.5f;
+
+    public const float IdleSpeed = 0.05f;
+    public const float TurnRate = 12.5f; // only applies in 3rd person
 
     // constructor
-    private Actor3D actor;
-    public ActorPhysics(Actor3D actor)
-    {
-        this.actor = actor;
-    }
+    private readonly Actor3D actor = actor;
+    private float groundedTime;
+    public float frictionScale = 1f;
 
     // physics
     public void StepPhysics(float delta)
     {
-        // vector editing
-        Vector3 moveVector = actor.input.globalMoveVector;
-        if (actor.camera.locked)
-            actor.Rotation = new(actor.Rotation.X, actor.camera.rotation.Y, 0);
-        else if (actor.input.stickL.Length() > .05)
-        {
-            float rot = Basis.LookingAt(moveVector).GetEuler().Y;
-            actor.Rotation = new(actor.Rotation.X, Mathf.LerpAngle(actor.Rotation.Y, rot, Mathf.Min(12.5f * delta, 1)), 0);
-        }
+        bool hasInput = actor.input.stickL.Length() > ActorInput.InputDeadzone;
+        Vector3 wish = hasInput ? actor.input.globalMoveVector.Normalized() : Vector3.Zero;
+        bool grounded = actor.IsOnFloor();
+        groundedTime = grounded ? groundedTime + delta : 0;
+
+        UpdateFacing(delta, wish, hasInput);
 
         Vector3 velocity = actor.Velocity;
-        float storeY = velocity.Y;
-        float forwardSpeed = actor.Velocity.Dot(moveVector);
-        float accelForce = actor.speed * (1 - Mathf.Clamp(forwardSpeed / Actor3D.MaxSpeed, 0, 1));
-        Vector3 forwardVelocity = moveVector * forwardSpeed;
-        velocity -= (velocity - forwardVelocity) * GroundDrag * delta;
+        Vector3 flat = StepHorizontal(VUtil.WithY(velocity, 0), wish, hasInput, grounded, delta);
+        float y = Mathf.Clamp(velocity.Y - gravity * delta, -TerminalFall, TerminalRise);
 
-        if (forwardSpeed < 0)
-            velocity -= forwardVelocity * GroundDrag * accelForce * delta;
+        actor.Velocity = new Vector3(flat.X, y, flat.Z);
+    }
 
-        velocity += moveVector * accelForce * delta;
+    private void UpdateFacing(float delta, Vector3 wish, bool hasInput)
+    {
+        if (actor.camera.Locked)
+            actor.Rotation = new(actor.Rotation.X, actor.camera.rotation.Y, 0);
+        else if (hasInput)
+        {
+            float rot = Basis.LookingAt(wish).GetEuler().Y;
+            actor.Rotation = new(actor.Rotation.X, Mathf.LerpAngle(actor.Rotation.Y, rot, 1 - Mathf.Exp(-TurnRate * delta)), 0);
+        }
+    }
 
-        // final component editing
-        var (x, y, z) = (velocity.X, storeY, velocity.Z);
+    private Vector3 StepHorizontal(Vector3 flat, Vector3 wish, bool hasInput, bool grounded, float delta)
+    {
+        float walkSpeed = actor.momentum;
+        float speed = flat.Length();
+        float friction = GetFrictionAt(speed) * frictionScale;
 
-        y -= (float)(Gravity * delta);
+        float steerControl = 1f;
+        if (hasInput && speed > walkSpeed)
+        {
+            float across = Mathf.Clamp(1f - flat.Normalized().Dot(wish), 0f, 1f);
+            float over = Mathf.Clamp((speed - walkSpeed) / (walkSpeed * OverspeedBand), 0f, 1f);
+            steerControl = Mathf.Lerp(1f, across, over);
+        }
 
-        x = Math.Clamp(x, -1800, 1800);
-        y = Math.Clamp(y, -75.6f, 180);
-        z = Math.Clamp(z, -1800, 1800);
+        // drag, fades out while input steers
+        float landed = Mathf.Clamp(Mathf.InverseLerp(LandingGrace, LandingGrace + LandingRamp, groundedTime), 0f, 1f);
+        float drag = grounded ? GroundDrag * friction * landed : AirDrag;
+        if (hasInput)
+            drag *= 1f - steerControl;
+        flat *= Mathf.Exp(-drag * delta);
 
-        actor.Velocity = new Vector3(x, y, z);
+        // steering
+        if (hasInput)
+        {
+            float rate = (grounded ? GroundSteer : AirSteer) * friction * steerControl;
+            flat = flat.Lerp(wish * walkSpeed, 1f - Mathf.Exp(-rate * delta));
+        }
+        else if (flat.LengthSquared() < IdleSpeed * IdleSpeed)
+            flat = Vector3.Zero;
+
+        return flat.LimitLength(TerminalSpeed);
+    }
+
+    private static float GetFrictionAt(float speed)
+    {
+        float t = Mathf.Clamp(Mathf.InverseLerp(GroundFrictionStart, GroundFrictionEnd, speed), 0f, 1f);
+        return Mathf.Exp(-GroundFrictionFalloff * t);
     }
 }

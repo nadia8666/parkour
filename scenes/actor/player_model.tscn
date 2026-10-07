@@ -2,13 +2,19 @@
 
 [ext_resource type="PackedScene" uid="uid://bsuajmf2trsuf" path="res://models/player_model.glb" id="1_hq1ji"]
 [ext_resource type="Texture2D" uid="uid://b77le57gpyffr" path="res://models/player_model_face.png" id="2_22oum"]
-[ext_resource type="Animation" uid="uid://bdkwaqtcpyik3" path="res://animations/idle.res" id="2_hq1ji"]
+[ext_resource type="Animation" uid="uid://crj7whfm6qxby" path="res://animations/idle.res" id="2_hq1ji"]
 [ext_resource type="Texture2D" uid="uid://cbgx01kdiigln" path="res://models/player_model_rbx_cloth_r6_torso.png" id="3_6umqm"]
-[ext_resource type="Animation" uid="uid://cb8p3g7wmjxbu" path="res://animations/run_forward.res" id="3_rw250"]
+[ext_resource type="Animation" uid="uid://ygddp8r1m70q" path="res://animations/run_forward.res" id="3_rw250"]
 [ext_resource type="Texture2D" uid="uid://ulr6o1gkgjg4" path="res://models/player_model_rbx_cloth_r6_left_arm.png" id="4_7mr4a"]
 [ext_resource type="Texture2D" uid="uid://cnwcrhf2hqfux" path="res://models/player_model_rbx_cloth_r6_right_arm.png" id="5_moo6j"]
 [ext_resource type="Texture2D" uid="uid://xqwgnht6lxji" path="res://models/player_model_rbx_cloth_r6_left_leg.png" id="6_5cj1o"]
 [ext_resource type="Texture2D" uid="uid://sk1nv0l546bs" path="res://models/player_model_rbx_cloth_r6_right_leg.png" id="7_500gc"]
+[ext_resource type="Animation" uid="uid://cwapaabpfbeuf" path="res://animations/fall.res" id="8_500gc"]
+[ext_resource type="Animation" uid="uid://cwo6jr78ettvx" path="res://animations/coil.res" id="8_vdwep"]
+[ext_resource type="Animation" uid="uid://ln1pf17n1ew0" path="res://animations/jump_l.res" id="10_7t2x5"]
+[ext_resource type="Animation" uid="uid://cjvlo6hq7tivr" path="res://animations/jump_r.res" id="11_hxyi7"]
+[ext_resource type="Animation" uid="uid://bdlndj74d882y" path="res://animations/powerslide_loop.res" id="13_3y2gs"]
+[ext_resource type="Animation" uid="uid://k38juk8n3pu4" path="res://animations/powerslide_start.res" id="14_ogac5"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7mr4a"]
 resource_name = "Head"
@@ -151,33 +157,15 @@ _surfaces = [{
 }]
 blend_shape_mode = 0
 
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_hq1ji"]
-animation = &"CharAnims/idle"
-
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_rw250"]
-animation = &"CharAnims/run_forward"
-
-[sub_resource type="AnimationNodeBlendSpace1D" id="AnimationNodeBlendSpace1D_e2li7"]
-blend_point_0/node = SubResource("AnimationNodeAnimation_hq1ji")
-blend_point_0/pos = 0.0
-blend_point_0/name = &"CharAnims_idle"
-blend_point_1/node = SubResource("AnimationNodeAnimation_rw250")
-blend_point_1/pos = 0.5
-blend_point_1/name = &"CharAnims_run_forward"
-
-[sub_resource type="AnimationNodeTimeScale" id="AnimationNodeTimeScale_7tfyc"]
-
-[sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_g4v7s"]
-nodes/output/position = Vector2(580, 120)
-nodes/IdleRunBlend/node = SubResource("AnimationNodeBlendSpace1D_e2li7")
-nodes/IdleRunBlend/position = Vector2(100, 140)
-nodes/RunSpeed/node = SubResource("AnimationNodeTimeScale_7tfyc")
-nodes/RunSpeed/position = Vector2(340, 120)
-node_connections = [&"output", 0, &"RunSpeed", &"RunSpeed", 0, &"IdleRunBlend"]
-
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_e2li7"]
 _data = {
+&"coil": ExtResource("8_vdwep"),
+&"fall": ExtResource("8_500gc"),
 &"idle": ExtResource("2_hq1ji"),
+&"jump_l": ExtResource("10_7t2x5"),
+&"jump_r": ExtResource("11_hxyi7"),
+&"powerslide_loop": ExtResource("13_3y2gs"),
+&"powerslide_start": ExtResource("14_ogac5"),
 &"run_forward": ExtResource("3_rw250")
 }
 
@@ -189,6 +177,7 @@ bones/2/position = Vector3(-1.0249319, 0.43179122, 0.039517015)
 bones/2/rotation = Quaternion(0.73858786, -0.018627059, 0.67342174, 0.02538255)
 bones/3/position = Vector3(1.03617, 0.45299354, 0.10209123)
 bones/3/rotation = Quaternion(0.7837673, 0.014923979, -0.617971, 0.059982877)
+bones/4/position = Vector3(-9.31427e-10, 1.0000002, -1.542503e-09)
 bones/4/rotation = Quaternion(0.012899036, 1.3163041e-13, 5.5740808e-11, 0.9999168)
 bones/5/position = Vector3(-1.0194904, -1.0037198, -0.13470984)
 bones/5/rotation = Quaternion(0.7719761, -0.016740955, 0.63520914, -0.016797282)
@@ -198,14 +187,13 @@ bones/6/rotation = Quaternion(0.76563877, 0.0045379666, -0.6426505, 0.02787394)
 [node name="PlayerModel" parent="PlayerArmature/GeneralSkeleton" index="0" unique_id=1902133585]
 mesh = SubResource("ArrayMesh_moo6j")
 
-[node name="AnimationTree" type="AnimationTree" parent="." index="1" unique_id=1821188929]
-root_motion_track = NodePath("%GeneralSkeleton:Root")
-callback_mode_process = 0
-tree_root = SubResource("AnimationNodeBlendTree_g4v7s")
-advance_expression_base_node = NodePath("../Animator")
-anim_player = NodePath("../Animator")
-parameters/IdleRunBlend/blend_position = 0.0
-parameters/RunSpeed/scale = 1.0
+[node name="BoneAttachment3D" type="BoneAttachment3D" parent="PlayerArmature/GeneralSkeleton" index="1" unique_id=637186706]
+transform = Transform3D(0.9896784, -0.0006614905, -0.14330478, 3.4430628e-10, 0.99998933, -0.004615918, 0.14330631, 0.004568275, 0.98966783, 0.0030354096, 3.999776, -0.020962654)
+bone_name = "Head"
+bone_idx = 4
 
-[node name="Animator" type="AnimationPlayer" parent="." index="2" unique_id=1450423217]
+[node name="CameraAttach" type="Node3D" parent="PlayerArmature/GeneralSkeleton/BoneAttachment3D" index="0" unique_id=1192226770]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+
+[node name="Animator" type="AnimationPlayer" parent="." index="1" unique_id=1450423217]
 libraries/CharAnims = SubResource("AnimationLibrary_e2li7")

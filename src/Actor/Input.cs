@@ -1,20 +1,29 @@
 using System;
+using System.Collections.Generic;
 using Godot;
 using Parkour.Core;
+using Parkour.Lib;
 
 namespace Parkour.Actor;
 
-public class ActorInput
+public class ActorInput(Actor3D actor)
 {
     // constants
     public const double InputDeadzone = 0.05;
 
-    // constructor
-    private Actor3D actor;
-    public ActorInput(Actor3D actor)
+    // where do i put this lol
+    public readonly struct Binds
     {
-        this.actor = actor;
+        public readonly Bind upmove = new("upmove");
+        public readonly Bind downmove = new("downmove");
+
+        public Binds() { }
+        public readonly IEnumerable<Bind> Iterator => [upmove, downmove];
     }
+
+    // constructor
+    private readonly Actor3D actor = actor;
+    public readonly Binds binds = new();
 
     // input
     public float cameraSensGamepad = 20f;
@@ -37,6 +46,12 @@ public class ActorInput
 
         // consume delta
         mouseDelta = new();
+
+        // binds
+        foreach (Bind bind in binds.Iterator)
+        {
+            bind.Update();
+        }
     }
 
     public void ProcessInput(InputEvent @event)
@@ -52,7 +67,7 @@ public class ActorInput
     public void UpdateZoom(bool zoomIn)
     {
         float force = zoomIn ? -.5f : .5f;
-        actor.camera.SetZoom(actor.camera.zoom + force);
+        actor.camera.SetZoom(actor.camera.Zoom + force);
     }
 
     // dont spam this too much :) its live calculated a bunch
