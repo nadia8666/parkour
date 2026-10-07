@@ -26,7 +26,9 @@ public partial class Actor3D : CharacterBody3D
     [Export] public ActorAnimation animation;
     public ActorCollision collision;
 
-    // timekeeping
+    // misc
+    public bool RotationLocked => parkour.sliding;
+    public bool MovementLocked => parkour.sliding;
     public double Clock()
     {
         return (Time.GetTicksUsec() + 100) / 1_000_000F;
@@ -61,12 +63,12 @@ public partial class Actor3D : CharacterBody3D
         parkour.UpdateMovement(fDelta);
 
         // physics
+        StepRootTween(fDelta);
         physics.StepPhysics(fDelta);
         collision.CollideAndSlide();
 
         // apparently camera and animations always go in physics process instead of render. coming from roblox that sounds stupid but Sure
         animation.UpdateAnimations((float)delta);
-        camera.RenderCamera();
     }
 
     public override void _Process(double delta)
@@ -75,6 +77,7 @@ public partial class Actor3D : CharacterBody3D
 
         // TODO: visual debug ui, update values in the ui modules too
         UI2D.instance.velocityReadout.Text = $"{Velocity.X}\n{Velocity.Y}\n{Velocity.Z}";
+        camera.RenderCamera();
     }
 
     #region speed
@@ -109,6 +112,35 @@ public partial class Actor3D : CharacterBody3D
     }
     #endregion
 
+    #region root movement
+    private bool rootTweenActive = false;
+    private float rootTweenTargetDuration = 0;
+    private float rootTweenTargetHeight = 0;
+    private float rootTweenProgress = 0;
+    public void TweenRoot(float targetHeight, float length)
+    {
+        rootTweenActive = true;
+        rootTweenTargetDuration = length;
+        rootTweenTargetHeight = targetHeight;
+        rootTweenProgress = 0;
+    }
+
+    public void StepRootTween(float delta)
+    {
+        if (rootTweenActive)
+        {
+            float newDelta = Mathf.Min(delta / rootTweenTargetDuration, rootTweenTargetDuration - rootTweenProgress);
+            rootTweenProgress += newDelta;
+            if (rootTweenProgress >= rootTweenTargetDuration)
+                rootTweenActive = false;
+
+            GD.Print($"added {rootTweenTargetHeight * newDelta}..{newDelta}");
+            Position += new Vector3(0, rootTweenTargetHeight * newDelta, 0);
+        }
+    }
+
+    #endregion
+
     #region ground/coyote
     public bool Airborne { get; private set; } = false;
     public bool Grounded { get; private set; } = false;
@@ -134,15 +166,12 @@ public partial class Actor3D : CharacterBody3D
             lastGrounded = Clock();
 
             if (Airborne)
-                parkour.CheckJumpBuffer(); // i would like thsit o be cleaner tbh
+                parkour.CheckJumpBuffer();
 
             CoyoteDuration = MinCoyoteTime;
         }
         else if (Grounded)
-        {
-            //humanoid.CoyoteTime = math.map(vel/260, 0, 1, humanoid.MinCoyoteTime, humanoid.MaxCoyoteTime)
             CoyoteDuration = MinCoyoteTime + Mathf.Clamp(Mathf.Max(0, Velocity.Y) / 260, 0, 1) * (MaxCoyoteTime - MinCoyoteTime);
-        }
 
         Grounded = isNowGrounded;
         Airborne = !isNowGrounded;

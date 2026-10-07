@@ -55,6 +55,8 @@ public class ActorPhysics(Actor3D actor)
 
     private void UpdateFacing(float delta, Vector3 wish, bool hasInput)
     {
+        if (actor.RotationLocked) return;
+
         if (actor.camera.Locked)
             actor.Rotation = new(actor.Rotation.X, actor.camera.rotation.Y, 0);
         else if (hasInput)
@@ -66,6 +68,9 @@ public class ActorPhysics(Actor3D actor)
 
     private Vector3 StepHorizontal(Vector3 flat, Vector3 wish, bool hasInput, bool grounded, float delta)
     {
+        if (actor.MovementLocked)
+            return flat.LimitLength(TerminalSpeed);
+
         float walkSpeed = actor.momentum;
         float speed = flat.Length();
         float friction = GetFrictionAt(speed) * frictionScale;

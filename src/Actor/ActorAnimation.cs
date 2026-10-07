@@ -29,6 +29,7 @@ public partial class ActorAnimation : AnimationTree
         grounded = actor.Grounded;
         jumping = actor.parkour.jumpDecayActive;
         coiling = actor.parkour.coiling;
+        powersliding = actor.parkour.sliding;
 
         // jumping
         if (jumping && jumpReset)

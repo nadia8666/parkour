@@ -21,19 +21,10 @@ public partial class ActorParkour(Actor3D actor)
             GD.Print("just pressed down:)", " ", actor.InCoyote, coiling);
             if (!actor.InCoyote)
             {
-                // try powerslide
-
-                // fallback, coil
-                if (!coiling)
-                {
-                    Coil();
-                    GD.Print("coiling :D");
-                }
+                if (!coiling) Coil();
             }
             else
-            {
-                // try powerslide
-            }
+                TryPowerslide();
         }
     }
 
@@ -46,5 +37,8 @@ public partial class ActorParkour(Actor3D actor)
 
         if (coiling)
             CoilStep();
+
+        if (sliding)
+            SlideStep(delta);
     }
 }

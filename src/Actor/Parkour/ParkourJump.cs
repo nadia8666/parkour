@@ -52,9 +52,11 @@ public partial class ActorParkour
         activeFloatPower = Mathf.Max(0, activeFloatPower - delta * JumpFloatDecay);
     }
 
-    public void CheckJumpBuffer()
+    public bool CheckJumpBuffer()
     {
         if (actor.Clock() - jumpLastQuery <= 0.075)
-            Jump();
+            return Jump();
+
+        return false;
     }
 }

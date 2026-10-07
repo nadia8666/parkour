@@ -13,7 +13,7 @@
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_4nllc"]
 margin = 0.01
 radius = 0.28
-height = 1.12
+height = 0.56
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7mr4a"]
 resource_name = "Head"
@@ -156,8 +156,9 @@ _surfaces = [{
 }]
 blend_shape_mode = 0
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_g4v7s"]
-size = Vector3(0.5, 0.249, 0.5)
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_f4rjh"]
+height = 0.31201172
+radius = 0.25
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_3ncd7"]
 animation = &"CharAnims/coil"
@@ -255,7 +256,7 @@ switch_mode = 2
 advance_mode = 2
 
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_tgmx7"]
-xfade_time = 0.1
+xfade_time = 0.13
 advance_mode = 2
 advance_expression = "!powersliding && grounded"
 
@@ -278,6 +279,11 @@ xfade_time = 0.1
 advance_mode = 2
 advance_expression = "coiling"
 
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_06x3d"]
+xfade_time = 0.1
+advance_mode = 2
+advance_expression = "!powersliding"
+
 [sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_jumim"]
 states/CharAnims_coil/node = SubResource("AnimationNodeAnimation_3ncd7")
 states/CharAnims_coil/position = Vector2(421, 100)
@@ -292,13 +298,13 @@ states/IdleRunBlend/position = Vector2(192, 100)
 states/JumpBlend/node = SubResource("AnimationNodeBlendSpace1D_iv3yu")
 states/JumpBlend/position = Vector2(192, 6)
 states/Start/position = Vector2(-71, 100)
-transitions = ["Start", "IdleRunBlend", SubResource("AnimationNodeStateMachineTransition_580pu"), "IdleRunBlend", "JumpBlend", SubResource("AnimationNodeStateMachineTransition_dl72g"), "JumpBlend", "CharAnims_fall", SubResource("AnimationNodeStateMachineTransition_1423r"), "IdleRunBlend", "CharAnims_fall", SubResource("AnimationNodeStateMachineTransition_o5qt2"), "CharAnims_fall", "IdleRunBlend", SubResource("AnimationNodeStateMachineTransition_3bxr4"), "CharAnims_fall", "JumpBlend", SubResource("AnimationNodeStateMachineTransition_500gc"), "JumpBlend", "IdleRunBlend", SubResource("AnimationNodeStateMachineTransition_3ncd7"), "CharAnims_fall", "CharAnims_coil", SubResource("AnimationNodeStateMachineTransition_n2fp5"), "CharAnims_coil", "CharAnims_fall", SubResource("AnimationNodeStateMachineTransition_jcmbl"), "IdleRunBlend", "CharAnims_powerslide_start", SubResource("AnimationNodeStateMachineTransition_c1lkw"), "CharAnims_powerslide_start", "CharAnims_powerslide_loop", SubResource("AnimationNodeStateMachineTransition_m2hjt"), "CharAnims_powerslide_loop", "IdleRunBlend", SubResource("AnimationNodeStateMachineTransition_tgmx7"), "CharAnims_coil", "IdleRunBlend", SubResource("AnimationNodeStateMachineTransition_0obwq"), "CharAnims_powerslide_loop", "CharAnims_fall", SubResource("AnimationNodeStateMachineTransition_wbinu"), "CharAnims_coil", "CharAnims_powerslide_start", SubResource("AnimationNodeStateMachineTransition_6111d"), "JumpBlend", "CharAnims_coil", SubResource("AnimationNodeStateMachineTransition_uhu0r")]
-graph_offset = Vector2(-318, -177)
+transitions = ["Start", "IdleRunBlend", SubResource("AnimationNodeStateMachineTransition_580pu"), "IdleRunBlend", "JumpBlend", SubResource("AnimationNodeStateMachineTransition_dl72g"), "JumpBlend", "CharAnims_fall", SubResource("AnimationNodeStateMachineTransition_1423r"), "IdleRunBlend", "CharAnims_fall", SubResource("AnimationNodeStateMachineTransition_o5qt2"), "CharAnims_fall", "IdleRunBlend", SubResource("AnimationNodeStateMachineTransition_3bxr4"), "CharAnims_fall", "JumpBlend", SubResource("AnimationNodeStateMachineTransition_500gc"), "JumpBlend", "IdleRunBlend", SubResource("AnimationNodeStateMachineTransition_3ncd7"), "CharAnims_fall", "CharAnims_coil", SubResource("AnimationNodeStateMachineTransition_n2fp5"), "CharAnims_coil", "CharAnims_fall", SubResource("AnimationNodeStateMachineTransition_jcmbl"), "IdleRunBlend", "CharAnims_powerslide_start", SubResource("AnimationNodeStateMachineTransition_c1lkw"), "CharAnims_powerslide_start", "CharAnims_powerslide_loop", SubResource("AnimationNodeStateMachineTransition_m2hjt"), "CharAnims_powerslide_loop", "IdleRunBlend", SubResource("AnimationNodeStateMachineTransition_tgmx7"), "CharAnims_coil", "IdleRunBlend", SubResource("AnimationNodeStateMachineTransition_0obwq"), "CharAnims_powerslide_loop", "CharAnims_fall", SubResource("AnimationNodeStateMachineTransition_wbinu"), "CharAnims_coil", "CharAnims_powerslide_start", SubResource("AnimationNodeStateMachineTransition_6111d"), "JumpBlend", "CharAnims_coil", SubResource("AnimationNodeStateMachineTransition_uhu0r"), "CharAnims_powerslide_start", "IdleRunBlend", SubResource("AnimationNodeStateMachineTransition_06x3d")]
+graph_offset = Vector2(-377, -163)
 
 [sub_resource type="AnimationNodeTimeScale" id="AnimationNodeTimeScale_500gc"]
 
 [sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_3ncd7"]
-graph_offset = Vector2(-426.34186, -100.41883)
+graph_offset = Vector2(-384.19998, -147.59999)
 nodes/output/position = Vector2(580, 120)
 nodes/StateMachine/node = SubResource("AnimationNodeStateMachine_jumim")
 nodes/StateMachine/position = Vector2(-240, 20)
@@ -314,18 +320,19 @@ floor_max_angle = 1.0471976
 script = ExtResource("1_krsua")
 cameraObj = NodePath("Camera3D")
 blendTree = NodePath("AnimationTree")
-cameraAttach = NodePath("PlayerModel/PlayerArmature/GeneralSkeleton/BoneAttachment3D/CameraAttach")
+cameraAttach = NodePath("PlayerModel/PlayerArmature/GeneralSkeleton/BoneAttachment3D/Marker3D")
 playerMesh = NodePath("PlayerModel/PlayerArmature/GeneralSkeleton/PlayerModel")
 groundSensor = NodePath("GroundSensor")
 animation = NodePath("AnimationTree")
 metadata/_custom_type_script = "uid://difhqk4rmdfam"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=132744879]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.56, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.28, 0)
 shape = SubResource("CapsuleShape3D_4nllc")
 debug_color = Color(1, 1, 1, 1)
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=777546167]
+physics_interpolation_mode = 2
 transform = Transform3D(0.99999994, -5.820766e-11, 0, 5.820766e-11, 1, 4.656613e-10, -1.4901161e-08, 0, 1, 1.1641532e-10, 1.2600001, 4.656613e-10)
 top_level = true
 fov = 90.0
@@ -346,11 +353,14 @@ bones/5/rotation = Quaternion(0.7719761, -0.016740955, 0.63520914, -0.016797282)
 bones/6/position = Vector3(1.020233, -1.008646, 0.1395779)
 bones/6/rotation = Quaternion(0.76563877, 0.0045379666, -0.6426505, 0.02787394)
 
-[node name="BoneAttachment3D" parent="PlayerModel/PlayerArmature/GeneralSkeleton" index="1" unique_id=637186706]
+[node name="BoneAttachment3D" type="BoneAttachment3D" parent="PlayerModel/PlayerArmature/GeneralSkeleton" index="0" unique_id=1978650127]
 transform = Transform3D(0.9896784, -0.0006614905, -0.14330478, 3.4430628e-10, 0.99998933, -0.004615918, 0.14330631, 0.004568275, 0.98966783, 0.0030354096, 3.999776, -0.020962654)
+bone_name = "Head"
+bone_idx = 4
 
-[node name="CameraAttach" parent="PlayerModel/PlayerArmature/GeneralSkeleton/BoneAttachment3D" index="0" unique_id=1192226770]
-transform = Transform3D(3.5345654, 4.9717275e-10, 0.5118082, -0.0023624657, 3.5713906, 0.016315265, -0.5118028, -0.016485425, 3.5345278, -0.0041293525, 0.5038421, -0.009661982)
+[node name="Marker3D" type="Marker3D" parent="PlayerModel/PlayerArmature/GeneralSkeleton/BoneAttachment3D" unique_id=1654804332]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+gizmo_extents = 1.0
 
 [node name="PlayerModel" parent="PlayerModel/PlayerArmature/GeneralSkeleton" index="2" unique_id=1375827821]
 mesh = SubResource("ArrayMesh_bhrcg")
@@ -358,8 +368,8 @@ mesh = SubResource("ArrayMesh_bhrcg")
 [node name="GroundSensor" type="Area3D" parent="." unique_id=1270996800]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="GroundSensor" unique_id=1594240487]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.025500488, 0)
-shape = SubResource("BoxShape3D_g4v7s")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.11949463, 0)
+shape = SubResource("CylinderShape3D_f4rjh")
 
 [node name="AnimationTree" type="AnimationTree" parent="." unique_id=849327178 node_paths=PackedStringArray("actor")]
 root_node = NodePath("../PlayerModel")

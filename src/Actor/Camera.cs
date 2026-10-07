@@ -57,8 +57,8 @@ public class ActorCamera
 
     public void RenderCamera()
     {
+        camera.GlobalTransform = actor.cameraAttach.GetGlobalTransformInterpolated();
         camera.Rotation = new Vector3(rotation.X, rotation.Y, 0);
-        camera.Position = actor.cameraAttach.GlobalPosition;
         camera.Position += camera.GlobalBasis.GetRotationQuaternion().Normalized() * new Vector3(0, 0, Zoom);
         bodyMat.AlbedoColor = new(1, 1, 1, Locked ? 0 : 1);
     }
