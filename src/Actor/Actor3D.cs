@@ -1,6 +1,7 @@
 using Godot;
 using Parkour.Lib;
 using Parkour.UI;
+using Parkour.Actor.Parkour;
 
 namespace Parkour.Actor;
 
@@ -26,9 +27,9 @@ public partial class Actor3D : CharacterBody3D
     public ActorCollision collision;
 
     // timekeeping
-    public ulong Clock()
+    public double Clock()
     {
-        return Time.GetTicksUsec() + 100;
+        return (Time.GetTicksUsec() + 100) / 1_000_000F;
     }
 
     // constructor
@@ -111,13 +112,15 @@ public partial class Actor3D : CharacterBody3D
     #region ground/coyote
     public bool Airborne { get; private set; } = false;
     public bool Grounded { get; private set; } = false;
+    public const double MinCoyoteTime = .2;
+    public const double MaxCoyoteTime = 1;
     public double CoyoteDuration { get; private set; } = .1;
-    public ulong lastGrounded = 0;
+    public double lastGrounded = 0;
 
     public void UpdateGrounded()
     {
         // ground collider sweep
-        bool isNowGrounded = groundSensor.HasOverlappingBodies();
+        bool isNowGrounded = groundSensor.HasOverlappingBodies() && Velocity.Y <= 0.01;
 
         // forward facing ledge cast
         if (!isNowGrounded)
@@ -132,6 +135,13 @@ public partial class Actor3D : CharacterBody3D
 
             if (Airborne)
                 parkour.CheckJumpBuffer(); // i would like thsit o be cleaner tbh
+
+            CoyoteDuration = MinCoyoteTime;
+        }
+        else if (Grounded)
+        {
+            //humanoid.CoyoteTime = math.map(vel/260, 0, 1, humanoid.MinCoyoteTime, humanoid.MaxCoyoteTime)
+            CoyoteDuration = MinCoyoteTime + Mathf.Clamp(Mathf.Max(0, Velocity.Y) / 260, 0, 1) * (MaxCoyoteTime - MinCoyoteTime);
         }
 
         Grounded = isNowGrounded;
