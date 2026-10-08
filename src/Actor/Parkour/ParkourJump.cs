@@ -28,20 +28,20 @@ public partial class ActorParkour
         actor.Velocity = VUtil.WithY(actor.Velocity, yVel);
 
         jumpDecayActive = true;
-        jumpDecayStart = actor.Clock();
+        jumpDecayStart = Actor3D.Clock();
 
         actor.SetGrounded(false);
         actor.lastGrounded = 0;
         actor.animation.jumpReset = true;
         coiling = false;
-        sliding = false;
+        EndSlide();
 
         return true;
     }
 
     public void JumpDecayStep(float delta)
     {
-        if ((actor.Clock() - jumpDecayStart > 0.05 && !actor.input.binds.upmove.isDown) || activeFloatPower <= 0)
+        if ((Actor3D.Clock() - jumpDecayStart > 0.05 && !actor.upmove.isDown) || activeFloatPower <= 0)
         {
             jumpDecayActive = false;
             actor.physics.gravity = ActorPhysics.DefaultGravity;
@@ -55,7 +55,7 @@ public partial class ActorParkour
 
     public bool CheckJumpBuffer()
     {
-        if (actor.Clock() - jumpLastQuery <= 0.075)
+        if (Actor3D.Clock() - jumpLastQuery <= 0.075)
             return Jump();
 
         return false;

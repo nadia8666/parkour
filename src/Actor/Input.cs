@@ -46,12 +46,6 @@ public class ActorInput(Actor3D actor)
 
         // consume delta
         mouseDelta = new();
-
-        // binds
-        foreach (Bind bind in binds.Iterator)
-        {
-            bind.Update();
-        }
     }
 
     public void ProcessInput(InputEvent @event)
@@ -61,7 +55,14 @@ public class ActorInput(Actor3D actor)
             // update as many times as needed to be consumed next step
             var size = actor.GetViewport().GetVisibleRect().Size;
             mouseDelta += mouseMotion.Relative / size * cameraSensMouse;
+
+            return;
         }
+
+        foreach (Bind bind in binds.Iterator)
+            if (bind.CheckEvent(actor, @event))
+                break;
+
     }
 
     public void UpdateZoom(bool zoomIn)

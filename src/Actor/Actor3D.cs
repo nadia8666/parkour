@@ -16,7 +16,7 @@ public partial class Actor3D : CharacterBody3D
     [Export] public AnimationTree blendTree;
     [Export] public Node3D cameraAttach;
     [Export] public MeshInstance3D playerMesh;
-    [Export] public Area3D groundSensor;
+    [Export] public Node3D playerModel;
 
     // submodules
     public ActorInput input;
@@ -26,15 +26,20 @@ public partial class Actor3D : CharacterBody3D
     public ActorCollision collision;
     [Export] public ActorSound sound;
     [Export] public ActorAnimation animation;
+    public ActorGround ground;
 
     // misc
     public bool RotationLocked => parkour.sliding;
     public bool MovementLocked => parkour.sliding;
     public Vector3 airVelocity = new();
-    public double Clock()
+    public static double Clock()
     {
         return (Time.GetTicksUsec() + 100) / 1_000_000F;
     }
+
+    // input quick acess
+    public Bind upmove => input.binds.upmove;
+    public Bind downmove => input.binds.downmove;
 
     // constructor
     public override void _Ready()
@@ -46,6 +51,10 @@ public partial class Actor3D : CharacterBody3D
         physics = new(this);
         parkour = new(this);
         collision = new(this);
+        ground = new(this);
+
+        // updated dynamically
+        GetNode<CollisionShape3D>("CollisionShape3D").Position = new Vector3(0, ActorGround.HipHeight + Unit, 0);
     }
 
     public override void _PhysicsProcess(double delta)
@@ -72,8 +81,22 @@ public partial class Actor3D : CharacterBody3D
         // apparently animations always go in physics process instead of render. coming from roblox that sounds stupid but Sure
         animation.UpdateAnimations((float)delta);
 
-        if (!IsOnFloor())
+        AlignToSlopes();
+
+        if (Airborne)
             airVelocity = Velocity;
+    }
+
+    public void AlignToSlopes()
+    {
+        if (parkour.sliding && Grounded)
+        {
+            Quaternion quat = GlobalBasis.GetRotationQuaternion().Normalized();
+            Quaternion diff = new(quat * Vector3.Up, ground.Normal);
+            playerModel.GlobalBasis = new Basis(diff * quat).Scaled(playerModel.GlobalBasis.Scale);
+        }
+        else
+            playerModel.Rotation = Vector3.Zero;
     }
 
     public override void _Process(double delta)
@@ -155,8 +178,9 @@ public partial class Actor3D : CharacterBody3D
 
     public void UpdateGrounded()
     {
-        // ground collider sweep
-        bool isNowGrounded = (IsOnFloor() || groundSensor.HasOverlappingBodies()) && Velocity.Y <= 0.01;
+        // ground probe
+        ground.SearchGround();
+        bool isNowGrounded = ground.IsGrounded;
 
         // forward facing ledge cast
         if (!isNowGrounded)

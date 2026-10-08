@@ -41,16 +41,29 @@ public class ActorPhysics(Actor3D actor)
     {
         bool hasInput = actor.input.stickL.Length() > ActorInput.InputDeadzone;
         Vector3 wish = hasInput ? actor.input.globalMoveVector.Normalized() : Vector3.Zero;
-        bool grounded = actor.IsOnFloor();
+        bool grounded = actor.Grounded;
+        bool sliding = actor.parkour.sliding;
         groundedTime = grounded ? groundedTime + delta : 0;
 
         UpdateFacing(delta, wish, hasInput);
 
         Vector3 velocity = actor.Velocity;
         Vector3 flat = StepHorizontal(VUtil.WithY(velocity, 0), wish, hasInput, grounded, delta);
-        float y = Mathf.Clamp(velocity.Y - gravity * delta, -TerminalFall, TerminalRise);
+        float y = StepVertical(velocity.Y, grounded, sliding, delta);
 
         actor.Velocity = new Vector3(flat.X, y, flat.Z);
+        actor.ground.StickToSlopes(delta, sliding);
+    }
+
+    private float StepVertical(float y, bool grounded, bool sliding, float delta)
+    {
+        if (grounded && sliding)
+            return y; // the slide step owns velocity on the ground
+
+        if (grounded && y <= 0)
+            return 0;
+
+        return Mathf.Clamp(y - gravity * delta, -TerminalFall, TerminalRise);
     }
 
     private void UpdateFacing(float delta, Vector3 wish, bool hasInput)

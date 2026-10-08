@@ -12,7 +12,7 @@ public partial class ActorParkour
 
     public void Coil()
     {
-        lastCoilStart = actor.Clock();
+        lastCoilStart = Actor3D.Clock();
         coiling = true;
         actor.TweenRoot(CoilTweenHeight, 0.1f);
         // tween root up -1.5/unit over .1s
@@ -20,7 +20,7 @@ public partial class ActorParkour
 
     public void CoilStep()
     {
-        if (actor.Clock() - lastCoilStart >= CoilDuration || actor.InCoyote)
+        if (Actor3D.Clock() - lastCoilStart >= CoilDuration || actor.InCoyote)
         {
             coiling = false;
 

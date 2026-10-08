@@ -6,17 +6,18 @@ public partial class ActorParkour(Actor3D actor)
 {
     private readonly Actor3D actor = actor;
 
+    public string ParkourType { get; private set; } = "None";
     public bool Parkouring { get; private set; } = false;
     public void CheckMovement()
     {
-        if (actor.input.binds.upmove.justPressed)
+        if (actor.upmove.pressed)
         {
+            actor.upmove.Consume();
             bool jumped = Jump();
-            if (!jumped)
-                jumpLastQuery = actor.Clock();
+            if (!jumped) jumpLastQuery = Actor3D.Clock();
         }
 
-        if (actor.input.binds.downmove.justPressed)
+        if (actor.downmove.pressed)
         {
             if (!actor.InCoyote)
             {
@@ -25,10 +26,12 @@ public partial class ActorParkour(Actor3D actor)
             }
             else
                 TryPowerslide();
+
+            actor.downmove.Consume();
         }
 
-        if (actor.input.binds.downmove.isDown && !actor.InCoyote)
-            LastPrepareHeld = actor.Clock();
+        if (actor.downmove.isDown && !actor.InCoyote)
+            LastPrepareHeld = Actor3D.Clock();
     }
 
     public void UpdateMovement(float delta)
@@ -44,7 +47,19 @@ public partial class ActorParkour(Actor3D actor)
         if (sliding)
             SlideStep(delta);
 
-        if (!actor.InCoyote && !actor.input.binds.downmove.isDown && LastPrepareLanding > 0 && actor.Clock() - LastPrepareHeld >= .2)
+        if (!actor.InCoyote && !actor.downmove.isDown && LastPrepareLanding > 0 && Actor3D.Clock() - LastPrepareHeld >= .2)
             LastPrepareLanding = 0;
+    }
+
+    public void SetActive(string name)
+    {
+        Parkouring = true;
+        ParkourType = name;
+    }
+
+    public void SetActive()
+    {
+        Parkouring = false;
+        ParkourType = "None";
     }
 }

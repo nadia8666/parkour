@@ -26,7 +26,7 @@ public partial class ActorParkour
 
     public void PrepareLanding()
     {
-        LastPrepareLanding = actor.Clock();
+        LastPrepareLanding = Actor3D.Clock();
     }
 
     public float GetFatalDistance(float ms)
@@ -48,7 +48,7 @@ public partial class ActorParkour
         Vector3 airVelocity = actor.airVelocity;
         if (airVelocity.Y < 0)
         {
-            float ms = (float)(LastPrepareLanding > 0 ? (actor.Clock() - LastPrepareLanding) * 1000 : Mathf.Inf);
+            float ms = (float)(LastPrepareLanding > 0 ? (Actor3D.Clock() - LastPrepareLanding) * 1000 : Mathf.Inf);
             float angleAlpha = 1; // TODO: pull from slope
             float fallSpeed = angleAlpha * Mathf.Abs(airVelocity.Y); // pa uses magnitude, for Some reason.
             float metersFallen = (float)(0.5 * actor.physics.gravity * Mathf.Pow(fallSpeed / actor.physics.gravity, 2));
@@ -91,7 +91,7 @@ public partial class ActorParkour
                 if (landType != "roll" && landType != "none")
                     actor.momentum -= 3;
 
-                if (coiling && actor.input.binds.downmove.isDown)
+                if (coiling && actor.downmove.isDown)
                     TryPowerslide();
                 else if (landType == "roll")
                 {
