@@ -46,7 +46,6 @@ public partial class ActorParkour
     public void Land()
     {
         Vector3 airVelocity = actor.airVelocity;
-        GD.Print(airVelocity);
         if (airVelocity.Y < 0)
         {
             float ms = (float)(LastPrepareLanding > 0 ? (actor.Clock() - LastPrepareLanding) * 1000 : Mathf.Inf);
@@ -78,8 +77,6 @@ public partial class ActorParkour
             else damage = 0;
 
             damage = damageMult > 0 ? damage * damageMult : 0;
-
-            GD.Print($"{damage}, {landType}");
 
             if (damage > 0)
                 actor.ChangeHealth(damage);
