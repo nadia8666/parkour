@@ -27,6 +27,8 @@
 [ext_resource type="Animation" uid="uid://cbg5u88j1kiun" path="res://animations/powerslide_loop.res" id="13_3y2gs"]
 [ext_resource type="Texture2D" uid="uid://cg2kwbcwphgaf" path="res://models/player_model_GloveCuff_NormalMap.png" id="13_oqjyx"]
 [ext_resource type="Animation" uid="uid://d01e08ry6x3np" path="res://animations/powerslide_start.res" id="14_ogac5"]
+[ext_resource type="Animation" uid="uid://dy31y7l7s7la" path="res://animations/roll.res" id="27_b5mb2"]
+[ext_resource type="PackedScene" uid="uid://b1tb7grovmdlp" path="res://scenes/actor/player_audio_source.tscn" id="28_loo8b"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vvqay"]
 resource_name = "PikiChain"
@@ -300,16 +302,38 @@ _data = {
 &"jump_r": ExtResource("11_hxyi7"),
 &"powerslide_loop": ExtResource("13_3y2gs"),
 &"powerslide_start": ExtResource("14_ogac5"),
+&"roll": ExtResource("27_b5mb2"),
 &"run_forward": ExtResource("3_rw250")
 }
 
 [node name="PlayerModel" unique_id=658158511 instance=ExtResource("1_hq1ji")]
 
-[node name="Gloves" parent="PlayerArmature/GeneralSkeleton" parent_id_path=PackedInt32Array(442940234) index="0" unique_id=1518491342]
+[node name="GeneralSkeleton" parent="PlayerArmature" parent_id_path=PackedInt32Array(987319250) index="0" unique_id=442940234]
+bones/1/rotation = Quaternion(-0.010563865, -0.07183474, -0.00076086086, 0.99736035)
+bones/2/position = Vector3(-1.0249319, 0.43179122, 0.039517015)
+bones/2/rotation = Quaternion(0.73858786, -0.018627059, 0.67342174, 0.02538255)
+bones/3/position = Vector3(1.03617, 0.45299354, 0.10209123)
+bones/3/rotation = Quaternion(0.7837673, 0.014923979, -0.617971, 0.059982877)
+bones/4/position = Vector3(-9.31427e-10, 1.0000002, -1.542503e-09)
+bones/4/rotation = Quaternion(0.012899036, 1.3163041e-13, 5.5740808e-11, 0.9999168)
+bones/5/position = Vector3(-1.0194904, -1.0037198, -0.13470984)
+bones/5/rotation = Quaternion(0.7719761, -0.016740955, 0.63520914, -0.016797282)
+bones/6/position = Vector3(1.020233, -1.008646, 0.1395779)
+bones/6/rotation = Quaternion(0.76563877, 0.0045379666, -0.6426505, 0.02787394)
+
+[node name="Gloves" parent="PlayerArmature/GeneralSkeleton" index="0" unique_id=1518491342]
 mesh = SubResource("ArrayMesh_kn430")
 
-[node name="PlayerModel" parent="PlayerArmature/GeneralSkeleton" parent_id_path=PackedInt32Array(442940234) index="1" unique_id=1375827821]
+[node name="PlayerModel" parent="PlayerArmature/GeneralSkeleton" index="1" unique_id=1375827821]
 mesh = SubResource("ArrayMesh_moo6j")
 
 [node name="Animator" type="AnimationPlayer" parent="." index="1" unique_id=1450423217]
 libraries/CharAnims = SubResource("AnimationLibrary_e2li7")
+
+[node name="PlayerAudioSource" parent="." index="2" unique_id=444120815 instance=ExtResource("28_loo8b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.84, 0)
+
+[node name="Footstep" parent="PlayerAudioSource" index="0" unique_id=459272042]
+stream = null
+
+[editable path="PlayerAudioSource"]

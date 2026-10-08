@@ -33,6 +33,8 @@ public partial class ActorParkour
 
         sliding = true;
         RotateTowardVector(VUtil.WithY(newVelocity, 0).Normalized(), 1);
+    
+        actor.sound.slideStart.Play();
     }
 
     public void SlideStep(float delta)
@@ -62,7 +64,6 @@ public partial class ActorParkour
 
     public bool TryPowerslide()
     {
-        GD.Print(actor.Velocity.Length() < SlideMinSpeed, "  ", actor.Clock() - lastSlide <= SlideCooldown);
         if (actor.Velocity.Length() < SlideMinSpeed || actor.Clock() - lastSlide <= SlideCooldown) return false;
 
         Powerslide();

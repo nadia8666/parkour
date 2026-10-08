@@ -15,6 +15,15 @@ public partial class ActorAnimation : AnimationTree
     public bool jumpReset = false;
     private float jumpState = -1;
     private float lerpedJumpState = 0;
+    public AnimationNodeStateMachinePlayback state;
+
+    public override void _EnterTree()
+    {
+        base._EnterTree();
+
+        state = (AnimationNodeStateMachinePlayback)(GodotObject)Get("parameters/StateMachine/playback");
+    }
+
 
     // movement force
     private float movementForce = 0;
@@ -34,7 +43,7 @@ public partial class ActorAnimation : AnimationTree
         // jumping
         if (jumping && jumpReset)
         {
-            ((AnimationNodeStateMachinePlayback)(GodotObject)Get("parameters/StateMachine/playback")).Travel("JumpBlend");
+            state.Travel("JumpBlend");
             jumpReset = false;
             jumpState = jumpState == -1 ? 1 : -1;
         }

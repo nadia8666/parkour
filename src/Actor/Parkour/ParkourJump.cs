@@ -34,6 +34,7 @@ public partial class ActorParkour
         actor.lastGrounded = 0;
         actor.animation.jumpReset = true;
         coiling = false;
+        sliding = false;
 
         return true;
     }

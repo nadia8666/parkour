@@ -5,6 +5,7 @@ namespace Parkour.Actor.Parkour;
 public partial class ActorParkour
 {
     public const float CoilTweenHeight = 1.5F * Actor3D.Unit;
+    public const float CoilMinSpeed = -15 * Actor3D.Unit;
     public const double CoilDuration = 1;
     public double lastCoilStart = 0;
     public bool coiling = false;
@@ -28,8 +29,6 @@ public partial class ActorParkour
                 // tween root down -1.5/unit over .1s
                 actor.TweenRoot(-CoilTweenHeight, 0.1f);
             }
-            else if (actor.input.binds.downmove.isDown)
-                TryPowerslide();
         }
     }
 }

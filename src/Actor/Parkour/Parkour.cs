@@ -20,11 +20,15 @@ public partial class ActorParkour(Actor3D actor)
         {
             if (!actor.InCoyote)
             {
-                if (!coiling) Coil();
+                PrepareLanding();
+                if (!coiling && actor.Velocity.Y >= CoilMinSpeed) Coil();
             }
             else
                 TryPowerslide();
         }
+
+        if (actor.input.binds.downmove.isDown && !actor.InCoyote)
+            LastPrepareHeld = actor.Clock();
     }
 
     public void UpdateMovement(float delta)
@@ -39,5 +43,8 @@ public partial class ActorParkour(Actor3D actor)
 
         if (sliding)
             SlideStep(delta);
+
+        if (!actor.InCoyote && !actor.input.binds.downmove.isDown && LastPrepareLanding > 0 && actor.Clock() - LastPrepareHeld >= .2)
+            LastPrepareLanding = 0;
     }
 }

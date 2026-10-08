@@ -1,0 +1,90 @@
+[gd_scene format=3 uid="uid://b1tb7grovmdlp"]
+
+[ext_resource type="Script" uid="uid://ccamkxm8kdsy3" path="res://src/Actor/ActorSound.cs" id="1_6l2eb"]
+[ext_resource type="AudioStream" uid="uid://csdk258cwshne" path="res://sounds/footstep/footstep_hard1.ogg" id="1_smsk8"]
+[ext_resource type="AudioStream" uid="uid://ctr1vtjmeht0l" path="res://sounds/footstep/footstep_hard2.ogg" id="2_6l2eb"]
+[ext_resource type="AudioStream" uid="uid://qjnhyn3xinah" path="res://sounds/footstep/footstep_hard3.ogg" id="3_r8qai"]
+[ext_resource type="AudioStream" uid="uid://cul6hln8kneok" path="res://sounds/footstep/footstep_hard4.ogg" id="4_e7sry"]
+[ext_resource type="AudioStream" uid="uid://cseoo2ioq2mvc" path="res://sounds/grab/grab1.ogg" id="5_vqo03"]
+[ext_resource type="AudioStream" uid="uid://bddv5cbriendl" path="res://sounds/grab/grab2.ogg" id="6_rr8xl"]
+[ext_resource type="AudioStream" uid="uid://f2pgyaxv3l1d" path="res://sounds/roll/roll1.ogg" id="7_1urwo"]
+[ext_resource type="AudioStream" uid="uid://bko7b7ymitm75" path="res://sounds/slideloop/slideloop1.ogg" id="8_o7p1j"]
+[ext_resource type="AudioStream" uid="uid://dnph521dp1vqr" path="res://sounds/slidestart/slidestart1.ogg" id="9_vrktt"]
+[ext_resource type="AudioStream" uid="uid://d3nhwfbh21ejf" path="res://sounds/slidestart/slidestart2.ogg" id="10_rc2pp"]
+[ext_resource type="AudioStream" uid="uid://17m2gpl5qove" path="res://sounds/slidestart/slidestart11.ogg" id="11_ahmms"]
+[ext_resource type="AudioStream" uid="uid://nm1x3gus5vd2" path="res://sounds/slidestart/slidestart12.ogg" id="12_ue6of"]
+[ext_resource type="AudioStream" uid="uid://crt7b6xsn1k6" path="res://sounds/slidestart/slidestart13.ogg" id="13_aguxi"]
+[ext_resource type="AudioStream" uid="uid://ch5pnr0t2kfx7" path="res://sounds/slidestart/slidestart14.ogg" id="14_bp81f"]
+[ext_resource type="AudioStream" uid="uid://do7puh36bf42v" path="res://sounds/slidestart/slidestart3.ogg" id="15_61hfx"]
+[ext_resource type="AudioStream" uid="uid://dpvgccxafir8m" path="res://sounds/slidestart/slidestart4.ogg" id="16_q11bp"]
+[ext_resource type="AudioStream" uid="uid://bk3xrib62oows" path="res://sounds/slidestart/slidestart5.ogg" id="17_gs6kx"]
+[ext_resource type="AudioStream" uid="uid://d22m6ua37wtim" path="res://sounds/slidestart/slidestart6.ogg" id="18_h03id"]
+[ext_resource type="AudioStream" uid="uid://rr73t7tdbru2" path="res://sounds/slidestart/slidestart7.ogg" id="19_w5fej"]
+[ext_resource type="AudioStream" uid="uid://b0cv8b42rlw76" path="res://sounds/slidestart/slidestart8.ogg" id="20_ds6i8"]
+[ext_resource type="AudioStream" uid="uid://7da5g1vd1s4o" path="res://sounds/slidestart/slidestart9.ogg" id="21_v018q"]
+[ext_resource type="AudioStream" uid="uid://ctv4akthjim4l" path="res://sounds/slidestart/slidestart10.ogg" id="22_7p8nr"]
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_g4v7s"]
+random_pitch = 1.0561026
+streams_count = 4
+stream_0/stream = ExtResource("1_smsk8")
+stream_1/stream = ExtResource("2_6l2eb")
+stream_2/stream = ExtResource("3_r8qai")
+stream_3/stream = ExtResource("4_e7sry")
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_yf5fn"]
+playback_mode = 1
+random_pitch = 1.0594631
+streams_count = 2
+stream_0/stream = ExtResource("5_vqo03")
+stream_1/stream = ExtResource("6_rr8xl")
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_57qmd"]
+streams_count = 1
+stream_0/stream = ExtResource("7_1urwo")
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_d0u6y"]
+playback_mode = 1
+random_pitch = 1.0594631
+streams_count = 1
+stream_0/stream = ExtResource("8_o7p1j")
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_mntvu"]
+streams_count = 14
+stream_0/stream = ExtResource("9_vrktt")
+stream_1/stream = ExtResource("10_rc2pp")
+stream_2/stream = ExtResource("15_61hfx")
+stream_3/stream = ExtResource("16_q11bp")
+stream_4/stream = ExtResource("17_gs6kx")
+stream_5/stream = ExtResource("18_h03id")
+stream_6/stream = ExtResource("19_w5fej")
+stream_7/stream = ExtResource("20_ds6i8")
+stream_8/stream = ExtResource("21_v018q")
+stream_9/stream = ExtResource("22_7p8nr")
+stream_10/stream = ExtResource("11_ahmms")
+stream_11/stream = ExtResource("12_ue6of")
+stream_12/stream = ExtResource("13_aguxi")
+stream_13/stream = ExtResource("14_bp81f")
+
+[node name="PlayerAudioSource" type="Node3D" unique_id=444120815 node_paths=PackedStringArray("footstep", "grab", "roll", "slideLoop", "slideStart")]
+script = ExtResource("1_6l2eb")
+footstep = NodePath("Footstep")
+grab = NodePath("Grab")
+roll = NodePath("Roll")
+slideLoop = NodePath("SlideLoop")
+slideStart = NodePath("SlideStart")
+
+[node name="Footstep" type="AudioStreamPlayer3D" parent="." unique_id=459272042]
+stream = SubResource("AudioStreamRandomizer_g4v7s")
+
+[node name="Grab" type="AudioStreamPlayer3D" parent="." unique_id=1524989618]
+stream = SubResource("AudioStreamRandomizer_yf5fn")
+
+[node name="Roll" type="AudioStreamPlayer3D" parent="." unique_id=1770029466]
+stream = SubResource("AudioStreamRandomizer_57qmd")
+
+[node name="SlideLoop" type="AudioStreamPlayer3D" parent="." unique_id=389590189]
+stream = SubResource("AudioStreamRandomizer_d0u6y")
+
+[node name="SlideStart" type="AudioStreamPlayer3D" parent="." unique_id=1156561084]
+stream = SubResource("AudioStreamRandomizer_mntvu")

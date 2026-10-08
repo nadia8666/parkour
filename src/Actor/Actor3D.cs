@@ -23,12 +23,14 @@ public partial class Actor3D : CharacterBody3D
     public ActorCamera camera;
     public ActorPhysics physics;
     public ActorParkour parkour;
-    [Export] public ActorAnimation animation;
     public ActorCollision collision;
+    [Export] public ActorSound sound;
+    [Export] public ActorAnimation animation;
 
     // misc
     public bool RotationLocked => parkour.sliding;
     public bool MovementLocked => parkour.sliding;
+    public Vector3 airVelocity = new();
     public double Clock()
     {
         return (Time.GetTicksUsec() + 100) / 1_000_000F;
@@ -67,8 +69,11 @@ public partial class Actor3D : CharacterBody3D
         physics.StepPhysics(fDelta);
         collision.CollideAndSlide();
 
-        // apparently camera and animations always go in physics process instead of render. coming from roblox that sounds stupid but Sure
+        // apparently animations always go in physics process instead of render. coming from roblox that sounds stupid but Sure
         animation.UpdateAnimations((float)delta);
+
+        if (!IsOnFloor())
+            airVelocity = Velocity;
     }
 
     public override void _Process(double delta)
@@ -134,7 +139,6 @@ public partial class Actor3D : CharacterBody3D
             if (rootTweenProgress >= rootTweenTargetDuration)
                 rootTweenActive = false;
 
-            GD.Print($"added {rootTweenTargetHeight * newDelta}..{newDelta}");
             Position += new Vector3(0, rootTweenTargetHeight * newDelta, 0);
         }
     }
@@ -152,7 +156,7 @@ public partial class Actor3D : CharacterBody3D
     public void UpdateGrounded()
     {
         // ground collider sweep
-        bool isNowGrounded = groundSensor.HasOverlappingBodies() && Velocity.Y <= 0.01;
+        bool isNowGrounded = (IsOnFloor() || groundSensor.HasOverlappingBodies()) && Velocity.Y <= 0.01;
 
         // forward facing ledge cast
         if (!isNowGrounded)
@@ -166,15 +170,17 @@ public partial class Actor3D : CharacterBody3D
             lastGrounded = Clock();
 
             if (Airborne)
+            {
+                parkour.Land();
                 parkour.CheckJumpBuffer();
+            }
 
             CoyoteDuration = MinCoyoteTime;
         }
         else if (Grounded)
             CoyoteDuration = MinCoyoteTime + Mathf.Clamp(Mathf.Max(0, Velocity.Y) / 260, 0, 1) * (MaxCoyoteTime - MinCoyoteTime);
 
-        Grounded = isNowGrounded;
-        Airborne = !isNowGrounded;
+        SetGrounded(isNowGrounded);
     }
 
     public void SetGrounded(bool grounded)
@@ -201,6 +207,20 @@ public partial class Actor3D : CharacterBody3D
     public void RefillAmmo()
     {
         ammo.jump = ammo.maxJump;
+    }
+    #endregion
+
+    #region health
+    public const float MaxHealth = 100;
+    public float Health { get; private set; } = MaxHealth;
+
+    public void SetHealth(float health)
+    {
+        Health = Mathf.Clamp(health, 0, MaxHealth);
+    }
+    public void ChangeHealth(float change)
+    {
+        Health = Mathf.Clamp(Health + change, 0, MaxHealth);
     }
     #endregion
 
