@@ -21,7 +21,6 @@ public partial class ActorParkour
     {
         if (actor.Clock() - lastCoilStart >= CoilDuration || actor.InCoyote)
         {
-            GD.Print("coil OVER");
             coiling = false;
 
             if (actor.Airborne)

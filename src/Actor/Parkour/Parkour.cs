@@ -18,7 +18,6 @@ public partial class ActorParkour(Actor3D actor)
 
         if (actor.input.binds.downmove.justPressed)
         {
-            GD.Print("just pressed down:)", " ", actor.InCoyote, coiling);
             if (!actor.InCoyote)
             {
                 if (!coiling) Coil();

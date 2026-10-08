@@ -33,7 +33,7 @@ public partial class ActorParkour
         actor.SetGrounded(false);
         actor.lastGrounded = 0;
         actor.animation.jumpReset = true;
-        GD.Print("JUMP");
+        coiling = false;
 
         return true;
     }

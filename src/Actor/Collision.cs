@@ -1,4 +1,5 @@
 using Godot;
+using Parkour.Lib;
 
 namespace Parkour.Actor;
 
@@ -12,7 +13,14 @@ public class ActorCollision(Actor3D actor)
         actor.MoveAndSlide();
         Vector3 reponseVel = actor.Velocity;
 
-        // read new vel changes base on reponse vel :)
-        //actor.Velocity = cacheVel;
+        if (actor.input.globalMoveVector.Length() >= .15)
+        {
+            // keep!
+            actor.Velocity = VUtil.WithY(cacheVel, reponseVel.Y);
+        }
+        else
+        {
+            // bounce :) idk how to do this yet because i need to get the wlal normal from move and slide which is.. ???
+        }
     }
 }
