@@ -14,7 +14,7 @@
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_4nllc"]
 margin = 0.01
 radius = 0.28
-height = 0.56
+height = 0.86642575
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_yf5fn"]
 transparency = 2
@@ -170,6 +170,7 @@ animation = &"CharAnims/idle"
 
 [sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_placeholder"]
 nodes/Idle/node = SubResource("AnimationNodeAnimation_placeholder")
+nodes/Idle/position = Vector2(0, 0)
 node_connections = [&"output", 0, &"Idle"]
 
 [node name="LocalPlayer" type="CharacterBody3D" unique_id=397332423 node_paths=PackedStringArray("cameraObj", "blendTree", "cameraAttach", "playerMesh", "playerModel", "sound", "animation")]
@@ -188,7 +189,7 @@ animation = NodePath("AnimationTree")
 metadata/_custom_type_script = "uid://difhqk4rmdfam"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=132744879]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.28, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9932128, 0)
 shape = SubResource("CapsuleShape3D_4nllc")
 debug_color = Color(1, 1, 1, 1)
 

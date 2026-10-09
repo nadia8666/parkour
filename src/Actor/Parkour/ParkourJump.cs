@@ -20,12 +20,24 @@ public partial class ActorParkour
         if (!actor.InCoyote || actor.ammo.jump <= 0) return false;
         actor.ammo.jump--;
 
-        //float longJumpMultiplier = 0.6f; // TODO: implement for horizontal stuff longjumping etc
+        float horizPower = VUtil.WithY(actor.Velocity, 0).Length();
+        Vector3 hDir = horizPower <= 0 ? Vector3.Zero : VUtil.WithY(actor.Velocity, 0).Normalized();
+
+        coiling = false;
+        actor.animation.Stop("roll");
+
+        if (sliding)
+        {
+            EndSlide();
+            horizPower = slideEntrySpeed; // when in an edge jump max(horzpower, slidepower)
+        }
+
+        float horizMult = 0.6f; // TODO: implement for horizontal stuff longjumping etc
         jumpPower = JumpPowerBase * Actor3D.Unit + actor.momentum * JumpSpeedInfluence;
         activeFloatPower = jumpPower * jumpFloatPower;
 
         float yVel = Mathf.Max(0, actor.Velocity.Y) + jumpPower;
-        actor.Velocity = VUtil.WithY(actor.Velocity, yVel);
+        actor.Velocity = VUtil.WithY(hDir * Mathf.Max(horizPower * horizMult, horizPower), yVel);
 
         jumpDecayActive = true;
         jumpDecayStart = Actor3D.Clock();
@@ -33,10 +45,6 @@ public partial class ActorParkour
         actor.SetGrounded(false);
         actor.lastGrounded = 0;
         actor.animation.PlayJump();
-
-        coiling = false;
-        actor.animation.Stop("roll");
-        EndSlide();
 
         return true;
     }

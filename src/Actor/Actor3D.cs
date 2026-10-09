@@ -52,9 +52,6 @@ public partial class Actor3D : CharacterBody3D
         parkour = new(this);
         collision = new(this);
         ground = new(this);
-
-        // updated dynamically
-        GetNode<CollisionShape3D>("CollisionShape3D").Position = new Vector3(0, ActorGround.HipHeight + Unit, 0);
     }
 
     public override void _PhysicsProcess(double delta)
