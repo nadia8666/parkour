@@ -54,6 +54,12 @@ use_collision = true
 size = Vector3(11.889267, 1.1588135, 15.360046)
 material = SubResource("StandardMaterial3D_krsua")
 
+[node name="CSGBox3D18" type="CSGBox3D" parent="." unique_id=1435696264]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24.315723, 9.996579, 32.81009)
+use_collision = true
+size = Vector3(2, 2, 2)
+material = SubResource("StandardMaterial3D_krsua")
+
 [node name="CSGBox3D14" type="CSGBox3D" parent="." unique_id=1972079836]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.0743027, 2.408669, 37.233353)
 use_collision = true
@@ -124,6 +130,24 @@ material = SubResource("StandardMaterial3D_krsua")
 transform = Transform3D(0.84574825, -0.53358245, 0, 0.53358245, 0.84574825, 0, 0, 0, 1, 32.97654, -2.4811182, 61.18762)
 use_collision = true
 size = Vector3(101.911865, 12.09021, 4.9110107)
+material = SubResource("StandardMaterial3D_krsua")
+
+[node name="CSGBox3D19" type="CSGBox3D" parent="." unique_id=749944781]
+transform = Transform3D(-3.696883e-08, 2.3323631e-08, 1.0000001, 0.5335825, 0.84574836, 0, -0.84574825, 0.53358245, -4.371139e-08, 8.764688, 8.358026, -31.116907)
+use_collision = true
+size = Vector3(61.284058, 12.09021, 4.9110107)
+material = SubResource("StandardMaterial3D_krsua")
+
+[node name="CSGBox3D21" type="CSGBox3D" parent="." unique_id=1167180466]
+transform = Transform3D(-3.6968835e-08, 2.3323635e-08, 1.0000001, 0.6482625, 0.7614173, 6.2064878e-09, -0.7614172, 0.6482625, -4.3268525e-08, 14.440186, 21.357967, -51.7223)
+use_collision = true
+size = Vector3(67.526825, 12.09021, 4.9110107)
+material = SubResource("StandardMaterial3D_krsua")
+
+[node name="CSGBox3D20" type="CSGBox3D" parent="." unique_id=1316557742]
+transform = Transform3D(1.109065e-07, -6.997089e-08, -1.0000001, 0.5335825, 0.84574836, 0, 0.84574825, -0.53358245, 1.3113417e-07, 4.0521736, 21.632015, -37.889835)
+use_collision = true
+size = Vector3(11.529846, 12.09021, 4.9110107)
 material = SubResource("StandardMaterial3D_krsua")
 
 [node name="CSGBox3D3" type="CSGBox3D" parent="." unique_id=26875042]

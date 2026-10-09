@@ -38,8 +38,9 @@ public partial class Actor3D : CharacterBody3D
     }
 
     // input quick acess
-    public Bind upmove => input.binds.upmove;
-    public Bind downmove => input.binds.downmove;
+    public Bind Upmove => input.binds.upmove;
+    public Bind Downmove => input.binds.downmove;
+    public Bind Dash => input.binds.dash;
 
     // constructor
     public override void _Ready()

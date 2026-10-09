@@ -10,14 +10,14 @@ public partial class ActorParkour(Actor3D actor)
     public bool Parkouring { get; private set; } = false;
     public void CheckMovement()
     {
-        if (actor.upmove.pressed)
+        if (actor.Upmove.pressed)
         {
-            actor.upmove.Consume();
+            actor.Upmove.Consume();
             bool jumped = Jump();
             if (!jumped) jumpLastQuery = Actor3D.Clock();
         }
 
-        if (actor.downmove.pressed)
+        if (actor.Downmove.pressed)
         {
             if (!actor.InCoyote)
             {
@@ -27,10 +27,10 @@ public partial class ActorParkour(Actor3D actor)
             else
                 TryPowerslide();
 
-            actor.downmove.Consume();
+            actor.Downmove.Consume();
         }
 
-        if (actor.downmove.isDown && !actor.InCoyote)
+        if (actor.Downmove.isDown && !actor.InCoyote)
             LastPrepareHeld = Actor3D.Clock();
     }
 
@@ -47,7 +47,7 @@ public partial class ActorParkour(Actor3D actor)
         if (sliding)
             SlideStep(delta);
 
-        if (!actor.InCoyote && !actor.downmove.isDown && LastPrepareLanding > 0 && Actor3D.Clock() - LastPrepareHeld >= .2)
+        if (!actor.InCoyote && !actor.Downmove.isDown && LastPrepareLanding > 0 && Actor3D.Clock() - LastPrepareHeld >= .2)
             LastPrepareLanding = 0;
     }
 

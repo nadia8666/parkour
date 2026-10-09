@@ -20,8 +20,23 @@ public partial class ActorParkour
         if (!actor.InCoyote || actor.ammo.jump <= 0) return false;
         actor.ammo.jump--;
 
+        bool edgeJump = false;
         float horizPower = VUtil.WithY(actor.Velocity, 0).Length();
         Vector3 hDir = horizPower <= 0 ? Vector3.Zero : VUtil.WithY(actor.Velocity, 0).Normalized();
+
+        jumpPower = JumpPowerBase * Actor3D.Unit + actor.momentum * JumpSpeedInfluence;
+        activeFloatPower = jumpPower * jumpFloatPower;
+
+        Vector3 _origin = actor.Position + hDir;
+        if (actor.Dash.isDown && !actor.Grounded && Raycast.Cast(_origin + Vector3.Up, _origin + Vector3.Down * 1.125f, actor.CollisionMask, actor.ground.excludeList) == null)
+        {
+            edgeJump = true;
+
+            Vector3 moveVec = actor.input.globalMoveVector;
+            hDir = moveVec.LengthSquared() > 0 ? hDir.Slerp(moveVec, Mathf.Clamp(hDir.Dot(moveVec), -0.3f, 1)) : hDir;
+            horizPower += 2;
+            jumpPower += 2;
+        }
 
         coiling = false;
         actor.animation.Stop("roll");
@@ -29,15 +44,11 @@ public partial class ActorParkour
         if (sliding)
         {
             EndSlide();
-            horizPower = slideEntrySpeed; // when in an edge jump max(horzpower, slidepower)
+            horizPower = edgeJump ? Mathf.Max(horizPower, slideEntrySpeed) : slideEntrySpeed;
         }
 
-        float horizMult = 0.6f; // TODO: implement for horizontal stuff longjumping etc
-        jumpPower = JumpPowerBase * Actor3D.Unit + actor.momentum * JumpSpeedInfluence;
-        activeFloatPower = jumpPower * jumpFloatPower;
-
         float yVel = Mathf.Max(0, actor.Velocity.Y) + jumpPower;
-        actor.Velocity = VUtil.WithY(hDir * Mathf.Max(horizPower * horizMult, horizPower), yVel);
+        actor.Velocity = VUtil.WithY(hDir * horizPower, yVel);
 
         jumpDecayActive = true;
         jumpDecayStart = Actor3D.Clock();
@@ -51,7 +62,7 @@ public partial class ActorParkour
 
     public void JumpDecayStep(float delta)
     {
-        if ((Actor3D.Clock() - jumpDecayStart > 0.05 && !actor.upmove.isDown) || activeFloatPower <= 0)
+        if ((Actor3D.Clock() - jumpDecayStart > 0.05 && !actor.Upmove.isDown) || activeFloatPower <= 0)
         {
             jumpDecayActive = false;
             actor.physics.gravity = ActorPhysics.DefaultGravity;

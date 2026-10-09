@@ -74,7 +74,7 @@ public partial class ActorParkour
         if (flatVelocity.LengthSquared() > 0)
             RotateTowardVector(flatVelocity, Mathf.Min(15 * delta, 1));
 
-        bool forceCancel = duration > SlideMinDuration && (!actor.InCoyote || !actor.downmove.isDown);
+        bool forceCancel = duration > SlideMinDuration && (!actor.InCoyote || !actor.Downmove.isDown);
         bool tooSlow = vel.Length() <= SlideMinSpeed && slopeDot >= .95f;
         if (forceCancel || tooSlow) { EndSlide(); return; }
     }

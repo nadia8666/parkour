@@ -16,9 +16,10 @@ public class ActorInput(Actor3D actor)
     {
         public readonly Bind upmove = new("upmove");
         public readonly Bind downmove = new("downmove");
+        public readonly Bind dash = new("dash");
 
         public Binds() { }
-        public readonly IEnumerable<Bind> Iterator => [upmove, downmove];
+        public readonly IEnumerable<Bind> Iterator => [upmove, downmove, dash];
     }
 
     // constructor
@@ -50,6 +51,10 @@ public class ActorInput(Actor3D actor)
 
     public void ProcessInput(InputEvent @event)
     {
+        foreach (Bind bind in binds.Iterator)
+            if (bind.CheckEvent(actor, @event))
+                break;
+
         if (@event is InputEventMouseMotion mouseMotion && Input.MouseMode == Input.MouseModeEnum.Captured)
         {
             // update as many times as needed to be consumed next step
@@ -58,11 +63,6 @@ public class ActorInput(Actor3D actor)
 
             return;
         }
-
-        foreach (Bind bind in binds.Iterator)
-            if (bind.CheckEvent(actor, @event))
-                break;
-
     }
 
     public void UpdateZoom(bool zoomIn)

@@ -91,7 +91,7 @@ public partial class ActorParkour
                 if (landType != "roll" && landType != "none")
                     actor.momentum -= 3;
 
-                if (coiling && actor.downmove.isDown)
+                if (coiling && actor.Downmove.isDown)
                     TryPowerslide();
                 else if (landType == "roll")
                 {

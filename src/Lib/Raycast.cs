@@ -18,7 +18,7 @@ public static class Raycast
 {
     public static PhysicsDirectSpaceState3D Space { get; private set; }
 
-    public static RaycastResults? Cast(Vector3 origin, Vector3 target, uint collisionMask, Array<Rid> excludeList)
+    public static RaycastResults? Cast(Vector3 origin, Vector3 target, uint collisionMask, Array<Rid> excludeList = null)
     {
         PhysicsRayQueryParameters3D ray = PhysicsRayQueryParameters3D.Create(origin, target, collisionMask, excludeList);
         Dictionary results = Space.IntersectRay(ray);

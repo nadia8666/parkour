@@ -30,11 +30,11 @@ public class ActorGround(Actor3D actor)
 
     private readonly Actor3D actor = actor;
     private PhysicsShapeQueryParameters3D queryParams;
-    private Array<Rid> excludeList;
+    public Array<Rid> excludeList;
 
     private void SetupParams()
     {
-        excludeList = new() { actor.GetRid() };
+        excludeList = [actor.GetRid()];
         queryParams = new()
         {
             Shape = new CylinderShape3D { Radius = SearchRadius, Height = SearchHeight },
