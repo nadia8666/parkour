@@ -32,8 +32,10 @@ public partial class ActorParkour
 
         actor.SetGrounded(false);
         actor.lastGrounded = 0;
-        actor.animation.jumpReset = true;
+        actor.animation.PlayJump();
+
         coiling = false;
+        actor.animation.Stop("roll");
         EndSlide();
 
         return true;

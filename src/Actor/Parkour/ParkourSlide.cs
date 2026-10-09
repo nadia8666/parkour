@@ -22,6 +22,7 @@ public partial class ActorParkour
     public void Powerslide()
     {
         SetActive("Powerslide");
+        actor.animation.Play("powerslide_start");
 
         if (VUtil.WithY(actor.Velocity, 0).LengthSquared() <= 0)
             actor.Velocity = VUtil.WithY(actor.camera.RawLookFlat * SlideMinSpeed, actor.Velocity.Y);
@@ -82,6 +83,8 @@ public partial class ActorParkour
     {
         if (!sliding) return;
         SetActive();
+        actor.animation.SafeStop("powerslide_start");
+        actor.animation.SafeStop("powerslide_loop");
         sliding = false;
         slideStoredVelocity = Vector3.Zero;
     }

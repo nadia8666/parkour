@@ -45,6 +45,8 @@ public partial class ActorParkour
 
     public void Land()
     {
+        actor.animation.StopType("airborne");
+
         Vector3 airVelocity = actor.airVelocity;
         if (airVelocity.Y < 0)
         {
@@ -96,7 +98,7 @@ public partial class ActorParkour
                 else if (landType == "roll")
                 {
                     actor.sound.roll.Play();
-                    actor.animation.state.Start("LandRoll");
+                    actor.animation.Play("roll");
                 }
             }
         }

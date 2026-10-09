@@ -15,7 +15,7 @@ public partial class ActorParkour
         lastCoilStart = Actor3D.Clock();
         coiling = true;
         actor.TweenRoot(CoilTweenHeight, 0.1f);
-        // tween root up -1.5/unit over .1s
+        actor.animation.Play("coil");
     }
 
     public void CoilStep()
@@ -25,10 +25,7 @@ public partial class ActorParkour
             coiling = false;
 
             if (actor.Airborne)
-            {
-                // tween root down -1.5/unit over .1s
                 actor.TweenRoot(-CoilTweenHeight, 0.1f);
-            }
         }
     }
 }
