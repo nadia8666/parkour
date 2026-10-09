@@ -1,4 +1,6 @@
 using Godot;
+using Godot.Collections;
+using Parkour.Lib;
 
 namespace Parkour.Actor;
 
@@ -28,7 +30,7 @@ public class ActorGround(Actor3D actor)
 
     private readonly Actor3D actor = actor;
     private PhysicsShapeQueryParameters3D queryParams;
-    private Godot.Collections.Array<Rid> excludeList;
+    private Array<Rid> excludeList;
 
     private void SetupParams()
     {
@@ -63,7 +65,7 @@ public class ActorGround(Actor3D actor)
 
         queryParams.Transform = new Transform3D(Basis.Identity, origin);
         queryParams.Motion = Vector3.Down * length;
-        float[] cast = space.CastMotion(queryParams);
+        float[] cast = Raycast.Space.CastMotion(queryParams);
         if (cast.Length < 2 || cast[1] >= 1f || cast[0] <= 0f)
             return;
 
@@ -72,10 +74,8 @@ public class ActorGround(Actor3D actor)
         Height = contactY - actor.GlobalPosition.Y;
 
         // surface normal
-        PhysicsRayQueryParameters3D ray = PhysicsRayQueryParameters3D.Create(origin, origin + Vector3.Down * length, actor.CollisionMask, excludeList);
-        Godot.Collections.Dictionary floorHit = space.IntersectRay(ray);
-        if (floorHit.Count > 0)
-            Normal = ((Vector3)floorHit["normal"]).Normalized();
+        if (Raycast.Cast(origin, origin + Vector3.Down * length, actor.CollisionMask, excludeList) is RaycastResults floorHit)
+            Normal = floorHit.normal.Normalized();
 
         Angle = Mathf.RadToDeg(Mathf.Acos(Mathf.Clamp(Normal.Dot(Vector3.Up), -1f, 1f)));
         IsGrounded = actor.Velocity.Y <= MaxSnapSpeed
