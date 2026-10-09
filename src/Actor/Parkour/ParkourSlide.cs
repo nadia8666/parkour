@@ -24,8 +24,8 @@ public partial class ActorParkour
         SetActive("Powerslide");
         actor.animation.Play("powerslide_start");
 
-        if (VUtil.WithY(actor.Velocity, 0).LengthSquared() <= 0)
-            actor.Velocity = VUtil.WithY(actor.camera.RawLookFlat * SlideMinSpeed, actor.Velocity.Y);
+        if (VUtil.WithY(actor.Velocity, 0).Length() <= SlideMinSpeed)
+            actor.Velocity = VUtil.WithY(actor.LookFlat * SlideMinSpeed, actor.Velocity.Y);
 
         float forceMultiplier = (float)(1 + (0.5 * Mathf.Clamp((Actor3D.Clock() - lastSlide - 1 / 30) * 2, 0, 1)));
 

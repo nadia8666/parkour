@@ -51,7 +51,7 @@ public partial class ActorParkour
         if (airVelocity.Y < 0)
         {
             float ms = (float)(LastPrepareLanding > 0 ? (Actor3D.Clock() - LastPrepareLanding) * 1000 : Mathf.Inf);
-            float angleAlpha = 1; // TODO: pull from slope
+            float angleAlpha = actor.ground.Normal.Dot(Vector3.Up);
             float fallSpeed = angleAlpha * Mathf.Abs(airVelocity.Y); // pa uses magnitude, for Some reason.
             float metersFallen = (float)(0.5 * actor.physics.gravity * Mathf.Pow(fallSpeed / actor.physics.gravity, 2));
             float fatalDistance = GetFatalDistance(ms);
@@ -81,13 +81,11 @@ public partial class ActorParkour
             damage = damageMult > 0 ? damage * damageMult : 0;
 
             if (damage > 0)
-                actor.ChangeHealth(damage);
+                actor.ChangeHealth(-damage);
 
             // later on replace this with actual straight vs roll vs stumble
             if (landType == "hard")
-            {
                 actor.momentum -= 100; // mommenutm rip
-            }
             else
             {
                 if (landType != "roll" && landType != "none")

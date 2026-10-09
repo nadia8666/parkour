@@ -85,6 +85,8 @@ public partial class Actor3D : CharacterBody3D
 
         if (Airborne)
             airVelocity = Velocity;
+
+        HealStep(fDelta);
     }
 
     public void AlignToSlopes()
@@ -106,6 +108,7 @@ public partial class Actor3D : CharacterBody3D
         // TODO: visual debug ui, update values in the ui modules too
         UI2D.instance.velocityReadout.Text = $"{Velocity.X}\n{Velocity.Y}\n{Velocity.Z}";
         camera.RenderCamera();
+        UI2D.instance.UpdateUI((float)delta, this);
     }
 
     #region speed
@@ -236,17 +239,35 @@ public partial class Actor3D : CharacterBody3D
 
     #region health
     public const float MaxHealth = 100;
+    public const double RegenFactor = 8;
     public float Health { get; private set; } = MaxHealth;
+    public double lastHurt = 0;
 
     public void SetHealth(float health)
     {
         Health = Mathf.Clamp(health, 0, MaxHealth);
     }
+
     public void ChangeHealth(float change)
     {
         Health = Mathf.Clamp(Health + change, 0, MaxHealth);
+
+        if (change < 0)
+            lastHurt = Clock();
+    }
+
+    public void HealStep(float delta)
+    {
+        if (Health >= MaxHealth) return;
+
+        double diff = Clock() - lastHurt;
+        if (diff >= 1.25)
+            ChangeHealth((float)(diff * delta * RegenFactor * (Velocity.Length() > 2 ? .15 : 1)));
     }
     #endregion
+
+    // misc
+    public Vector3 LookFlat => camera.Locked ? camera.RawLookFlat : GlobalBasis.GetRotationQuaternion().Normalized() * Vector3.Forward;
 
     // input events
     public override void _Input(InputEvent @event)
