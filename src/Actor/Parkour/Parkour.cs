@@ -1,5 +1,3 @@
-using Godot;
-
 namespace Parkour.Actor.Parkour;
 
 public partial class ActorParkour(Actor3D actor)
@@ -10,11 +8,22 @@ public partial class ActorParkour(Actor3D actor)
     public bool Parkouring { get; private set; } = false;
     public void CheckMovement()
     {
+        if (actor.Frozen) return;
+
         if (actor.Upmove.pressed)
         {
             actor.Upmove.Consume();
-            bool jumped = Jump();
-            if (!jumped) jumpLastQuery = Actor3D.Clock();
+
+            if (actor.InCoyote)
+            {
+                bool jumped = Jump();
+                if (!jumped) jumpLastQuery = Actor3D.Clock();
+            }
+            else
+            {
+                if (GetLedgeGrabData() is LedgeGrabData data)
+                    StartLedgeGrab(data);
+            }
         }
 
         if (actor.Downmove.pressed)
@@ -46,6 +55,9 @@ public partial class ActorParkour(Actor3D actor)
 
         if (sliding)
             SlideStep(delta);
+
+        if (ledgeGrabbing)
+            StepLedgeGrab(delta);
 
         if (!actor.InCoyote && !actor.Downmove.isDown && LastPrepareLanding > 0 && Actor3D.Clock() - LastPrepareHeld >= .2)
             LastPrepareLanding = 0;

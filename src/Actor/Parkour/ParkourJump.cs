@@ -21,20 +21,20 @@ public partial class ActorParkour
         actor.ammo.jump--;
 
         bool edgeJump = false;
-        float horizPower = VUtil.WithY(actor.Velocity, 0).Length();
-        Vector3 hDir = horizPower <= 0 ? Vector3.Zero : VUtil.WithY(actor.Velocity, 0).Normalized();
+        float horizPower = actor.Velocity.WithY(0).Length();
+        Vector3 hDir = horizPower <= 0 ? Vector3.Zero : actor.Velocity.WithY(0).Normalized();
 
         jumpPower = JumpPowerBase * Actor3D.Unit + actor.momentum * JumpSpeedInfluence;
         activeFloatPower = jumpPower * jumpFloatPower;
 
         Vector3 _origin = actor.Position + hDir;
-        if (actor.Dash.isDown && !actor.Grounded && Raycast.Cast(_origin + Vector3.Up, _origin + Vector3.Down * 1.125f, actor.CollisionMask, actor.ground.excludeList) == null)
+        if (actor.Dash.isDown && Raycast.Cast(_origin + Vector3.Up, _origin + Vector3.Down * 0.05f, actor.CollisionMask, actor.ground.excludeList) == null)
         {
             edgeJump = true;
 
             Vector3 moveVec = actor.input.globalMoveVector;
             hDir = moveVec.LengthSquared() > 0 ? hDir.Slerp(moveVec, Mathf.Clamp(hDir.Dot(moveVec), -0.3f, 1)) : hDir;
-            horizPower += 2;
+            horizPower += 3.25f;
             jumpPower += 2;
         }
 
@@ -48,14 +48,14 @@ public partial class ActorParkour
         }
 
         float yVel = Mathf.Max(0, actor.Velocity.Y) + jumpPower;
-        actor.Velocity = VUtil.WithY(hDir * horizPower, yVel);
+        actor.Velocity = (hDir * horizPower).WithY(yVel);
 
         jumpDecayActive = true;
         jumpDecayStart = Actor3D.Clock();
 
         actor.SetGrounded(false);
         actor.lastGrounded = 0;
-        actor.animation.PlayJump();
+        actor.animation.PlayJump(edgeJump);
 
         return true;
     }

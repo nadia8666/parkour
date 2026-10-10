@@ -24,8 +24,8 @@ public partial class ActorParkour
         SetActive("Powerslide");
         actor.animation.Play("powerslide_start");
 
-        if (VUtil.WithY(actor.Velocity, 0).Length() <= SlideMinSpeed)
-            actor.Velocity = VUtil.WithY(actor.LookFlat * SlideMinSpeed, actor.Velocity.Y);
+        if (actor.Velocity.WithY(0).Length() <= SlideMinSpeed)
+            actor.Velocity = (actor.LookFlat * SlideMinSpeed).WithY(actor.Velocity.Y);
 
         float forceMultiplier = (float)(1 + (0.5 * Mathf.Clamp((Actor3D.Clock() - lastSlide - 1 / 30) * 2, 0, 1)));
 
@@ -38,7 +38,7 @@ public partial class ActorParkour
         slideStoredVelocity = newVelocity;
 
         sliding = true;
-        RotateTowardVector(VUtil.WithY(newVelocity, 0).Normalized(), 1);
+        RotateTowardVector(newVelocity.WithY(0).Normalized(), 1);
         actor.sound.slideStart.Play();
     }
 
@@ -70,7 +70,7 @@ public partial class ActorParkour
 
         actor.Velocity = vel;
 
-        Vector3 flatVelocity = VUtil.WithY(actor.Velocity, 0);
+        Vector3 flatVelocity = actor.Velocity.WithY(0);
         if (flatVelocity.LengthSquared() > 0)
             RotateTowardVector(flatVelocity, Mathf.Min(15 * delta, 1));
 
@@ -92,7 +92,7 @@ public partial class ActorParkour
     public void RotateTowardVector(Vector3 vector, float lerpForce)
     {
         float yRot = Basis.LookingAt(vector).GetEuler().Y;
-        actor.Rotation = VUtil.WithY(actor.Rotation, Mathf.LerpAngle(actor.Rotation.Y, yRot, lerpForce));
+        actor.Rotation = actor.Rotation.WithY(Mathf.LerpAngle(actor.Rotation.Y, yRot, lerpForce));
     }
 
     public bool TryPowerslide()

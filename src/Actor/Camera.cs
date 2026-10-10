@@ -52,7 +52,7 @@ public class ActorCamera
         RawRotation = new(rotation.X, rotation.Y, 0);
         RawRotationFlat = new(0, rotation.Y, 0);
         RawLook = Basis.FromEuler(RawRotation).GetRotationQuaternion().Normalized() * Vector3.Forward;
-        RawLookFlat = VUtil.WithY(RawLook, 0).Normalized(); // shouldnt ever nan with 89 deg max pitch
+        RawLookFlat = RawLook.WithY(0).Normalized(); // shouldnt ever nan with 89 deg max pitch
     }
 
     public void RenderCamera()

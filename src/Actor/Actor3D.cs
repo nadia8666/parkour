@@ -2,12 +2,20 @@ using Godot;
 using Parkour.Lib;
 using Parkour.UI;
 using Parkour.Actor.Parkour;
+using Godot.Collections;
+using System.Linq;
 
 namespace Parkour.Actor;
 
 [GlobalClass]
 public partial class Actor3D : CharacterBody3D
 {
+    public enum RootTweenType
+    {
+        VOffset,
+        Position
+    }
+
     // hello im global
     public const float Unit = 0.28f; // i would have called this scale like every other framework i have made but scale is Real here.
 
@@ -27,15 +35,6 @@ public partial class Actor3D : CharacterBody3D
     [Export] public ActorSound sound;
     [Export] public ActorAnimation animation;
     public ActorGround ground;
-
-    // misc
-    public bool RotationLocked => parkour.sliding;
-    public bool MovementLocked => parkour.sliding;
-    public Vector3 airVelocity = new();
-    public static double Clock()
-    {
-        return (Time.GetTicksUsec() + 100) / 1_000_000F;
-    }
 
     // input quick acess
     public Bind Upmove => input.binds.upmove;
@@ -121,7 +120,9 @@ public partial class Actor3D : CharacterBody3D
 
     public void UpdateSpeed(float delta)
     {
-        float flatSpeed = VUtil.WithY(Velocity, 0).Length();
+        if (Frozen) return;
+
+        float flatSpeed = Velocity.WithY(0).Length();
         float alpha = Mathf.Clamp(Mathf.InverseLerp(BaseMomentum, MaxMomentum, momentum), 0, 1);
         timeUnderSlowFloor = flatSpeed <= SlowMomentumFloor ? timeUnderSlowFloor + delta : 0;
 
@@ -143,27 +144,43 @@ public partial class Actor3D : CharacterBody3D
 
     #region root movement
     private bool rootTweenActive = false;
+    private RootTweenType rootTweenType = RootTweenType.VOffset;
     private float rootTweenTargetDuration = 0;
     private float rootTweenTargetHeight = 0;
+    private Vector3 rootTweenTargetPos = Vector3.Zero;
     private float rootTweenProgress = 0;
-    public void TweenRoot(float targetHeight, float length)
+    public void TweenRootUp(float targetHeight, float length)
     {
         rootTweenActive = true;
         rootTweenTargetDuration = length;
         rootTweenTargetHeight = targetHeight;
         rootTweenProgress = 0;
+        rootTweenType = RootTweenType.VOffset;
+    }
+
+    public void TweenRootTo(Vector3 targetPos, float length)
+    {
+        rootTweenActive = true;
+        rootTweenTargetDuration = length;
+        rootTweenTargetPos = targetPos - Position;
+        rootTweenProgress = 0;
+        rootTweenType = RootTweenType.Position;
     }
 
     public void StepRootTween(float delta)
     {
         if (rootTweenActive)
         {
-            float newDelta = Mathf.Min(delta / rootTweenTargetDuration, rootTweenTargetDuration - rootTweenProgress);
-            rootTweenProgress += newDelta;
+            float step = Mathf.Min(delta, rootTweenTargetDuration - rootTweenProgress);
+            rootTweenProgress += step;
             if (rootTweenProgress >= rootTweenTargetDuration)
                 rootTweenActive = false;
 
-            Position += new Vector3(0, rootTweenTargetHeight * newDelta, 0);
+            float alphaDiff = step / rootTweenTargetDuration;
+            if (rootTweenType == RootTweenType.Position)
+                Position += rootTweenTargetPos * alphaDiff;
+            else
+                Position += new Vector3(0, rootTweenTargetHeight * alphaDiff, 0);
         }
     }
 
@@ -179,6 +196,8 @@ public partial class Actor3D : CharacterBody3D
 
     public void UpdateGrounded()
     {
+        if (Frozen) return;
+
         // ground probe
         ground.SearchGround();
         bool isNowGrounded = ground.IsGrounded;
@@ -264,8 +283,37 @@ public partial class Actor3D : CharacterBody3D
     }
     #endregion
 
+    #region freezing
+    public Dictionary<string, bool> freezeList = new();
+    public bool Frozen => freezeList.Any();
+
+    public void Freeze(string freezeType)
+    {
+        freezeList.Add(freezeType, true);
+    }
+
+    public void Unfreeze(string freezeType)
+    {
+        freezeList.Remove(freezeType);
+    }
+
+    public void BulkUnfreeze()
+    {
+        freezeList.Clear();
+    }
+    #endregion
+
     // misc
+    public Vector3 airVelocity = new();
+    public Vector3 Center => Position + Vector3.Up * (ActorGround.HipHeight + Unit);
+    public bool RotationLocked => parkour.sliding;
+    public bool MovementLocked => parkour.sliding;
     public Vector3 LookFlat => camera.Locked ? camera.RawLookFlat : GlobalBasis.GetRotationQuaternion().Normalized() * Vector3.Forward;
+    public Vector3 GenericTarget => input.stickL.Length() > .1 ? input.globalMoveVector : (camera.Locked ? camera.RawLookFlat : LookFlat);
+    public static double Clock()
+    {
+        return (Time.GetTicksUsec() + 100) / 1_000_000F;
+    }
 
     // input events
     public override void _Input(InputEvent @event)

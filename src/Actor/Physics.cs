@@ -39,6 +39,8 @@ public class ActorPhysics(Actor3D actor)
     // physics
     public void StepPhysics(float delta)
     {
+        if (actor.Frozen) return;
+
         bool hasInput = actor.input.stickL.Length() > ActorInput.InputDeadzone;
         Vector3 wish = hasInput ? actor.input.globalMoveVector.Normalized() : Vector3.Zero;
         bool grounded = actor.Grounded;
@@ -48,7 +50,7 @@ public class ActorPhysics(Actor3D actor)
         UpdateFacing(delta, wish, hasInput);
 
         Vector3 velocity = actor.Velocity;
-        Vector3 flat = StepHorizontal(VUtil.WithY(velocity, 0), wish, hasInput, grounded, delta);
+        Vector3 flat = StepHorizontal(velocity.WithY(0), wish, hasInput, grounded, delta);
         float y = StepVertical(velocity.Y, grounded, sliding, delta);
 
         actor.Velocity = new Vector3(flat.X, y, flat.Z);

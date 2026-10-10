@@ -20,6 +20,10 @@ config/icon="res://icon.svg"
 
 ServiceLoader="*uid://doxfi60qlpgd6"
 
+[debug_draw_3d]
+
+settings/addon_root_folder="res://debug_draw_3d"
+
 [display]
 
 window/size/viewport_width=1920

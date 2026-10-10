@@ -226,7 +226,6 @@ mesh = SubResource("ArrayMesh_bhrcg")
 
 [node name="AnimationTree" type="AnimationTree" parent="." unique_id=849327178 node_paths=PackedStringArray("actor")]
 root_node = NodePath("../PlayerModel")
-root_motion_track = NodePath("%GeneralSkeleton:Root")
 callback_mode_process = 0
 tree_root = SubResource("AnimationNodeBlendTree_placeholder")
 anim_player = NodePath("../PlayerModel/Animator")

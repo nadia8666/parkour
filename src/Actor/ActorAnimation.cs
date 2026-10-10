@@ -44,7 +44,9 @@ public partial class ActorAnimation : AnimationTree
         new("fall", 10, true, 1f, FadeIn: 0.12f, FadeOut: 0.12f, Type: "airborne"),
         new("jump_l", 30, false, 1f, FadeIn: 0.04f, Type: "airborne"),
         new("jump_r", 30, false, 1f, FadeIn: 0.04f, Type: "airborne"),
-        new("coil", 31, true, 1f, FadeIn: 0.08f, Type: "airborne"),
+        new("edge_jump_l", 30, false, 1.2f, FadeIn: 0.125f, Type: "airborne"),
+        new("edge_jump_r", 30, false, 1.2f, FadeIn: 0.125f, Type: "airborne"),
+        new("coil", 31, false, 1f, FadeIn: 0.08f, Type: "airborne"),
 
         // slide
         new("powerslide_start", 40, false, 1f, "powerslide_loop", FadeIn: 0.08f),
@@ -52,6 +54,13 @@ public partial class ActorAnimation : AnimationTree
         
         // landing
         new("roll", 50, false, 1f, FadeIn: 0.04f, FadeOut: 0.12f),
+
+        // wallrun
+        new("wallrun_l", 50, false, 1f),
+        new("wallrun_r", 50, false, 1f),
+
+        // ledge
+        new("ledge_grab", 60, false, 1f, FadeOut: 0.2f),
     ];
 
     private readonly Dictionary<string, Track> tracks = new(StringComparer.Ordinal);
@@ -175,10 +184,13 @@ public partial class ActorAnimation : AnimationTree
             track.Speed = speed;
     }
 
-    public void PlayJump()
+    public void PlayJump(bool isEdge)
     {
         string name = nextJumpIsLeft ? "jump_l" : "jump_r";
         nextJumpIsLeft = !nextJumpIsLeft;
+
+        if (isEdge)
+            name = $"edge_{name}";
 
         Play(name);
     }
@@ -192,7 +204,7 @@ public partial class ActorAnimation : AnimationTree
 
     public void UpdateAnimations(float delta)
     {
-        float movementForce = VUtil.WithY(actor.Velocity, 0).Length() / 2;
+        float movementForce = actor.Velocity.WithY(0).Length() / 2;
         float movementBlend = Mathf.Clamp(movementForce / 3f, 0, 1);
         Set("parameters/RunBlend/blend_amount", movementBlend);
 

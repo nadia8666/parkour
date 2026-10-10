@@ -9,6 +9,8 @@ public class ActorCollision(Actor3D actor)
 
     public void CollideAndSlide()
     {
+        if (actor.Frozen) return;
+        
         Vector3 cacheVel = actor.Velocity;
         actor.MoveAndSlide();
         Vector3 reponseVel = actor.Velocity;
@@ -16,7 +18,7 @@ public class ActorCollision(Actor3D actor)
         if (actor.input.stickL.Length() >= .15)
         {
             // keep!
-            actor.Velocity = VUtil.WithY(cacheVel, reponseVel.Y);
+            actor.Velocity = cacheVel.WithY(reponseVel.Y);
         }
         else
         {
