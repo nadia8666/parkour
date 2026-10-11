@@ -219,6 +219,7 @@ bone_name = "Head"
 bone_idx = 4
 
 [node name="Marker3D" type="Marker3D" parent="PlayerModel/PlayerArmature/GeneralSkeleton/CameraBone" unique_id=1654804332]
+physics_interpolation_mode = 2
 transform = Transform3D(1, -5.820766e-11, 0, 1.1641532e-10, 1, 0, 0, -4.656613e-10, 1, 2.3283064e-10, 0.49999928, 0)
 gizmo_extents = 1.0
 
