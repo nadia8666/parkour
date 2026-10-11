@@ -16,8 +16,16 @@ public partial class ActorParkour(Actor3D actor)
 
             if (actor.InCoyote)
             {
-                bool jumped = Jump();
-                if (!jumped) jumpLastQuery = Actor3D.Clock();
+                if (GetLedgeGrabData(actor.Position) is LedgeGrabData vaultData) // TODO: eventually replace with a separate vault move isntead of ledgegrab
+                {
+                    actor.input.ConsumeAll();
+                    StartLedgeGrab(vaultData);
+                }
+                else
+                {
+                    bool jumped = Jump();
+                    if (!jumped) jumpLastQuery = Actor3D.Clock();
+                }
             }
             else
             {
@@ -25,6 +33,11 @@ public partial class ActorParkour(Actor3D actor)
                 {
                     actor.input.ConsumeAll();
                     StartLedgeGrab(data);
+                }
+                else if (GetLedgeGrabData(actor.Position) is LedgeGrabData vaultData) // TODO: eventually replace with a separate vault move isntead of ledgegrab
+                {
+                    actor.input.ConsumeAll();
+                    StartLedgeGrab(vaultData);
                 }
             }
         }
