@@ -61,6 +61,7 @@ public partial class ActorAnimation : AnimationTree
 
         // ledge
         new("ledge_grab", 60, false, 1f, FadeOut: 0.2f),
+        new("ledge_vault", 61, false, 1f, Next: "ledge_grab"),
     ];
 
     private readonly Dictionary<string, Track> tracks = new(StringComparer.Ordinal);

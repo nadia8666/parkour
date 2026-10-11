@@ -21,8 +21,11 @@ public partial class ActorParkour(Actor3D actor)
             }
             else
             {
-                if (GetLedgeGrabData() is LedgeGrabData data)
+                if (GetLedgeGrabData(actor.Center) is LedgeGrabData data)
+                {
+                    actor.input.ConsumeAll();
                     StartLedgeGrab(data);
+                }
             }
         }
 
@@ -58,6 +61,9 @@ public partial class ActorParkour(Actor3D actor)
 
         if (ledgeGrabbing)
             StepLedgeGrab(delta);
+
+        if (ledgeVaulting)
+            StepLedgeVault(delta);
 
         if (!actor.InCoyote && !actor.Downmove.isDown && LastPrepareLanding > 0 && Actor3D.Clock() - LastPrepareHeld >= .2)
             LastPrepareLanding = 0;

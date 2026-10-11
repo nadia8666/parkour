@@ -169,6 +169,7 @@ blend_shape_mode = 0
 animation = &"CharAnims/idle"
 
 [sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_placeholder"]
+graph_offset = Vector2(-399.67484, -193.86671)
 nodes/Idle/node = SubResource("AnimationNodeAnimation_placeholder")
 nodes/Idle/position = Vector2(0, 0)
 node_connections = [&"output", 0, &"Idle"]
@@ -218,7 +219,7 @@ bone_name = "Head"
 bone_idx = 4
 
 [node name="Marker3D" type="Marker3D" parent="PlayerModel/PlayerArmature/GeneralSkeleton/CameraBone" unique_id=1654804332]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+transform = Transform3D(1, -5.820766e-11, 0, 1.1641532e-10, 1, 0, 0, -4.656613e-10, 1, 2.3283064e-10, 0.49999928, 0)
 gizmo_extents = 1.0
 
 [node name="PlayerModel" parent="PlayerModel/PlayerArmature/GeneralSkeleton" parent_id_path=PackedInt32Array(658158511, 442940234) index="3" unique_id=1375827821]

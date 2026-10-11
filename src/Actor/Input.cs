@@ -49,6 +49,12 @@ public class ActorInput(Actor3D actor)
         mouseDelta = new();
     }
 
+    public void ConsumeAll()
+    {
+        foreach (Bind bind in binds.Iterator)
+            bind.Consume();
+    }
+
     public void ProcessInput(InputEvent @event)
     {
         foreach (Bind bind in binds.Iterator)

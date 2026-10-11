@@ -30,10 +30,11 @@
 [ext_resource type="Animation" uid="uid://bqw8d57papc6g" path="res://animations/edge_jump_l.res" id="21_4icg3"]
 [ext_resource type="Animation" uid="uid://bbwaj243lc1h3" path="res://animations/edge_jump_r.res" id="22_qhret"]
 [ext_resource type="Animation" uid="uid://cvhcpu40ks7il" path="res://animations/roll.res" id="27_b5mb2"]
-[ext_resource type="Animation" uid="uid://bjigoxajr7vc8" path="res://animations/ledge_grab.res" id="27_thtum"]
+[ext_resource type="Animation" uid="uid://btwv3d8vy46t5" path="res://animations/ledge_grab.res" id="27_thtum"]
+[ext_resource type="Animation" uid="uid://byg5pq6mhlkt1" path="res://animations/ledge_vault.res" id="28_2g455"]
 [ext_resource type="PackedScene" uid="uid://b1tb7grovmdlp" path="res://scenes/actor/player_audio_source.tscn" id="28_loo8b"]
-[ext_resource type="Animation" uid="uid://ccmyxt8vnhmis" path="res://animations/wallrun_l.res" id="32_2g455"]
-[ext_resource type="Animation" uid="uid://dxaam4gkyxptc" path="res://animations/wallrun_r.res" id="33_w4edw"]
+[ext_resource type="Animation" uid="uid://bitabka7jaua4" path="res://animations/wallrun_l.res" id="32_2g455"]
+[ext_resource type="Animation" uid="uid://bltoqnrlv605p" path="res://animations/wallrun_r.res" id="33_w4edw"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vvqay"]
 resource_name = "PikiChain"
@@ -308,6 +309,7 @@ _data = {
 &"jump_l": ExtResource("10_7t2x5"),
 &"jump_r": ExtResource("11_hxyi7"),
 &"ledge_grab": ExtResource("27_thtum"),
+&"ledge_vault": ExtResource("28_2g455"),
 &"powerslide_loop": ExtResource("13_3y2gs"),
 &"powerslide_start": ExtResource("14_ogac5"),
 &"roll": ExtResource("27_b5mb2"),

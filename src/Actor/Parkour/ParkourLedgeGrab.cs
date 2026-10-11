@@ -10,6 +10,9 @@ public partial class ActorParkour
     public const float LedgeGrabDistance = 0.7f; // horizontal distance checked
     public const float LedgeGrabDuration = 35f / 60f;
 
+    public const float LedgeVaultDuration = 40f / 60f;
+    public const float LedgeVaultHeight = 2.8f;
+
     public struct LedgeGrabData(Vector3 position, Vector3 normal, bool thin)
     {
         public Vector3 position = position;
@@ -19,18 +22,25 @@ public partial class ActorParkour
 
     public LedgeGrabData? currentLedgeGrab;
     public bool ledgeGrabbing = false;
+    public bool ledgeVaulting = false;
     public float ledgeGrabProgress = 0;
+    public float ledgeVaultProgress = 0;
+    public bool checkedLedgeVault = false;
 
-    public LedgeGrabData? GetLedgeGrabData()
+    public LedgeGrabData? GetLedgeGrabData(Vector3 center)
     {
+        if (actor.Velocity.Y <= -15) return null;
+
+        Vector3 target = ledgeGrabbing ? actor.LookFlat : actor.GenericTarget;
+
         RaycastResults? lastCast = null;
 
         for (float heightStep = 1; heightStep <= 50; heightStep++)
         {
             float targetHeight = LedgeGrabMaxHeight * (heightStep / 50);
 
-            Vector3 frontOrigin = actor.Center + Vector3.Up * targetHeight;
-            RaycastResults? frontCast = Raycast.Cast(frontOrigin, frontOrigin + actor.GenericTarget * LedgeGrabDistance, actor.CollisionMask, actor.ground.excludeList);
+            Vector3 frontOrigin = center + Vector3.Up * targetHeight;
+            RaycastResults? frontCast = Raycast.Cast(frontOrigin, frontOrigin + target * LedgeGrabDistance, actor.CollisionMask, actor.ground.excludeList);
             if (frontCast is RaycastResults front)
                 lastCast = front;
             else
@@ -51,7 +61,6 @@ public partial class ActorParkour
                             );
                     }
                 }
-                break;
             }
         }
 
@@ -64,12 +73,23 @@ public partial class ActorParkour
         SetActive("ledgeGrab");
         actor.Freeze("ledgeGrab");
 
-        actor.animation.Play("ledge_grab");
+        actor.animation.Play("ledge_grab", ledgeVaulting ? 0f : 0.1f);
+        actor.animation.Stop("ledge_vault", 0f);
 
         currentLedgeGrab = data;
         ledgeGrabProgress = 0;
+        checkedLedgeVault = false;
 
-        actor.TweenRootTo(data.position, 0.125f);
+        if (ledgeVaulting)
+        {
+            actor.Position = data.position;
+            actor.ResetPhysicsInterpolation();
+        }
+        else
+            actor.TweenRootTo(data.position, 0.125f);
+
+        actor.camera.RenderCamera();
+
         actor.Quaternion = Basis.LookingAt(-data.normal).GetRotationQuaternion().Normalized();
 
         actor.sound.grab.Play();
@@ -88,7 +108,52 @@ public partial class ActorParkour
     {
         ledgeGrabProgress += delta / LedgeGrabDuration;
 
+        if (ledgeGrabProgress >= 0.25 && !checkedLedgeVault)
+            TryLedgeVault();
+
         if (ledgeGrabProgress >= 1)
             EndLedgeGrab();
+    }
+
+    public void StepLedgeVault(float delta)
+    {
+        ledgeVaultProgress += delta / LedgeVaultDuration;
+
+        if (ledgeVaultProgress >= 1)
+        {
+            checkedLedgeVault = false;
+            StartLedgeGrab(currentLedgeGrab.Value);
+            ledgeVaulting = false;
+        }
+    }
+
+    public void TryLedgeVault()
+    {
+        checkedLedgeVault = true;
+
+        if (!actor.Upmove.isDown) return;
+
+        Vector3 next = actor.Position + new Vector3(0, LedgeVaultHeight, 0);
+
+        // for the 2 raycasts the offsets matter less since we already know that its just 10 studs above the last valid corner pos 
+        RaycastResults? downCast = Raycast.Cast(next + actor.LookFlat / 5 + Vector3.Up / 2, next + actor.LookFlat / 5 + Vector3.Down, actor.CollisionMask, actor.ground.excludeList);
+        RaycastResults? frontCast = Raycast.Cast(next - actor.LookFlat / 2 + Vector3.Down / 4, next + actor.LookFlat / 2 + Vector3.Down / 4, actor.CollisionMask, actor.ground.excludeList);
+
+        if (downCast is RaycastResults down && frontCast is RaycastResults front && Mathf.Abs(front.normal.Y) <= .25)
+        {
+            SetActive("ledgeVault");
+            ledgeGrabbing = false;
+            currentLedgeGrab = new LedgeGrabData(
+                position: front.position.WithY(down.position.Y),
+                normal: front.normal.WithY(0).Normalized(),
+                thin: false
+            );
+
+            ledgeVaultProgress = 0;
+            ledgeVaulting = true;
+
+            actor.animation.Stop("ledge_grab", fadeOut: 0);
+            actor.animation.Play("ledge_vault", fadeIn: 0);
+        }
     }
 }

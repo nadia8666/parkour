@@ -59,9 +59,75 @@ size = Vector3(96.30945, 4.505615, 120)
 material = SubResource("StandardMaterial3D_krsua")
 
 [node name="CSGBox3D13" type="CSGBox3D" parent="Colliders" unique_id=1059032363]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.33596, -2.003109, 32.81009)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.33596, -1.3042259, 32.81009)
 use_collision = true
-size = Vector3(11.889267, 1.1588135, 15.360046)
+size = Vector3(11.889267, 3.7610474, 15.360046)
+material = SubResource("StandardMaterial3D_krsua")
+
+[node name="CSGBox3D27" type="CSGBox3D" parent="Colliders" unique_id=597568028]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.612476, -2.4815483, 25.916084)
+use_collision = true
+size = Vector3(11.336235, 1.4064026, 4.662033)
+material = SubResource("StandardMaterial3D_krsua")
+
+[node name="CSGBox3D22" type="CSGBox3D" parent="Colliders" unique_id=1493572561]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.336, 3.2310607, 26.05251)
+use_collision = true
+size = Vector3(11.889267, 0.2966919, 1.8450623)
+material = SubResource("StandardMaterial3D_krsua")
+
+[node name="CSGBox3D23" type="CSGBox3D" parent="Colliders" unique_id=570468100]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.336, 6.031, 26.053)
+use_collision = true
+size = Vector3(11.889267, 0.2966919, 1.8450623)
+material = SubResource("StandardMaterial3D_krsua")
+
+[node name="CSGBox3D29" type="CSGBox3D" parent="Colliders" unique_id=783185098]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.336, 11.631, 26.053)
+use_collision = true
+size = Vector3(11.889267, 0.2966919, 1.8450623)
+material = SubResource("StandardMaterial3D_krsua")
+
+[node name="CSGBox3D30" type="CSGBox3D" parent="Colliders" unique_id=852352844]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.336, 14.431, 26.053)
+use_collision = true
+size = Vector3(11.889267, 0.2966919, 1.8450623)
+material = SubResource("StandardMaterial3D_krsua")
+
+[node name="CSGBox3D31" type="CSGBox3D" parent="Colliders" unique_id=66438801]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.336, 17.231, 26.053)
+use_collision = true
+size = Vector3(11.889267, 0.2966919, 1.8450623)
+material = SubResource("StandardMaterial3D_krsua")
+
+[node name="CSGBox3D32" type="CSGBox3D" parent="Colliders" unique_id=36756507]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.336, 20.031, 26.053)
+use_collision = true
+size = Vector3(11.889267, 0.2966919, 1.8450623)
+material = SubResource("StandardMaterial3D_krsua")
+
+[node name="CSGBox3D33" type="CSGBox3D" parent="Colliders" unique_id=157446804]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.336, 22.831, 26.053)
+use_collision = true
+size = Vector3(11.889267, 0.2966919, 1.8450623)
+material = SubResource("StandardMaterial3D_krsua")
+
+[node name="CSGBox3D24" type="CSGBox3D" parent="Colliders" unique_id=2085194632]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.336, 8.831, 25.664398)
+use_collision = true
+size = Vector3(11.889267, 0.2966919, 1.0678825)
+material = SubResource("StandardMaterial3D_krsua")
+
+[node name="CSGBox3D25" type="CSGBox3D" parent="Colliders" unique_id=1386999410]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.336, 8.831, 32.30569)
+use_collision = true
+size = Vector3(1.1210938, 0.2966919, 12.35047)
+material = SubResource("StandardMaterial3D_krsua")
+
+[node name="CSGBox3D26" type="CSGBox3D" parent="Colliders" unique_id=773884704]
+transform = Transform3D(-4.0404377e-08, -0.38155913, 0.9243444, -1.6678479e-08, 0.9243444, 0.38155913, -1, 0, -4.371139e-08, 22.267378, 10.031692, 37.63205)
+use_collision = true
+size = Vector3(1.1210938, 0.2966919, 6.2099466)
 material = SubResource("StandardMaterial3D_krsua")
 
 [node name="CSGBox3D18" type="CSGBox3D" parent="Colliders" unique_id=1435696264]
@@ -110,6 +176,24 @@ material = SubResource("StandardMaterial3D_krsua")
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 30.15343, 4.7640724, 15.166967)
 use_collision = true
 size = Vector3(26.267075, 12.828308, 6)
+material = SubResource("StandardMaterial3D_krsua")
+
+[node name="FallFatal" type="CSGBox3D" parent="Colliders" unique_id=543949791]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 23.111807, 8.468654, -1.3251026)
+use_collision = true
+size = Vector3(3.662, 18.2, 6)
+material = SubResource("StandardMaterial3D_krsua")
+
+[node name="FallMin" type="CSGBox3D" parent="Colliders" unique_id=762663044]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 23.111807, 1.7100816, 2.5010462)
+use_collision = true
+size = Vector3(3.662, 5, 6)
+material = SubResource("StandardMaterial3D_krsua")
+
+[node name="FallMin2" type="CSGBox3D" parent="Colliders" unique_id=319788464]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 23.111807, 5.6192613, -6.0013967)
+use_collision = true
+size = Vector3(3.662, 12.818359, 6)
 material = SubResource("StandardMaterial3D_krsua")
 
 [node name="CSGBox3D12" type="CSGBox3D" parent="Colliders" unique_id=1412020054]
@@ -175,3 +259,24 @@ material = SubResource("StandardMaterial3D_krsua")
 [node name="CSGBox3D" type="CSGBox3D" parent="." unique_id=1203284600]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.763212, -1.11908, 40.191067)
 size = Vector3(1, 1, 0.7)
+
+[node name="PlayerModel2" parent="." unique_id=2066612488 instance=ExtResource("2_f4rjh")]
+transform = Transform3D(-0.28, 0, -2.4478377e-08, 0, 0.28, 0, 2.4478377e-08, 0, -0.28, 12.965241, 0.57629585, 25.11854)
+
+[node name="GeneralSkeleton" parent="PlayerModel2/PlayerArmature" parent_id_path=PackedInt32Array(2066612488, 987319250) index="0" unique_id=442940234]
+bones/0/position = Vector3(0, 5.7, 1.2)
+bones/1/position = Vector3(1.3279703e-16, 2.1705718, 0.0925163)
+bones/1/rotation = Quaternion(0.057053253, -0.1261041, 0.01288481, 0.99029124)
+bones/2/position = Vector3(-1.4782301, 1.077744, -0.28406608)
+bones/2/rotation = Quaternion(0.047350556, -0.9111347, 0.4030055, 0.071957976)
+bones/3/position = Vector3(1.1547945, 0.8539409, -1.0398237)
+bones/3/rotation = Quaternion(-0.062323913, 0.9235088, -0.35170394, -0.13982671)
+bones/4/position = Vector3(-3.5390258e-08, 1, -6.7055225e-08)
+bones/4/rotation = Quaternion(0.027648488, 0.124544926, -0.023597289, 0.99154794)
+bones/5/position = Vector3(-1.1728033, -0.37816626, -0.4679548)
+bones/5/rotation = Quaternion(0.7729273, -0.048543103, 0.6326335, 0.0013745093)
+bones/6/position = Vector3(1.0143287, 0.58806074, -0.5469035)
+bones/6/rotation = Quaternion(0.6231664, 0.076815, -0.768839, -0.12103599)
+
+[editable path="PlayerModel2"]
+[editable path="PlayerModel2/PlayerAudioSource"]

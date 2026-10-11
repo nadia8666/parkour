@@ -184,6 +184,11 @@ public partial class Actor3D : CharacterBody3D
         }
     }
 
+    public void CancelRootTween()
+    {
+        rootTweenActive = false;
+    }
+
     #endregion
 
     #region ground/coyote
@@ -289,7 +294,8 @@ public partial class Actor3D : CharacterBody3D
 
     public void Freeze(string freezeType)
     {
-        freezeList.Add(freezeType, true);
+        if (!freezeList.ContainsKey(freezeType))
+            freezeList.Add(freezeType, true);
     }
 
     public void Unfreeze(string freezeType)
