@@ -6,8 +6,8 @@ namespace Parkour.Actor.Parkour;
 
 public partial class ActorParkour
 {
-    public const float LedgeGrabMaxHeight = 1.15f; // vertical distance checked
-    public const float LedgeGrabDistance = 0.7f; // horizontal distance checked
+    public const float LedgeGrabMaxHeight = 1.4f; // vertical distance checked
+    public const float LedgeGrabDistance = 1.25f; // horizontal distance checked
     public const float LedgeGrabDuration = 35f / 60f;
 
     public const float LedgeVaultDuration = 40f / 60f;
