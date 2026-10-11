@@ -13,6 +13,10 @@ public class ActorCamera
     private readonly Actor3D actor;
     public Camera3D camera;
     private readonly BaseMaterial3D bodyMat;
+private readonly BaseMaterial3D headMat;
+    private Vector3 springPosition;
+    private Vector3 springVelocity;
+    private bool springReady;
 
     public Vector2 rotation = new();
 
@@ -32,6 +36,11 @@ public class ActorCamera
         actor.playerMesh.SetSurfaceOverrideMaterial(1, bodyMat);
         bodyMat.Transparency = BaseMaterial3D.TransparencyEnum.Alpha;
         bodyMat.DepthDrawMode = BaseMaterial3D.DepthDrawModeEnum.Always;
+
+        headMat = (BaseMaterial3D)actor.playerMesh.Mesh.SurfaceGetMaterial(0).Duplicate();
+        actor.playerMesh.SetSurfaceOverrideMaterial(0, headMat);
+        headMat.Transparency = BaseMaterial3D.TransparencyEnum.Alpha;
+        headMat.DepthDrawMode = BaseMaterial3D.DepthDrawModeEnum.Always;
     }
 
     public void SetZoom(float newZoom)
@@ -61,6 +70,7 @@ public class ActorCamera
         camera.Rotation = new Vector3(rotation.X, rotation.Y, 0);
         camera.Position += camera.GlobalBasis.GetRotationQuaternion().Normalized() * new Vector3(0, 0, Zoom);
         bodyMat.AlbedoColor = new(1, 1, 1, Locked ? 0 : 1);
+headMat.AlbedoColor = new(1, 1, 1, Locked ? 0 : 1);
     }
 
     public Vector3 VectorToGlobal(Vector3 localVec)
