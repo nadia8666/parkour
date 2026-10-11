@@ -109,12 +109,12 @@ public partial class Actor3D : CharacterBody3D
     }
 
     #region speed
-    public const float BaseMomentum = 12f * Unit;
-    public const float MomentumCap = 26f * Unit;
-    public const float MaxMomentum = 32f * Unit;
-    public const float SlowMomentumFloor = 8f * Unit;
-    public const float MomentumAccelFloor = 0.25f * Unit;
-    public const float MomentumAccelCoeff = 42f * Unit;
+    public const float BaseMomentum = 3.36f;
+    public const float MomentumCap = 7.28f;
+    public const float MaxMomentum = 8.96f;
+    public const float SlowMomentumFloor = 2.24f;
+    public const float MomentumAccelFloor = 0.07f;
+    public const float MomentumAccelCoeff = 11.76f;
     public float momentum = BaseMomentum;
     private float timeUnderSlowFloor;
 
@@ -126,9 +126,9 @@ public partial class Actor3D : CharacterBody3D
         float alpha = Mathf.Clamp(Mathf.InverseLerp(BaseMomentum, MaxMomentum, momentum), 0, 1);
         timeUnderSlowFloor = flatSpeed <= SlowMomentumFloor ? timeUnderSlowFloor + delta : 0;
 
-        if (Grounded) // should it factor in coyote? i dont think so... but maybe
+        if (InCoyote) // should it factor in coyote? i dont think so... but maybe
         {
-            float keepUp = momentum - 2 * Unit;
+            float keepUp = momentum - 0.56f;
             if (flatSpeed > SlowMomentumFloor && flatSpeed > keepUp)
                 momentum += Mathf.Max(MomentumAccelFloor, (1 - Easing.EaseOutCirc(alpha)) * MomentumAccelCoeff) * delta;
             else if (flatSpeed < keepUp)
