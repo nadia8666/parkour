@@ -5,19 +5,17 @@ namespace Parkour.Actor.Parkour;
 
 public partial class ActorParkour
 {
-    public const float MinLandingHeight = 8 * Actor3D.Unit;
-    public const float MinDamageHeight = 20 * Actor3D.Unit;
-    public const float FatalDistance = 65 * Actor3D.Unit;
+    public const float MinLandingHeight = 5;
+    public const float FatalDistance = 16;
     public const float MinDamage = 20;
-    public const float LandCooldown = 0.5F;
 
-    public const float RollWindow = 175;
-    public const float PreciseWindow = 90;
-    public const float PerfectWindow = 50;
+    public const float RollWindow = 215;
+    public const float PreciseWindow = 120;
+    public const float PerfectWindow = 90;
 
-    public const float MultUnprepared = 0.58f;
-    public const float MultBad = 0.75f;
-    public const float MultNormal = 0.80f;
+    public const float MultUnprepared = 0.75f;
+    public const float MultBad = 0.8f;
+    public const float MultNormal = 0.9f;
     public const float MultImperfect = 0.95f;
 
     public double LastPrepareLanding = 0;
@@ -50,13 +48,14 @@ public partial class ActorParkour
         if (airVelocity.Y < 0)
         {
             float ms = (float)(LastPrepareLanding > 0 ? (Actor3D.Clock() - LastPrepareLanding) * 1000 : Mathf.Inf);
+            GD.Print(ms);
             float angleAlpha = actor.ground.Normal.Dot(Vector3.Up);
             float fallSpeed = angleAlpha * Mathf.Abs(airVelocity.Y); // pa uses magnitude, for Some reason.
             float metersFallen = (float)(0.5 * actor.physics.gravity * Mathf.Pow(fallSpeed / actor.physics.gravity, 2));
             float fatalDistance = GetFatalDistance(ms);
             float damageMult = ms <= PreciseWindow ? 0 : Mathf.Clamp((ms - PreciseWindow) / (500 - PreciseWindow), 0.35f, 1);
 
-            float damageAlpha = Easing.EaseInCirc((metersFallen - MinDamageHeight) / (fatalDistance - MinDamageHeight));
+            float damageAlpha = Easing.EaseInCirc((metersFallen - MinLandingHeight) / (fatalDistance - MinLandingHeight));
             float damage = MinDamage + damageAlpha * (Actor3D.MaxHealth - MinDamage);
 
 
@@ -68,7 +67,7 @@ public partial class ActorParkour
                 {
                     if (actor.input.stickL.Length() >= .45 && ms >= RollWindow)
                         landType = "straight";
-                    else if (isMoving && ms <= PreciseWindow && metersFallen >= MinDamageHeight)
+                    else if (isMoving && ms <= PreciseWindow)
                         landType = "roll";
                     else landType = "stumble";
                 }
