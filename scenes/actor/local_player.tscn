@@ -203,18 +203,32 @@ fov = 90.0
 [node name="PlayerModel" parent="." unique_id=658158511 instance=ExtResource("2_3et3n")]
 transform = Transform3D(0.28, 0, 0, 0, 0.28, 0, 0, 0, 0.28, 0, 0, 0)
 
-[node name="TorsoBone" type="BoneAttachment3D" parent="PlayerModel/PlayerArmature/GeneralSkeleton" parent_id_path=PackedInt32Array(658158511, 442940234) index="0" unique_id=522949269]
-transform = Transform3D(0.9896784, 0.0030354096, -0.14327416, 2.3283064e-10, 0.99977565, 0.021181272, 0.14330631, -0.020962646, 0.98945636, 0, 3, 0)
+[node name="GeneralSkeleton" parent="PlayerModel/PlayerArmature" parent_id_path=PackedInt32Array(658158511, 987319250) index="0" unique_id=442940234]
+bones/1/position = Vector3(0, 3.1118991, 0.19213177)
+bones/1/rotation = Quaternion(0.20649679, 0, -7.234247e-18, 0.9784474)
+bones/2/position = Vector3(-1.0106348, -0.061853528, -0.22397494)
+bones/2/rotation = Quaternion(0.3075748, -0.5116323, 0.6310626, -0.49536863)
+bones/3/position = Vector3(1.0106348, -0.061853528, -0.22397494)
+bones/3/rotation = Quaternion(0.30641118, 0.5113009, -0.6321715, -0.4950179)
+bones/4/position = Vector3(9.919705e-25, 1.0000002, 7.450581e-09)
+bones/4/rotation = Quaternion(-0.24928936, -4.1855693e-25, 2.476427e-17, 0.9684291)
+bones/5/position = Vector3(-1, 0.019051194, -1.2447089)
+bones/5/rotation = Quaternion(0.70841485, 0.18770063, 0.648776, 0.20495507)
+bones/6/position = Vector3(1, 0.33399713, -1.1891935)
+bones/6/rotation = Quaternion(0.7222793, -0.117257066, -0.6700984, 0.124625795)
+
+[node name="TorsoBone" type="BoneAttachment3D" parent="PlayerModel/PlayerArmature/GeneralSkeleton" index="0" unique_id=522949269]
+transform = Transform3D(1, 1.4156657e-17, -2.987697e-18, -1.4156657e-17, 0.91471815, -0.4040924, -2.987697e-18, 0.4040924, 0.91471815, 0, 3.1118991, 0.19213177)
 bone_name = "Torso"
 bone_idx = 1
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="PlayerModel/PlayerArmature/GeneralSkeleton/TorsoBone" unique_id=575108887]
-transform = Transform3D(1.4994069, 0.024653673, -0.320147, -0.751528, -0.015120494, -0.63851666, -0.06771679, 0.71369976, -0.0024686456, 0.08158167, 0.15434384, 0.5668024)
+transform = Transform3D(1.4994068, 0.024653673, -0.320147, -0.7515281, -0.015120491, -0.63851666, -0.06771681, 0.71369976, -0.0024686456, 0.08158167, 0.1969645, 1.2199124)
 material_override = SubResource("StandardMaterial3D_yf5fn")
 mesh = SubResource("PlaneMesh_g4v7s")
 
-[node name="CameraBone" type="BoneAttachment3D" parent="PlayerModel/PlayerArmature/GeneralSkeleton" parent_id_path=PackedInt32Array(658158511, 442940234) index="1" unique_id=1978650127]
-transform = Transform3D(0.9896784, -0.0006614905, -0.14330478, 3.4430628e-10, 0.99998933, -0.004615918, 0.14330631, 0.004568275, 0.98966783, 0.0030354096, 3.999776, -0.020962654)
+[node name="CameraBone" type="BoneAttachment3D" parent="PlayerModel/PlayerArmature/GeneralSkeleton" index="1" unique_id=1978650127]
+transform = Transform3D(1, -3.4125177e-17, -8.12792e-18, 3.4706983e-17, 0.99613875, 0.08779314, 5.100576e-18, -0.08779314, 0.99613875, 1.4156662e-17, 4.0266175, 0.59622425)
 bone_name = "Head"
 bone_idx = 4
 
@@ -223,7 +237,7 @@ physics_interpolation_mode = 2
 transform = Transform3D(1, -5.820766e-11, 0, 1.1641532e-10, 1, 0, 0, -4.656613e-10, 1, 2.3283064e-10, 0.49999928, 0)
 gizmo_extents = 1.0
 
-[node name="PlayerModel" parent="PlayerModel/PlayerArmature/GeneralSkeleton" parent_id_path=PackedInt32Array(658158511, 442940234) index="3" unique_id=1375827821]
+[node name="PlayerModel" parent="PlayerModel/PlayerArmature/GeneralSkeleton" index="3" unique_id=1375827821]
 mesh = SubResource("ArrayMesh_bhrcg")
 
 [node name="AnimationTree" type="AnimationTree" parent="." unique_id=849327178 node_paths=PackedStringArray("actor")]

@@ -13,7 +13,7 @@ public class ActorCamera
     private readonly Actor3D actor;
     public Camera3D camera;
     private readonly BaseMaterial3D bodyMat;
-private readonly BaseMaterial3D headMat;
+    private readonly BaseMaterial3D headMat;
     private Vector3 springPosition;
     private Vector3 springVelocity;
     private bool springReady;
@@ -70,7 +70,7 @@ private readonly BaseMaterial3D headMat;
         camera.Rotation = new Vector3(rotation.X, rotation.Y, 0);
         camera.Position += camera.GlobalBasis.GetRotationQuaternion().Normalized() * new Vector3(0, 0, Zoom);
         bodyMat.AlbedoColor = new(1, 1, 1, Locked ? 0 : 1);
-headMat.AlbedoColor = new(1, 1, 1, Locked ? 0 : 1);
+        headMat.AlbedoColor = new(1, 1, 1, Locked ? 0 : 1);
     }
 
     public Vector3 VectorToGlobal(Vector3 localVec)
