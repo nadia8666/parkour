@@ -44,8 +44,8 @@ public partial class ActorAnimation : AnimationTree
         new("fall", 10, true, 1f, FadeIn: 0.12f, FadeOut: 0.12f, Type: "airborne"),
         new("jump_l", 30, false, 1f, FadeIn: 0.04f, Type: "airborne"),
         new("jump_r", 30, false, 1f, FadeIn: 0.04f, Type: "airborne"),
-        new("edge_jump_l", 30, false, 1.2f, FadeIn: 0.125f, Type: "airborne"),
-        new("edge_jump_r", 30, false, 1.2f, FadeIn: 0.125f, Type: "airborne"),
+        new("edge_jump_r", 30, false, 1.35f, FadeIn: 0.125f, Type: "airborne"),
+        new("edge_jump_l", 30, false, 1.35f, FadeIn: 0.125f, Type: "airborne"),
         new("coil", 31, false, 1f, FadeIn: 0.08f, Type: "airborne"),
 
         // slide
