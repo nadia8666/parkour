@@ -109,9 +109,9 @@ public partial class Actor3D : CharacterBody3D
     }
 
     #region speed
-    public const float BaseMomentum = 3.36f;
-    public const float MomentumCap = 7.28f;
-    public const float MaxMomentum = 8.96f;
+    public const float BaseMomentum = 3.25f;
+    public const float MomentumCap = 9f;
+    public const float MaxMomentum = 10f;
     public const float SlowMomentumFloor = 2.24f;
     public const float MomentumAccelFloor = 0.07f;
     public const float MomentumAccelCoeff = 11.76f;
