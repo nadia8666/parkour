@@ -77,6 +77,7 @@ public partial class Actor3D : CharacterBody3D
 
         // apparently animations always go in physics process instead of render. coming from roblox that sounds stupid but Sure
         animation.UpdateAnimations((float)delta);
+        parkour.StepLedgeMotion(fDelta);
 
         AlignToSlopes();
 

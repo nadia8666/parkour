@@ -53,7 +53,7 @@ public partial class ActorAnimation : AnimationTree
         new("powerslide_loop", 41, true, 1f, FadeIn:0, FadeOut: 0.12f),
         
         // landing
-        new("roll", 50, false, 1f, FadeIn: 0.04f, FadeOut: 0.12f),
+        new("roll", 50, false, 1.35f, FadeIn: 0.04f, FadeOut: 0.12f),
 
         // wallrun
         new("wallrun_l", 50, false, 1f),
@@ -74,6 +74,10 @@ public partial class ActorAnimation : AnimationTree
     {
         base._Ready();
         animationPlayer = actor.GetNode<AnimationPlayer>("PlayerModel/Animator");
+
+        CallbackModeProcess = AnimationCallbackModeProcess.Manual;
+        if (RootMotionTrack.IsEmpty)
+            GD.PushWarning("hey You forgot the root motion track");
 
         foreach (TrackDefinition definition in trackDefs)
         {
@@ -203,6 +207,50 @@ public partial class ActorAnimation : AnimationTree
                 SafeStop(def.Name, fadeOut);
     }
 
+    public float ClipLength(string name) => tracks.TryGetValue(name, out Track track) ? (float)track.Length : 0;
+
+    public float Duration(string name) => tracks.TryGetValue(name, out Track track) && track.Speed > 0 ? (float)(track.Length / track.Speed) : 0;
+
+    public float Elapsed(string name) => tracks.TryGetValue(name, out Track track) && track.Speed > 0 ? (float)(track.PlaybackTime / track.Speed) : 0;
+
+    public float Progress(string name)
+    {
+        if (!tracks.TryGetValue(name, out Track track) || !track.IsPlaying || track.Length <= 0)
+            return 1;
+
+        return (float)Mathf.Clamp(track.PlaybackTime / track.Length, 0, 1);
+    }
+
+    public bool WillFinish(string name, float delta)
+    {
+        if (!tracks.TryGetValue(name, out Track track) || !track.IsPlaying || track.Length <= 0)
+            return true;
+
+        return track.PlaybackTime + delta * track.Speed >= track.Length;
+    }
+
+    private Node3D rootMotionNode;
+
+    public Basis RootSpace
+    {
+        get
+        {
+            rootMotionNode ??= GetNodeOrNull<Node3D>(RootNode)?.GetNodeOrNull<Node3D>(new NodePath(RootMotionTrack.GetConcatenatedNames()));
+            return rootMotionNode == null ? Basis.Identity : actor.GlobalBasis.Inverse() * rootMotionNode.GlobalBasis;
+        }
+    }
+
+    public Vector3 SampleRoot(string name, double time)
+    {
+        if (RootMotionTrack.IsEmpty || !tracks.ContainsKey(name))
+            return Vector3.Zero;
+
+        Animation clip = animationPlayer.GetAnimation($"CharAnims/{name}");
+        int index = clip.FindTrack(RootMotionTrack, Animation.TrackType.Position3D);
+
+        return index < 0 ? Vector3.Zero : clip.PositionTrackInterpolate(index, time);
+    }
+
     public void UpdateAnimations(float delta)
     {
         float movementForce = actor.Velocity.WithY(0).Length() / 2;
@@ -214,6 +262,7 @@ public partial class ActorAnimation : AnimationTree
 
         UpdateStateTrack("fall", actor.Airborne);
         UpdateTracks(delta);
+        Advance(delta);
     }
 
     private void UpdateStateTrack(string name, bool shouldPlay)
