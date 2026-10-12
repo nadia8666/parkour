@@ -251,6 +251,17 @@ public partial class ActorAnimation : AnimationTree
         return index < 0 ? Vector3.Zero : clip.PositionTrackInterpolate(index, time);
     }
 
+    public Quaternion SampleRootRotation(string name, double time)
+    {
+        if (RootMotionTrack.IsEmpty || !tracks.ContainsKey(name))
+            return Quaternion.Identity;
+
+        Animation clip = animationPlayer.GetAnimation($"CharAnims/{name}");
+        int index = clip.FindTrack(RootMotionTrack, Animation.TrackType.Rotation3D);
+
+        return index < 0 ? Quaternion.Identity : clip.RotationTrackInterpolate(index, time);
+    }
+
     public void UpdateAnimations(float delta)
     {
         float movementForce = actor.Velocity.WithY(0).Length() / 2;

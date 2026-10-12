@@ -41,6 +41,12 @@ public partial class ActorParkour
 
     private Vector3 RootToWorld(Basis basis, Vector3 root) => basis * (actor.animation.RootSpace * root);
 
+    private Quaternion RootToActor(Quaternion root)
+    {
+        Quaternion frame = actor.animation.RootSpace.GetRotationQuaternion().Normalized();
+        return frame * root * frame.Inverse();
+    }
+
     // warp? tween? consistency is Great.
     private void BeginLedgeWarp(Vector3 total, float duration)
     {
@@ -118,6 +124,7 @@ public partial class ActorParkour
 
         Vector3 hang = RootToWorld(ledgeBasis, actor.animation.SampleRoot("ledge_grab", 0));
         BeginLedgeWarp(data.position + hang - actor.Position, LedgeGrabWarpTime);
+        actor.visual.SetRoot(RootToActor(actor.animation.SampleRootRotation("ledge_grab", 0)));
         ledgeMotionActive = true;
 
         actor.sound.grab.Play();
@@ -174,9 +181,13 @@ public partial class ActorParkour
         ledgeWarpAlpha = alpha;
 
         actor.Quaternion = actor.Quaternion.Slerp(ledgeFacing, 1f - Mathf.Exp(-LedgeFacingRate * delta)).Normalized();
+        actor.visual.AdvanceRoot(RootToActor(actor.animation.GetRootMotionRotation()));
 
         if (!ledgeGrabbing && !ledgeVaulting)
+        {
             ledgeMotionActive = false;
+            actor.visual.SetRoot(Quaternion.Identity);
+        }
     }
 
     public void TryLedgeVault()

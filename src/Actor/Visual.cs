@@ -16,6 +16,7 @@ public class ActorVisual
     private Quaternion rotation = Quaternion.Identity;
     private Vector3 rotationVelocity = Vector3.Zero;
     private Quaternion tilt = Quaternion.Identity;
+    private Quaternion root = Quaternion.Identity;
 
     public Quaternion ModelRotation { get; private set; } = Quaternion.Identity;
 
@@ -38,6 +39,18 @@ public class ActorVisual
         position -= shift;
     }
 
+    public void AdvanceRoot(Quaternion delta)
+    {
+        root = (root * delta).Normalized();
+    }
+
+    public void SetRoot(Quaternion value)
+    {
+        value = value.Normalized();
+        rotation = (rotation * tilt * root * value.Inverse() * tilt.Inverse()).Normalized();
+        root = value;
+    }
+
     public void Reset()
     {
         position = Vector3.Zero;
@@ -45,6 +58,7 @@ public class ActorVisual
         rotation = Quaternion.Identity;
         rotationVelocity = Vector3.Zero;
         tilt = Quaternion.Identity;
+        root = Quaternion.Identity;
     }
 
     public void Step(float delta)
@@ -63,7 +77,7 @@ public class ActorVisual
         }
 
         tilt = tilt.Slerp(targetTilt, 1f - Mathf.Exp(-TiltRate * delta)).Normalized();
-        ModelRotation = (rotation * tilt).Normalized();
+        ModelRotation = (rotation * tilt * root).Normalized();
 
         actor.playerModel.Transform = new Transform3D(
             new Basis(ModelRotation) * rest.Basis,
