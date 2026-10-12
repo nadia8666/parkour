@@ -38,7 +38,9 @@ public partial class ActorParkour
         slideStoredVelocity = newVelocity;
 
         slideActive = true;
+        Transform3D before = actor.GlobalTransform;
         RotateTowardVector(newVelocity.WithY(0).Normalized(), 1);
+        actor.visual.Absorb(before);
         actor.sound.slideStart.Play();
     }
 

@@ -94,6 +94,7 @@ public class ActorGround(Actor3D actor)
 
         float flatSpeed = new Vector2(actor.Velocity.X, actor.Velocity.Z).Length();
         float move = 0;
+        bool hardSnap = (sliding && Height > -StickMargin) || (flatSpeed > actor.momentum * 2f && Height > 0);
         if (sliding && Height > -StickMargin)
             move = Height;
         else if (flatSpeed > actor.momentum * 2f && Height > 0)
@@ -102,5 +103,11 @@ public class ActorGround(Actor3D actor)
             move = Height * (1f - Mathf.Exp(-StairInfluence * delta));
 
         actor.GlobalPosition += Vector3.Up * move;
+
+        if (hardSnap)
+        {
+            float slopeRate = Normal.Y > 0.01f ? -(Normal.X * actor.Velocity.X + Normal.Z * actor.Velocity.Z) / Normal.Y : 0;
+            actor.visual.AbsorbShift(Vector3.Up * (move - (slopeRate - vy) * delta));
+        }
     }
 }

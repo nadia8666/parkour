@@ -27,7 +27,11 @@ public partial class ActorParkour
     public WallrunData WrapWallrunResults(RaycastResults cast, Vector3 dir, bool left)
     {
         Vector3 flatNormal = cast.normal.WithY(0).Normalized();
+
+        Transform3D before = actor.GlobalTransform;
         actor.Center = cast.position + (flatNormal * 0.3f);
+        actor.visual.Absorb(before);
+
         return new WallrunData(dir, flatNormal, left);
     }
 
@@ -64,7 +68,9 @@ public partial class ActorParkour
 
     public void AlignWallrun()
     {
+        Transform3D before = actor.GlobalTransform;
         actor.GlobalBasis = new Basis(LedgeFacingOf(currentWallrun.Value.normal.WithY(0).Normalized()) * Quaternion.FromEuler(new Vector3(0, currentWallrun.Value.left ? -Mathf.Pi / 2 : Mathf.Pi / 2, 0)));
+        actor.visual.Absorb(before);
     }
 
     public void StartWallrun(WallrunData data)

@@ -17,7 +17,7 @@ public partial class ActorParkour
 
     public bool Jump()
     {
-        if (!actor.InCoyote || actor.ammo.jump <= 0) return false;
+        if ((!actor.InCoyote && !slideActive) || actor.ammo.jump <= 0) return false;
         actor.ammo.jump--;
 
         float horizPower = actor.Velocity.WithY(0).Length();

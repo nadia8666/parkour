@@ -85,7 +85,7 @@ public partial class ActorParkour
                     Vector3 downOrigin = last.position + Vector3.Up * (LedgeGrabMaxHeight * 0.02f) + actor.GenericTarget * distAlpha;
                     RaycastResults? downCast = Raycast.Cast(downOrigin, downOrigin + Vector3.Down * 0.04f, actor.CollisionMask, actor.ground.excludeList);
 
-                    if (downCast is RaycastResults down)
+                    if (downCast is RaycastResults down && (-last.normal.WithY(0).Normalized().Dot(actor.camera.Locked ? actor.camera.RawLook : target) >= .7))
                         return new LedgeGrabData(
                              position: last.position.WithY(down.position.Y),
                              normal: last.normal.WithY(0).Normalized(),

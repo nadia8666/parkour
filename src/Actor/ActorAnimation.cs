@@ -236,7 +236,7 @@ public partial class ActorAnimation : AnimationTree
         get
         {
             rootMotionNode ??= GetNodeOrNull<Node3D>(RootNode)?.GetNodeOrNull<Node3D>(new NodePath(RootMotionTrack.GetConcatenatedNames()));
-            return rootMotionNode == null ? Basis.Identity : actor.GlobalBasis.Inverse() * rootMotionNode.GlobalBasis;
+            return rootMotionNode == null ? Basis.Identity : new Basis(actor.visual.ModelRotation).Inverse() * actor.GlobalBasis.Inverse() * rootMotionNode.GlobalBasis;
         }
     }
 

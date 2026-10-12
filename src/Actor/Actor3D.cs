@@ -35,6 +35,7 @@ public partial class Actor3D : CharacterBody3D
     [Export] public ActorSound sound;
     [Export] public ActorAnimation animation;
     public ActorGround ground;
+    public ActorVisual visual;
 
     // input quick acess
     public Bind Upmove => input.binds.upmove;
@@ -52,6 +53,7 @@ public partial class Actor3D : CharacterBody3D
         parkour = new(this);
         collision = new(this);
         ground = new(this);
+        visual = new(this);
     }
 
     public override void _PhysicsProcess(double delta)
@@ -79,24 +81,12 @@ public partial class Actor3D : CharacterBody3D
         animation.UpdateAnimations((float)delta);
         parkour.StepLedgeMotion(fDelta);
 
-        AlignToSlopes();
+        visual.Step(fDelta);
 
         if (Airborne)
             airVelocity = Velocity;
 
         HealStep(fDelta);
-    }
-
-    public void AlignToSlopes()
-    {
-        if (parkour.slideActive && Grounded)
-        {
-            Quaternion quat = GlobalBasis.GetRotationQuaternion().Normalized();
-            Quaternion diff = new(quat * Vector3.Up, ground.Normal);
-            playerModel.GlobalBasis = new Basis(diff * quat).Scaled(playerModel.GlobalBasis.Scale);
-        }
-        else
-            playerModel.Rotation = Vector3.Zero;
     }
 
     public override void _Process(double delta)
