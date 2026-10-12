@@ -17,7 +17,7 @@ public partial class ActorParkour
     public double lastSlide = 0;
     public Vector3 slideStoredVelocity = new();
     public float slideEntrySpeed = 0;
-    public bool sliding = false;
+    public bool slideActive = false;
 
     public void Powerslide()
     {
@@ -37,7 +37,7 @@ public partial class ActorParkour
         actor.Velocity = newVelocity;
         slideStoredVelocity = newVelocity;
 
-        sliding = true;
+        slideActive = true;
         RotateTowardVector(newVelocity.WithY(0).Normalized(), 1);
         actor.sound.slideStart.Play();
     }
@@ -48,7 +48,6 @@ public partial class ActorParkour
         float slopeDot = 1;
         Vector3 vel = actor.Velocity;
 
-        // TODO: slide under checks
         if (actor.Grounded)
         {
             Vector3 normal = actor.ground.Normal;
@@ -64,11 +63,12 @@ public partial class ActorParkour
             }
         }
 
+
         // friction
         if (duration > SlideFrictionWindow)
             vel /= 1 + SlideDragFactor * delta * (slopeDot < .95f ? 0 : 1);
 
-        actor.Velocity = vel;
+        actor.Velocity = vel.WithY(actor.Velocity.Y);
 
         Vector3 flatVelocity = actor.Velocity.WithY(0);
         if (flatVelocity.LengthSquared() > 0)
@@ -77,15 +77,21 @@ public partial class ActorParkour
         bool forceCancel = duration > SlideMinDuration && (!actor.InCoyote || !actor.Downmove.isDown);
         bool tooSlow = vel.Length() <= SlideMinSpeed && slopeDot >= .95f;
         if (forceCancel || tooSlow) { EndSlide(); return; }
+
+        if (actor.Upmove.pressed)
+        {
+            actor.Upmove.Consume();
+            Jump();
+        }
     }
 
     private void EndSlide()
     {
-        if (!sliding) return;
+        if (!slideActive) return;
         SetActive();
         actor.animation.SafeStop("powerslide_start");
         actor.animation.SafeStop("powerslide_loop");
-        sliding = false;
+        slideActive = false;
         slideStoredVelocity = Vector3.Zero;
     }
 

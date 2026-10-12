@@ -318,20 +318,24 @@ _data = {
 &"wallrun_r": ExtResource("33_w4edw")
 }
 
+[sub_resource type="AudioStreamPolyphonic" id="AudioStreamPolyphonic_2g455"]
+
 [node name="PlayerModel" unique_id=658158511 instance=ExtResource("1_hq1ji")]
 
 [node name="GeneralSkeleton" parent="PlayerArmature" parent_id_path=PackedInt32Array(987319250) index="0" unique_id=442940234]
-bones/1/rotation = Quaternion(-0.010563865, -0.07183474, -0.00076086086, 0.99736035)
-bones/2/position = Vector3(-1.0249319, 0.43179122, 0.039517015)
-bones/2/rotation = Quaternion(0.73858786, -0.018627059, 0.67342174, 0.02538255)
-bones/3/position = Vector3(1.03617, 0.45299354, 0.10209123)
-bones/3/rotation = Quaternion(0.7837673, 0.014923979, -0.617971, 0.059982877)
-bones/4/position = Vector3(-9.31427e-10, 1.0000002, -1.542503e-09)
-bones/4/rotation = Quaternion(0.012899036, 1.3163041e-13, 5.5740808e-11, 0.9999168)
-bones/5/position = Vector3(-1.0194904, -1.0037198, -0.13470984)
-bones/5/rotation = Quaternion(0.7719761, -0.016740955, 0.63520914, -0.016797282)
-bones/6/position = Vector3(1.020233, -1.008646, 0.1395779)
-bones/6/rotation = Quaternion(0.76563877, 0.0045379666, -0.6426505, 0.02787394)
+bones/0/position = Vector3(0, -0.010206194, -0.018144334)
+bones/1/position = Vector3(-0.37221745, 3.2633986, 0.0015226731)
+bones/1/rotation = Quaternion(0.02506564, -0.13635853, 0.16086161, 0.97719073)
+bones/2/position = Vector3(-1.2289562, 0.19682094, 0.3087028)
+bones/2/rotation = Quaternion(0.6269435, -0.32598466, 0.70732945, -0.01899788)
+bones/3/position = Vector3(1.3967876, 0.670557, 0.5608037)
+bones/3/rotation = Quaternion(0.09721394, 0.7829916, -0.44476163, 0.4238642)
+bones/4/position = Vector3(6.344635e-08, 0.99999976, -1.3038516e-08)
+bones/4/rotation = Quaternion(-0.067551434, 0.15267882, -0.057217285, 0.9843029)
+bones/5/position = Vector3(-1.0226604, -1.0520704, 0.38900346)
+bones/5/rotation = Quaternion(0.7555418, 0.15890072, 0.6355018, 0.006690421)
+bones/6/position = Vector3(0.9040848, -0.089958966, -0.928342)
+bones/6/rotation = Quaternion(0.6967575, 0.0962726, -0.6966832, -0.14104272)
 
 [node name="Gloves" parent="PlayerArmature/GeneralSkeleton" index="0" unique_id=1518491342]
 mesh = SubResource("ArrayMesh_kn430")
@@ -346,6 +350,6 @@ libraries/CharAnims = SubResource("AnimationLibrary_e2li7")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.84, 0)
 
 [node name="Footstep" parent="PlayerAudioSource" index="0" unique_id=459272042]
-stream = null
+stream = SubResource("AudioStreamPolyphonic_2g455")
 
 [editable path="PlayerAudioSource"]

@@ -65,25 +65,32 @@ public partial class ActorParkour
 
             Vector3 frontOrigin = center + Vector3.Up * targetHeight;
             RaycastResults? frontCast = Raycast.Cast(frontOrigin, frontOrigin + target * LedgeGrabDistance, actor.CollisionMask, actor.ground.excludeList);
+            bool shouldTry = true;
             if (frontCast is RaycastResults front)
-                lastCast = front;
-            else
             {
-                if (lastCast is RaycastResults last && Mathf.Abs(last.normal.Y) <= .25)
-                {
-                    for (float dist = 1; dist <= 20; dist++)
-                    {
-                        float distAlpha = LedgeGrabDistance * (dist / 20);
-                        Vector3 downOrigin = last.position + Vector3.Up * (LedgeGrabMaxHeight * 0.02f) + actor.GenericTarget * distAlpha;
-                        RaycastResults? downCast = Raycast.Cast(downOrigin, downOrigin + Vector3.Down * 0.04f, actor.CollisionMask, actor.ground.excludeList);
+                shouldTry = false;
+                if (lastCast is RaycastResults last2)
+                    if ((last2.position.WithY(0) - front.position.WithY(0)).Length() >= 0.35f)
+                        shouldTry = true;
 
-                        if (downCast is RaycastResults down)
-                            return new LedgeGrabData(
-                                 position: last.position.WithY(down.position.Y),
-                                 normal: last.normal.WithY(0).Normalized(),
-                                 thin: false
-                            );
-                    }
+                if (!shouldTry)
+                    lastCast = front;
+            }
+
+            if (shouldTry && lastCast is RaycastResults last && Mathf.Abs(last.normal.Y) <= .25)
+            {
+                for (float dist = 1; dist <= 20; dist++)
+                {
+                    float distAlpha = LedgeGrabDistance * (dist / 20);
+                    Vector3 downOrigin = last.position + Vector3.Up * (LedgeGrabMaxHeight * 0.02f) + actor.GenericTarget * distAlpha;
+                    RaycastResults? downCast = Raycast.Cast(downOrigin, downOrigin + Vector3.Down * 0.04f, actor.CollisionMask, actor.ground.excludeList);
+
+                    if (downCast is RaycastResults down)
+                        return new LedgeGrabData(
+                             position: last.position.WithY(down.position.Y),
+                             normal: last.normal.WithY(0).Normalized(),
+                             thin: false
+                        );
                 }
             }
         }

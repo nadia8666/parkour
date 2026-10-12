@@ -44,7 +44,7 @@ public class ActorPhysics(Actor3D actor)
         bool hasInput = actor.input.stickL.Length() > ActorInput.InputDeadzone;
         Vector3 wish = hasInput ? actor.input.globalMoveVector.Normalized() : Vector3.Zero;
         bool grounded = actor.Grounded;
-        bool sliding = actor.parkour.sliding;
+        bool sliding = actor.parkour.slideActive;
         groundedTime = grounded ? groundedTime + delta : 0;
 
         UpdateFacing(delta, wish, hasInput);

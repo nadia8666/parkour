@@ -29,7 +29,7 @@ public partial class ActorParkour
         coiling = false;
         actor.animation.Stop("roll");
 
-        if (sliding)
+        if (slideActive)
         {
             EndSlide();
             horizPower = slideEntrySpeed;

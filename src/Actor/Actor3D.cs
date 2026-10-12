@@ -89,7 +89,7 @@ public partial class Actor3D : CharacterBody3D
 
     public void AlignToSlopes()
     {
-        if (parkour.sliding && Grounded)
+        if (parkour.slideActive && Grounded)
         {
             Quaternion quat = GlobalBasis.GetRotationQuaternion().Normalized();
             Quaternion diff = new(quat * Vector3.Up, ground.Normal);
@@ -249,6 +249,9 @@ public partial class Actor3D : CharacterBody3D
         public int maxJump = 1;
         public int jump = 1;
 
+        public int maxWallrun = 2;
+        public int wallrun = 2;
+
         public Ammo() { }
     }
 
@@ -257,6 +260,7 @@ public partial class Actor3D : CharacterBody3D
     public void RefillAmmo()
     {
         ammo.jump = ammo.maxJump;
+        ammo.wallrun = ammo.maxWallrun;
     }
     #endregion
 
@@ -312,9 +316,13 @@ public partial class Actor3D : CharacterBody3D
 
     // misc
     public Vector3 airVelocity = new();
-    public Vector3 Center => Position + Vector3.Up * (ActorGround.HipHeight + Unit);
-    public bool RotationLocked => parkour.sliding;
-    public bool MovementLocked => parkour.sliding;
+    public Vector3 Center {get => Position + Vector3.Up * (ActorGround.HipHeight + Unit); set
+        {
+            Position = value - Vector3.Up * (ActorGround.HipHeight + Unit);
+        }
+    }
+    public bool RotationLocked => parkour.slideActive || parkour.wallrunActive;
+    public bool MovementLocked => parkour.slideActive;
     public Vector3 LookFlat => camera.Locked ? camera.RawLookFlat : GlobalBasis.GetRotationQuaternion().Normalized() * Vector3.Forward;
     public Vector3 GenericTarget => input.stickL.Length() > .1 ? input.globalMoveVector : (camera.Locked ? camera.RawLookFlat : LookFlat);
     public static double Clock()

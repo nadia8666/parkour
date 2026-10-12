@@ -8,7 +8,7 @@ public partial class ActorParkour(Actor3D actor)
     public bool Parkouring { get; private set; } = false;
     public void CheckMovement()
     {
-        if (actor.Frozen) return;
+        if (actor.Frozen || Parkouring) return;
 
         if (actor.Upmove.pressed)
         {
@@ -39,6 +39,8 @@ public partial class ActorParkour(Actor3D actor)
                     actor.input.ConsumeAll();
                     StartLedgeGrab(vaultData);
                 }
+                else if (GetWallrunData() is WallrunData wallrunData)
+                    StartWallrun(wallrunData);
             }
         }
 
@@ -63,13 +65,14 @@ public partial class ActorParkour(Actor3D actor)
     {
         CheckMovement();
 
+        // may very well be a good idea to do this dynamically. lol. possible even in SetActive() ?
         if (jumpDecayActive)
             JumpDecayStep(delta);
 
         if (coiling)
             CoilStep();
 
-        if (sliding)
+        if (slideActive)
             SlideStep(delta);
 
         if (ledgeGrabbing)
@@ -77,6 +80,9 @@ public partial class ActorParkour(Actor3D actor)
 
         if (ledgeVaulting)
             StepLedgeVault(delta);
+
+        if (wallrunActive)
+            StepWallrun(delta);
 
         if (!actor.InCoyote && !actor.Downmove.isDown && LastPrepareLanding > 0 && Actor3D.Clock() - LastPrepareHeld >= .2)
             LastPrepareLanding = 0;

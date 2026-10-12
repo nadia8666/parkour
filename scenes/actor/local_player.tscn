@@ -198,7 +198,7 @@ debug_color = Color(1, 1, 1, 1)
 physics_interpolation_mode = 2
 transform = Transform3D(0.99999994, -5.820766e-11, 0, 5.820766e-11, 1, 4.656613e-10, -1.4901161e-08, 0, 1, 1.1641532e-10, 1.2600001, 4.656613e-10)
 top_level = true
-fov = 90.0
+fov = 110.0
 
 [node name="PlayerModel" parent="." unique_id=658158511 instance=ExtResource("2_3et3n")]
 transform = Transform3D(0.28, 0, 0, 0, 0.28, 0, 0, 0, 0.28, 0, 0, 0)

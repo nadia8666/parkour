@@ -44,6 +44,12 @@ transform = Transform3D(0.86964816, -0.24683604, 0.4275325, -0.493672, -0.434824
 [node name="PlayerModel" parent="." unique_id=658158511 instance=ExtResource("2_f4rjh")]
 transform = Transform3D(0.28, 0, 0, 0, 0.28, 0, 0, 0, 0.28, -6.8045006, -2.4765587, 40.594536)
 
+[node name="PlayerModel4" parent="." unique_id=1428196728 instance=ExtResource("2_f4rjh")]
+transform = Transform3D(-1.2239188e-08, 0, -0.28, 0, 0.28, 0, 0.28, 0, -1.2239188e-08, 4.9292183, -2.4765587, 67.73694)
+
+[node name="PlayerModel3" parent="." unique_id=223208738 instance=ExtResource("2_f4rjh")]
+transform = Transform3D(0.28, 0, 0, 0, 0.28, 0, 0, 0, 0.28, 4.859496, -2.4765587, 40.594536)
+
 [node name="Colliders" type="Node3D" parent="." unique_id=1858679135]
 
 [node name="CSGBox3D" type="CSGBox3D" parent="Colliders" unique_id=921264496]
@@ -108,6 +114,132 @@ material = SubResource("StandardMaterial3D_krsua")
 
 [node name="CSGBox3D33" type="CSGBox3D" parent="Colliders" unique_id=157446804]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.336, 22.831, 26.053)
+use_collision = true
+size = Vector3(11.889267, 0.2966919, 1.8450623)
+material = SubResource("StandardMaterial3D_krsua")
+
+[node name="CSGBox3D34" type="CSGBox3D" parent="Colliders" unique_id=648194399]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.336, 11.631, 67.80284)
+use_collision = true
+size = Vector3(11.889267, 0.2966919, 1.8450623)
+material = SubResource("StandardMaterial3D_krsua")
+
+[node name="CSGBox3D44" type="CSGBox3D" parent="Colliders" unique_id=1779298793]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 23.716246, 6.451419, 71.37746)
+use_collision = true
+size = Vector3(12.137478, 0.2966919, 1.8450623)
+material = SubResource("StandardMaterial3D_krsua")
+
+[node name="CSGBox3D45" type="CSGBox3D" parent="Colliders" unique_id=2015242025]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 23.716, 9.251, 77.04)
+use_collision = true
+size = Vector3(0.8114147, 0.2966919, 1.8450623)
+material = SubResource("StandardMaterial3D_krsua")
+
+[node name="CSGBox3D46" type="CSGBox3D" parent="Colliders" unique_id=1548551469]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 23.716, 12.051, 77.04)
+use_collision = true
+size = Vector3(0.8114147, 0.2966919, 1.8450623)
+material = SubResource("StandardMaterial3D_krsua")
+
+[node name="CSGBox3D35" type="CSGBox3D" parent="Colliders" unique_id=710446339]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.336, 14.431, 67.80284)
+use_collision = true
+size = Vector3(11.889267, 0.2966919, 1.8450623)
+material = SubResource("StandardMaterial3D_krsua")
+
+[node name="CSGBox3D36" type="CSGBox3D" parent="Colliders" unique_id=1909972910]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.336, 17.231, 67.80284)
+use_collision = true
+size = Vector3(11.889267, 0.2966919, 1.8450623)
+material = SubResource("StandardMaterial3D_krsua")
+
+[node name="CSGBox3D37" type="CSGBox3D" parent="Colliders" unique_id=1707089224]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.336, 20.031, 67.80284)
+use_collision = true
+size = Vector3(11.889267, 0.2966919, 1.8450623)
+material = SubResource("StandardMaterial3D_krsua")
+
+[node name="CSGBox3D38" type="CSGBox3D" parent="Colliders" unique_id=99147222]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.336, 22.831, 67.80284)
+use_collision = true
+size = Vector3(11.889267, 0.2966919, 1.8450623)
+material = SubResource("StandardMaterial3D_krsua")
+
+[node name="CSGBox3D49" type="CSGBox3D" parent="Colliders" unique_id=795802943]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.336, 0.08233881, 77.289024)
+use_collision = true
+size = Vector3(11.889267, 0.2966919, 1.8450623)
+material = SubResource("StandardMaterial3D_krsua")
+
+[node name="CSGBox3D54" type="CSGBox3D" parent="Colliders" unique_id=1645170226]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.242155, -2.4278731, 77.7301)
+use_collision = true
+size = Vector3(6.0769577, 1.2694855, 2.7272186)
+material = SubResource("StandardMaterial3D_krsua")
+
+[node name="CSGBox3D50" type="CSGBox3D" parent="Colliders" unique_id=1167388942]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.336, 2.882339, 77.289024)
+use_collision = true
+size = Vector3(11.889267, 0.2966919, 1.8450623)
+material = SubResource("StandardMaterial3D_krsua")
+
+[node name="CSGBox3D51" type="CSGBox3D" parent="Colliders" unique_id=949873901]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.336, 5.68234, 77.289024)
+use_collision = true
+size = Vector3(11.889267, 0.2966919, 1.8450623)
+material = SubResource("StandardMaterial3D_krsua")
+
+[node name="CSGBox3D52" type="CSGBox3D" parent="Colliders" unique_id=858710477]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.336, 8.48234, 77.289024)
+use_collision = true
+size = Vector3(11.889267, 0.2966919, 1.8450623)
+material = SubResource("StandardMaterial3D_krsua")
+
+[node name="CSGBox3D53" type="CSGBox3D" parent="Colliders" unique_id=1207848343]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.336, 11.282339, 77.289024)
+use_collision = true
+size = Vector3(11.889267, 0.2966919, 1.8450623)
+material = SubResource("StandardMaterial3D_krsua")
+
+[node name="CSGBox3D39" type="CSGBox3D" parent="Colliders" unique_id=1918686603]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.336, 11.631, 73.3419)
+use_collision = true
+size = Vector3(11.889267, 0.2966919, 1.8450623)
+material = SubResource("StandardMaterial3D_krsua")
+
+[node name="CSGBox3D47" type="CSGBox3D" parent="Colliders" unique_id=1565397622]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.336, -1.0214548, 73.3419)
+use_collision = true
+size = Vector3(11.889267, 0.2966919, 1.8450623)
+material = SubResource("StandardMaterial3D_krsua")
+
+[node name="CSGBox3D48" type="CSGBox3D" parent="Colliders" unique_id=209801758]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.336, 3.3725367, 67.49708)
+use_collision = true
+size = Vector3(11.889267, 0.2966919, 1.8450623)
+material = SubResource("StandardMaterial3D_krsua")
+
+[node name="CSGBox3D40" type="CSGBox3D" parent="Colliders" unique_id=1198075896]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.336, 14.431, 73.3419)
+use_collision = true
+size = Vector3(11.889267, 0.2966919, 1.8450623)
+material = SubResource("StandardMaterial3D_krsua")
+
+[node name="CSGBox3D41" type="CSGBox3D" parent="Colliders" unique_id=2012441655]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.336, 17.231, 73.3419)
+use_collision = true
+size = Vector3(11.889267, 0.2966919, 1.8450623)
+material = SubResource("StandardMaterial3D_krsua")
+
+[node name="CSGBox3D42" type="CSGBox3D" parent="Colliders" unique_id=1462381700]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.336, 20.031, 73.3419)
+use_collision = true
+size = Vector3(11.889267, 0.2966919, 1.8450623)
+material = SubResource("StandardMaterial3D_krsua")
+
+[node name="CSGBox3D43" type="CSGBox3D" parent="Colliders" unique_id=1467181255]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.336, 22.831, 73.3419)
 use_collision = true
 size = Vector3(11.889267, 0.2966919, 1.8450623)
 material = SubResource("StandardMaterial3D_krsua")
@@ -254,6 +386,12 @@ material = SubResource("StandardMaterial3D_krsua")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 32.691387, 9.223636, 65.25436)
 use_collision = true
 size = Vector3(55.669067, 28.906006, 4.038025)
+material = SubResource("StandardMaterial3D_krsua")
+
+[node name="CSGBox3D28" type="CSGBox3D" parent="Colliders" unique_id=1339564297]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.952831, 9.223636, 75.74337)
+use_collision = true
+size = Vector3(18.191956, 28.906006, 4.038025)
 material = SubResource("StandardMaterial3D_krsua")
 
 [node name="CSGBox3D" type="CSGBox3D" parent="." unique_id=1203284600]
